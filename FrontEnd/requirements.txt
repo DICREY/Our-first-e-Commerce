@@ -1,0 +1,254 @@
+# E-commerce Fashion Hub - Dependencias del Proyecto
+# Proyecto: Tienda de Ropa Femenina en React.js con CSS Modules
+# Versión: 1.0.0
+
+# ============================================
+# INSTALACIÓN DE DEPENDENCIAS
+# ============================================
+
+# Opción 1: Usando NPM
+npm install react react-dom react-scripts
+
+# Opción 2: Usando Yarn
+yarn add react react-dom react-scripts
+
+# ============================================
+# DEPENDENCIAS PRINCIPALES
+# ============================================
+
+# React Core
+react@^18.2.0                    # Biblioteca principal de React
+react-dom@^18.2.0                # DOM renderer para React
+react-scripts@5.0.1              # Scripts de configuración de Create React App
+
+# ============================================
+# DEPENDENCIAS DE DESARROLLO (OPCIONALES)
+# ============================================
+
+# Para desarrollo y testing
+# NPM:
+npm install --save-dev @testing-library/react @testing-library/jest-dom @testing-library/user-event
+
+# Yarn:
+yarn add --dev @testing-library/react @testing-library/jest-dom @testing-library/user-event
+
+# ============================================
+# DEPENDENCIAS ADICIONALES RECOMENDADAS
+# ============================================
+
+# Para iconos (opcional - actualmente usando emojis)
+# NPM:
+npm install lucide-react
+
+# Yarn:
+yarn add lucide-react
+
+# Para manejo de formularios (futuras implementaciones)
+# NPM:
+npm install react-hook-form
+
+# Yarn:
+yarn add react-hook-form
+
+# Para routing (navegación entre páginas)
+# NPM:
+npm install react-router-dom
+
+# Yarn:
+yarn add react-router-dom
+
+# Para animaciones avanzadas (opcional)
+# NPM:
+npm install framer-motion
+
+# Yarn:
+yarn add framer-motion
+
+# Para manejo de estado global más complejo (alternativa a Context)
+# NPM:
+npm install zustand
+
+# Yarn:
+yarn add zustand
+
+# ============================================
+# COMANDOS DE INSTALACIÓN COMPLETA
+# ============================================
+
+# INSTALACIÓN BÁSICA (MÍNIMA REQUERIDA)
+# NPM:
+npm create react-app fashion-ecommerce
+cd fashion-ecommerce
+npm install
+
+# Yarn:
+yarn create react-app fashion-ecommerce
+cd fashion-ecommerce
+yarn install
+
+# INSTALACIÓN CON DEPENDENCIAS ADICIONALES
+# NPM:
+npm install react react-dom react-scripts lucide-react react-router-dom
+
+# Yarn:
+yarn add react react-dom react-scripts lucide-react react-router-dom
+
+# ============================================
+# SCRIPTS DISPONIBLES
+# ============================================
+
+# Iniciar servidor de desarrollo
+npm start          # o yarn start
+
+# Crear build de producción
+npm run build      # o yarn build
+
+# Ejecutar tests
+npm test           # o yarn test
+
+# Exponer configuración de webpack (no recomendado)
+npm run eject      # o yarn eject
+
+# ============================================
+# ESTRUCTURA DE PACKAGE.JSON RECOMENDADA
+# ============================================
+
+{
+  "name": "fashion-ecommerce",
+  "version": "1.0.0",
+  "description": "E-commerce de ropa femenina con React.js y CSS Modules",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "lucide-react": "^0.263.1",
+    "react-router-dom": "^6.15.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
+
+# ============================================
+# REQUISITOS DEL SISTEMA
+# ============================================
+
+# Node.js: >= 14.0.0 (Recomendado: >= 16.0.0)
+# NPM: >= 6.0.0 (viene con Node.js)
+# Yarn: >= 1.22.0 (opcional, alternativa a NPM)
+
+# Verificar versiones instaladas:
+node --version
+npm --version
+yarn --version
+
+# ============================================
+# INSTALACIÓN DE NODE.JS
+# ============================================
+
+# Descargar desde: https://nodejs.org/
+# O usar un manejador de versiones como nvm:
+
+# Para macOS/Linux:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+nvm install node
+nvm use node
+
+# Para Windows:
+# Descargar nvm-windows desde: https://github.com/coreybutler/nvm-windows
+
+# ============================================
+# INSTALACIÓN DE YARN (OPCIONAL)
+# ============================================
+
+# NPM:
+npm install -g yarn
+
+# Homebrew (macOS):
+brew install yarn
+
+# Chocolatey (Windows):
+choco install yarn
+
+# ============================================
+# COMANDOS DE INICIO RÁPIDO
+# ============================================
+
+# 1. Crear proyecto
+npx create-react-app fashion-ecommerce
+cd fashion-ecommerce
+
+# 2. Instalar dependencias adicionales
+npm install lucide-react react-router-dom
+
+# 3. Reemplazar archivos con el código proporcionado
+
+# 4. Iniciar servidor de desarrollo
+npm start
+
+# El proyecto estará disponible en: http://localhost:3000
+
+# ============================================
+# NOTAS IMPORTANTES
+# ============================================
+
+# - Este proyecto NO requiere TypeScript
+# - CSS Modules está soportado nativamente por Create React App
+# - No se necesita configuración adicional de webpack
+# - Los archivos .module.css son procesados automáticamente
+# - El proyecto es compatible con todas las versiones modernas de navegadores
+
+# ============================================
+# SOLUCIÓN DE PROBLEMAS COMUNES
+# ============================================
+
+# Error de permisos en NPM (macOS/Linux):
+sudo chown -R $(whoami) ~/.npm
+
+# Limpiar caché de NPM:
+npm cache clean --force
+
+# Limpiar caché de Yarn:
+yarn cache clean
+
+# Reinstalar node_modules:
+rm -rf node_modules package-lock.json
+npm install
+
+# ============================================
+# RECURSOS ADICIONALES
+# ============================================
+
+# Documentación oficial de React: https://react.dev/
+# Create React App: https://create-react-app.dev/
+# CSS Modules: https://github.com/css-modules/css-modules
+# Node.js: https://nodejs.org/
+# NPM: https://www.npmjs.com/
+# Yarn: https://yarnpkg.com/
