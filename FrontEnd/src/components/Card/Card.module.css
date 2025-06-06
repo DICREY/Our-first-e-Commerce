@@ -1,0 +1,33 @@
+.card {
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 1px solid var(--neutral-200);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-200);
+}
+
+.cardContent {
+  padding: 1rem;
+}
+
+.cardHeader {
+  padding: 1rem 1rem 0;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin-bottom: 0.5rem;
+}
+
+.cardDescription {
+  color: var(--neutral-600);
+  font-size: 0.875rem;
+}
