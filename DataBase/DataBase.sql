@@ -1,0 +1,47 @@
+DROP DATABASE IF EXISTS e_commerce;
+CREATE DATABASE e_commerce;
+CREATE TABLE e_commerce.roles(
+    id_rol INT AUTO_INCREMENT PRIMARY KEY,
+    nom_rol VARCHAR(100) NOT NULL,
+    fot_rol TEXT DEFAULT("https://imgs.search.brave.com/rL6dnhwCDXLvz02lsRs2QjVj1F8o-8D0o4pTYhmHah8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2M4L01h/cmllX0N1cmllX2Mu/XzE5MjBzLmpwZy81/MTJweC1NYXJpZV9D/dXJpZV9jLl8xOTIw/cy5qcGc") NOT NULL
+);
+
+CREATE TABLE e_commerce.personas(
+    id_per INT AUTO_INCREMENT PRIMARY KEY,
+    nom_per VARCHAR(100) NOT NULL,
+    ape_per VARCHAR(100) NOT NULL,
+    fec_nac_per DATE NOT NULL,
+    tip_doc_per VARCHAR(10) NOT NULL,
+    doc_per VARCHAR(20) UNIQUE NOT NULL,INDEX(doc_per),
+    dir_per VARCHAR(100) NOT NULL,
+    cel_per VARCHAR(20) NOT NULL,
+    cel2_per VARCHAR(20),
+    email_per VARCHAR(100) UNIQUE NOT NULL,INDEX(email_per),
+    cont_per VARCHAR(255) NOT NULL,
+    gen_per VARCHAR(100) NOT NULL,
+    estado BOOLEAN DEFAULT(1) NOT NULL,
+    fec_cre_per DATE DEFAULT(NOW()) NOT NULL
+);
+
+CREATE TABLE e_commerce.otorgar_roles(
+    id_rol INT NOT NULL,INDEX(id_rol),FOREIGN KEY(id_rol) REFERENCES roles(id_rol) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_per INT NOT NULL,INDEX(id_per),FOREIGN KEY(id_per) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE,
+    fec_oto DATE DEFAULT(NOW()) NOT NULL,
+    PRIMARY KEY(id_rol,id_per)
+);
+
+CREATE TABLE e_commerce.cat_productos(
+    id_cat_pro INT AUTO_INCREMENT PRIMARY KEY,
+    nom_cat_pro VARCHAR(100) NOT NULL,INDEX(nom_cat_pro),
+    img_cat_pro TEXT DEFAULT('No-Registrado') NOT NULL,
+    estado BOOLEAN DEFAULT(1) NOT NULL
+);
+
+CREATE TABLE e_commerce.productos(
+    id_pro INT AUTO_INCREMENT PRIMARY KEY,
+    cat_pro INT NOT NULL,INDEX(cat_pro), FOREIGN KEY(cat_pro) REFERENCES cat_productos(id_cat_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    nom_pro VARCHAR(100) NOT NULL,
+    pre_pro DECIMAL(10,2) NOT NULL,
+    des_pro TEXT NOT NULL,
+    sta_pro ENUM("DISPONIBLE","NO-DISPONIBLE") DEFAULT("DISPONIBLE") NOT NULL # Estado del servicio
+);
