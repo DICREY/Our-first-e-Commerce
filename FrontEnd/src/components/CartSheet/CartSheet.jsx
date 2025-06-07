@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useCart } from "./context/CartContext"
+import { useCart } from "../../Contexts/CartContext"
 import Badge from "../Badge/Badge"
 import styles from "./CartSheet.module.css"
 

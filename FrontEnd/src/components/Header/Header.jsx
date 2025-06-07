@@ -3,20 +3,23 @@
 import { useState } from "react"
 import { useCart } from "../../Contexts/CartContext"
 import Button from "../Button/Button"
-// import CartSheet from "../CartSheet/CartSheet"
+import CartSheet from "../CartSheet/CartSheet"
+import FavoritesSheet from "../FavoritesSheet/FavoritesSheet"
+import { products } from "../data/products"
 import styles from "./Header.module.css"
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
   const { getTotalItems } = useCart()
 
   const navigation = [
     { name: "Inicio", href: "/" },
-    { name: "Vestidos", href: "/categoria/vestidos" },
-    { name: "Blusas", href: "/categoria/blusas" },
-    { name: "Pantalones", href: "/categoria/pantalones" },
-    { name: "Ofertas", href: "/ofertas" },
+    { name: "Vestidos", href: "/productos" },
+    { name: "Blusas", href: "/productos" },
+    { name: "Pantalones", href: "/productos" },
+    { name: "Ofertas", href: "/productos" },
   ]
 
   return (
@@ -47,7 +50,8 @@ const Header = () => {
                 🔍
               </Button>
 
-              <Button variant="ghost" size="icon" className="hidden">
+              {/* FAVORITES BUTTON */}
+              <Button variant="ghost" size="icon" onClick={() => setIsFavoritesOpen(true)}>
                 ❤️
               </Button>
 
@@ -74,7 +78,8 @@ const Header = () => {
         </div>
       </header>
 
-      {/* <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} /> */}
+      <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <FavoritesSheet products={products} isOpen={isFavoritesOpen} onClose={() => setIsFavoritesOpen(false)} />
       {/* <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} navigation={navigation} /> */}
     </>
   )

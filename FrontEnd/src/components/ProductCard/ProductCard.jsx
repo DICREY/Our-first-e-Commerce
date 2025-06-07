@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useCart } from "../../Contexts/CartContext"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
-// import ProductQuickView from "../ProductQuickView/ProductQuickView"
+import ProductQuickView from "../ProductQuickView/ProductQuickView"
 import styles from "./ProductCard.module.css"
 
 const ProductCard = ({ product }) => {
@@ -30,6 +30,18 @@ const ProductCard = ({ product }) => {
       "azul oscuro": "#1e40af",
     }
     return colorMap[color.toLowerCase()] || "#a8c5ff"
+  }
+
+  // Persistencia de likes en localStorage
+  useEffect(() => {
+    const liked = localStorage.getItem(`liked-product-${product.id}`)
+    if (liked === "true") setIsLiked(true)
+  }, [product.id])
+
+  const handleLike = () => {
+    const newLiked = !isLiked
+    setIsLiked(newLiked)
+    localStorage.setItem(`liked-product-${product.id}`, newLiked)
   }
 
   return (
@@ -61,7 +73,7 @@ const ProductCard = ({ product }) => {
           </div>
 
           {/* Wishlist button */}
-          <button className={styles.wishlistButton} onClick={() => setIsLiked(!isLiked)}>
+          <button className={styles.wishlistButton} onClick={handleLike}>
             <span style={{ color: isLiked ? "#ef4444" : "#6b7280" }}>{isLiked ? "❤️" : "🤍"}</span>
           </button>
         </div>
@@ -87,7 +99,7 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
 
-      {/* <ProductQuickView product={product} isOpen={showQuickView} onClose={() => setShowQuickView(false)} /> */}
+      <ProductQuickView product={product} isOpen={showQuickView} onClose={() => setShowQuickView(false)} />
     </>
   )
 }
