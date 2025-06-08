@@ -2,6 +2,9 @@
 const express = require('express')
 
 // Imports 
+const credentl = require('../routes/credentials.route')
+const cookies = require('../routes/cookies.route')
+const peoples = require('../routes/people.route')
 const testing = require('../routes/test.route')
 
 // function to Define routers
@@ -13,6 +16,9 @@ function routerApi(app) {
     app.use('/',router)
 
     // Secundary Routes
+    router.use('/credential',credentl)
+    router.use('/cookie',cookies)
+    router.use('/people',peoples)
     router.use('/test',testing)
 }
 

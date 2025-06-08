@@ -113,6 +113,81 @@ BEGIN
         p.id_per
     LIMIT 100;
 END //
+CREATE PROCEDURE pets_heaven.SearchPeopleBy(
+    IN p_by VARCHAR(100)
+)
+BEGIN
+    SELECT
+        p.nom_per,
+        p.ape_per,
+        p.fec_nac_per,
+        p.tip_doc_per,
+        p.doc_per,
+        p.dir_per,
+        p.cel_per,
+        p.cel2_per,
+        p.email_per,
+        p.cont_per,
+        p.gen_per,
+        p.fec_cre_per,
+        GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
+    FROM 
+        personas p
+    JOIN
+        otorgar_roles otr ON otr.id_per = p.id_per
+    JOIN
+        roles r ON otr.id_rol = r.id_rol
+    WHERE
+        p.estado = 1
+        AND (
+            p.doc_per = p_by
+            OR p.email_per LIKE p_by
+        )
+    ORDER BY
+        p.id_per
+    LIMIT 50;
+END //
+
+CREATE PROCEDURE pets_heaven.SearchPeoplesBy(
+    IN p_by VARCHAR(100)
+)
+BEGIN
+    SELECT
+        p.nom_per,
+        p.ape_per,
+        p.fec_nac_per,
+        p.tip_doc_per,
+        p.doc_per,
+        p.dir_per,
+        p.cel_per,
+        p.cel2_per,
+        p.email_per,
+        p.cont_per,
+        p.gen_per,
+        p.fec_cre_per,
+        GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
+    FROM 
+        personas p
+    JOIN
+        otorgar_roles otr ON otr.id_per = p.id_per
+    JOIN
+        roles r ON otr.id_rol = r.id_rol
+    WHERE
+        p.estado = 1
+        AND (
+            r.nom_rol = p_by
+            OR p.nom_per LIKE CONCAT('%',p_by,'%')
+            OR p.ape_per LIKE CONCAT('%',p_by,'%')
+            OR p.doc_per LIKE CONCAT('%',p_by,'%')
+            OR p.email_per LIKE CONCAT('%',p_by,'%')
+            OR p.gen_per LIKE CONCAT('%',p_by,'%')
+            OR p.cel_per LIKE CONCAT('%',p_by,'%')
+            OR p.tip_doc_per LIKE CONCAT('%',p_by,'%')
+        )
+    GROUP BY 
+        p.id_per
+    LIMIT 100;
+END //
 CREATE PROCEDURE e_commerce.DeletePeople(
     IN p_by VARCHAR(100)
 )
@@ -143,4 +218,4 @@ BEGIN
     SET autocommit = 1;
 END //
 
-CALL `SearchPeoples`();
+/* CALL `SearchPeoples`(); */

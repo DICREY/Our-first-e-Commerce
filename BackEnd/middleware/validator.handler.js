@@ -43,7 +43,8 @@ function authenticateJWT(req, res, next) {
 
 function ValidatorRol(requireRol = '') {
     return (req,res,next) => {
-        const rolesHeader = req.signedCookies?.__user
+        // const rolesHeader = req.signedCookies?.__user
+        const rolesHeader = req.headers['roles']
         // Verificación más robusta del header
         if (!rolesHeader || typeof rolesHeader !== 'string') {
             return res.status(403).json({ message: 'Roles perdidos o invalidos' })
