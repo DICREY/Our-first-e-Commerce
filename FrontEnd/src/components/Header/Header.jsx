@@ -1,13 +1,20 @@
 "use client"
 
-import { useState } from "react"
-import { useCart } from "../../Contexts/CartContext"
+// Imports 
 import Button from "../Button/Button"
 import CartSheet from "../CartSheet/CartSheet"
+import { useCart } from "../../Contexts/CartContext"
 import FavoritesSheet from "../FavoritesSheet/FavoritesSheet"
 import { products } from "../data/products"
+
+// Librarys 
+import { useState } from "react"
+import { Heart, UserRound, Search, ShoppingBag } from 'lucide-react'
+
+// Import styles 
 import styles from "./Header.module.css"
 
+// Component 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
@@ -47,22 +54,26 @@ const Header = () => {
             {/* Actions */}
             <div className={styles.actions}>
               <Button variant="ghost" size="icon" className="hidden">
-                🔍
+                <Search />
+                {/* Buscar */}
               </Button>
 
               {/* FAVORITES BUTTON */}
               <Button variant="ghost" size="icon" onClick={() => setIsFavoritesOpen(true)}>
-                ❤️
+                <Heart />
+                {/* Favoritos */}
               </Button>
 
               <Button variant="ghost" size="icon">
-                👤
+                <UserRound />
+                {/* Perfil */}
               </Button>
 
               {/* Cart */}
               <div className={styles.cartButton}>
                 <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
-                  🛍️
+                  <ShoppingBag />
+                  {/* Carrito */}
                   {getTotalItems() > 0 && <span className={styles.cartBadge}>{getTotalItems()}</span>}
                 </Button>
               </div>

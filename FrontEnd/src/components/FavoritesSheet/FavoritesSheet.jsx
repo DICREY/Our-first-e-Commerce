@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
-import Modal from "../Modal/Modal";
-import ProductCard from "../ProductCard/ProductCard";
-import styles from "./FavoritesSheet.module.css";
+// Librarys 
+import { useEffect, useState } from "react"
+import { Heart } from 'lucide-react'
+
+// Imports 
+import Modal from "../Modal/Modal"
+import ProductCard from "../ProductCard/ProductCard"
+
+import styles from "./FavoritesSheet.module.css"
 
 const getLikedProductIds = () => {
   return Object.keys(localStorage)
@@ -9,19 +14,19 @@ const getLikedProductIds = () => {
       (key) =>
         key.startsWith("liked-product-") && localStorage.getItem(key) === "true"
     )
-    .map((key) => key.replace("liked-product-", ""));
-};
+    .map((key) => key.replace("liked-product-", ""))
+}
 
 const FavoritesSheet = ({ products, isOpen, onClose }) => {
-  const [likedIds, setLikedIds] = useState([]);
+  const [likedIds, setLikedIds] = useState([])
 
   useEffect(() => {
     if (isOpen) {
-      setLikedIds(getLikedProductIds());
+      setLikedIds(getLikedProductIds())
     }
-  }, [isOpen]);
+  }, [isOpen])
 
-  const likedProducts = products.filter((p) => likedIds.includes(p.id));
+  const likedProducts = products.filter((p) => likedIds.includes(p.id))
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Tus Favoritos">
@@ -37,7 +42,7 @@ const FavoritesSheet = ({ products, isOpen, onClose }) => {
 
         {likedProducts.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>🤍</div>
+            <div className={styles.emptyIcon}><Heart /></div>
             <h3 className={styles.emptyTitle}>Tu lista de favoritos está vacía</h3>
             <p className={styles.emptyDescription}>
               Guarda tus productos favoritos haciendo clic en el corazón para verlos aquí.
@@ -52,7 +57,7 @@ const FavoritesSheet = ({ products, isOpen, onClose }) => {
         )}
       </div>
     </Modal>
-  );
-};
+  )
+}
 
-export default FavoritesSheet;
+export default FavoritesSheet

@@ -1,6 +1,8 @@
 "use client"
 
+// Librarys 
 import { useEffect } from "react"
+import { ShoppingBag } from 'lucide-react'
 import { useCart } from "../../Contexts/CartContext"
 import Badge from "../Badge/Badge"
 import styles from "./CartSheet.module.css"
@@ -42,7 +44,7 @@ const CartSheet = ({ isOpen, onClose }) => {
           {items.length === 0 ? (
             <div className={styles.emptyState}>
               <div>
-                <div className={styles.emptyIcon}>🛍️</div>
+                <div className={styles.emptyIcon}><ShoppingBag /></div>
                 <p className={styles.emptyTitle}>Tu carrito está vacío</p>
                 <p className={styles.emptyDescription}>Agrega algunos productos para comenzar</p>
               </div>

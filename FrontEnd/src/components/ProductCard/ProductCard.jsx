@@ -1,10 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+// Imports 
 import { useCart } from "../../Contexts/CartContext"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
 import ProductQuickView from "../ProductQuickView/ProductQuickView"
+
+// Librarys 
+import { useState, useEffect } from "react"
+import { Heart, PackagePlus, Eye } from 'lucide-react'
+
+// Import styles 
 import styles from "./ProductCard.module.css"
 
 const ProductCard = ({ product }) => {
@@ -64,17 +70,17 @@ const ProductCard = ({ product }) => {
           <div className={styles.overlay}>
             <div className={styles.overlayActions}>
               <Button size="sm" variant="secondary" onClick={() => setShowQuickView(true)}>
-                Vista Rápida
+                <Eye /> Vista Rápida
               </Button>
               <Button size="sm" variant="primary" onClick={handleQuickAdd}>
-                🛍️ Agregar
+                <PackagePlus /> Agregar
               </Button>
             </div>
           </div>
 
           {/* Wishlist button */}
           <button className={styles.wishlistButton} onClick={handleLike}>
-            <span style={{ color: isLiked ? "#ef4444" : "#6b7280" }}>{isLiked ? "❤️" : "🤍"}</span>
+            <span style={{ color: isLiked ? "#ef4444" : "#6b7280" }}>{isLiked ? <Heart /> : <Heart />}</span>
           </button>
         </div>
 
