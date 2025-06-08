@@ -1,15 +1,18 @@
 // Imports 
 const DataBase = require('./DataBase.service')
 
+// Class
 class Test {
+    // Constructor method
     constructor () {
         this.conection
     }
 
+    // Testing method
     async test () {
          return new Promise((res,rej) => {
             // vars
-            const proc = "SELECT * FROM personas;"
+            const proc = "CALL SearchPeoples();"
 
             // conect to database
             this.database = new DataBase()
@@ -17,7 +20,7 @@ class Test {
 
             if (this.database) this.database.conection.query(proc,(err,result) => {
                 if(err) rej({ message: err })
-                if(!result || !result[0]) rej({
+                if(!result || !result[0] || !result[0][0]) rej({
                     message: "Not found",
                     status: 404
                 })
@@ -36,4 +39,5 @@ class Test {
     }
 }
 
+// Export 
 module.exports = Test
