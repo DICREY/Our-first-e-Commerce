@@ -18,9 +18,10 @@ class Test {
             this.database = new DataBase()
             this.database.conect()
 
+            // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
                 if(err) rej({ message: err })
-                if(!result || !result[0] || !result[0][0]) rej({
+                    if(!result || !result[0] || !result[0][0]) rej({
                     message: "Not found",
                     status: 404
                 })
@@ -32,7 +33,7 @@ class Test {
                     })
                 },1000)
             })
-
+            
             // close conection 
             this.database.conection.end()
         })

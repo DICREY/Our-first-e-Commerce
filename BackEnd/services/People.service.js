@@ -19,6 +19,7 @@ class People {
             this.database = new DataBase()
             this.database.conect()
 
+            // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
                 if(err) rej({ message: err })
                 if(!result || !result[0][0]) rej({
@@ -49,6 +50,7 @@ class People {
             this.database = new DataBase()
             this.database.conect()
 
+            // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,by,(err,result) => {
                 if(err) rej({ message: err })
                 if(!result || !result[0][0]) rej({
@@ -79,6 +81,7 @@ class People {
             this.database = new DataBase()
             this.database.conect()
 
+            // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,by,(err,result) => {
                 if(err) rej({ message: err })
                 if(!result || !result[0][0]) rej({
@@ -121,7 +124,7 @@ class People {
             this.database = new DataBase()
             this.database.conect()
             
-            // call procedure
+            // verify conection and call procedure
             if (this.database) this.database.conection.query(procedure,newUser,err => { 
                 if(err) rej(err) 
                 setTimeout(() => res({
@@ -158,7 +161,7 @@ class People {
             this.database = new DataBase()
             this.database.conect()
 
-            // call procedure
+            // verify conection and call procedure
             if (this.database) this.database.conection.query(procedure,newUser,err => { 
                 if(err) rej(err) 
                 setTimeout(() => res({
@@ -181,7 +184,7 @@ class People {
             // conect to database
             const conection = conect()
 
-            // call procedure
+            // verify conection and call procedure and call procedure
             if (conection) conection.query(procedure,data,err => { 
                 if(err) rej(err) 
                 setTimeout(() => res({

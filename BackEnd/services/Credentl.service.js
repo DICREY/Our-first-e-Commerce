@@ -1,7 +1,7 @@
 // Imports 
 const DataBase = require('./DataBase.service')
 
-// Class 
+// Main Class
 class Credentl {
     // constructor
     constructor(...args) {
@@ -19,6 +19,7 @@ class Credentl {
             this.database = new DataBase()
             this.database.conect()
 
+            // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,by,(err,result) => {
                 if(err) rej({ message: err }) 
                 if(!result || !result[0][0]) rej({
