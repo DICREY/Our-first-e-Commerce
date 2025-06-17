@@ -1,9 +1,9 @@
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 CREATE TABLE e_commerce.roles(
     id_rol INT AUTO_INCREMENT PRIMARY KEY,
-    nom_rol VARCHAR(100) NOT NULL,
-    fot_rol TEXT DEFAULT("https://imgs.search.brave.com/rL6dnhwCDXLvz02lsRs2QjVj1F8o-8D0o4pTYhmHah8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2M4L01h/cmllX0N1cmllX2Mu/XzE5MjBzLmpwZy81/MTJweC1NYXJpZV9D/dXJpZV9jLl8xOTIw/cy5qcGc") NOT NULL
+    nom_rol VARCHAR(100) NOT NULL,INDEX(nom_rol)
 );
 
 CREATE TABLE e_commerce.personas(
@@ -20,6 +20,7 @@ CREATE TABLE e_commerce.personas(
     cont_per VARCHAR(255) NOT NULL,
     gen_per VARCHAR(100) NOT NULL,
     estado BOOLEAN DEFAULT(1) NOT NULL,
+    fot_rol TEXT DEFAULT("https://imgs.search.brave.com/rL6dnhwCDXLvz02lsRs2QjVj1F8o-8D0o4pTYhmHah8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2M4L01h/cmllX0N1cmllX2Mu/XzE5MjBzLmpwZy81/MTJweC1NYXJpZV9D/dXJpZV9jLl8xOTIw/cy5qcGc") NOT NULL,
     fec_cre_per DATE DEFAULT(NOW()) NOT NULL
 );
 
@@ -33,15 +34,44 @@ CREATE TABLE e_commerce.otorgar_roles(
 CREATE TABLE e_commerce.cat_productos(
     id_cat_pro INT AUTO_INCREMENT PRIMARY KEY,
     nom_cat_pro VARCHAR(100) NOT NULL,INDEX(nom_cat_pro),
-    img_cat_pro TEXT DEFAULT('No-Registrado') NOT NULL,
-    estado BOOLEAN DEFAULT(1) NOT NULL
+    sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL
 );
 
 CREATE TABLE e_commerce.productos(
     id_pro INT AUTO_INCREMENT PRIMARY KEY,
     cat_pro INT NOT NULL,INDEX(cat_pro), FOREIGN KEY(cat_pro) REFERENCES cat_productos(id_cat_pro) ON DELETE CASCADE ON UPDATE CASCADE,
-    nom_pro VARCHAR(100) NOT NULL,
-    pre_pro DECIMAL(10,2) NOT NULL,
+    nom_pro VARCHAR(100) NOT NULL,INDEX(nom_pro),
+    pre_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro),
     des_pro TEXT NOT NULL,
+    img_pro TEXT DEFAULT('No-Registrado') NOT NULL,
     sta_pro ENUM("DISPONIBLE","NO-DISPONIBLE") DEFAULT("DISPONIBLE") NOT NULL # Estado del servicio
 );
+
+CREATE TABLE e_commerce.metodos_pagos(
+    id_met_pag INT AUTO_INCREMENT PRIMARY KEY,
+    nom_met_pag VARCHAR(100) NOT NULL,INDEX(nom_met_pag)
+);
+
+CREATE TABLE e_commerce.pedidos (
+    id_ped INT AUTO_INCREMENT PRIMARY KEY,
+    cli_ped INT NOT NULL,INDEX(cli_ped),FOREIGN KEY (cli_ped) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE,
+    fec_ped DATE DEFAULT(CURRENT_DATE()),
+    sta_ped ENUM('PENDIENTE', 'PROCESANDO', 'ENVIADO', 'ENTREGADO', 'CANCELADO') DEFAULT 'PENDIENTE',INDEX(sta_ped),
+    dir_env_ped VARCHAR(200) NOT NULL,
+    met_pag_ped INT NOT NULL,INDEX(met_pag_ped),FOREIGN KEY (met_pag_ped) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE e_commerce.detalle_pedidos (
+    id_det_ped INT AUTO_INCREMENT PRIMARY KEY,
+    ped_det_ped INT NOT NULL COMMENT 'Pedido',INDEX(ped_det_ped),FOREIGN KEY (ped_det_ped) REFERENCES pedidos(id_ped) ON DELETE CASCADE ON UPDATE CASCADE,
+    pro_det_ped INT NOT NULL COMMENT 'Producto',INDEX(pro_det_ped),FOREIGN KEY (pro_det_ped) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    can_det_ped INT NOT NULL COMMENT 'Cantidad',
+    pre_uni_det_ped DECIMAL(10,2) NOT NULL COMMENT 'Precio por unidad',
+    subtotal DECIMAL(12,2) GENERATED ALWAYS AS (can_det_ped * pre_uni_det_ped) STORED
+);
+
+/* 
+tabla de descuentos y promociones
+tabla de devoluciones/reembolsos
+
+Agregar campos de costo para calcular márgenes */
