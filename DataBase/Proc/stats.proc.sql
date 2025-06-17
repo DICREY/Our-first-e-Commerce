@@ -1,87 +1,142 @@
 -- Ventas totales por período
-SELECT 
-    DATE(fecha_ped) AS fecha,
-    SUM(total) AS ventas_totales,
-    COUNT(*) AS cantidad_pedidos
-FROM e_commerce.pedidos
-WHERE fecha_ped BETWEEN '2023-01-01' AND '2023-12-31'
-GROUP BY DATE(fecha_ped)
-ORDER BY fecha;
+CREATE PROCEDURE e_commerce.AnnualSales()
+BEGIN
+    
+    SELECT 
+        DATE(p.fec_ped) AS fecha,
+        /* SUM(total) AS ventas_totales, --verify */
+        COUNT(p.id_ped) AS cantidad_pedidos
+    FROM 
+        e_commerce.pedidos p
+    WHERE 
+        p.fec_ped BETWEEN '2025-01-01' AND '2025-12-31'
+    GROUP BY 
+        DATE(p.fec_ped)
+    ORDER BY 
+        fecha;
+END //
 
 -- Productos más vendidos
-SELECT 
-    p.nom_pro AS producto,
-    c.nom_cat_pro AS categoria,
-    SUM(dp.cantidad) AS unidades_vendidas,
-    SUM(dp.subtotal) AS ingresos_generados
-FROM detalle_pedidos dp
-JOIN productos p ON dp.id_producto = p.id_pro
-JOIN cat_productos c ON p.cat_pro = c.id_cat_pro
-GROUP BY p.id_pro
-ORDER BY unidades_vendidas DESC
-LIMIT 10;
-
+CREATE PROCEDURE e_commerce.SellestProducts()
+BEGIN
+    SELECT 
+        p.nom_pro AS producto,
+        c.nom_cat_pro AS categoria,
+        SUM(dp.can_det_ped) AS unidades_vendidas,
+        SUM(dp.subtotal) AS ingresos_generados
+    FROM
+        detalle_pedidos dp
+    JOIN 
+        productos p ON dp.id_det_ped = p.id_pro
+    JOIN
+        cat_productos c ON p.cat_pro = c.id_cat_pro
+    GROUP BY
+        p.id_pro
+    ORDER BY
+        unidades_vendidas DESC
+    LIMIT 10;
+END //
 -- Clientes más valiosos
-SELECT 
-    CONCAT(pe.nom_per, ' ', pe.ape_per) AS cliente,
-    COUNT(p.id_ped) AS total_pedidos,
-    SUM(p.total) AS gasto_total,
-    AVG(p.total) AS ticket_promedio
-FROM pedidos p
-JOIN personas pe ON p.id_cliente = pe.id_per
-GROUP BY p.id_cliente
-ORDER BY gasto_total DESC
-LIMIT 10;
+CREATE PROCEDURE e_commerce.AnnualSales()
+BEGIN
+    
+    SELECT 
+        CONCAT(pe.nom_per, ' ', pe.ape_per) AS cliente,
+        COUNT(p.id_ped) AS total_pedidos
+        /* SUM(p.total) AS gasto_total, */
+        /* AVG(p.total) AS ticket_promedio */
+    FROM
+        pedidos p
+    JOIN
+        personas pe ON p.cli_ped = pe.id_per
+    GROUP BY
+        p.cli_ped
+    ORDER BY
+        gasto_total DESC
+    LIMIT 10;
+END //
 
 -- Frecuencia de compra por cliente
-SELECT 
-    CONCAT(pe.nom_per, ' ', pe.ape_per) AS cliente,
-    COUNT(p.id_ped) AS total_pedidos,
-    DATEDIFF(MAX(p.fecha_ped), MIN(p.fecha_ped)) / COUNT(p.id_ped) AS dias_entre_compras
-FROM pedidos p
-JOIN personas pe ON p.id_cliente = pe.id_per
-GROUP BY p.id_cliente
-HAVING COUNT(p.id_ped) > 1;
+CREATE PROCEDURE e_commerce.FrequencyPerClient()
+BEGIN
+    SELECT
+        CONCAT(pe.nom_per, ' ', pe.ape_per) AS cliente,
+        COUNT(p.id_ped) AS total_pedidos,
+        DATEDIFF(MAX(p.fec_ped), MIN(p.fec_ped)) / COUNT(p.id_ped) AS dias_entre_compras
+    FROM 
+        pedidos p
+    JOIN 
+        personas pe ON p.cli_ped = pe.id_per
+    GROUP BY
+        p.cli_ped
+    HAVING
+        COUNT(p.id_ped) > 1;
+END //
 
 -- Rendimiento por categoría
-SELECT 
-    c.nom_cat_pro AS categoria,
-    COUNT(dp.id_detalle) AS items_vendidos,
-    SUM(dp.subtotal) AS ingresos,
-    SUM(dp.cantidad) AS unidades_vendidas
-FROM detalle_pedidos dp
-JOIN productos p ON dp.id_producto = p.id_pro
-JOIN cat_productos c ON p.cat_pro = c.id_cat_pro
-GROUP BY c.id_cat_pro
-ORDER BY ingresos DESC;
+CREATE PROCEDURE e_commerce.PerformancePerCategorie()
+BEGIN
+    SELECT 
+        c.nom_cat_pro AS categoria,
+        COUNT(dp.id_det_ped) AS items_vendidos,
+        SUM(dp.subtotal) AS ingresos,
+        SUM(dp.can_det_ped) AS unidades_vendidas
+    FROM 
+        detalle_pedidos dp
+    JOIN
+        productos p ON dp.id_det_ped = p.id_pro
+    JOIN
+        cat_productos c ON p.cat_pro = c.id_cat_pro
+    GROUP BY
+        c.id_cat_pro
+    ORDER BY 
+        ingresos DESC;
+END //
 
 -- Productos con bajo stock (asumiendo que agregamos columna stock)
-SELECT 
-    nom_pro AS producto,
-    pre_pro AS precio,
-    stock_actual
-FROM productos
-WHERE stock_actual < stock_minimo;
-
+CREATE PROCEDURE e_commerce.ProductsWithLowStock()
+BEGIN
+    SELECT 
+        nom_pro AS producto,
+        pre_pro AS precio,
+        stock_actual
+    FROM 
+        productos
+    WHERE
+        stock_actual < stock_minimo;
+END //
 -- Ventas por mes
-SELECT 
-    YEAR(fecha_ped) AS año,
-    MONTH(fecha_ped) AS mes,
-    SUM(total) AS ventas_totales,
-    COUNT(*) AS cantidad_pedidos
-FROM pedidos
-GROUP BY YEAR(fecha_ped), MONTH(fecha_ped)
-ORDER BY año, mes;
+CREATE PROCEDURE e_commerce.SalesPerMonth()
+BEGIN
+    SELECT
+        YEAR(fec_ped) AS año,
+        MONTH(fec_ped) AS mes,
+        /* SUM(total) AS ventas_totales, */
+        COUNT(*) AS cantidad_pedidos
+    FROM
+        pedidos
+    GROUP BY
+        YEAR(fec_ped), MONTH(fec_ped)
+    ORDER BY
+        año, mes;
+END //
 
 -- Comparación interanual
-SELECT 
-    MONTH(fecha_ped) AS mes,
-    SUM(CASE WHEN YEAR(fecha_ped) = 2022 THEN total ELSE 0 END) AS ventas_2022,
-    SUM(CASE WHEN YEAR(fecha_ped) = 2023 THEN total ELSE 0 END) AS ventas_2023,
-    (SUM(CASE WHEN YEAR(fecha_ped) = 2023 THEN total ELSE 0 END) - 
-     SUM(CASE WHEN YEAR(fecha_ped) = 2022 THEN total ELSE 0 END)) / 
-    SUM(CASE WHEN YEAR(fecha_ped) = 2022 THEN total ELSE 0 END) * 100 AS crecimiento_porcentual
-FROM pedidos
-WHERE YEAR(fecha_ped) IN (2022, 2023)
-GROUP BY MONTH(fecha_ped)
-ORDER BY mes;
+CREATE PROCEDURE e_commerce.YearOnYearComparison()
+BEGIN
+    SELECT 
+        MONTH(fec_ped) AS mes,
+        SUM(CASE WHEN YEAR(fec_ped) = 2022 THEN total ELSE 0 END) AS ventas_2022,
+        SUM(CASE WHEN YEAR(fec_ped) = 2023 THEN total ELSE 0 END) AS ventas_2023,
+        (SUM(CASE WHEN YEAR(fec_ped) = 2023 THEN total ELSE 0 END) - 
+        SUM(CASE WHEN YEAR(fec_ped) = 2022 THEN total ELSE 0 END)) / 
+        SUM(CASE WHEN YEAR(fec_ped) = 2022 THEN total ELSE 0 END) * 100 AS crecimiento_porcentual
+    FROM
+        pedidos
+    WHERE
+        YEAR(fec_ped) IN (2022, 2023)
+    GROUP BY
+        MONTH(fec_ped)
+    ORDER BY
+        mes;
+END //
