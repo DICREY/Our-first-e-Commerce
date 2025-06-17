@@ -47,6 +47,29 @@ CREATE TABLE e_commerce.productos(
     sta_pro ENUM("DISPONIBLE","NO-DISPONIBLE") DEFAULT("DISPONIBLE") NOT NULL # Estado del servicio
 );
 
+CREATE TABLE e_commerce.colores(
+    id_col INT AUTO_INCREMENT PRIMARY KEY,
+    nom_col VARCHAR(100) NOT NULL,INDEX(nom_col),
+    hex_col VARCHAR(7) NOT NULL,INDEX(hex_col)
+);
+
+CREATE TABLE e_commerce.productos_colores(
+    id_pro_col INT AUTO_INCREMENT PRIMARY KEY,
+    pro_col_pro INT NOT NULL,INDEX(pro_col_pro),FOREIGN KEY (pro_col_pro) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    col_pro_col INT NOT NULL,INDEX(col_pro_col),FOREIGN KEY (col_pro_col) REFERENCES colores(id_col) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE e_commerce.tallas(
+    id_tal_pro INT AUTO_INCREMENT PRIMARY KEY,
+    nom_tal_pro VARCHAR(100) NOT NULL,INDEX(nom_tal_pro)
+);
+
+CREATE TABLE e_commerce.productos_tallas(
+    id_pro_tal INT AUTO_INCREMENT PRIMARY KEY,
+    pro_tal_pro INT NOT NULL,INDEX(pro_tal_pro),FOREIGN KEY (pro_tal_pro) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    tal_pro_tal INT NOT NULL,INDEX(tal_pro_tal), FOREIGN KEY (tal_pro_tal) REFERENCES tallas(id_tal_pro) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE e_commerce.metodos_pagos(
     id_met_pag INT AUTO_INCREMENT PRIMARY KEY,
     nom_met_pag VARCHAR(100) NOT NULL,INDEX(nom_met_pag)

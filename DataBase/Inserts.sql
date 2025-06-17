@@ -23,3 +23,72 @@ INSERT INTO e_commerce.otorgar_roles (id_rol, id_per) VALUES
 (1,5),
 (2,5),
 (3,5);
+
+-- 1. Insertar categorías
+INSERT INTO e_commerce.cat_productos (nom_cat_pro) VALUES 
+('Ropa de Mujer'), ('Lencería'), ('Ropa Deportiva Mujer');
+
+-- 2. Insertar colores
+INSERT INTO e_commerce.colores (nom_col, hex_col) VALUES 
+('Rojo', '#FF0000'), ('Negro', '#000000'), ('Blanco', '#FFFFFF'),
+('Azul Marino', '#000080'), ('Rosa', '#FFC0CB'), ('Beige', '#F5F5DC'),
+('Verde Oliva', '#808000'), ('Morado', '#800080'), ('Gris', '#808080');
+
+-- 3. Insertar tallas específicas para mujer
+INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES 
+('XS'), ('S'), ('M'), ('L'), ('XL'), ('XXL'),
+('34'), ('36'), ('38'), ('40'), ('42'), ('44'),
+('Única');
+
+-- 4. Insertar 20 productos de ropa para mujer
+INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro, img_pro) VALUES
+-- Ropa casual
+(1, 'Blusa de seda estampada', 45.99, 'Blusa elegante de seda con estampado floral', 'blusa_seda.jpg'),
+(1, 'Jeans skinny alto talle', 59.99, 'Jeans ajustados con tiro alto y elastano', 'jeans_skinny.jpg'),
+(1, 'Vestido midi floral', 65.99, 'Vestido hasta la rodilla con estampado de flores', 'vestido_midi.jpg'),
+-- Abrigos y chaquetas
+(1, 'Chaqueta de denim', 89.99, 'Chaqueta estilo oversize en mezclilla', 'chaqueta_denim.jpg'),
+(1, 'Abrigo de lana invierno', 129.99, 'Abrigo largo para clima frío con cinturón', 'abrigo_lana.jpg'),
+-- Ropa deportiva
+(3, 'Leggings deportivos compresión', 49.99, 'Leggings de alta compresión para entrenamiento', 'leggings_deporte.jpg'),
+(3, 'Top deportivo soporte alto', 39.99, 'Top con soporte máximo para actividades intensas', 'top_deporte.jpg'),
+-- Lencería
+(2, 'Conjunto de encaje negro', 55.99, 'Sujetador y braga de encaje con detalles delicados', 'lenceria_encaje.jpg'),
+(2, 'Pijama de satén corto', 42.99, 'Conjunto de pijama en satén suave', 'pijama_saten.jpg'),
+-- Ropa de baño
+(1, 'Bikini estampado tropical', 49.99, 'Conjunto de bikini con estampado floral', 'bikini_tropical.jpg'),
+(1, 'Bañador entero deportivo', 59.99, 'Bañador de una pieza para natación', 'banador_deporte.jpg'),
+-- Ropa formal
+(1, 'Traje de chaqueta slim', 149.99, 'Conjunto de chaqueta y pantalón para oficina', 'traje_chaqueta.jpg'),
+(1, 'Vestido de cóctel elegante', 119.99, 'Vestido corto para eventos especiales', 'vestido_coctel.jpg'),
+-- Ropa de maternidad
+(1, 'Vestido maternidad verano', 54.99, 'Vestido holgado con tirantes ajustables', 'vestido_maternidad.jpg'),
+(1, 'Jeans maternidad elásticos', 69.99, 'Jeans con bandaja elástica para embarazo', 'jeans_maternidad.jpg'),
+-- Accesorios de moda
+(1, 'Chal de cachemira', 79.99, 'Chal fino para todas las estaciones', 'chal_cachemira.jpg'),
+(1, 'Fular de seda estampado', 39.99, 'Fular ligero con estampado artístico', 'fular_seda.jpg'),
+-- Ropa plus size
+(1, 'Vestido plus size floral', 69.99, 'Vestido holgado con estampado grande', 'vestido_plus.jpg'),
+(1, 'Blusa plus size manga larga', 49.99, 'Blusa elegante con detalles en cuello', 'blusa_plus.jpg');
+
+-- Asignación de colores y tallas a algunos productos
+-- Blusa de seda estampada (id_pro 1)
+INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES 
+(1, 2), (1, 3), (1, 5);  -- Negro, Blanco, Rosa
+
+INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
+(1, 1), (1, 2), (1, 3), (1, 4);  -- XS, S, M, L
+
+-- Jeans skinny (id_pro 2)
+INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES 
+(2, 2), (2, 4);  -- Negro, Azul Marino
+
+INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
+(2, 7), (2, 8), (2, 9), (2, 10), (2, 11);  -- 34, 36, 38, 40, 42
+
+-- Leggings deportivos (id_pro 6)
+INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES 
+(6, 1), (6, 2), (6, 3), (6, 9);  -- Rojo, Negro, Blanco, Gris
+
+INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
+(6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6);  -- XS, S, M, L, XL, XXL
