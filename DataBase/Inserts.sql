@@ -1,8 +1,8 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
-INSERT INTO e_commerce.roles (nom_rol,fot_rol) VALUES
-('Administrador','https://imgs.search.brave.com/JheS1cTjYH1Y1E7rp1FADfQDL9uXw20FxZAFfjZwEaY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy9k/L2Q0L04uVGVzbGEu/SlBH'),
-('Veterinario','https://imgs.search.brave.com/rL6dnhwCDXLvz02lsRs2QjVj1F8o-8D0o4pTYhmHah8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2M4L01h/cmllX0N1cmllX2Mu/XzE5MjBzLmpwZy81/MTJweC1NYXJpZV9D/dXJpZV9jLl8xOTIw/cy5qcGc'),
-('Usuario','https://imgs.search.brave.com/kWZPq0vRV5Hl9y9RS9CtH5o-SRhsHFZfA8twL1VUavI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9oaXBz/LmhlYXJzdGFwcHMu/Y29tL2htZy1wcm9k/L2ltYWdlcy9nZXR0/eWltYWdlcy02MTUz/MTI2MzQuanBnP2Ny/b3A9MXh3OjEuMHho/O2NlbnRlcix0b3Am/cmVzaXplPTY0MDoq');
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
+INSERT INTO e_commerce.roles (nom_rol) VALUES
+('Administrador'),
+('Veterinario'),
+('Usuario');
 INSERT INTO e_commerce.personas (nom_per, ape_per, fec_nac_per, tip_doc_per, doc_per, dir_per, cel_per, cel2_per, email_per, cont_per,gen_per) VALUES
 ('Juan', 'Pérez',NOW(), 'CC', '123450989', 'Calle 123 #45-67', '3001234567', NULL, 'juanperez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','Masculino'),
 ('María', 'Gómez',NOW(), 'CC', '876254321', 'Av. Principal #12-34', '3102345678', '3203456789', 'mariagomez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','Femenino'),
@@ -92,3 +92,34 @@ INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES
 
 INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
 (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6);  -- XS, S, M, L, XL, XXL
+
+INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES 
+('Tarjeta de Crédito'),
+('Tarjeta de Débito'),
+('PSE (Pagos Seguros en Línea)'),
+('Contraentrega (Efectivo)'),
+('Transferencia Bancaria'),
+('Billetera Digital');
+
+INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped) VALUES
+(1, 'Calle 123 #45-67, Bogotá', 1, DEFAULT),  -- Pedido 1: Cliente Juan Pérez (ID 1)
+(2, 'Av. Principal #12-34, Medellín', 3, DEFAULT), -- Pedido 2: Cliente María Gómez (ID 2)
+(3, 'Carrera 56 #78-90, Cali', 4, 'ENTREGADO'),  -- Pedido 3: Cliente Carlos Rodríguez (ID 3) - Este cliente es hombre pero podría comprar para regalo
+(4, 'Diagonal 34 #56-78, Barranquilla', 2, 'PROCESANDO'), -- Pedido 4: Cliente Ana Martínez (ID 4)
+(5, 'Transversal 12 #34-56, Cartagena', 5, DEFAULT); -- Pedido 5: Cliente Luis García (ID 5) - Compra grande
+
+INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, pro_det_ped, can_det_ped, pre_uni_det_ped) VALUES
+(1, 1, 2, 45.99),  -- 2 Blusas de seda
+(1, 6, 1, 49.99),   -- 1 Legging deportivo
+(2, 3, 1, 65.99),  -- 1 Vestido midi floral
+(2, 8, 2, 55.99),  -- 2 Conjuntos de encaje
+(2, 12, 1, 119.99), -- 1 Vestido de cóctel
+(3, 5, 1, 129.99),  -- 1 Abrigo de lana
+(3, 17, 1, 79.99),   -- 1 Chal de cachemira
+(4, 7, 2, 39.99),   -- 2 Tops deportivos
+(4, 10, 1, 49.99),   -- 1 Bikini tropical
+(5, 2, 3, 59.99),   -- 3 Jeans skinny
+(5, 4, 1, 89.99),    -- 1 Chaqueta de denim
+(5, 9, 2, 42.99),    -- 2 Pijamas de satén
+(5, 13, 1, 149.99),  -- 1 Traje de chaqueta
+(5, 19, 1, 69.99);   -- 1 Vestido plus size

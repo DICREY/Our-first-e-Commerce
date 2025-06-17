@@ -1,3 +1,4 @@
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 -- Ventas totales por período
 CREATE PROCEDURE e_commerce.AnnualSales()
 BEGIN
@@ -21,6 +22,10 @@ CREATE PROCEDURE e_commerce.SellestProducts()
 BEGIN
     SELECT 
         p.nom_pro AS producto,
+        p.pre_pro,
+        p.sta_pro,
+        p.des_pro,
+        p.img_pro,
         c.nom_cat_pro AS categoria,
         SUM(dp.can_det_ped) AS unidades_vendidas,
         SUM(dp.subtotal) AS ingresos_generados
@@ -139,3 +144,5 @@ BEGIN
     ORDER BY
         mes;
 END //
+
+/* CALL SellestProducts(); */
