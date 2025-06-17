@@ -36,10 +36,9 @@ BEGIN
         unidades_vendidas DESC
     LIMIT 10;
 END //
--- Clientes más valiosos
-CREATE PROCEDURE e_commerce.AnnualSales()
+-- Mayores compradores
+CREATE PROCEDURE e_commerce.MajorBuyers()
 BEGIN
-    
     SELECT 
         CONCAT(pe.nom_per, ' ', pe.ape_per) AS cliente,
         COUNT(p.id_ped) AS total_pedidos

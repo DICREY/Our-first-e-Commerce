@@ -2,6 +2,7 @@
 const mysql = require('mysql')
 require('dotenv').config()
 
+// Main Class
 class DataBase {
     constructor() {
         this.conection = this.createConnection()
@@ -30,7 +31,6 @@ class DataBase {
         })
     }
 }
-
 
 // Exports 
 module.exports = DataBase
