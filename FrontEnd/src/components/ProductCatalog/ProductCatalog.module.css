@@ -1,16 +1,16 @@
 .catalogPage {
-  padding: 2rem 1rem;
+  padding: 1rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
 .title {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 600;
   color: #212121;
   margin-bottom: 0.5rem;
@@ -18,29 +18,29 @@
 
 .subtitle {
   color: #616161;
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
 }
 
 .filtersBar {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .filterSection {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .sectionTitle {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: #757575;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   display: block;
 }
 
@@ -55,11 +55,12 @@
   color: #424242;
   border: none;
   border-radius: 20px;
-  padding: 0.5rem 1.25rem;
-  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .categoryBtn:hover {
@@ -72,20 +73,20 @@
 }
 
 .filterRow {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
-  align-items: center;
 }
 
 .filterGroup {
-  flex: 1;
-  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .searchInput {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -99,7 +100,7 @@
 
 .select {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -114,8 +115,7 @@
 .priceLabels {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #616161;
 }
 
@@ -123,14 +123,14 @@
   width: 100%;
   height: 4px;
   appearance: none;
-  -webkit-appearance: none;
   background: #e0e0e0;
   border-radius: 2px;
   outline: none;
+  margin: 0.5rem 0;
 }
 
 .rangeSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
+  appearance: none;
   width: 16px;
   height: 16px;
   background: #212121;
@@ -138,45 +138,83 @@
   cursor: pointer;
 }
 
+.sizeFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sizeOption {
+  display: none;
+}
+
+.sizeLabel {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sizeOption:checked + .sizeLabel {
+  background: #212121;
+  color: white;
+  border-color: #212121;
+}
+
 .productsGrid {
   display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 }
 
 .emptyState {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 4rem 0;
+  padding: 2rem 0;
 }
 
 .emptyIcon {
-  font-size: 3rem;
+  font-size: 2rem;
   color: #e0e0e0;
   margin-bottom: 1rem;
 }
 
 .emptyText {
   color: #9e9e9e;
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
-@media (max-width: 768px) {
+/* Media Queries */
+@media (min-width: 480px) {
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
   .catalogPage {
-    padding: 1rem;
-  }
-  
-  .filterRow {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .filterGroup {
-    width: 100%;
+    padding: 2rem;
   }
   
   .productsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .filterRow {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+  
+  .categoryBtn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
 }
