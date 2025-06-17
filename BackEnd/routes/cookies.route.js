@@ -8,31 +8,51 @@ const { authenticateJWT } = require('../middleware/validator.handler')
 // Vars 
 const Route = Router()
 
-// Routes 
-Route.post('/cookie', authenticateJWT, async (req, res) => {
+// Routes
+Route.post('/create',(req, res) => {
     const { name, value } = req.body
-    
-    res.cookie( name, value, cookiesOptions)
+    try {
+        if (!name || !value) return res.status(400).json({ message: "Petición invalida, faltan datos"})
 
-    res.status(201).json({ message: 'Cookie creada' })
+        res.cookie( name, value, cookiesOptions)
+        res.status(201).json({ message: 'Cookie creada' })
+    } catch (err) {
+        if (err.status) return res.status(err.status).json({ message: err.message })
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
 })
 
-Route.post('/check-cookie', authenticateJWT, async (req, res) => {
+// Call middleware
+Route.use(authenticateJWT)
+
+Route.post('/check',(req, res) => {
     const { name } = req.body
-    const cookie = req.signedCookies[name] || req.cookies[name]
+    try {
+        if (!name) return res.status(400).json({ message: "Petición invalida, faltan datos"})
 
-    if (!cookie) return res.status(404).json({ message: 'Cookie no encontrada' })
+        const cookie = req.signedCookies[name] || req.cookies[name]
     
-    return res.status(200).json({ data: cookie })
+        if (!cookie) return res.status(404).json({ message: 'Cookie no encontrada' })
+        
+        return res.status(200).json({ data: cookie })
+    } catch (err) {
+        if (err.status) return res.status(err.status).json({ message: err.message })
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
 })
 
-Route.post('/clear-cookies', authenticateJWT, async (req, res) => {
-    res.clearCookie('__cred', cookiesOptions)
-    res.clearCookie('__nit', cookiesOptions)
-    res.clearCookie('__user', cookiesOptions)
-    res.clearCookie('__userName', cookiesOptions)
-
-    return res.status(200).json({ message: 'Cookies eliminadas' })
+Route.post('/clear', (req, res) => {
+    try {
+        res.clearCookie('__cred', cookiesOptions)
+        res.clearCookie('__nit', cookiesOptions)
+        res.clearCookie('__user', cookiesOptions)
+        res.clearCookie('__userName', cookiesOptions)
+    
+        return res.status(200).json({ message: 'Cookies eliminadas' })
+    } catch (err) {
+        if (err.status) return res.status(err.status).json({ message: err.message })
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
 })
 
 // Export 

@@ -15,6 +15,9 @@ const secret = process.env.JWT_SECRET
 // vars
 const Route = Router()
 
+// Middleware 
+Route.use(Fullinfo(['empty']))
+
 // Routes
 Route.post('/register', async (req,res) => {
     // Vars 
@@ -24,10 +27,10 @@ Route.post('/register', async (req,res) => {
     
     try {
         // Verifiy if exist
-        const find = await user.findBy(toString(body.numeroDocumento))
+        const find = await user.findBy(toString(body.doc_per))
         if (find.result[0][0].nom_per) res.status(302).json({ message: "Usuario ya existe" })
             
-        const create = await user.create({hash_pass: await hash(body.password,saltRounds), ...body})
+        const create = await user.create({hash_pass: await hash(body.pas_per,saltRounds), ...body})
         res.status(201).json(create)
     } catch(err) {
         if(err.status) return res.status(err.status).json({message: err.message})
@@ -47,7 +50,7 @@ Route.post('/login', limiterLog, async (req,res) => {
 
         if(!user) return res.status(404).json({ message: 'Usuario no encontrado' })
         // Verify
-        const coincide = await compare(secondData, user.cont_per)
+        const coincide = await compare(secondData, user.pas_per)
 
         if (!coincide) return res.status(401).json({ message: 'Credenciales inválidas' })
         const token = jwt.sign(
