@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCart } from "../../../Contexts/CartContext"
 import { useParams, useNavigate } from "react-router-dom";
 import { products } from "../../data/products";
 import styles from "./ProductDetailPage.module.css";
@@ -11,6 +12,11 @@ const ProductDetailPage = () => {
   const [selectedColor, setSelectedColor] = useState(product?.colors[0] || "");
   const [selectedSize, setSelectedSize] = useState(product?.sizes[0] || "");
   const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart()
+
+  const handleQuickAdd = () => {
+    addToCart(product, product.sizes[0], product.colors[0])
+  }
 
   if (!product) {
     return (
@@ -156,7 +162,10 @@ const ProductDetailPage = () => {
                 +
               </button>
             </div>
-            <button className={styles.primaryButton}>Añadir al carrito</button>
+            <button 
+            className={styles.primaryButton}
+            onClick={handleQuickAdd}
+            >Añadir al carrito</button>
             <button className={styles.secondaryButton}>Comprar ahora</button>
           </div>
         </div>
