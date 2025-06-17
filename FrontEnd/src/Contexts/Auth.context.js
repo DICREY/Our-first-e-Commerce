@@ -15,9 +15,9 @@ export const AuthProvider = ({ children }) => {
 
     // Functions
     // Iniciar sesion 
-    const login = async (url = '', firstData, secondData) => {
+    const login = async (url = '', data = {}) => {
         try {            
-            const response = await PostData(url, { firstData: firstData, secondData: secondData })
+            const response = await PostData(url, data)
             if (response) {
                 const userData = decodeJWT(response.__cred)
                 setUser(userData)

@@ -10,10 +10,30 @@ const { authenticateJWT, ValidatorRol } = require('../middleware/validator.handl
 const people = new People()
 const Route = Router()
 
-// Middleware 
-// Route.use(authenticateJWT)
-
 // Routes
+Route.post('/register', async (req,res) => {
+    // Vars 
+    const saltRounds = 15
+    const body = req.body
+    
+    try {
+        // Verifiy if exist
+        const find = await people.findBy(toString(body.doc_per))
+        if (find.result[0][0].nom_per) res.status(302).json({ message: "Usuario ya existe" })
+
+        const create = await people.create({hash_pass: await hash(body.pas_per,saltRounds), ...body})
+        res.status(201).json(create)
+
+    } catch(err) {
+        console.log(err)
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: err })
+    }
+})
+
+// Middleware 
+Route.use(authenticateJWT)
+
 Route.get('/all', ValidatorRol("administrador"), async (req,res) => {
     try {
         const search = await people.findAll()
@@ -53,25 +73,6 @@ Route.get('/by:by', ValidatorRol("administrador"), async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        if(err.status) return res.status(err.status).json({message: err.message})
-        res.status(500).json({ message: err })
-    }
-})
-Route.post('/register', async (req,res) => {
-    // Vars 
-    const saltRounds = 15
-    const body = req.body
-    
-    try {
-        // Verifiy if exist
-        const find = await people.findBy(toString(body.doc))
-        if (find.result[0][0].nom_per) res.status(302).json({ message: "Usuario ya existe" })
-
-        const create = await people.create({hash_pass: await hash(body.passwd,saltRounds), ...body})
-        res.status(201).json(create)
-
-    } catch(err) {
-        console.log(err)
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: err })
     }
