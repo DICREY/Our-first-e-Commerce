@@ -62,5 +62,28 @@ function ValidatorRol(requireRol = '') {
     }
 }
 
+function Fullinfo(optionalFields = []) {
+    return (req, res, next) => {
+        // Vars 
+        const data = req.body
+        
+        // Verifica si el body está vacío
+        if (!data || Object.keys(data).length === 0) {
+            return res.status(400).json({ message: "Petición vacía, no se enviaron datos" })
+        }
+
+        // Busca campos vacíos por defecto
+        for (const [key, value] of Object.entries(data)) {
+            if (optionalFields.includes(key)) continue
+            if (value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0)) {
+                return res.status(400).json({ message: "A la petición le faltan datos" })
+            }
+        }
+        
+        // Next to 
+        next()
+    }
+}
+
 // export middleware 
-module.exports = { validatorHeaders, ValidatorRol, authenticateJWT}
+module.exports = { validatorHeaders, ValidatorRol, authenticateJWT, Fullinfo }

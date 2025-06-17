@@ -29,7 +29,7 @@ class Stats {
                 setTimeout(() => {
                     res({
                         message: "Info found",
-                        result: result[0]
+                        result: result
                     })
                 },1000)
             })

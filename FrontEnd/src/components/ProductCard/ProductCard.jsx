@@ -4,8 +4,8 @@
 import { useCart } from "../../Contexts/CartContext"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
-import ProductQuickView from "../ProductQuickView/ProductQuickView"
 import { useNavigate } from "react-router-dom";
+// import ProductQuickView from "../ProductQuickView/ProductQuickView"
 
 // Librarys 
 import { useState, useEffect } from "react"
@@ -13,15 +13,16 @@ import { Heart, PackagePlus, Eye } from 'lucide-react'
 
 // Import styles 
 import styles from "./ProductCard.module.css"
+import { checkImage } from "../../Utils/utils";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product = {}, img = '' }) => {
   const [isLiked, setIsLiked] = useState(false)
   const [showQuickView, setShowQuickView] = useState(false)
   const { addToCart } = useCart()
   const navigate = useNavigate();
 
   const handleQuickAdd = () => {
-    addToCart(product, product.sizes[0], product.colors[0])
+    addToCart(product, product.sizes[0], product?.colors[0])
   }
 
   const getColorStyle = (color) => {
@@ -58,13 +59,16 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-      <div className={styles.card} onClick={handleCardClick} style={{ cursor: "pointer" }}>
+      <section className={styles.card} onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <div className={styles.imageContainer}>
-          <img
-            src={product.image || "/placeholder.svg?height=400&width=300"}
-            alt={product.name}
-            className={styles.image}
-          />
+          {
+            checkImage(
+              product.img_pro,
+              product.nom_pro,
+              img,
+              styles.image
+            )
+          }
 
           {/* Badges */}
           <div className={styles.badges}>
@@ -114,30 +118,30 @@ const ProductCard = ({ product }) => {
 
         <div className={styles.content}>
           <div className={styles.productInfo}>
-            <h3 className={styles.productName}>{product.name}</h3>
+            <h3 className={styles.productName}>{product.nom_pro}</h3>
 
             <div className={styles.priceContainer}>
-              <span className={styles.price}>${product.price.toFixed(2)}</span>
-              {product.originalPrice && (
+              <span className={styles.price}>${product.pre_pro?.toFixed(2)}</span>
+              {/* {product.originalPrice && (
                 <span className={styles.originalPrice}>${product.originalPrice.toFixed(2)}</span>
-              )}
+              )} */}
             </div>
 
             <div className={styles.colors}>
-              {product.colors.slice(0, 3).map((color, index) => (
+              {product?.colors?.slice(0, 3).map((color, index) => (
                 <div key={index} className={styles.colorDot} style={{ backgroundColor: getColorStyle(color) }} />
               ))}
-              {product.colors.length > 3 && <span className={styles.colorCount}>+{product.colors.length - 3}</span>}
+              {product?.colors?.length > 3 && <span className={styles.colorCount}>+{product?.colors?.length - 3}</span>}
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <ProductQuickView
+      {/* <ProductQuickView
         product={product}
         isOpen={showQuickView}
         onClose={() => setShowQuickView(false)}
-      />
+      /> */}
     </>
   );
 };

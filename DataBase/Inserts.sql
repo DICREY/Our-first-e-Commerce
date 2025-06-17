@@ -43,33 +43,33 @@ INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES
 -- 4. Insertar 20 productos de ropa para mujer
 INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro, img_pro) VALUES
 -- Ropa casual
-(1, 'Blusa de seda estampada', 45.99, 'Blusa elegante de seda con estampado floral', 'blusa_seda.jpg'),
-(1, 'Jeans skinny alto talle', 59.99, 'Jeans ajustados con tiro alto y elastano', 'jeans_skinny.jpg'),
-(1, 'Vestido midi floral', 65.99, 'Vestido hasta la rodilla con estampado de flores', 'vestido_midi.jpg'),
+(1, 'Blusa de seda estampada', 45.99, 'Blusa elegante de seda con estampado floral', DEFAULT),
+(1, 'Jeans skinny alto talle', 59.99, 'Jeans ajustados con tiro alto y elastano', DEFAULT),
+(1, 'Vestido midi floral', 65.99, 'Vestido hasta la rodilla con estampado de flores', DEFAULT),
 -- Abrigos y chaquetas
-(1, 'Chaqueta de denim', 89.99, 'Chaqueta estilo oversize en mezclilla', 'chaqueta_denim.jpg'),
-(1, 'Abrigo de lana invierno', 129.99, 'Abrigo largo para clima frío con cinturón', 'abrigo_lana.jpg'),
+(1, 'Chaqueta de denim', 89.99, 'Chaqueta estilo oversize en mezclilla', DEFAULT),
+(1, 'Abrigo de lana invierno', 129.99, 'Abrigo largo para clima frío con cinturón', DEFAULT),
 -- Ropa deportiva
-(3, 'Leggings deportivos compresión', 49.99, 'Leggings de alta compresión para entrenamiento', 'leggings_deporte.jpg'),
-(3, 'Top deportivo soporte alto', 39.99, 'Top con soporte máximo para actividades intensas', 'top_deporte.jpg'),
+(3, 'Leggings deportivos compresión', 49.99, 'Leggings de alta compresión para entrenamiento', DEFAULT),
+(3, 'Top deportivo soporte alto', 39.99, 'Top con soporte máximo para actividades intensas', DEFAULT),
 -- Lencería
-(2, 'Conjunto de encaje negro', 55.99, 'Sujetador y braga de encaje con detalles delicados', 'lenceria_encaje.jpg'),
-(2, 'Pijama de satén corto', 42.99, 'Conjunto de pijama en satén suave', 'pijama_saten.jpg'),
+(2, 'Conjunto de encaje negro', 55.99, 'Sujetador y braga de encaje con detalles delicados', DEFAULT),
+(2, 'Pijama de satén corto', 42.99, 'Conjunto de pijama en satén suave', DEFAULT),
 -- Ropa de baño
-(1, 'Bikini estampado tropical', 49.99, 'Conjunto de bikini con estampado floral', 'bikini_tropical.jpg'),
-(1, 'Bañador entero deportivo', 59.99, 'Bañador de una pieza para natación', 'banador_deporte.jpg'),
+(1, 'Bikini estampado tropical', 49.99, 'Conjunto de bikini con estampado floral', DEFAULT),
+(1, 'Bañador entero deportivo', 59.99, 'Bañador de una pieza para natación', DEFAULT),
 -- Ropa formal
-(1, 'Traje de chaqueta slim', 149.99, 'Conjunto de chaqueta y pantalón para oficina', 'traje_chaqueta.jpg'),
-(1, 'Vestido de cóctel elegante', 119.99, 'Vestido corto para eventos especiales', 'vestido_coctel.jpg'),
+(1, 'Traje de chaqueta slim', 149.99, 'Conjunto de chaqueta y pantalón para oficina', DEFAULT),
+(1, 'Vestido de cóctel elegante', 119.99, 'Vestido corto para eventos especiales', DEFAULT),
 -- Ropa de maternidad
-(1, 'Vestido maternidad verano', 54.99, 'Vestido holgado con tirantes ajustables', 'vestido_maternidad.jpg'),
-(1, 'Jeans maternidad elásticos', 69.99, 'Jeans con bandaja elástica para embarazo', 'jeans_maternidad.jpg'),
+(1, 'Vestido maternidad verano', 54.99, 'Vestido holgado con tirantes ajustables', DEFAULT),
+(1, 'Jeans maternidad elásticos', 69.99, 'Jeans con bandaja elástica para embarazo', DEFAULT),
 -- Accesorios de moda
-(1, 'Chal de cachemira', 79.99, 'Chal fino para todas las estaciones', 'chal_cachemira.jpg'),
-(1, 'Fular de seda estampado', 39.99, 'Fular ligero con estampado artístico', 'fular_seda.jpg'),
+(1, 'Chal de cachemira', 79.99, 'Chal fino para todas las estaciones', DEFAULT),
+(1, 'Fular de seda estampado', 39.99, 'Fular ligero con estampado artístico', DEFAULT),
 -- Ropa plus size
-(1, 'Vestido plus size floral', 69.99, 'Vestido holgado con estampado grande', 'vestido_plus.jpg'),
-(1, 'Blusa plus size manga larga', 49.99, 'Blusa elegante con detalles en cuello', 'blusa_plus.jpg');
+(1, 'Vestido plus size floral', 69.99, 'Vestido holgado con estampado grande', DEFAULT),
+(1, 'Blusa plus size manga larga', 49.99, 'Blusa elegante con detalles en cuello', DEFAULT);
 
 -- Asignación de colores y tallas a algunos productos
 -- Blusa de seda estampada (id_pro 1)

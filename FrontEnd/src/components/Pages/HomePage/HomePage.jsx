@@ -1,18 +1,46 @@
-"use client"
+// Librarys 
+import { useEffect, useState } from "react"
 
-import { useState } from "react"
+// Imports 
 import { products, categories } from "../../data/products"
 import HeroSection from "../../HeroSection/HeroSection"
 import ProductCard from "../../ProductCard/ProductCard"
 import Badge from "../../Badge/Badge"
 import Button from "../../Button/Button"
+import { errorStatusHandler } from "../../../Utils/utils"
+import { GetData } from "../../../Utils/Requests"
+
+// Import styles 
 import styles from "./HomePage.module.css"
 
-const HomePage = () => {
+// Component 
+const HomePage = ({ URL = '', imgProduct = '' }) => {
+  // Dynamic vars 
   const [selectedCategory, setSelectedCategory] = useState("Todos")
-
-  const featuredProducts = products.filter((product) => product.featured)
+  const [sellest, setSellest] = useState([])
   const saleProducts = products.filter((product) => product.onSale)
+
+  // Vars 
+  const mainUrl = `${URL}/stats`
+
+  // Get products sellest 
+  const GetSellest = async () => {
+    try {
+      const prod = await GetData(`${mainUrl}/sellest`)
+      // console.log(prod)
+      if (prod) {
+        setSellest(prod)
+      }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      console.log(message)
+    }
+  }
+
+  // Effects
+  useEffect(() => {
+    GetSellest()
+  },[])
 
   return (
     <div className={styles.page}>
@@ -62,8 +90,8 @@ const HomePage = () => {
           </div>
 
           <div className={styles.productsGrid}>
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {sellest?.map((product, index) => (
+              <ProductCard key={index + 129} product={product} img={imgProduct} />
             ))}
           </div>
 
@@ -88,8 +116,8 @@ const HomePage = () => {
             </div>
 
             <div className={styles.productsGrid}>
-              {saleProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {saleProducts.map((product, index) => (
+                <ProductCard key={index + 98} product={product} img={imgProduct} />
               ))}
             </div>
           </div>
@@ -123,8 +151,8 @@ const HomePage = () => {
               <div className={styles.productsGrid}>
                 {(selectedCategory === "Todos" ? products : products.filter((p) => p.category === selectedCategory))
                   .slice(0, 8)
-                  .map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  .map((product, index) => (
+                    <ProductCard key={index + 789} product={product} img={imgProduct} />
                   ))}
               </div>
             </div>

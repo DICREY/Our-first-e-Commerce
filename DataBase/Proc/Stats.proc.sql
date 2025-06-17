@@ -2,7 +2,6 @@
 -- Ventas totales por período
 CREATE PROCEDURE e_commerce.AnnualSales()
 BEGIN
-    
     SELECT 
         DATE(p.fec_ped) AS fecha,
         /* SUM(total) AS ventas_totales, --verify */
@@ -27,6 +26,33 @@ BEGIN
         p.des_pro,
         p.img_pro,
         c.nom_cat_pro AS categoria,
+        (
+            SELECT GROUP_CONCAT(
+                CONCAT_WS(',',
+                    co.nom_col,
+                    co.hex_col
+                ) 
+                SEPARATOR '---'
+            )
+            FROM 
+                productos_colores pco
+            JOIN
+                colores co ON pco.col_pro_col = co.id_col
+            WHERE
+                pco.pro_col_pro = p.id_pro
+        ) AS colores,
+        (
+            SELECT GROUP_CONCAT(
+                t.nom_tal_pro
+                SEPARATOR '---'
+            )
+            FROM 
+                productos_tallas pt
+            JOIN
+                tallas t ON pt.tal_pro_tal = t.id_tal_pro
+            WHERE
+                pt.pro_tal_pro = p.id_pro
+        ) AS sizes,
         SUM(dp.can_det_ped) AS unidades_vendidas,
         SUM(dp.subtotal) AS ingresos_generados
     FROM

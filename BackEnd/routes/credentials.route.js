@@ -7,6 +7,7 @@ const { hash } = require('bcrypt')
 // Imports
 const Credentl = require('../services/Credentl.service')
 const People = require('../services/People.service')
+const { Fullinfo } = require('../middleware/validator.handler')
 const { limiterLog, cookiesOptionsLog } = require('../middleware/varios.handler')
 
 // Env vars

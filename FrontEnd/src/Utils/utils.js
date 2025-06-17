@@ -1,3 +1,25 @@
+// Verify if load img
+export const checkImage = (src = '', alt, imgDefault = '', className = '') => {
+    const img = new Image()
+    let srcMod = src || src === 'No-Registrado'? src:  imgDefault
+    let def = false
+
+    img.src = srcMod
+    img.onerror = def = 1
+    img.onload = def = 0
+
+    if (def) return <img
+        className={className}
+        src={srcMod}
+        alt={alt || "No Registrado"}
+    />
+
+    return <img
+        className={className}
+        src={imgDefault}
+        alt={alt || "No Registrado"}
+    />
+}
 
 // decodificar token
 export const decodeJWT = (token = "") => {
