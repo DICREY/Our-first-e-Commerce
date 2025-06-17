@@ -32,4 +32,4 @@ app.use(cookieParser(secret))
 routerApi(app)
 
 // Listen 
-app.listen(port,'0.0.0.0',() => console.log('Back-End is on: http://localhost:' + port))
+app.listen(port,'0.0.0.0',() => console.log(`Back-End is on: http://localhost:${port}/ecommerce`))

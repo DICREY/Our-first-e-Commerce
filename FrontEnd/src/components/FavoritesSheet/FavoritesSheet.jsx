@@ -6,8 +6,10 @@ import { Heart } from 'lucide-react'
 import Modal from "../Modal/Modal"
 import ProductCard from "../ProductCard/ProductCard"
 
+// Import styles 
 import styles from "./FavoritesSheet.module.css"
 
+// Component
 const getLikedProductIds = () => {
   return Object.keys(localStorage)
     .filter(
@@ -17,7 +19,7 @@ const getLikedProductIds = () => {
     .map((key) => key.replace("liked-product-", ""))
 }
 
-const FavoritesSheet = ({ products, isOpen, onClose }) => {
+const FavoritesSheet = ({ products, isOpen, onClose, img = '' }) => {
   const [likedIds, setLikedIds] = useState([])
 
   useEffect(() => {
@@ -50,8 +52,8 @@ const FavoritesSheet = ({ products, isOpen, onClose }) => {
           </div>
         ) : (
           <div className={styles.productsGrid}>
-            {likedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {likedProducts.map((product, index) => (
+              <ProductCard key={index + 129} product={product} img={img} />
             ))}
           </div>
         )}

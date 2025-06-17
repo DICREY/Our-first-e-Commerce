@@ -1,13 +1,18 @@
-"use client"
-
 // Librarys 
 import { useEffect } from "react"
 import { ShoppingBag } from 'lucide-react'
+
+// Imports 
 import { useCart } from "../../Contexts/CartContext"
+import { checkImage } from "../../Utils/utils"
 import Badge from "../Badge/Badge"
+
+// Import styles 
 import styles from "./CartSheet.module.css"
 
-const CartSheet = ({ isOpen, onClose }) => {
+// Component 
+const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
+  // Vars 
   const { items, removeFromCart, updateQuantity, getTotalPrice, getTotalItems } = useCart()
 
   useEffect(() => {
@@ -26,9 +31,9 @@ const CartSheet = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div className={styles.overlay} onClick={onClose} />
-      <div className={`${styles.sheet} ${isOpen ? styles.open : ""}`}>
-        <div className={styles.header}>
+      <main className={styles.overlay} onClick={onClose} />
+      <main className={`${styles.sheet} ${isOpen ? styles.open : ""}`}>
+        <header className={styles.header}>
           <div className={styles.title}>
             Carrito de Compras
             <Badge variant="primary">
@@ -38,10 +43,10 @@ const CartSheet = ({ isOpen, onClose }) => {
           <button className={styles.closeButton} onClick={onClose}>
             ×
           </button>
-        </div>
+        </header>
 
-        <div className={styles.content}>
-          {items.length === 0 ? (
+        <section className={styles.content}>
+          {items?.length === 0 ? (
             <div className={styles.emptyState}>
               <div>
                 <div className={styles.emptyIcon}><ShoppingBag /></div>
@@ -53,20 +58,24 @@ const CartSheet = ({ isOpen, onClose }) => {
             <>
               <div className={styles.itemsList}>
                 <div className={styles.items}>
-                  {items.map((item) => (
-                    <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className={styles.item}>
+                  {items?.map((item, index) => (
+                    <div key={index + 908} className={styles.item}>
                       <div className={styles.itemImage}>
-                        <img src={item.image || "/placeholder.svg"} alt={item.name} />
+                        {checkImage(
+                          item.img_pro,
+                          item.nom_pro,
+                          imgProductDefault
+                        )}
                       </div>
 
                       <div className={styles.itemDetails}>
-                        <h4 className={styles.itemName}>{item.name}</h4>
+                        <h4 className={styles.itemName}>{item.nom_pro}</h4>
                         <div className={styles.itemMeta}>
                           <span className={styles.itemMetaText}>Talla: {item.selectedSize}</span>
-                          <span className={styles.itemMetaText}>Color: {item.selectedColor}</span>
+                          {/* <span className={styles.itemMetaText}>Color: {item.selectedColor}</span> */}
                         </div>
                         <div className={styles.itemFooter}>
-                          <span className={styles.itemPrice}>${item.price.toFixed(2)}</span>
+                          <span className={styles.itemPrice}>${item.pre_pro}</span>
                           <div className={styles.itemControls}>
                             <button
                               className={styles.quantityButton}
@@ -95,7 +104,7 @@ const CartSheet = ({ isOpen, onClose }) => {
               <div className={styles.footer}>
                 <div className={styles.total}>
                   <span className={styles.totalLabel}>Total:</span>
-                  <span className={styles.totalAmount}>${getTotalPrice().toFixed(2)}</span>
+                  <span className={styles.totalAmount}>${getTotalPrice()}</span>
                 </div>
 
                 <div className={styles.actions}>
@@ -107,8 +116,8 @@ const CartSheet = ({ isOpen, onClose }) => {
               </div>
             </>
           )}
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   )
 }

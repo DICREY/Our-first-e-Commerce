@@ -14,7 +14,7 @@ import { GetData } from "../../../Utils/Requests"
 import styles from "./HomePage.module.css"
 
 // Component 
-const HomePage = ({ URL = '', imgProduct = '' }) => {
+const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
   // Dynamic vars 
   const [selectedCategory, setSelectedCategory] = useState("Todos")
   const [sellest, setSellest] = useState([])
@@ -27,7 +27,6 @@ const HomePage = ({ URL = '', imgProduct = '' }) => {
   const GetSellest = async () => {
     try {
       const prod = await GetData(`${mainUrl}/sellest`)
-      // console.log(prod)
       if (prod) {
         setSellest(prod)
       }
@@ -91,7 +90,12 @@ const HomePage = ({ URL = '', imgProduct = '' }) => {
 
           <div className={styles.productsGrid}>
             {sellest?.map((product, index) => (
-              <ProductCard key={index + 129} product={product} img={imgProduct} />
+              <ProductCard 
+                key={index + 129} 
+                product={product} 
+                img={imgProduct} 
+                setProduct={setProduct}
+              />
             ))}
           </div>
 
@@ -117,7 +121,12 @@ const HomePage = ({ URL = '', imgProduct = '' }) => {
 
             <div className={styles.productsGrid}>
               {saleProducts.map((product, index) => (
-                <ProductCard key={index + 98} product={product} img={imgProduct} />
+                <ProductCard 
+                  key={index + 98} 
+                  product={product} 
+                  img={imgProduct} 
+                  setProduct={setProduct}
+                />
               ))}
             </div>
           </div>
@@ -149,10 +158,15 @@ const HomePage = ({ URL = '', imgProduct = '' }) => {
 
             <div className={styles.tabContent}>
               <div className={styles.productsGrid}>
-                {(selectedCategory === "Todos" ? products : products.filter((p) => p.category === selectedCategory))
+                {(selectedCategory === "Todos" ? products : products.filter((p) => p.cat_pro === selectedCategory))
                   .slice(0, 8)
                   .map((product, index) => (
-                    <ProductCard key={index + 789} product={product} img={imgProduct} />
+                    <ProductCard 
+                      key={index + 789} 
+                      product={product} 
+                      img={imgProduct} 
+                      setProduct={setProduct}
+                    />
                   ))}
               </div>
             </div>

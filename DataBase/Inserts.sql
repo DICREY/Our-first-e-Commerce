@@ -72,25 +72,30 @@ INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro, img_pro) V
 (1, 'Blusa plus size manga larga', 49.99, 'Blusa elegante con detalles en cuello', DEFAULT);
 
 -- Asignación de colores y tallas a algunos productos
--- Blusa de seda estampada (id_pro 1)
 INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES 
-(1, 2), (1, 3), (1, 5);  -- Negro, Blanco, Rosa
+(1, 2), (1, 3), (1, 5),  -- Negro, Blanco, Rosa
+(2, 2), (2, 4),  -- Negro, Azul Marino
+(3, 1), (3, 4),
+(4, 2), (4, 3),
+(5, 2), (5, 4),
+(6, 1), (6, 2), (6, 3), (6, 9),  -- Rojo, Negro, Blanco, Gris
+(7, 2), (7, 4),
+(8, 2), (8, 4),
+(9, 2), (9, 4),
+(10, 2), (10, 4),
+(11, 2), (11, 4),
+(12, 2), (12, 4),
+(13, 2), (13, 4),
+(14, 2), (14, 4),
+(15, 2), (15, 4),
+(16, 2), (16, 4),
+(17, 2), (17, 4),
+(18, 2), (18, 4),
+(19, 2), (19, 4);
 
 INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
-(1, 1), (1, 2), (1, 3), (1, 4);  -- XS, S, M, L
-
--- Jeans skinny (id_pro 2)
-INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES 
-(2, 2), (2, 4);  -- Negro, Azul Marino
-
-INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
-(2, 7), (2, 8), (2, 9), (2, 10), (2, 11);  -- 34, 36, 38, 40, 42
-
--- Leggings deportivos (id_pro 6)
-INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES 
-(6, 1), (6, 2), (6, 3), (6, 9);  -- Rojo, Negro, Blanco, Gris
-
-INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
+(1, 1), (1, 2), (1, 3), (1, 4),  -- XS, S, M, L
+(2, 7), (2, 8), (2, 9), (2, 10), (2, 11),  -- 34, 36, 38, 40, 42
 (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6);  -- XS, S, M, L, XL, XXL
 
 INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES 

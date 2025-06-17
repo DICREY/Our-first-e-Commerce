@@ -52,7 +52,7 @@ export function CartProvider({ children }) {
   }
 
   const getTotalPrice = () => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0)
+    return items.reduce((total, item) => total + item.pre_pro * item.quantity, 0)
   }
 
   const getTotalItems = () => {

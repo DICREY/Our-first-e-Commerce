@@ -20,15 +20,15 @@ END //
 CREATE PROCEDURE e_commerce.SellestProducts()
 BEGIN
     SELECT 
-        p.nom_pro AS producto,
+        p.nom_pro,
         p.pre_pro,
         p.sta_pro,
         p.des_pro,
         p.img_pro,
-        c.nom_cat_pro AS categoria,
+        c.nom_cat_pro AS cat_pro,
         (
             SELECT GROUP_CONCAT(
-                CONCAT_WS(',',
+                CONCAT_WS(';',
                     co.nom_col,
                     co.hex_col
                 ) 
@@ -40,7 +40,7 @@ BEGIN
                 colores co ON pco.col_pro_col = co.id_col
             WHERE
                 pco.pro_col_pro = p.id_pro
-        ) AS colores,
+        ) AS colors,
         (
             SELECT GROUP_CONCAT(
                 t.nom_tal_pro
@@ -172,3 +172,4 @@ BEGIN
 END //
 
 /* CALL SellestProducts(); */
+/* DROP PROCEDURE `SellestProducts`; */

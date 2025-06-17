@@ -9,6 +9,39 @@ class Stats {
         this.args = args
     }
 
+    headerI = (headers = [], data = []) => {
+        const result = {}
+        headers.forEach((header, index) => {
+            result[header] = data[index] !== undefined ? data[index] : null;
+        })
+        return result
+    }
+
+    format = (datas = [], subKey = '', headers = []) => {
+        const results = datas.map(data => {
+            const list = data[subKey]?.split("---")
+            .map(item => {
+                const subList = item.split(";")
+                return this.headerI(headers,subList)
+            })
+            return {
+                ...data,
+                [subKey]: list
+            }
+        })
+        return results
+    }
+
+    iterar = (datas = [], key = '') => {
+        return datas.map(data => {
+            const value = data[key];
+            const arr = typeof value === 'string'
+                ? value.split('---').map(item => item.trim()).filter(item => item.length > 0)
+                : [];
+            return { ...data, [key]: arr };
+        });
+    }
+
     // function to find sellest products
     async SellestProducts() {
         return new Promise((res,rej) => {
@@ -26,10 +59,12 @@ class Stats {
                     message: "Not found",
                     status: 404
                 })
+                const resOne = this.format(result[0],'colors',['nom_col','hex_col'])
+                const lastRes = this.iterar(resOne,'sizes')
                 setTimeout(() => {
                     res({
                         message: "Info found",
-                        result: result
+                        result: lastRes
                     })
                 },1000)
             })

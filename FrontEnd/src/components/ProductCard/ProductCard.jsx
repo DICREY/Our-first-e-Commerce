@@ -1,44 +1,26 @@
-"use client"
+// Librarys 
+import { useState, useEffect } from "react"
+import { Heart, PackagePlus, Eye } from 'lucide-react'
 
 // Imports 
 import { useCart } from "../../Contexts/CartContext"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
 import { useNavigate } from "react-router-dom";
-// import ProductQuickView from "../ProductQuickView/ProductQuickView"
-
-// Librarys 
-import { useState, useEffect } from "react"
-import { Heart, PackagePlus, Eye } from 'lucide-react'
+import ProductQuickView from "../ProductQuickView/ProductQuickView"
 
 // Import styles 
 import styles from "./ProductCard.module.css"
-import { checkImage } from "../../Utils/utils";
+import { checkImage } from "../../Utils/utils"
 
-const ProductCard = ({ product = {}, img = '' }) => {
+const ProductCard = ({ product = {}, img = '', setProduct }) => {
   const [isLiked, setIsLiked] = useState(false)
   const [showQuickView, setShowQuickView] = useState(false)
   const { addToCart } = useCart()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleQuickAdd = () => {
-    addToCart(product, product.sizes[0], product?.colors[0])
-  }
-
-  const getColorStyle = (color) => {
-    const colorMap = {
-      negro: "#000000",
-      blanco: "#ffffff",
-      rosa: "#f472b6",
-      azul: "#3b82f6",
-      beige: "#f5f5dc",
-      gris: "#6b7280",
-      "rosa claro": "#fce7f3",
-      "azul marino": "#1e3a8a",
-      "azul claro": "#93c5fd",
-      "azul oscuro": "#1e40af",
-    }
-    return colorMap[color.toLowerCase()] || "#a8c5ff"
+    addToCart(product, product?.sizes[0], product?.colors[0])
   }
 
   // Persistencia de likes en localStorage
@@ -54,7 +36,8 @@ const ProductCard = ({ product = {}, img = '' }) => {
   }
 
   const handleCardClick = () => {
-    navigate(`/producto/${product.id}`);
+    setProduct(product)
+    navigate(`/producto`)
   };
 
   return (
@@ -92,10 +75,7 @@ const ProductCard = ({ product = {}, img = '' }) => {
               <Button
                 size="sm"
                 variant="primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleQuickAdd();
-                }}
+                onClick={(e) => { e.stopPropagation(); handleQuickAdd() }}
               >
                 <PackagePlus /> Agregar
               </Button>
@@ -121,15 +101,15 @@ const ProductCard = ({ product = {}, img = '' }) => {
             <h3 className={styles.productName}>{product.nom_pro}</h3>
 
             <div className={styles.priceContainer}>
-              <span className={styles.price}>${product.pre_pro?.toFixed(2)}</span>
+              <span className={styles.price}>${product.pre_pro}</span>
               {/* {product.originalPrice && (
                 <span className={styles.originalPrice}>${product.originalPrice.toFixed(2)}</span>
               )} */}
             </div>
 
             <div className={styles.colors}>
-              {product?.colors?.slice(0, 3).map((color, index) => (
-                <div key={index} className={styles.colorDot} style={{ backgroundColor: getColorStyle(color) }} />
+              {product?.colors?.map((color, index) => (
+                <div key={index} className={styles.colorDot} style={{ backgroundColor: color.hex_col }} />
               ))}
               {product?.colors?.length > 3 && <span className={styles.colorCount}>+{product?.colors?.length - 3}</span>}
             </div>
@@ -137,13 +117,14 @@ const ProductCard = ({ product = {}, img = '' }) => {
         </div>
       </section>
 
-      {/* <ProductQuickView
+      <ProductQuickView
         product={product}
         isOpen={showQuickView}
         onClose={() => setShowQuickView(false)}
-      /> */}
+        img={img}
+      />
     </>
-  );
-};
+  )
+}
 
-export default ProductCard;
+export default ProductCard

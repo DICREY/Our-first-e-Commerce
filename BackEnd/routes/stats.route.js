@@ -18,7 +18,7 @@ Route.get('/sellest', async (req,res) => {
         const search = await stat.SellestProducts()
         if (!search.result) return res.status(404).json({ message: "Información no encontrada"})
 
-        res.status(200).json(search)
+        res.status(200).json({...search})
     } catch (err) {
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: err })

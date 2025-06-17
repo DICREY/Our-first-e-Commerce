@@ -1,8 +1,13 @@
+// Imports 
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
+import { checkImage } from "../../Utils/utils";
+
+// Import styles 
 import styles from "./ProductQuickView.module.css";
 
-const ProductQuickView = ({ product, isOpen, onClose }) => {
+// Component 
+const ProductQuickView = ({ product, isOpen, onClose, img = '' }) => {
   if (!product) return null;
 
   // Calcular descuento si hay precio original
@@ -14,13 +19,14 @@ const ProductQuickView = ({ product, isOpen, onClose }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={product.nom_pro}>
-      <div className={styles.container}>
+      <section className={styles.container}>
         <div className={styles.imageContainer}>
-          <img
-            src={product.img_pro || "/placeholder.svg?height=400&width=300"}
-            alt={product.nom_pro}
-            className={styles.image}
-          />
+          {checkImage(
+            product.img_pro,
+            '',
+            img,
+            styles.image
+          )}
         </div>
 
         <div className={styles.details}>
@@ -47,10 +53,9 @@ const ProductQuickView = ({ product, isOpen, onClose }) => {
 
           <div>
             <p className={styles.sectionTitle}>Tallas disponibles</p>
-            {console.log(product)}
             <div className={styles.attributes}>
-              {product.sizes?.split('---')?.map((size) => (
-                <span key={size} className={styles.attribute}>
+              {product?.sizes?.map((size, index) => (
+                <span key={index +1209} className={styles.attribute}>
                   {size}
                 </span>
               ))}
@@ -60,8 +65,8 @@ const ProductQuickView = ({ product, isOpen, onClose }) => {
           <div>
             <p className={styles.sectionTitle}>Colores disponibles</p>
             <div className={styles.attributes}>
-              {product.colors?.map((color) => (
-                <span key={color} className={styles.attribute}>
+              {product?.colors?.map((color, index) => (
+                <span key={index + 120} className={styles.attribute}>
                   {color}
                 </span>
               ))}
@@ -75,7 +80,7 @@ const ProductQuickView = ({ product, isOpen, onClose }) => {
             </Button>
           </div>
         </div>
-      </div>
+      </section>
     </Modal>
   );
 };

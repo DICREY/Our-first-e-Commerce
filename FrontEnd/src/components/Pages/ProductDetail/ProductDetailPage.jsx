@@ -1,17 +1,21 @@
-import { useState } from "react";
-import { useCart } from "../../../Contexts/CartContext"
-import { useParams, useNavigate } from "react-router-dom";
-import { products } from "../../data/products";
-import styles from "./ProductDetailPage.module.css";
+// Librarys 
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
-const ProductDetailPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const product = products.find((p) => p.id === id);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0] || "");
-  const [selectedSize, setSelectedSize] = useState(product?.sizes[0] || "");
-  const [quantity, setQuantity] = useState(1);
+// Imports 
+import { useCart } from "../../../Contexts/CartContext"
+import { checkImage } from "../../../Utils/utils"
+
+// Import styles
+import styles from "./ProductDetailPage.module.css"
+
+// Component
+const ProductDetailPage = ({ img = '', product = {} }) => {
+  const navigate = useNavigate()
+  const [selectedImage, setSelectedImage] = useState(0)
+  const [selectedColor, setSelectedColor] = useState(product?.colors[0].nom_col || "")
+  const [selectedSize, setSelectedSize] = useState(product?.sizes[0] || "")
+  const [quantity, setQuantity] = useState(1)
   const { addToCart } = useCart()
 
   const handleQuickAdd = () => {
@@ -52,9 +56,9 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.imageGallery}>
+    <main className={styles.page}>
+      <main className={styles.container}>
+        <header className={styles.imageGallery}>
           <div className={styles.thumbnailContainer}>
             {productImages.map((img, index) => (
               <img
@@ -68,15 +72,16 @@ const ProductDetailPage = () => {
               />
             ))}
           </div>
-          <img
-            src={productImages[selectedImage]}
-            alt={product.name}
-            className={styles.mainImage}
-          />
-        </div>
+          {checkImage(
+            productImages[selectedImage],
+            product.name,
+            img,
+            styles.mainImage
+          )}
+        </header>
 
-        <div className={styles.details}>
-          <h1 className={styles.title}>{product.name}</h1>
+        <section className={styles.details}>
+          <h1 className={styles.title}>{product.nom_pro}</h1>
 
           <div className={styles.rating}>
             <div className={styles.stars}>★★★★★</div>
@@ -84,7 +89,7 @@ const ProductDetailPage = () => {
           </div>
 
           <div className={styles.priceContainer}>
-            <p className={styles.price}>${product.price.toFixed(2)}</p>
+            <p className={styles.price}>${product.pre_pro.toFixed(2)}</p>
             {product.originalPrice && (
               <>
                 <p className={styles.originalPrice}>
@@ -97,35 +102,35 @@ const ProductDetailPage = () => {
             )}
           </div>
 
-          <p className={styles.description}>{product.description}</p>
+          <p className={styles.description}>{product.des_pro}</p>
 
           <div className={styles.attributes}>
             {product.colors.length > 0 && (
               <div className={styles.attributeGroup}>
                 <span className={styles.attributeTitle}>Color</span>
                 <div className={styles.colorOptions}>
-                  {product.colors.map((color) => (
+                  {product.colors.map((color, index) => (
                     <div
-                      key={color}
+                      key={index + 909}
                       className={`${styles.colorOption} ${
-                        selectedColor === color ? styles.active : ""
+                        selectedColor === color.nom_col ? styles.active : ""
                       }`}
-                      style={{ backgroundColor: color.toLowerCase() }}
-                      onClick={() => setSelectedColor(color)}
-                      title={color}
+                      style={{ backgroundColor: color.hex_col }}
+                      onClick={() => setSelectedColor(color.nom_col)}
+                      title={color.nom_col}
                     />
                   ))}
                 </div>
               </div>
             )}
 
-            {product.sizes.length > 0 && (
+            {product.sizes?.length > 0 && (
               <div className={styles.attributeGroup}>
                 <span className={styles.attributeTitle}>Talla</span>
                 <div className={styles.sizeOptions}>
-                  {product.sizes.map((size) => (
+                  {product?.sizes?.map((size, index) => (
                     <div
-                      key={size}
+                      key={index + 972}
                       className={`${styles.sizeOption} ${
                         selectedSize === size ? styles.active : ""
                       }`}
@@ -168,9 +173,9 @@ const ProductDetailPage = () => {
             >Añadir al carrito</button>
             <button className={styles.secondaryButton}>Comprar ahora</button>
           </div>
-        </div>
-      </div>
-    </div>
+        </section>
+      </main>
+    </main>
   );
 };
 

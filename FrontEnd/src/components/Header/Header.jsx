@@ -15,7 +15,7 @@ import { Heart, UserRound, Search, ShoppingBag } from 'lucide-react'
 import styles from "./Header.module.css"
 
 // Component 
-const Header = () => {
+const Header = ({ imgProductDefault = '' }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
@@ -89,7 +89,7 @@ const Header = () => {
         </div>
       </header>
 
-      <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartSheet imgProductDefault={imgProductDefault} isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       <FavoritesSheet products={products} isOpen={isFavoritesOpen} onClose={() => setIsFavoritesOpen(false)} />
       {/* <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} navigation={navigation} /> */}
     </>

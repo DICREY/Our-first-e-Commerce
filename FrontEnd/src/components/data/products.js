@@ -51,7 +51,7 @@ export const products = [
     nom_pro: "Falda Midi Plisada",
     pre_pro: 55.99,
     img_pro: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
-    category: "Faldas",
+    cat_pro: "Faldas",
     sizes: ["XS", "S", "M", "L", "XL"],
     colors: ["Rosa", "Negro", "Beige"],
     des_pro: "Falda midi con plisado elegante. Ideal para looks sofisticados.",
