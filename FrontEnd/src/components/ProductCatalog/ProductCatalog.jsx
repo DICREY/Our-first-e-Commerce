@@ -9,10 +9,22 @@ const getAllColors = (products) => {
   return Array.from(colorSet);
 };
 
+const getAllSizes = (products) => {
+  const sizeSet = new Set();
+  products.forEach((p) => p.sizes.forEach((s) => sizeSet.add(s)));
+  return Array.from(sizeSet).sort((a, b) => {
+    // Ordenar tallas numéricas primero
+    if (!isNaN(a)) return !isNaN(b) ? a - b : -1;
+    if (!isNaN(b)) return 1;
+    return a.localeCompare(b);
+  });
+};
+
 const ProductCatalog = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [search, setSearch] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSizes, setSelectedSizes] = useState([]);
   const [sort, setSort] = useState("default");
   const [priceRange, setPriceRange] = useState([0, 200]);
 
@@ -37,6 +49,11 @@ const ProductCatalog = () => {
         p.colors.map((c) => c.toLowerCase()).includes(selectedColor.toLowerCase())
       );
     }
+    if (selectedSizes.length > 0) {
+      filtered = filtered.filter((p) =>
+        selectedSizes.some((size) => p.sizes.includes(size))
+      );
+    }
     filtered = filtered.filter(
       (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
     );
@@ -47,15 +64,24 @@ const ProductCatalog = () => {
     if (sort === "name-desc") filtered = [...filtered].sort((a, b) => b.name.localeCompare(a.name));
 
     return filtered;
-  }, [selectedCategory, search, selectedColor, sort, priceRange]);
+  }, [selectedCategory, search, selectedColor, selectedSizes, sort, priceRange]);
 
   const allColors = getAllColors(products);
+  const allSizes = getAllSizes(products);
+
+  const handleSizeChange = (size) => {
+    setSelectedSizes(prev =>
+      prev.includes(size)
+        ? prev.filter(s => s !== size)
+        : [...prev, size]
+    );
+  };
 
   return (
     <div className={styles.catalogPage}>
       <div className={styles.header}>
         <h1 className={styles.title}>Nuestro Catálogo</h1>
-        <p className={styles.subtitle}>Encuentra lo que buscas entre nuestras selección</p>
+        <p className={styles.subtitle}>Encuentra lo que buscas entre nuestra selección</p>
       </div>
 
       <div className={styles.filtersBar}>
@@ -152,6 +178,26 @@ const ProductCatalog = () => {
                 />
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className={styles.filterSection}>
+          <span className={styles.sectionTitle}>Tallas</span>
+          <div className={styles.sizeFilter}>
+            {allSizes.map((size) => (
+              <div key={size}>
+                <input
+                  type="checkbox"
+                  id={`size-${size}`}
+                  className={styles.sizeOption}
+                  checked={selectedSizes.includes(size)}
+                  onChange={() => handleSizeChange(size)}
+                />
+                <label htmlFor={`size-${size}`} className={styles.sizeLabel}>
+                  {size}
+                </label>
+              </div>
+            ))}
           </div>
         </div>
       </div>

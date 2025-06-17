@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { products, categories } from "../data/products"
-import HeroSection from "../HeroSection/HeroSection"
-import ProductCard from "../ProductCard/ProductCard"
-import Badge from "../Badge/Badge"
-import Button from "../Button/Button"
+import { products, categories } from "../../data/products"
+import HeroSection from "../../HeroSection/HeroSection"
+import ProductCard from "../../ProductCard/ProductCard"
+import Badge from "../../Badge/Badge"
+import Button from "../../Button/Button"
 import styles from "./HomePage.module.css"
 
 const HomePage = () => {

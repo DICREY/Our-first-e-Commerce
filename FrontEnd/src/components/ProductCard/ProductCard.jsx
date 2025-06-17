@@ -5,6 +5,7 @@ import { useCart } from "../../Contexts/CartContext"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
 import ProductQuickView from "../ProductQuickView/ProductQuickView"
+import { useNavigate } from "react-router-dom";
 
 // Librarys 
 import { useState, useEffect } from "react"
@@ -17,6 +18,7 @@ const ProductCard = ({ product }) => {
   const [isLiked, setIsLiked] = useState(false)
   const [showQuickView, setShowQuickView] = useState(false)
   const { addToCart } = useCart()
+  const navigate = useNavigate();
 
   const handleQuickAdd = () => {
     addToCart(product, product.sizes[0], product.colors[0])
@@ -50,9 +52,13 @@ const ProductCard = ({ product }) => {
     localStorage.setItem(`liked-product-${product.id}`, newLiked)
   }
 
+  const handleCardClick = () => {
+    navigate(`/producto/${product.id}`);
+  };
+
   return (
     <>
-      <div className={styles.card}>
+      <div className={styles.card} onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <div className={styles.imageContainer}>
           <img
             src={product.image || "/placeholder.svg?height=400&width=300"}
@@ -69,18 +75,40 @@ const ProductCard = ({ product }) => {
           {/* Actions overlay */}
           <div className={styles.overlay}>
             <div className={styles.overlayActions}>
-              <Button size="sm" variant="secondary" onClick={() => setShowQuickView(true)}>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowQuickView(true);
+                }}
+              >
                 <Eye /> Vista Rápida
               </Button>
-              <Button size="sm" variant="primary" onClick={handleQuickAdd}>
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleQuickAdd();
+                }}
+              >
                 <PackagePlus /> Agregar
               </Button>
             </div>
           </div>
 
           {/* Wishlist button */}
-          <button className={styles.wishlistButton} onClick={handleLike}>
-            <span style={{ color: isLiked ? "#ef4444" : "#6b7280" }}>{isLiked ? <Heart /> : <Heart />}</span>
+          <button
+            className={styles.wishlistButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
+            }}
+          >
+            <span style={{ color: isLiked ? "#ef4444" : "#6b7280" }}>
+              <Heart />
+            </span>
           </button>
         </div>
 
@@ -105,9 +133,13 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
 
-      <ProductQuickView product={product} isOpen={showQuickView} onClose={() => setShowQuickView(false)} />
+      <ProductQuickView
+        product={product}
+        isOpen={showQuickView}
+        onClose={() => setShowQuickView(false)}
+      />
     </>
-  )
-}
+  );
+};
 
-export default ProductCard
+export default ProductCard;
