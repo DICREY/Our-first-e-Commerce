@@ -93,6 +93,41 @@ CREATE TABLE e_commerce.detalle_pedidos (
     subtotal DECIMAL(12,2) GENERATED ALWAYS AS (can_det_ped * pre_uni_det_ped) STORED
 );
 
+-- Tabla para sesiones/usuarios únicos
+CREATE TABLE e_commerce.sessions (
+    id_ses VARCHAR(255) PRIMARY KEY,
+    usu_id_ses VARCHAR(255),
+    dir_ip_ses VARCHAR(45),
+    user_agent_ses TEXT,
+    device_type_ses VARCHAR(50),
+    browser_ses VARCHAR(100),
+    os_ses VARCHAR(100),
+    first_visit_ses TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_activity_ses TIMESTAMP,
+    ref_ses VARCHAR(512),
+    pai_ses VARCHAR(100),
+    cit_ses VARCHAR(100)
+);
+
+-- Tabla para registros de página vistas
+CREATE TABLE e_commerce.page_views (
+    id_vie INT AUTO_INCREMENT PRIMARY KEY,
+    id_ses_vie VARCHAR(255),INDEX(id_ses_vie),FOREIGN KEY (id_ses_vie) REFERENCES sessions(id_ses) ON DELETE CASCADE ON UPDATE CASCADE,
+    url_pag_vie VARCHAR(512),
+    tit_pag_vie VARCHAR(255),
+    tim_vis_vie TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    time_spent INT -- en segundos
+);
+
+-- Tabla para eventos personalizados
+CREATE TABLE e_commerce.custom_events (
+    id_eve INT AUTO_INCREMENT PRIMARY KEY,
+    id_ses_eve VARCHAR(255),INDEX(id_ses_eve),FOREIGN KEY (id_ses_eve) REFERENCES sessions(id_ses) ON DELETE CASCADE ON UPDATE CASCADE,
+    nom_eve VARCHAR(255),
+    dat_eve JSON,
+    tim_eve TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 /* 
 tabla de descuentos y promociones
 tabla de devoluciones/reembolsos
