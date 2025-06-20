@@ -1,10 +1,10 @@
 import { Badge, Dropdown } from "flowbite-react";
-import { Icon } from "@iconify/react";
+// import { Icon } from "@iconify/react";
 import { Link } from "react-router";
-import user1 from "/src/assets/images/profile/user-1.jpg";
-import user2 from "/src/assets/images/profile/user-2.jpg";
-import user3 from "/src/assets/images/profile/user-3.jpg";
-import user4 from "/src/assets/images/profile/user-4.jpg";
+// import user1 from "/src/assets/images/profile/user-1.jpg";
+// import user2 from "/src/assets/images/profile/user-2.jpg";
+// import user3 from "/src/assets/images/profile/user-3.jpg";
+// import user4 from "/src/assets/images/profile/user-4.jpg";
 
 const Notifications = [
     {
@@ -37,7 +37,7 @@ const Notification = () => {
                     className="h-10 w-10 hover:text-primary group-hover/menu:bg-lightprimary group-hover/menu:text-primary hover:bg-lightprimary rounded-full flex justify-center items-center cursor-pointer relative"
                     aria-label="Notifications"
                 >
-                    <Icon icon="solar:bell-linear" height={20} />
+                    {/* <Icon icon="solar:bell-linear" height={20} /> */}
                     <Badge className="h-2 w-2 rounded-full absolute end-2 top-1 bg-primary p-0" />
                 </span>
             )}

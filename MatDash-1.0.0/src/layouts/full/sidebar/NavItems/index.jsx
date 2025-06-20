@@ -19,9 +19,9 @@ const NavItems = ({ item }) => {
         } `}
       >
         <span className="flex gap-3 align-center items-center">
-          {item.icon ? (
+          {/* {item.icon ? (
             <Icon icon={item.icon} className={`${item.color}`} height={18} />
-          ) : (
+          ) : ( */}
             <span
               className={`${
                 item.url === pathname
@@ -29,7 +29,7 @@ const NavItems = ({ item }) => {
                   : "h-[6px] w-[6px] bg-black/40 dark:bg-white rounded-full mx-1.5 group-hover/link:bg-primary"
               } `}
             ></span>
-          )}
+          {/* )} */}
           <span className="max-w-36 overflow-hidden">
             {item.name}
           </span>
