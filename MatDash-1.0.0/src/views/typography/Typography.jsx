@@ -1,4 +1,4 @@
-import BasicTypography from "src/components/typography/BasicTypography"
+import BasicTypography from "../../components/typography/BasicTypography"
 
 
 const Typography = () => {

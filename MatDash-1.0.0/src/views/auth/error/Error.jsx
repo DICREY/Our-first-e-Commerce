@@ -1,7 +1,10 @@
-
+// Librarys 
 import { Link } from "react-router";
-import ErrorImg from "/src/assets/images/backgrounds/errorimg.svg";
-import { Button } from "flowbite-react";
+
+// Imports 
+import ErrorImg from "../../../assets/images/backgrounds/errorimg.svg";
+
+// Component 
 const Error = () => {
   return (
     <>
@@ -12,14 +15,12 @@ const Error = () => {
           <h6 className="text-xl text-ld">
             This page you are looking for could not be found.
           </h6>
-          <Button
-            color={"primary"}
-            as={Link}
+          <Link
             to="/"
-            className="w-fit mt-6 mx-auto"
+            className="w-fit mt-6 mx-auto inline-block bg-primary text-white px-4 py-2 rounded-xl hover:bg-primary-dark transition"
           >
             Go Back to Home
-          </Button>
+          </Link>
         </div>
       </div>
     </>

@@ -1,6 +1,7 @@
-import { Button, Label, TextInput } from "flowbite-react";
+// Librarys
 import { useNavigate } from "react-router";
 
+// Component
 const AuthRegister = () => {
   const navigate = useNavigate();
   const handleSubmit = (event) => {
@@ -12,44 +13,44 @@ const AuthRegister = () => {
     <>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <div className="mb-2 block">
-            <Label htmlFor="name" value="Name" />
-          </div>
-          <TextInput
+          <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            Name
+          </label>
+          <input
             id="name"
             type="text"
-            sizing="md"
             required
-            className="form-control form-rounded-xl"
+            className="form-control form-rounded-xl block w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         <div className="mb-4">
-          <div className="mb-2 block">
-            <Label htmlFor="emadd" value="Email Address" />
-          </div>
-          <TextInput
+          <label htmlFor="emadd" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            Email Address
+          </label>
+          <input
             id="emadd"
             type="email"
-            sizing="md"
             required
-            className="form-control form-rounded-xl"
+            className="form-control form-rounded-xl block w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         <div className="mb-6">
-          <div className="mb-2 block">
-            <Label htmlFor="userpwd" value="Password" />
-          </div>
-          <TextInput
+          <label htmlFor="userpwd" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            Password
+          </label>
+          <input
             id="userpwd"
             type="password"
-            sizing="md"
             required
-            className="form-control form-rounded-xl"
+            className="form-control form-rounded-xl block w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
-        <Button color="primary" type="submit" className="w-full">
+        <button
+          type="submit"
+          className="w-full bg-primary text-white rounded-xl px-4 py-2 hover:bg-primary-dark transition"
+        >
           Sign Up
-        </Button>
+        </button>
       </form>
     </>
   );

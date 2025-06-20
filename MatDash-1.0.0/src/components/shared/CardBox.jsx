@@ -1,16 +1,12 @@
-import { Card } from "flowbite-react";
 import React from "react";
 
 const CardBox = ({ children, className = "" }) => {
   return (
-    <Card
-      className={`card p-[30px] shadow-md dark:shadow-none  ${className} `}
-      style={{
-        borderRadius: `12px`,
-      }}
+    <div
+      className={`card p-[30px] shadow-md dark:shadow-none rounded-[12px] ${className}`}
     >
       {children}
-    </Card>
+    </div>
   );
 };
 

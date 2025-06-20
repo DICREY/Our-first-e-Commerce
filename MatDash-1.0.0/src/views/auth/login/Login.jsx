@@ -1,5 +1,5 @@
 
-import FullLogo from "src/layouts/full/shared/logo/FullLogo";
+import FullLogo from "../../../layouts/full/shared/logo/FullLogo";
 import AuthLogin from "../authforms/AuthLogin";
 import { Link } from "react-router";
 

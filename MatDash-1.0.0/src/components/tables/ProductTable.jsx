@@ -1,16 +1,21 @@
+// Librarys 
+import React, { useState } from "react";
+// import { HiOutlineDotsVertical } from "react-icons/hi"
+// import { Icon } from "@iconify/react"
 
-import { Badge, Dropdown, Progress } from "flowbite-react";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { Icon } from "@iconify/react";
-import { Table } from "flowbite-react";
+// Imports
+import product1 from "../../assets/images/products/dash-prd-1.jpg"
+import product2 from "../../assets/images/products/dash-prd-2.jpg"
+import product3 from "../../assets/images/products/dash-prd-3.jpg"
+import product4 from "../../assets/images/products/dash-prd-4.jpg"
 
-import product1 from "/src/assets/images/products/dash-prd-1.jpg";
-import product2 from "/src/assets/images/products/dash-prd-2.jpg";
-import product3 from "/src/assets/images/products/dash-prd-3.jpg";
-import product4 from "/src/assets/images/products/dash-prd-4.jpg";
+// Import styles
+import styles from '../../css/global/ProductTable.module.css'
 
+// Component
+export const ProductTable = () => {
+  const [openIndex, setOpenIndex] = useState(null);
 
-const ProductTable = () => {
   const ProductTableData = [
     {
       img: product1,
@@ -18,8 +23,8 @@ const ProductTable = () => {
       payment: "$180",
       paymentstatus: "Partially paid",
       process: 45,
-      processcolor: "bg-warning",
-      statuscolor: "secondary",
+      processcolor: "#facc15", // yellow-400
+      statuscolor: "#f59e42", // orange
       statustext: "Confirmed",
     },
     {
@@ -28,8 +33,8 @@ const ProductTable = () => {
       payment: "$120",
       paymentstatus: "Full paid",
       process: 100,
-      processcolor: "bg-success",
-      statuscolor: "success",
+      processcolor: "#22c55e", // green-500
+      statuscolor: "#22c55e", // green
       statustext: "Confirmed",
     },
     {
@@ -38,8 +43,8 @@ const ProductTable = () => {
       payment: "$120",
       paymentstatus: "Cancelled",
       process: 100,
-      processcolor: "bg-error",
-      statuscolor: "error",
+      processcolor: "#ef4444", // red-500
+      statuscolor: "#ef4444", // red
       statustext: "Cancelled",
     },
     {
@@ -48,13 +53,12 @@ const ProductTable = () => {
       payment: "$120",
       paymentstatus: "Partially paid",
       process: 45,
-      processcolor: "bg-warning",
-      statuscolor: "secondary",
+      processcolor: "#facc15", // yellow-400
+      statuscolor: "#f59e42", // orange
       statustext: "Confirmed",
     },
   ];
 
-  /*Table Action*/
   const tableActionData = [
     {
       icon: "solar:add-circle-outline",
@@ -71,90 +75,97 @@ const ProductTable = () => {
   ];
 
   return (
-    <>
-      <div className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-6  relative w-full break-words">
-        <h5 className="card-title">Table</h5>
-        <div className="mt-3">
-         
-            <div className="overflow-x-auto">
-              <Table hoverable>
-                <Table.Head>
-                  <Table.HeadCell className="p-6">Products</Table.HeadCell>
-                  <Table.HeadCell>Payment</Table.HeadCell>
-                  <Table.HeadCell>Status</Table.HeadCell>
-                  <Table.HeadCell></Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="divide-y divide-border dark:divide-darkborder ">
-                  {ProductTableData.map((item, index) => (
-                    <Table.Row key={index}>
-                      <Table.Cell className="whitespace-nowrap ps-6">
-                        <div className="flex gap-3 items-center">
-                          <img
-                            src={item.img}
-                            alt="icon"
-                            className="h-[60px] w-[60px] rounded-md"
-                          />
-                          <div className="truncat line-clamp-2 sm:text-wrap max-w-56">
-                            <h6 className="text-sm">{item.name}</h6>
-                          </div>
-                        </div>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <h5 className="text-base text-wrap">
-                          {item.payment}
-                          <span className="text-dark opacity-70">
-                            <span className="mx-1">/</span>499
-                          </span>
-                        </h5>
-                        <div className="text-sm font-medium text-dark opacity-70 mb-2 text-wrap">
-                          {item.paymentstatus}
-                        </div>
-                        <div className="me-5">
-                          <Progress
-                            progress={item.process}
-                            color={`${item.processcolor}`}
-                            className={`${item.processcolor}`}
-                            size={"sm"}
-                          />
-                        </div>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Badge
-                          color={`light${item.statuscolor}`}
-                          className={`text-${item.statuscolor}`}
-                        >
-                          {item.statustext}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Dropdown
-                          label=""
-                          dismissOnClick={false}
-                          renderTrigger={() => (
-                            <span className="h-9 w-9 flex justify-center items-center rounded-full hover:bg-lightprimary hover:text-primary cursor-pointer">
-                              <HiOutlineDotsVertical size={22} />
-                            </span>
-                          )}
-                        >
-                          {tableActionData.map((items, index) => (
-                            <Dropdown.Item key={index} className="flex gap-3">
-                              {" "}
-                              <Icon icon={`${items.icon}`} height={18} />
-                              <span>{items.listtitle}</span>
-                            </Dropdown.Item>
-                          ))}
-                        </Dropdown>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </div>
-         
-        </div>
+    <section className={styles.container}>
+      <h5 className={styles.title}>Table</h5>
+      <div className={styles.tableWrapper}>
+        <table className={styles.table}>
+          <thead className={styles.thead}>
+            <tr>
+              <th className={styles.th}>Products</th>
+              <th className={styles.th}>Payment</th>
+              <th className={styles.th}>Status</th>
+              <th className={styles.th}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {ProductTableData.map((item, index) => (
+              <tr key={index}>
+                <td className={styles.td}>
+                  <div className={styles.productCell}>
+                    <img
+                      src={item.img}
+                      alt="icon"
+                      className={styles.productImg}
+                    />
+                    <div className={styles.productName}>{item.name}</div>
+                  </div>
+                </td>
+                <td className={styles.td}>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>
+                      {item.payment}
+                      <span style={{ color: "#374151", opacity: 0.7 }}>
+                        <span style={{ margin: "0 0.25rem" }}>/</span>499
+                      </span>
+                    </div>
+                    <div className={styles.paymentStatus}>
+                      {item.paymentstatus}
+                    </div>
+                    <div>
+                      <div className={styles.progressBarBg}>
+                        <div
+                          className={styles.progressBar}
+                          style={{
+                            width: `${item.process}%`,
+                            background: item.processcolor,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td className={styles.td}>
+                  <span
+                    className={styles.badge}
+                    style={{
+                      background: item.statuscolor + "22",
+                      color: item.statuscolor,
+                    }}
+                  >
+                    {item.statustext}
+                  </span>
+                </td>
+                <td className={styles.td}>
+                  <div style={{ position: "relative" }}>
+                    <button
+                      onClick={() =>
+                        setOpenIndex(openIndex === index ? null : index)
+                      }
+                      className={styles.menuBtn}
+                      aria-label="Actions"
+                    >
+                      ⋮
+                    </button>
+                    {openIndex === index && (
+                      <div className={styles.dropdown}>
+                        {tableActionData.map((items, idx) => (
+                          <button
+                            key={idx}
+                            className={styles.dropdownBtn}
+                          >
+                            {/* Aquí puedes poner un icono si lo deseas */}
+                            <span>{items.listtitle}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </>
+    </section>
   );
 };
-
-export  {ProductTable};

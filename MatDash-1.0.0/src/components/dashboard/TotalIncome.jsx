@@ -1,7 +1,10 @@
-import Chart from "react-apexcharts";
-import { Icon } from "@iconify/react";
-import { Badge } from "flowbite-react";
+// Librarys 
+import Chart from "react-apexcharts"
 
+// Import styles 
+import styles from "../../css/dashboard/TotalIncome.module.css"
+
+// Component 
 const TotalIncome = () => {
   const ChartData = {
     series: [
@@ -49,38 +52,34 @@ const TotalIncome = () => {
         show: false,
       },
     },
-  };
+  }
 
   return (
-    <>
-      <div className="bg-white rounded-xl shadow-md p-8">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="bg-lighterror text-error p-3 rounded-md">
-            <Icon icon="solar:box-linear" height={24} />
-          </div>
-          <p className="text-lg font-semibold text-dark">Total Income</p>
+    <section className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.iconBox}>
+          {/* <Icon icon="solar:box-linear" height={24} /> */}
         </div>
-        <div className="flex">
-          <div className="flex-1">
-            <p className="text-xl text-dark font-medium mb-2">$680</p>
-            <Badge className={`bg-lightsuccess text-success`}>
-              +18%
-            </Badge>
-            <p className="text-success text-xs"></p>
-          </div>
-          <div className="rounded-bars flex-1 md:ps-7">
-            <Chart
-              options={ChartData}
-              series={ChartData.series}
-              type="area"
-              height="60px"
-              width="100%"
-            />
-          </div>
+        <p className={styles.title}>Total Income</p>
+      </div>
+      <div className={styles.flex}>
+        <div className={styles.flex1}>
+          <p className={styles.amount}>$680</p>
+          <span className={styles.badge}>+18%</span>
+          <p className={styles.textSuccess}></p>
+        </div>
+        <div className={`${styles.chartCol} ${styles.flex1}`}>
+          <Chart
+            options={ChartData}
+            series={ChartData.series}
+            type="area"
+            height="60px"
+            width="100%"
+          />
         </div>
       </div>
-    </>
-  );
-};
+    </section>
+  )
+}
 
-export default TotalIncome;
+export default TotalIncome

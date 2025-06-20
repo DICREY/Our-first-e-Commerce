@@ -1,60 +1,75 @@
-import { Link } from 'react-router';
-import BlogCards from 'src/components/dashboard/BlogCards';
-import DailyActivity from 'src/components/dashboard/DailyActivity';
-import NewCustomers from 'src/components/dashboard/NewCustomers';
-import ProductRevenue from 'src/components/dashboard/ProductRevenue';
-import { RevenueForecast } from 'src/components/dashboard/RevenueForecast';
-import TotalIncome from 'src/components/dashboard/TotalIncome';
+// Librarys 
+import { Link } from 'react-router'
 
+// Imports 
+import BlogCards from '../../components/dashboard/BlogCards'
+import DailyActivity from '../../components/dashboard/DailyActivity'
+import NewCustomers from '../../components/dashboard/NewCustomers'
+import ProductRevenue from '../../components/dashboard/ProductRevenue'
+import TotalIncome from '../../components/dashboard/TotalIncome'
+import { RevenueForecast } from '../../components/dashboard/RevenueForecast'
+
+// Import styles 
+import styles from '../../css/dashboard/Dashboard.module.css'
+
+// Component 
 const Dashboard = () => {
   return (
-    <div className="grid grid-cols-12 gap-30">
-      <div className="lg:col-span-8 col-span-12">
+    <section className={styles.grid}>
+      <div className={styles.lgColSpan8 + " " + styles.colSpan12}>
         <RevenueForecast />
       </div>
-      <div className="lg:col-span-4 col-span-12">
-        <div className="grid grid-cols-12 h-full items-stretch">
-          <div className="col-span-12 mb-30">
+      <div className={styles.lgColSpan4 + " " + styles.colSpan12}>
+        <div className={styles.grid + " " + styles.hFull + " " + styles.itemsStretch}>
+          <div className={styles.colSpan12 + " " + styles.mb30}>
             <NewCustomers />
           </div>
-          <div className="col-span-12">
+          <div className={styles.colSpan12}>
             <TotalIncome />
           </div>
         </div>
       </div>
-      <div className="lg:col-span-8 col-span-12">
+      <div className={styles.lgColSpan8 + " " + styles.colSpan12}>
         <ProductRevenue />
       </div>
-      <div className="lg:col-span-4 col-span-12 flex">
+      <div className={styles.lgColSpan4 + " " + styles.colSpan12 + " " + styles.flex}>
         <DailyActivity />
       </div>
-      <div className="col-span-12">
+      <div className={styles.colSpan12}>
         <BlogCards />
       </div>
-      <div className="flex justify-center align-middle gap-2 flex-wrap col-span-12 text-center">
-        <p className="text-base">
+      <div className={
+        styles.flex + " " +
+        styles.justifyCenter + " " +
+        styles.alignMiddle + " " +
+        styles.gap2 + " " +
+        styles.flexWrap + " " +
+        styles.colSpan12 + " " +
+        styles.textCenter
+      }>
+        <p className={styles.textBase}>
           Design and Developed by{' '}
           <Link
             to="https://adminmart.com/"
             target="_blank"
-            className="pl-1 text-primary underline decoration-primary"
+            className={styles.pl1 + " " + styles.textPrimary + " " + styles.underline + " " + styles.decorationPrimary}
           >
             adminmart.com
           </Link>
         </p>
-        <p className="text-base">
+        <p className={styles.textBase}>
           Distributed by
           <Link
             to="https://themewagon.com/"
             target="_blank"
-            className="pl-1 text-primary underline decoration-primary"
+            className={styles.pl1 + " " + styles.textPrimary + " " + styles.underline + " " + styles.decorationPrimary}
           >
             ThemeWagon
           </Link>
         </p>
       </div>
-    </div>
-  );
-};
+    </section>
+  )
+}
 
-export default Dashboard;
+export default Dashboard

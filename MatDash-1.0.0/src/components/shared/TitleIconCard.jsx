@@ -1,6 +1,5 @@
-import { Card, Button } from "flowbite-react";
-import { Icon } from "@iconify/react";
 import React from "react";
+import { Icon } from "@iconify/react";
 
 const TitleIconCard = ({
   children,
@@ -10,29 +9,26 @@ const TitleIconCard = ({
   onDownload,
 }) => {
   return (
-    <Card
-      className={`card dark:shadow-dark-md shadow-md p-0 ${className}`}
-      style={{
-        borderRadius: `12px`,
-      }}
+    <div
+      className={`card dark:shadow-dark-md shadow-md p-0 rounded-[12px] ${className}`}
     >
       <div className="flex justify-between items-center border-b border-ld px-6 py-4">
         <h5 className="text-xl font-semibold">{title}</h5>
-        <Button
-          className="flex items-center"
-          size="sm"
-          color="primary"
+        <button
+          className="flex items-center bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary-dark transition"
+          style={{ fontSize: "0.875rem" }}
           onClick={onDownload}
+          type="button"
         >
           <Icon
             icon={icon || "solar:download-minimalistic-bold-duotone"}
             width={20}
             height={20}
           />
-        </Button>
+        </button>
       </div>
       <div className="pt-4 p-6">{children}</div>
-    </Card>
+    </div>
   );
 };
 

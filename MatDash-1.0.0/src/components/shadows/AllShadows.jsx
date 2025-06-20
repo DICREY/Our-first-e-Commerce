@@ -1,9 +1,8 @@
-
-
+// Component
 export const AllShadows = () => {
     return (
       <>
-        <div className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-6 relative w-full break-words">
+        <section className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-6 relative w-full break-words">
           <h5 className="card-title">Shadow</h5>
           <div className="mt-6">
             <div className="grid grid-cols-12 gap-30">
@@ -49,7 +48,7 @@ export const AllShadows = () => {
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </>
     )
   }

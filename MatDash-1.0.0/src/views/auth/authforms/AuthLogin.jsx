@@ -1,6 +1,6 @@
-import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router";
 
+// Component
 const AuthLogin = () => {
   const navigate = useNavigate();
   const handleSubmit = (event) => {
@@ -12,46 +12,51 @@ const AuthLogin = () => {
     <>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <div className="mb-2 block">
-            <Label htmlFor="Username" value="Username" />
-          </div>
-          <TextInput
+          <label htmlFor="Username" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            Username
+          </label>
+          <input
             id="Username"
             type="text"
-            sizing="md"
             required
-            className="form-control form-rounded-xl"
+            className="form-control form-rounded-xl block w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         <div className="mb-4">
-          <div className="mb-2 block">
-            <Label htmlFor="userpwd" value="Password" />
-          </div>
-          <TextInput
+          <label htmlFor="userpwd" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            Password
+          </label>
+          <input
             id="userpwd"
             type="password"
-            sizing="md"
             required
-            className="form-control form-rounded-xl"
+            className="form-control form-rounded-xl block w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         <div className="flex justify-between my-5">
           <div className="flex items-center gap-2">
-            <Checkbox id="accept" className="checkbox" />
-            <Label
+            <input
+              id="accept"
+              type="checkbox"
+              className="checkbox accent-primary rounded focus:ring-primary"
+            />
+            <label
               htmlFor="accept"
               className="opacity-90 font-normal cursor-pointer"
             >
-              Remeber this Device
-            </Label>
+              Remember this Device
+            </label>
           </div>
           <Link to={"/"} className="text-primary text-sm font-medium">
             Forgot Password ?
           </Link>
         </div>
-        <Button type="submit" color={"primary"} className="w-full bg-primary text-white rounded-xl">
+        <button
+          type="submit"
+          className="w-full bg-primary text-white rounded-xl px-4 py-2 hover:bg-primary-dark transition"
+        >
           Sign in
-        </Button>
+        </button>
       </form>
     </>
   );

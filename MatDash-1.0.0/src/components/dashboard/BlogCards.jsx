@@ -1,15 +1,15 @@
-
-
-import user2 from "/src/assets/images/profile/user-2.jpg";
-import user3 from "/src/assets/images/profile/user-3.jpg";
-import img1 from "/src/assets/images/blog/blog-img1.jpg";
-import img2 from "/src/assets/images/blog/blog-img2.jpg";
-import img3 from "/src/assets/images/blog/blog-img3.jpg";
-import { Badge } from "flowbite-react";
-import { TbPoint } from "react-icons/tb";
-import { Icon } from "@iconify/react";
+// Librarys 
 import { Link } from "react-router";
 
+// Imports 
+import user2 from "../../assets/images/profile/user-2.jpg";
+import user3 from "../../assets/images/profile/user-3.jpg";
+import img1 from "../../assets/images/blog/blog-img1.jpg";
+import img2 from "../../assets/images/blog/blog-img2.jpg";
+import img3 from "../../assets/images/blog/blog-img3.jpg";
+
+// Import styles
+import styles from "../../css/dashboard/BlogCards.module.css";
 
 const BlogCardsData = [
   {
@@ -22,20 +22,19 @@ const BlogCardsData = [
     view: "9,125",
     comments: "3",
     time: "Mon, Dec 19",
-    url:''
+    url: ""
   },
   {
     avatar: user2,
     coveravatar: img2,
     read: "2 min Read",
-    title:
-      "Intel loses bid to revive antitrust case against patent foe Fortress",
+    title: "Intel loses bid to revive antitrust case against patent foe Fortress",
     category: "Gadget",
     name: "Georgeanna Ramero",
     view: "4,150",
     comments: "38",
     time: "Sun, Dec 18",
-    url:''
+    url: ""
   },
   {
     avatar: user3,
@@ -47,53 +46,44 @@ const BlogCardsData = [
     view: "9,480",
     comments: "12",
     time: "Sat, Dec 17",
-    url:''
+    url: ""
   },
 ];
 
+// Component 
 const BlogCards = () => {
   return (
     <>
-      <div className="grid grid-cols-12 gap-30">
+      <div className={styles.grid}>
         {BlogCardsData.map((item, i) => (
-          <div className="lg:col-span-4 col-span-12" key={i}>
+          <div className={styles.cardCol} key={i}>
             <Link to={item.url} className="group">
-            <div className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-0 relative w-full break-words overflow-hidden">
-                <div className="relative">
-                  <img src={item.coveravatar} alt="matdash" />
-                  <Badge
-                    color={"muted"}
-                    className="absolute bottom-5 end-5 font-semibold rounded-sm bg-muted"
-                  >
+              <div className={styles.card}>
+                <div className={styles.coverWrapper}>
+                  <img src={item.coveravatar} alt="matdash" className={styles.coverImg} />
+                  <span className={styles.readBadge}>
                     {item.read}
-                  </Badge>
+                  </span>
                 </div>
-
-                <div className="px-6 pb-6">
+                <div className={styles.content}>
                   <img
                     src={item.avatar}
-                    className="h-10 w-10 rounded-full -mt-7 relative z-1"
+                    className={styles.avatar}
                     alt="user"
                   />
-                  <Badge color={"muted"} className="mt-6">
+                  <span className={styles.categoryBadge}>
                     {item.category}
-                  </Badge>
-                  <h5 className="text-lg my-6 group-hover:text-primary line-clamp-2">{item.title}</h5>
-                  <div className="flex">
-                    <div className="flex gap-2 me-6 items-center">
-                    <Icon icon="solar:eye-outline" height="18" className="text-dark" />
-                      <span className="text-sm text-darklink">{item.view}</span>
+                  </span>
+                  <h5 className={styles.title}>{item.title}</h5>
+                  <div className={styles.flexRow}>
+                    <div className={styles.flexGap}>
+                      <span className={styles.textSm}>{item.view}</span>
                     </div>
-                    <div className="flex gap-2 items-center">
-                    <Icon icon="solar:chat-line-outline" height="18" className="text-dark" />
-                      <span className="text-sm text-darklink">{item.view}</span>
+                    <div className={styles.flexGap2}>
+                      <span className={styles.textSm}>{item.view}</span>
                     </div>
-                    <div className="flex gap-1 items-center ms-auto">
-                      <TbPoint
-                        size={15}
-                        className="text-dark"
-                      />{" "}
-                      <span className="text-sm text-darklink">{item.time}</span>
+                    <div className={styles.flexEnd}>
+                      <span className={styles.textSm}>{item.time}</span>
                     </div>
                   </div>
                 </div>

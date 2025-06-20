@@ -10,7 +10,12 @@
 @tailwind components;
 @tailwind utilities;
 
-
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
 @layer components {
   .container {
@@ -177,9 +182,4 @@
   .sorting ul li button:hover {
     @apply hover:text-primary
   }
-
-
-
-
-
 }

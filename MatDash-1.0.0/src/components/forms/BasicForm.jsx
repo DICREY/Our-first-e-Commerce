@@ -1,94 +1,116 @@
-import { Label, TextInput, Select, Button } from "flowbite-react"
+// Import styles 
+import styles from "../../css/forms/BasicForm.module.css"
 
-
+// Component 
 const BasicForm = () => {
   return (
-    <div className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-6 relative w-full break-words">
-    <h5 className="card-title">Form</h5>
-    <div className="mt-6">
-      <div className="grid grid-cols-12 gap-30">
-        <div className="lg:col-span-6 col-span-12">
-          <div className="flex  flex-col gap-4">
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="name" value="Your Name" />
+    <section className={styles.container}>
+      <h5 className={styles.title}>Form</h5>
+      <section className={styles.mt6}>
+        <section className={styles.grid}>
+          <div className={styles.col6}>
+            <div className={styles.flexCol}>
+              <div>
+                <label htmlFor="name" className={styles.label}>
+                  Your Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="Your Name"
+                  required
+                  className={styles.input}
+                />
               </div>
-              <TextInput
-                id="name"
-                type="text"
-                placeholder="Your Name"
-                required
-                className="form-control form-rounded-xl"
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="email1" value="Your email" />
+              <div>
+                <label htmlFor="email1" className={styles.label}>
+                  Your email
+                </label>
+                <input
+                  id="email1"
+                  type="email"
+                  placeholder="name@matdash.com"
+                  required
+                  className={styles.input}
+                />
               </div>
-              <TextInput
-                id="email1"
-                type="email"
-                placeholder="name@matdash.com"
-                required
-                className="form-control form-rounded-xl"
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="password1" value="Your password" />
+              <div>
+                <label htmlFor="password1" className={styles.label}>
+                  Your password
+                </label>
+                <input
+                  id="password1"
+                  type="password"
+                  required
+                  className={styles.input}
+                />
               </div>
-              <TextInput
-                id="password1"
-                type="password"
-                required
-                className="form-control form-rounded-xl"
-              />
-            </div>
-          
-          </div>
-        </div>
-        <div className="lg:col-span-6 col-span-12">
-          <div className="flex  flex-col gap-4">
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="countries1" value="Country" />
-              </div>
-              <Select id="countries1" required className="select-rounded">
-                <option>India</option>
-                <option>Canada</option>
-                <option>France</option>
-                <option>Germany</option>
-              </Select>
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="countries2" value="State" />
-              </div>
-              <Select id="countries2" required className="select-rounded">
-                <option>Delhi</option>
-                <option>Gujarat</option>
-                <option>Mumbai</option>
-                <option>Chennai</option>
-              </Select>
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="countries3" value="City" />
-              </div>
-              <Select id="countries3" required className="select-rounded">
-                <option>Rajkot</option>
-                <option>Ahemedabad</option>
-              </Select>
             </div>
           </div>
-        </div>
-        <div className="col-span-12 flex gap-3">
-          <Button color={'primary'}>Submit</Button>
-          <Button color={'error'}>Cancel</Button>
-        </div>
-      </div>
-    </div>
-  </div>
+          <div className={styles.col6}>
+            <div className={styles.flexCol}>
+              <div>
+                <label htmlFor="countries1" className={styles.label}>
+                  Country
+                </label>
+                <select
+                  id="countries1"
+                  required
+                  className={styles.select}
+                >
+                  <option>India</option>
+                  <option>Canada</option>
+                  <option>France</option>
+                  <option>Germany</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="countries2" className={styles.label}>
+                  State
+                </label>
+                <select
+                  id="countries2"
+                  required
+                  className={styles.select}
+                >
+                  <option>Delhi</option>
+                  <option>Gujarat</option>
+                  <option>Mumbai</option>
+                  <option>Chennai</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="countries3" className={styles.label}>
+                  City
+                </label>
+                <select
+                  id="countries3"
+                  required
+                  className={styles.select}
+                >
+                  <option>Rajkot</option>
+                  <option>Ahemedabad</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className={styles.buttonRow}>
+            <button
+              type="submit"
+              className={styles.btnPrimary}
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              className={styles.btnError}
+            >
+              Cancel
+            </button>
+          </div>
+        </section>
+      </section>
+    </section>
   )
 }
 

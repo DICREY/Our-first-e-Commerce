@@ -1,24 +1,27 @@
+// Import styles 
+import styles from "../../css/dashboard/NewCustomers.module.css";
 
-import { Progress } from "flowbite-react";
-import { Icon } from "@iconify/react";
-
+// Component
 const NewCustomers = () => {
   return (
-    <>
-      <div className="bg-white rounded-xl shadow-md p-8">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="bg-lightsecondary text-secondary p-3 rounded-md">
-            <Icon icon="solar:football-outline" height={24} />
-          </div>
-          <p className="text-lg text-dark font-semibold">New Customers</p>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.iconBox}>
+          {/* <Icon icon="solar:football-outline" height={24} /> */}
         </div>
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm text-dark">New goals</p>
-          <p className="text-sm text-dark">83%</p>
-        </div>
-        <Progress progress={83} color="secondary" />
+        <p className={styles.title}>New Customers</p>
       </div>
-    </>
+      <div className={styles.flexBetween}>
+        <p className={styles.textSm}>New goals</p>
+        <p className={styles.textSm}>83%</p>
+      </div>
+      <div className={styles.progressBg}>
+        <div
+          className={styles.progressBar}
+          style={{ width: "83%" }}
+        ></div>
+      </div>
+    </div>
   );
 };
 

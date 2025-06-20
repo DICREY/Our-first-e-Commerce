@@ -1,9 +1,10 @@
-import { Card } from "flowbite-react";
 import React from "react";
 
 const OutlineCard = ({ children, className = "" }) => {
   return (
-    <Card className={`card ${className} border border-ld`}>{children}</Card>
+    <div className={`card border border-ld rounded-[12px] p-6 bg-white dark:bg-darkgray ${className}`}>
+      {children}
+    </div>
   );
 };
 
