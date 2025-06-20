@@ -1,0 +1,71 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.875rem; /* 30px */
+}
+
+.colSpan12 {
+  grid-column: span 12;
+}
+.lgColSpan8 {
+  grid-column: span 12;
+}
+.lgColSpan4 {
+  grid-column: span 12;
+}
+@media (min-width: 1024px) {
+  .lgColSpan8 {
+    grid-column: span 8;
+  }
+  .lgColSpan4 {
+    grid-column: span 4;
+  }
+}
+
+.flex {
+  display: flex;
+}
+
+.justifyCenter {
+  justify-content: center;
+}
+.alignMiddle {
+  align-items: center;
+}
+.gap2 {
+  gap: 0.5rem;
+}
+.flexWrap {
+  flex-wrap: wrap;
+}
+.textCenter {
+  text-align: center;
+}
+
+.mb30 {
+  margin-bottom: 1.875rem;
+}
+
+.hFull {
+  height: 100%;
+}
+.itemsStretch {
+  align-items: stretch;
+}
+
+.textBase {
+  font-size: 1rem;
+}
+
+.textPrimary {
+  color: var(--color-primary, #2563eb);
+}
+.underline {
+  text-decoration: underline;
+}
+.decorationPrimary {
+  text-decoration-color: var(--color-primary, #2563eb);
+}
+.pl1 {
+  padding-left: 0.25rem;
+}
