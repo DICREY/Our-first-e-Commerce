@@ -1,0 +1,3 @@
+yarn add @svgr/rollup @tabler/icons-react aos apexcharts chance date-fns flowbite formik formik-mui gray-matter i18next lodash moment prop-types react react-apexcharts react-dom react-helmet react-intersection-observer react-router remark remark-html simplebar simplebar-react stylis-plugin-rtl yup
+
+yarn add -D autoprefixer eslint eslint-config-next gh-pages postcss tailwindcss react-scripts
