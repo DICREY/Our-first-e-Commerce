@@ -1,3 +1,4 @@
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.Login(
     IN p_firstData VARCHAR(100)
 )
@@ -6,7 +7,7 @@ BEGIN
         p.nom_per,
         p.ape_per,
         p.doc_per,
-        p.cont_per,
+        p.pas_per,
         p.fot_per,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM

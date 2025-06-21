@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const [ user, setUser ] = useState(null)
     const [ roles, setRoles ] = useState(null)
     const [ mainRol, setMainRol ] = useState(null)
+    const [ admin, setAdmin ] = useState(false)
 
     // Functions
     // Iniciar sesion 
@@ -21,9 +22,11 @@ export const AuthProvider = ({ children }) => {
             if (response) {
                 const userData = decodeJWT(response.__cred)
                 setUser(userData)
+                setRoles(userData.roles?.split(', ') || ['Usuario'])
+                setMainRol(userData.roles?.split(', ')[0] || ['Usuario'])
+                setAdmin(userData.roles?.split(', ').includes('Administrador'))
                 return { data: userData, logged: 1}
-            }
-            return response
+            } else return response
         } catch (err) {
             throw err 
         }
@@ -32,10 +35,12 @@ export const AuthProvider = ({ children }) => {
     // Cerrar sesion 
     const logout = async () => {
         try {
-            const check = await PostData('http://localhost:3000/cookie/clear-cookies', {})
+            const check = await PostData('http://localhost:3000/ecommerce/cookies/clear', {})
             if (check) {
                 setUser(null)
+                setMainRol(null)
                 setRoles(null)
+                setAdmin(null)
                 window.location.href = '/login'
             }
         } catch (err) {
@@ -47,11 +52,13 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const check = await PostData('http://localhost:3000/cookie/check-cookie', { name: '__cred' })
+                const check = await PostData('http://localhost:3000/ecommerce/cookies/check', { name: '__cred' })
                 if (check) {
                     const userData = decodeJWT(check.data)
                     setUser(userData)
                     setRoles(userData?.roles?.split(', ') || ['Usuario'])
+                    setMainRol(userData.roles?.split(', ')[0] || 'Usuario')
+                    setAdmin(userData.roles?.split(', ').includes('Veterinario'))
                 }
             } catch (err) {
                 setUser(null)
@@ -61,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, roles, login, logout }}>
+        <AuthContext.Provider value={{ admin, mainRol, user, roles, login, logout }}>
             {children}
         </AuthContext.Provider>
     )

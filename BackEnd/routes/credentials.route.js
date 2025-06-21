@@ -47,7 +47,7 @@ Route.post('/login', limiterLog, async (req,res) => {
     try {
         // Search in database
         let log = await global.login()
-        let user = await log.result[0][0]
+        let user = await log.result[0]
 
         if(!user) return res.status(404).json({ message: 'Usuario no encontrado' })
         // Verify
@@ -58,7 +58,9 @@ Route.post('/login', limiterLog, async (req,res) => {
             {   
                 names: user.nom_per,
                 lastNames: user.ape_per,
-                roles: user.roles
+                roles: user.roles,
+                doc: user.doc_per,
+                img: user.fot_per
             },
             secret,
             { expiresIn: '8h' }
@@ -70,7 +72,7 @@ Route.post('/login', limiterLog, async (req,res) => {
         if (user.roles) res.cookie('__user', user.roles, cookiesOptionsLog)
         if (user.nom_per && user.ape_per) res.cookie('__userName', `${user.nom_per} ${user.ape_per}`, cookiesOptionsLog)
 
-        res.status(200).json({ token: token })
+        res.status(200).json({ __cred: token })
 
     } catch (err) {
         if (err.status) return res.status(err.status).json({ message: err.message })

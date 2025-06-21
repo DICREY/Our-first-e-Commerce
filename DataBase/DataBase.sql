@@ -17,10 +17,10 @@ CREATE TABLE e_commerce.personas(
     cel_per VARCHAR(20) NOT NULL,
     cel2_per VARCHAR(20),
     email_per VARCHAR(100) UNIQUE NOT NULL,INDEX(email_per),
-    cont_per VARCHAR(255) NOT NULL,
+    pas_per VARCHAR(255) NOT NULL,
     gen_per VARCHAR(100) NOT NULL,
     estado BOOLEAN DEFAULT(1) NOT NULL,
-    fot_rol TEXT DEFAULT("https://imgs.search.brave.com/rL6dnhwCDXLvz02lsRs2QjVj1F8o-8D0o4pTYhmHah8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2M4L01h/cmllX0N1cmllX2Mu/XzE5MjBzLmpwZy81/MTJweC1NYXJpZV9D/dXJpZV9jLl8xOTIw/cy5qcGc") NOT NULL,
+    fot_per TEXT DEFAULT("https://imgs.search.brave.com/rL6dnhwCDXLvz02lsRs2QjVj1F8o-8D0o4pTYhmHah8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2M4L01h/cmllX0N1cmllX2Mu/XzE5MjBzLmpwZy81/MTJweC1NYXJpZV9D/dXJpZV9jLl8xOTIw/cy5qcGc") NOT NULL,
     fec_cre_per DATE DEFAULT(NOW()) NOT NULL
 );
 

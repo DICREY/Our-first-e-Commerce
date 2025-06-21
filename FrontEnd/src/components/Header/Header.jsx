@@ -8,19 +8,24 @@ import FavoritesSheet from "../FavoritesSheet/FavoritesSheet"
 import { products } from "../data/products"
 
 // Librarys 
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Heart, UserRound, Search, ShoppingBag } from 'lucide-react'
+
+// Imports 
+import { checkImage } from "../../Utils/utils"
+import { AuthContext } from "../../Contexts/Contexts"
 
 // Import styles 
 import styles from "./Header.module.css"
 
 // Component 
-const Header = ({ imgProductDefault = '' }) => {
+const Header = ({ imgProductDefault = '', imgDefault = '' }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
   const { getTotalItems } = useCart()
 
+  const { user } = useContext(AuthContext)
   const navigation = [
     { name: "Inicio", href: "/" },
     { name: "Vestidos", href: "/productos" },
@@ -65,7 +70,12 @@ const Header = ({ imgProductDefault = '' }) => {
               </Button>
 
               <Button variant="ghost" size="icon">
-                <UserRound />
+                {checkImage(
+                  user?.img,
+                  `${user?.names} ${user?.lastNames}`,
+                  imgProductDefault,
+                  'imgPerfil'
+                )}
                 {/* Perfil */}
               </Button>
 

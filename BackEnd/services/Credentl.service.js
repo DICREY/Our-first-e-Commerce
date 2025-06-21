@@ -29,7 +29,7 @@ class Credentl {
                 setTimeout(() => {
                     res({
                         message: "Authorized",
-                        result: result
+                        result: result[0]
                     })
                 },1000)
             })
