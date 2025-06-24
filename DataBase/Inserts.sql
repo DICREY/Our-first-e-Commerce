@@ -1,4 +1,4 @@
--- Active: 1746130779175@@127.0.0.1@3306@e_commerce
+-- Active: 1747352860830@@127.0.0.1@3306@e_commerce
 INSERT INTO e_commerce.roles (nom_rol) VALUES
 ('Administrador'),
 ('Usuario');
@@ -69,32 +69,39 @@ INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro, img_pro) V
 (1, 'Vestido plus size floral', 69.99, 'Vestido holgado con estampado grande', DEFAULT),
 (1, 'Blusa plus size manga larga', 49.99, 'Blusa elegante con detalles en cuello', DEFAULT);
 
--- Asignación de colores y tallas a algunos productos
-INSERT INTO e_commerce.productos_colores (pro_col_pro, col_pro_col) VALUES 
-(1, 2), (1, 3), (1, 5),  -- Negro, Blanco, Rosa
-(2, 2), (2, 4),  -- Negro, Azul Marino
-(3, 1), (3, 4),
-(4, 2), (4, 3),
-(5, 2), (5, 4),
-(6, 1), (6, 2), (6, 3), (6, 9),  -- Rojo, Negro, Blanco, Gris
-(7, 2), (7, 4),
-(8, 2), (8, 4),
-(9, 2), (9, 4),
-(10, 2), (10, 4),
-(11, 2), (11, 4),
-(12, 2), (12, 4),
-(13, 2), (13, 4),
-(14, 2), (14, 4),
-(15, 2), (15, 4),
-(16, 2), (16, 4),
-(17, 2), (17, 4),
-(18, 2), (18, 4),
-(19, 2), (19, 4);
+-- Insertar datos de inventario para los productos existentes
+-- Blusa de seda estampada (id_pro 1) - Negro (2), Blanco (3), Rosa (5) - Tallas XS(1), S(2), M(3), L(4)
+INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
+(1, 2, 1, 10), (1, 2, 2, 15), (1, 2, 3, 8), (1, 2, 4, 5),   -- Negro
+(1, 3, 1, 12), (1, 3, 2, 18), (1, 3, 3, 10), (1, 3, 4, 7),  -- Blanco
+(1, 5, 1, 8), (1, 5, 2, 10), (1, 5, 3, 6), (1, 5, 4, 3);    -- Rosa
 
-INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
-(1, 1), (1, 2), (1, 3), (1, 4),  -- XS, S, M, L
-(2, 7), (2, 8), (2, 9), (2, 10), (2, 11),  -- 34, 36, 38, 40, 42
-(6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6);  -- XS, S, M, L, XL, XXL
+-- Jeans skinny alto talle (id_pro 2) - Negro (2), Azul Marino (4) - Tallas 34(7), 36(8), 38(9), 40(10), 42(11)
+INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
+(2, 2, 7, 5), (2, 2, 8, 8), (2, 2, 9, 12), (2, 2, 10, 10), (2, 2, 11, 6),   -- Negro
+(2, 4, 7, 7), (2, 4, 8, 10), (2, 4, 9, 15), (2, 4, 10, 12), (2, 4, 11, 8);  -- Azul Marino
+
+-- Leggings deportivos compresión (id_pro 6) - Rojo(1), Negro(2), Blanco(3), Gris(9) - Tallas XS(1), S(2), M(3), L(4), XL(5), XXL(6)
+INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
+(6, 1, 1, 5), (6, 1, 2, 8), (6, 1, 3, 10), (6, 1, 4, 12), (6, 1, 5, 6), (6, 1, 6, 3),   -- Rojo
+(6, 2, 1, 8), (6, 2, 2, 12), (6, 2, 3, 15), (6, 2, 4, 18), (6, 2, 5, 10), (6, 2, 6, 5), -- Negro
+(6, 3, 1, 6), (6, 3, 2, 9), (6, 3, 3, 12), (6, 3, 4, 15), (6, 3, 5, 8), (6, 3, 6, 4),   -- Blanco
+(6, 9, 1, 4), (6, 9, 2, 7), (6, 9, 3, 9), (6, 9, 4, 11), (6, 9, 5, 5), (6, 9, 6, 2);    -- Gris
+
+-- Vestido midi floral (id_pro 3) - Rojo(1), Azul Marino(4) - Tallas S(2), M(3), L(4)
+INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
+(3, 1, 2, 7), (3, 1, 3, 9), (3, 1, 4, 5),   -- Rojo
+(3, 4, 2, 8), (3, 4, 3, 11), (3, 4, 4, 6);  -- Azul Marino
+
+-- Conjunto de encaje negro (id_pro 8) - Negro(2) - Tallas Única(13)
+INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
+(8, 2, 13, 25);  -- Talla única
+
+-- Bikini estampado tropical (id_pro 10) - Negro(2), Azul Marino(4) - Tallas S(2), M(3), L(4)
+INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
+(10, 2, 2, 6), (10, 2, 3, 8), (10, 2, 4, 5),    -- Negro
+(10, 4, 2, 7), (10, 4, 3, 9), (10, 4, 4, 6);    -- Azul Marino
+
 
 INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES 
 ('Tarjeta de Crédito'),
