@@ -1,38 +1,74 @@
-"use client"
-
-// Imports 
-import Button from "../Button/Button"
-import CartSheet from "../CartSheet/CartSheet"
-import { useCart } from "../../Contexts/CartContext"
-import FavoritesSheet from "../FavoritesSheet/FavoritesSheet"
-import { products } from "../data/products"
-
 // Librarys 
-import { useContext, useState } from "react"
-import { Heart, UserRound, Search, ShoppingBag } from 'lucide-react'
+import { useContext, useEffect, useRef, useState } from "react"
+import { Heart, Search, ShoppingBag } from 'lucide-react'
 
 // Imports 
-import { checkImage } from "../../Utils/utils"
+import { CheckImage, errorStatusHandler } from "../../Utils/utils"
 import { AuthContext } from "../../Contexts/Contexts"
+import { useCart } from "../../Contexts/CartContext"
+import { products } from "../data/products"
+import CartSheet from "../CartSheet/CartSheet"
+import Button from "../Button/Button"
+import FavoritesSheet from "../FavoritesSheet/FavoritesSheet"
 
 // Import styles 
 import styles from "./Header.module.css"
+import { GetData } from "../../Utils/Requests"
 
 // Component 
-const Header = ({ imgProductDefault = '', imgDefault = '' }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
-  const { getTotalItems } = useCart()
-
-  const { user } = useContext(AuthContext)
-  const navigation = [
+const Header = ({ URL = '', imgProductDefault = '', imgDefault = '' }) => {
+  // Dynamic Vars 
+  const [ isMenuOpen, setIsMenuOpen] = useState(false)
+  const [ isCartOpen, setIsCartOpen] = useState(false)
+  const [ isFavoritesOpen, setIsFavoritesOpen ] = useState(false)
+  const [ isProfileMenuOpen, setIsProfileMenuOpen ] = useState(false)
+  const [ prductCat, setProductCat ] = useState(null)
+  const profileMenuRef = useRef()
+  const [ navigation, setNavigation] = useState([
     { name: "Inicio", href: "/" },
     { name: "Vestidos", href: "/productos" },
     { name: "Blusas", href: "/productos" },
     { name: "Pantalones", href: "/productos" },
     { name: "Ofertas", href: "/productos" },
-  ]
+  ])
+  
+  // Vars 
+  const { getTotalItems } = useCart()
+  const { user } = useContext(AuthContext)
+
+  const getProducts = async () => {
+    try {
+      const product = await GetData(`${URL}/products/categories`)
+      if (product) {
+        console.log(product)
+        setProductCat(product)
+      }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      console.log(message)
+    }
+  }
+
+  const handleLogout = () => {
+    // Aquí va tu lógica de logout
+    console.log("Cerrar sesión");
+    // Por ejemplo: logout(); o setUser(null);
+  };
+
+  useEffect(() => {
+    getProducts()
+  },[])
+
+  // Cierra el menú si se hace click fuera
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setIsProfileMenuOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   return (
     <>
@@ -69,15 +105,66 @@ const Header = ({ imgProductDefault = '', imgDefault = '' }) => {
                 {/* Favoritos */}
               </Button>
 
-              <Button variant="ghost" size="icon">
-                {checkImage(
-                  user?.img,
-                  `${user?.names} ${user?.lastNames}`,
-                  imgProductDefault,
-                  'imgPerfil'
+              <aside style={{ position: "relative" }} ref={profileMenuRef}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+                >
+                  {console.log(user)}
+                  <CheckImage
+                    src={user?.img}
+                    alt={`${user?.names || ""} ${user?.lastNames || ""}`}
+                    imgDefault={imgProductDefault}
+                    className='imgPerfil'
+                  />
+                  {/* Perfil */}
+                </Button>
+                {isProfileMenuOpen && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      top: "100%",
+                      marginTop: 8,
+                      background: "#fff",
+                      border: "1px solid #e0e0e0",
+                      borderRadius: '.5rem',
+                      boxShadow: "0 .2rem 1rem rgba(0,0,0,0.08)",
+                      zIndex: 100,
+                      minWidth: 160,
+                      padding: '.5rem',
+                    }}
+                  >
+                    {user == null ? (
+                      <>
+                        <a href="/login" className={styles.menuOption}>Iniciar sesión</a>
+                        <a href="/signup" className={styles.menuOption}>Registrarse</a>
+                      </>
+                    ) : (
+                      <>
+                        <a href="/profile" className={styles.menuOption}>Perfil</a>
+                        <button
+                          onClick={handleLogout}
+                          className={styles.menuOption}
+                          style={{ border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}
+                        >
+                          Cerrar sesión
+                        </button>
+                      </>
+                    )}
+                  </div>
                 )}
-                {/* Perfil */}
-              </Button>
+              </aside>
+              {/* <Button variant="ghost" size="icon">
+              {console.log(user)}
+                <CheckImage
+                  src={user?.img}
+                  alt={`${user?.names} ${user?.lastNames}`}
+                  imgDefault={imgProductDefault}
+                  className='imgPerfil'
+                />
+              </Button> */}
 
               {/* Cart */}
               <div className={styles.cartButton}>

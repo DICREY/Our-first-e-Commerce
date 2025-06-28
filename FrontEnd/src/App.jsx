@@ -29,7 +29,7 @@ const App = () => {
       <CartProvider>
         <Router>
           <div className="App">
-            <Header imgProductDefault={imgProduct} />
+            <Header URL={URL} imgProductDefault={imgProduct} />
             <main>
               <Routes>
                 <Route path="/" element={<HomePage URL={URL} imgProduct={imgProduct} setProduct={setProduct} />} />

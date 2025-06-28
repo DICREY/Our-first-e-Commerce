@@ -4,7 +4,7 @@ import { ShoppingBag } from 'lucide-react'
 
 // Imports 
 import { useCart } from "../../Contexts/CartContext"
-import { checkImage } from "../../Utils/utils"
+import { CheckImage } from "../../Utils/utils"
 import Badge from "../Badge/Badge"
 
 // Import styles 
@@ -61,11 +61,11 @@ const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
                   {items?.map((item, index) => (
                     <div key={index + 908} className={styles.item}>
                       <div className={styles.itemImage}>
-                        {checkImage(
-                          item.img_pro,
-                          item.nom_pro,
-                          imgProductDefault
-                        )}
+                        <CheckImage
+                          src={item.img_pro}
+                          alt={item.nom_pro}
+                          imgDefault={imgProductDefault}
+                        />
                       </div>
 
                       <div className={styles.itemDetails}>

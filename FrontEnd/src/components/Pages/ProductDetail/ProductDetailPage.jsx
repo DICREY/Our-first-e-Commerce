@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 // Imports 
 import { useCart } from "../../../Contexts/CartContext"
-import { checkImage } from "../../../Utils/utils"
+import { CheckImage } from "../../../Utils/utils"
 
 // Import styles
 import styles from "./ProductDetailPage.module.css"
@@ -72,12 +72,12 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
               />
             ))}
           </div>
-          {checkImage(
-            productImages[selectedImage],
-            product.name,
-            img,
-            styles.mainImage
-          )}
+          <CheckImage
+            src={productImages[selectedImage]}
+            alt={product.name}
+            imgDefault={img}
+            className={styles.mainImage}
+          />
         </header>
 
         <section className={styles.details}>

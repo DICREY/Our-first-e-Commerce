@@ -1,28 +1,29 @@
+// Librarys 
+import { useState } from "react"
+
 // Verify if load img
-export const checkImage = (src = '', alt, imgDefault = '', className = '') => {
-    const img = new Image()
-    let srcMod = src || src === 'No-Registrado'? src:  imgDefault
-    let def = false
+export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = '' }) => {
+    // Dynamic vars 
+    const [ imgSrc, setImgSrc ] = useState(src && src !== 'No-Registrado'? src : imgDefault)
 
-    img.src = srcMod
-    img.onerror = def = 1
-    img.onload = def = 0
+    return (
+        <img
+            className={className}
+            src={imgSrc}
+            alt={alt || 'No Registrado'}
+            onError={() => setImgSrc(imgDefault)}
+        />
+    )
+}
 
-    if (def) return <img
-        className={className}
-        src={srcMod}
-        alt={alt || "No Registrado"}
-    />
-
-    return <img
-        className={className}
-        src={imgDefault}
-        alt={alt || "No Registrado"}
-    />
+// Convierte la primera letra en mayúscula y el resto en minúscula
+export const capitalize = (word = '') => {
+  if (!word) return '';
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
 // decodificar token
-export const decodeJWT = (token = "") => {
+export const decodeJWT = (token = '') => {
     try {
         // Validación básica
         if (!token || typeof token !== "string") {
@@ -114,62 +115,64 @@ export const getAge = (fec = "") => {
 
 // Handle request errors
 export const errorStatusHandler = (err) => {
-    const returnMessage = (errStatus) => {
-        let message = 'Error interno'
+  const returnMessage = (errStatus) => {
+    let message = 'Error interno'
 
-        if (errStatus?.response?.data?.message) return errStatus.response.data.message
+    if (errStatus?.response?.data?.message) {
+      return errStatus.response.data.message
+    } else if (errStatus?.message) return errStatus.message
+    
+    if (errStatus.status >= 500) return 'Error del servidor por favor intentelo mas tarde' 
+    
+    switch (errStatus.status) {
+      case 302:
+        message = 'Ya existe en el sistema'
+        break
 
-        if (errStatus.status >= 500) return 'Error del servidor por favor intentelo mas tarde'
+      case 400:
+        message = 'Contenido invalido o falta información'
+        break
 
-        switch (errStatus.status) {
-            case 302:
-                message = 'Ya existe en el sistema'
-                break
+      case 401:
+        message = 'Usuario no autorizado'
+        break
+      
+      case 403:
+        message = 'Sesion expirada'
+        break
+      
+      case 404:
+        message = 'No se encontro lo que buscas'
+        break
 
-            case 400:
-                message = 'Contenido invalido o falta información'
-                break
+      case 409:
+        message = 'Conflicto, datos duplicados'
+        break
 
-            case 401:
-                message = 'Usuario no autorizado'
-                break
+      case 423: 
+        message = 'Bloqueado'
+        break
 
-            case 403:
-                message = 'Sesion expirada'
-                break
+      case 425:
+        message = 'Demasiado temprano'
+        break
 
-            case 404:
-                message = 'No se encontro lo que buscas'
-                break
+      case 429: 
+        message = 'Demasiados intentos espera un momento'
+        break
 
-            case 409:
-                message = 'Conflicto, datos duplicados'
-                break
-
-            case 423:
-                message = 'Bloqueado'
-                break
-
-            case 425:
-                message = 'Demasiado temprano'
-                break
-
-            case 429:
-                message = 'Demasiados intentos espera un momento'
-                break
-
-            case 498:
-                message = 'Usuario no autorizado'
-                break
-
-            default:
-                message = errStatus
-                break
-        }
-
-        return message
+      case 498: 
+        message = 'Usuario no autorizado'
+        break
+        
+      default:
+        message = errStatus
+        break
     }
-    return returnMessage(err)
+    
+    return message
+  }
+  return returnMessage(err)
 }
 
 // Convertir horario 24h a 12h
