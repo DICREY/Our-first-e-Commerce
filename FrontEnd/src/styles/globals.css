@@ -311,7 +311,9 @@ body {
 }
 
 .imgPerfil {
-  height: 2rem;
-  width: 2rem;
+  height: 2.1rem;
+  width: 2.1rem;
+  object-fit: cover;
+  object-position: center;
   border-radius: 50%;
 }

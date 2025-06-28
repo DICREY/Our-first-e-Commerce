@@ -1,5 +1,6 @@
 // Librarys 
 import React, { useContext, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 // Imports
 import { PostData } from '../../Utils/Requests'
@@ -11,14 +12,21 @@ import styles from '../../styles/Forms/login.module.css'
 
 // Component 
 export const LoginForm = ({ URL = '' }) => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  // Dynamic Vars 
+  const [ email, setEmail ] = useState("")
+  const [ password, setPassword ] = useState("")
+
+  // Vars 
   const { login } = useContext(AuthContext)
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
         const log = await login(`${URL}/credential/login`, { firstData: email, secondData: password })
+        if (log) {
+          navigate('/')
+        }
     } catch (err) {
         const message = errorStatusHandler(err)
         console.log(message)

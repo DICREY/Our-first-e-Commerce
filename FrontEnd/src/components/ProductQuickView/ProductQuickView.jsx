@@ -1,7 +1,7 @@
 // Imports 
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
-import { checkImage } from "../../Utils/utils";
+import { CheckImage } from "../../Utils/utils";
 
 // Import styles 
 import styles from "./ProductQuickView.module.css";
@@ -21,12 +21,12 @@ const ProductQuickView = ({ product, isOpen, onClose, img = '' }) => {
     <Modal isOpen={isOpen} onClose={onClose} title={product.nom_pro}>
       <section className={styles.container}>
         <div className={styles.imageContainer}>
-          {checkImage(
-            product.img_pro,
-            '',
-            img,
-            styles.image
-          )}
+          <CheckImage
+            src={product.img_pro}
+            alt={''}
+            imgDefault={img}
+            className={styles.image}
+          />
         </div>
 
         <div className={styles.details}>

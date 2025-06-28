@@ -1,33 +1,31 @@
 // Librarys 
 import { useState, useEffect } from "react"
 import { Heart, PackagePlus, Eye } from 'lucide-react'
+import { useNavigate } from "react-router-dom";
 
 // Imports 
 import { useCart } from "../../Contexts/CartContext"
+import { CheckImage } from "../../Utils/utils"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
-import { useNavigate } from "react-router-dom";
 import ProductQuickView from "../ProductQuickView/ProductQuickView"
 
 // Import styles 
 import styles from "./ProductCard.module.css"
-import { checkImage } from "../../Utils/utils"
 
+// Component 
 const ProductCard = ({ product = {}, img = '', setProduct }) => {
+  // Dynamic vars 
   const [isLiked, setIsLiked] = useState(false)
   const [showQuickView, setShowQuickView] = useState(false)
+
+  // Vars 
   const { addToCart } = useCart()
   const navigate = useNavigate()
 
   const handleQuickAdd = () => {
     addToCart(product, product?.sizes[0], product?.colors[0])
   }
-
-  // Persistencia de likes en localStorage
-  useEffect(() => {
-    const liked = localStorage.getItem(`liked-product-${product.id}`)
-    if (liked === "true") setIsLiked(true)
-  }, [product.id])
 
   const handleLike = () => {
     const newLiked = !isLiked
@@ -38,21 +36,24 @@ const ProductCard = ({ product = {}, img = '', setProduct }) => {
   const handleCardClick = () => {
     setProduct(product)
     navigate(`/producto`)
-  };
+  }
+
+  // Persistencia de likes en localStorage
+  useEffect(() => {
+    const liked = localStorage.getItem(`liked-product-${product.id}`)
+    if (liked === "true") setIsLiked(true)
+  }, [product.id])
 
   return (
     <>
       <section className={styles.card} onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <div className={styles.imageContainer}>
-          {
-            checkImage(
-              product.img_pro,
-              product.nom_pro,
-              img,
-              styles.image
-            )
-          }
-
+          <CheckImage
+            src={product.img_pro}
+            alt={product.nom_pro}
+            imgDefault={img}
+            className={styles.image}
+          />
           {/* Badges */}
           <div className={styles.badges}>
             {product.onSale && <Badge variant="sale">Oferta</Badge>}
