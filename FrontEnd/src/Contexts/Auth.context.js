@@ -33,9 +33,9 @@ export const AuthProvider = ({ children }) => {
     }
 
     // Cerrar sesion 
-    const logout = async () => {
+    const logout = async ( URL = '') => {
         try {
-            const check = await PostData('http://localhost:3000/ecommerce/cookies/clear', {})
+            const check = await PostData(`${URL}/cookies/clear`, {})
             if (check) {
                 setUser(null)
                 setMainRol(null)

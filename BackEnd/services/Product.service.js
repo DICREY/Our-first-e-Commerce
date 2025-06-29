@@ -1,11 +1,13 @@
 // Imports
 const DataBase = require('./DataBase.service')
+const Global = require('./Global.service')
 
 // Main class
 class Product {
     // constructor
     constructor(...args) {
         this.database = new DataBase()
+        this.global = new Global()
         this.args = args
     }
 
@@ -26,10 +28,12 @@ class Product {
                     message: "Not found",
                     status: 404
                 })
+                const resOne = this.global.format(result[0],'colors',['nom_col','hex_col'])
+                const lastRes = this.global.iterar(resOne,'sizes')
                 setTimeout(() => {
                     res({
-                        message: "Products found",
-                        result: result
+                        message: "Info found",
+                        result: lastRes
                     })
                 },1000)
             })
@@ -90,7 +94,67 @@ class Product {
                 setTimeout(() => {
                     res({
                         message: "Products found",
-                        result: result
+                        result: result[0]
+                    })
+                },1000)
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
+    // function to find all product colors
+    async findAllColors() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL GetProductsColors();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,(err,result) => {
+                if(err) rej({ message: err })
+                if(!result || !result[0][0]) rej({
+                    message: "Not found",
+                    status: 404
+                })
+                setTimeout(() => {
+                    res({
+                        message: "Products found",
+                        result: result[0]
+                    })
+                },1000)
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
+    // function to find all product sizes
+    async findAllSizes() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL GetProductsSizes();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,(err,result) => {
+                if(err) rej({ message: err })
+                if(!result || !result[0][0]) rej({
+                    message: "Not found",
+                    status: 404
+                })
+                setTimeout(() => {
+                    res({
+                        message: "Products found",
+                        result: result[0]
                     })
                 },1000)
             })
@@ -151,8 +215,8 @@ class Product {
                 })
                 setTimeout(() => {
                     res({
-                        message: "User found",
-                        result: result
+                        message: "Category found",
+                        result: result[0]
                     })
                 },1000)
             })

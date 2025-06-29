@@ -9,9 +9,6 @@ const { authenticateJWT, ValidatorRol, Fullinfo } = require('../middleware/valid
 // vars
 const Route = Router()
 const prodInst = new Product()
-// Middleware 
-Route.use(authenticateJWT)
-Route.use(ValidatorRol("usuario"))
 
 // Routes
 Route.get('/all', async (req,res) => {
@@ -35,6 +32,40 @@ Route.get('/categories', async (req,res) => {
         // Verifiy if exists
         const search = await productInstans.findAllCategories()
         if (!search.result) res.status(404).json({ message: "Productos no encontrados"})
+
+        res.status(200).json(search)
+    } catch (err) {
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
+Route.get('/colors', async (req,res) => {
+    try {
+        // Vars 
+        const productInstans = new Product()
+
+        // Verifiy if exists
+        const search = await productInstans.findAllColors()
+        if (!search.result) res.status(404).json({ message: "Colores no encontrados"})
+
+        res.status(200).json(search)
+    } catch (err) {
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
+Route.get('/sizes', async (req,res) => {
+    try {
+        // Vars 
+        const productInstans = new Product()
+
+        // Verifiy if exists
+        const search = await productInstans.findAllSizes()
+        if (!search.result) res.status(404).json({ message: "Tamaños no encontrados"})
 
         res.status(200).json(search)
     } catch (err) {
@@ -105,6 +136,10 @@ Route.post('/by/categorie', async (req,res) => {
     }
 })
 
+// Middleware 
+Route.use(authenticateJWT)
+Route.use(ValidatorRol("usuario"))
+
 Route.post('/register', async (req,res) => {
     // Vars 
     const saltRounds = 15
@@ -119,6 +154,7 @@ Route.post('/register', async (req,res) => {
         res.status(201).json(create)
 
     } catch(err) {
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }

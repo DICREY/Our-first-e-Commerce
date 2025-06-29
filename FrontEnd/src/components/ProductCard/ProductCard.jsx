@@ -14,7 +14,7 @@ import ProductQuickView from "../ProductQuickView/ProductQuickView"
 import styles from "./ProductCard.module.css"
 
 // Component 
-const ProductCard = ({ product = {}, img = '', setProduct }) => {
+const ProductCard = ({ product = {}, imgDefault = '', setProduct }) => {
   // Dynamic vars 
   const [isLiked, setIsLiked] = useState(false)
   const [showQuickView, setShowQuickView] = useState(false)
@@ -30,7 +30,7 @@ const ProductCard = ({ product = {}, img = '', setProduct }) => {
   const handleLike = () => {
     const newLiked = !isLiked
     setIsLiked(newLiked)
-    localStorage.setItem(`liked-product-${product.id}`, newLiked)
+    localStorage.setItem(`liked-product-${product.id_pro}`, newLiked)
   }
 
   const handleCardClick = () => {
@@ -40,9 +40,9 @@ const ProductCard = ({ product = {}, img = '', setProduct }) => {
 
   // Persistencia de likes en localStorage
   useEffect(() => {
-    const liked = localStorage.getItem(`liked-product-${product.id}`)
+    const liked = localStorage.getItem(`liked-product-${product.id_pro}`)
     if (liked === "true") setIsLiked(true)
-  }, [product.id])
+  }, [product.id_pro])
 
   return (
     <>
@@ -51,7 +51,7 @@ const ProductCard = ({ product = {}, img = '', setProduct }) => {
           <CheckImage
             src={product.img_pro}
             alt={product.nom_pro}
-            imgDefault={img}
+            imgDefault={imgDefault}
             className={styles.image}
           />
           {/* Badges */}
@@ -122,7 +122,7 @@ const ProductCard = ({ product = {}, img = '', setProduct }) => {
         product={product}
         isOpen={showQuickView}
         onClose={() => setShowQuickView(false)}
-        img={img}
+        img={imgDefault}
       />
     </>
   )

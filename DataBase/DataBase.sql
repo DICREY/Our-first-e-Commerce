@@ -34,6 +34,7 @@ CREATE TABLE e_commerce.otorgar_roles(
 CREATE TABLE e_commerce.cat_productos(
     id_cat_pro INT AUTO_INCREMENT PRIMARY KEY,
     nom_cat_pro VARCHAR(100) NOT NULL,INDEX(nom_cat_pro),
+    slug VARCHAR(100) UNIQUE NOT NULL,
     sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL
 );
 

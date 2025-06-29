@@ -19,6 +19,7 @@ import "./styles/globals.css"
 const App = () => {
   // Dynamic vars
   const [ product, setProduct ] = useState()
+  const [ catPro, setCatPro ] = useState()
 
   // Vars 
   const URL = 'http://localhost:3000/ecommerce'
@@ -29,14 +30,21 @@ const App = () => {
       <CartProvider>
         <Router>
           <div className="App">
-            <Header URL={URL} imgProductDefault={imgProduct} />
+            <Header URL={URL} imgProductDefault={imgProduct} setCatPro={setCatPro} />
             <main>
               <Routes>
                 <Route path="/" element={<HomePage URL={URL} imgProduct={imgProduct} setProduct={setProduct} />} />
                 <Route path="/login" element={<LoginForm URL={URL} />} />
                 <Route path="/signup" element={<RegisterForm URL={URL} />} />
-                <Route path="/productos" element={<ProductCatalog  />} />
-                <Route path="/producto" element={<ProductDetailPage img={imgProduct} product={product} />} />
+                <Route path="/productos" element={<ProductCatalog URL={URL} imgDefault={imgProduct} setProduct={setProduct} />} />
+                <Route path="/productos/lenceria" element={
+                  <ProductCatalog 
+                    URL={URL} 
+                    imgDefault={imgProduct} 
+                    setProduct={setProduct} 
+                    preSelectedCat='Lencería'
+                  />} />
+                <Route path="/producto" element={<ProductDetailPage URL={URL} img={imgProduct} product={product} />} />
               </Routes>
             </main>
           </div>

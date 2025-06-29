@@ -23,8 +23,10 @@ INSERT INTO e_commerce.otorgar_roles (id_rol, id_per) VALUES
 (2,6);
 
 -- 1. Insertar categorías
-INSERT INTO e_commerce.cat_productos (nom_cat_pro) VALUES 
-('Ropa de Mujer'), ('Lencería'), ('Ropa Deportiva Mujer');  
+INSERT INTO e_commerce.cat_productos (nom_cat_pro,slug) VALUES 
+('Ropa de Mujer','ropa-de-mujer'), 
+('Lencería','lenceria'),
+('Ropa Deportiva Mujer','ropa-deportiva-mujer');  
 
 -- 2. Insertar colores
 INSERT INTO e_commerce.colores (nom_col, hex_col) VALUES 

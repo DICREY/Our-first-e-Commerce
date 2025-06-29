@@ -16,7 +16,7 @@ import styles from "./Header.module.css"
 import { GetData } from "../../Utils/Requests"
 
 // Component 
-const Header = ({ URL = '', imgProductDefault = '', imgDefault = '' }) => {
+const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro = null }) => {
   // Dynamic Vars 
   const [ isMenuOpen, setIsMenuOpen] = useState(false)
   const [ isCartOpen, setIsCartOpen] = useState(false)
@@ -24,24 +24,22 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '' }) => {
   const [ isProfileMenuOpen, setIsProfileMenuOpen ] = useState(false)
   const [ prductCat, setProductCat ] = useState(null)
   const profileMenuRef = useRef()
-  const [ navigation, setNavigation] = useState([
-    { name: "Inicio", href: "/" },
-    { name: "Vestidos", href: "/productos" },
-    { name: "Blusas", href: "/productos" },
-    { name: "Pantalones", href: "/productos" },
-    { name: "Ofertas", href: "/productos" },
-  ])
+  const [ navigation, setNavigation] = useState()
   
   // Vars 
   const { getTotalItems } = useCart()
-  const { user } = useContext(AuthContext)
+  const { user, logout } = useContext(AuthContext)
 
-  const getProducts = async () => {
+  const getProductCategories = async () => {
     try {
       const product = await GetData(`${URL}/products/categories`)
       if (product) {
-        console.log(product)
         setProductCat(product)
+        const catPro = [{ name: "Inicio", href: "/" }]
+        product?.map(cat => (
+          catPro.push({ name: cat.nom_cat_pro, href: `/productos/${cat.slug?.toLowerCase()}` })
+        ))
+        setNavigation(catPro)
       }
     } catch (err) {
       const message = errorStatusHandler(err)
@@ -50,13 +48,11 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '' }) => {
   }
 
   const handleLogout = () => {
-    // Aquí va tu lógica de logout
-    console.log("Cerrar sesión");
-    // Por ejemplo: logout(); o setUser(null);
+    logout(URL)
   };
 
   useEffect(() => {
-    getProducts()
+    getProductCategories()
   },[])
 
   // Cierra el menú si se hace click fuera
@@ -85,8 +81,12 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '' }) => {
 
             {/* Desktop Navigation */}
             <nav className={styles.navigation}>
-              {navigation.map((item) => (
-                <a key={item.name} href={item.href} className={styles.navLink}>
+              {navigation?.map(item => (
+                <a key={item.name} 
+                  className={styles.navLink} 
+                  onClick={() => setCatPro(item.name)}
+                  href={item.href}
+                >
                   {item.name}
                 </a>
               ))}
@@ -111,7 +111,6 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '' }) => {
                   size="icon"
                   onClick={() => setIsProfileMenuOpen((prev) => !prev)}
                 >
-                  {console.log(user)}
                   <CheckImage
                     src={user?.img}
                     alt={`${user?.names || ""} ${user?.lastNames || ""}`}

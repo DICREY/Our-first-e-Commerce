@@ -3,17 +3,17 @@ import { useState } from "react"
 
 // Verify if load img
 export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = '' }) => {
-    // Dynamic vars 
-    const [ imgSrc, setImgSrc ] = useState(src && src !== 'No-Registrado'? src : imgDefault)
+  // Dynamic vars 
+  const [imgSrc, setImgSrc] = useState(src && src !== 'No-Registrado' ? src : imgDefault)
 
-    return (
-        <img
-            className={className}
-            src={imgSrc}
-            alt={alt || 'No Registrado'}
-            onError={() => setImgSrc(imgDefault)}
-        />
-    )
+  return (
+    <img
+      className={className}
+      src={imgSrc}
+      alt={alt || 'No Registrado'}
+      onError={() => setImgSrc(imgDefault)}
+    />
+  )
 }
 
 // Convierte la primera letra en mayúscula y el resto en minúscula
@@ -197,3 +197,15 @@ export const hourTraductor = (hour) => {
 
     return `${twelveHour}:${formattedMins} ${period}`;
 }
+
+// const getApi = async () => {
+//   try {
+//     const cat = await GetData(`${URL}/products/categories`)
+//     if (cat) {
+//       setCategories(cat)
+//     }
+//   } catch (err) {
+//     const message = errorStatusHandler(err)
+//     console.log(message)
+//   }
+// }

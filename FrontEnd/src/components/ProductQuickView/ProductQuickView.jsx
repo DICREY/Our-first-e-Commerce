@@ -67,7 +67,7 @@ const ProductQuickView = ({ product, isOpen, onClose, img = '' }) => {
             <div className={styles.attributes}>
               {product?.colors?.map((color, index) => (
                 <span key={index + 120} className={styles.attribute}>
-                  {color}
+                  {color.nom_col}
                 </span>
               ))}
             </div>

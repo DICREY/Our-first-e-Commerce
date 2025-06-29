@@ -73,7 +73,7 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
             ))}
           </div>
           <CheckImage
-            src={productImages[selectedImage]}
+            src={product.img}
             alt={product.name}
             imgDefault={img}
             className={styles.mainImage}
