@@ -20,17 +20,19 @@ END //
 CREATE PROCEDURE e_commerce.SellestProducts()
 BEGIN
     SELECT 
+        p.id_pro,
         p.nom_pro,
         p.pre_pro,
         p.sta_pro,
         p.des_pro,
-        p.img_pro,
         c.nom_cat_pro AS cat_pro,
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
                     co.nom_col,
-                    co.hex_col
+                    co.hex_col,
+                    img.nom_img,
+                    img.url_img
                 ) 
                 SEPARATOR '---'
             )
@@ -38,6 +40,8 @@ BEGIN
                 productos_colores pco
             JOIN
                 colores co ON pco.col_pro_col = co.id_col
+            JOIN
+                imagenes img ON pco.img_pro_col = img.id_img
             WHERE
                 pco.pro_col_pro = p.id_pro
         ) AS colors,

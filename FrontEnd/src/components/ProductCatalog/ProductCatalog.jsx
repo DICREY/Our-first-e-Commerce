@@ -256,9 +256,9 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
           filteredProducts?.map((product) => (
             <ProductCard 
               key={product.id_pro} 
-              product={product} 
+              data={product} 
               imgDefault={imgDefault} 
-              setProduct={setProduct}
+              set={setProduct}
             />
           ))
         )}

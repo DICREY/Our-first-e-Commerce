@@ -114,7 +114,7 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
                   <CheckImage
                     src={user?.img}
                     alt={`${user?.names || ""} ${user?.lastNames || ""}`}
-                    imgDefault={imgProductDefault}
+                    imgDefault={imgDefault}
                     className='imgPerfil'
                   />
                   {/* Perfil */}
@@ -186,7 +186,7 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
       </header>
 
       <CartSheet imgProductDefault={imgProductDefault} isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <FavoritesSheet products={products} isOpen={isFavoritesOpen} onClose={() => setIsFavoritesOpen(false)} />
+      <FavoritesSheet img={imgProductDefault} products={products} isOpen={isFavoritesOpen} onClose={() => setIsFavoritesOpen(false)} />
       {/* <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} navigation={navigation} /> */}
     </>
   )

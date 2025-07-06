@@ -24,19 +24,25 @@ const App = () => {
   // Vars 
   const URL = 'http://localhost:3000/ecommerce'
   const imgProduct = require('./Imgs/ProductDefault.png')
+  const imgUser = require('./Imgs/UserDefault.webp')
 
   return (
     <AuthProvider>
       <CartProvider>
         <Router>
           <div className="App">
-            <Header URL={URL} imgProductDefault={imgProduct} setCatPro={setCatPro} />
+            <Header URL={URL} imgDefault={imgUser} imgProductDefault={imgProduct} setCatPro={setCatPro} />
             <main>
               <Routes>
                 <Route path="/" element={<HomePage URL={URL} imgProduct={imgProduct} setProduct={setProduct} />} />
                 <Route path="/login" element={<LoginForm URL={URL} />} />
                 <Route path="/signup" element={<RegisterForm URL={URL} />} />
-                <Route path="/productos" element={<ProductCatalog URL={URL} imgDefault={imgProduct} setProduct={setProduct} />} />
+                <Route path="/productos" element={
+                  <ProductCatalog 
+                    URL={URL} 
+                    imgDefault={imgProduct} 
+                    setProduct={setProduct} 
+                  />} />
                 <Route path="/productos/lenceria" element={
                   <ProductCatalog 
                     URL={URL} 
@@ -44,7 +50,12 @@ const App = () => {
                     setProduct={setProduct} 
                     preSelectedCat='Lencería'
                   />} />
-                <Route path="/producto" element={<ProductDetailPage URL={URL} img={imgProduct} product={product} />} />
+                <Route path="/producto" element={
+                  <ProductDetailPage 
+                    URL={URL} 
+                    img={imgProduct} 
+                    product={product} 
+                  />} />
               </Routes>
             </main>
           </div>

@@ -1,5 +1,5 @@
 // Librarys 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Imports 
@@ -11,11 +11,14 @@ import styles from "./ProductDetailPage.module.css"
 
 // Component
 const ProductDetailPage = ({ img = '', product = {} }) => {
+  // Dynamic vars 
+  const [ selectedImage, setSelectedImage ] = useState(0)
+  const [ selectedColor, setSelectedColor ] = useState("")
+  const [ selectedSize, setSelectedSize ] = useState(null)
+  const [ quantity, setQuantity ] = useState(1)
+
+  // Vars 
   const navigate = useNavigate()
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0].nom_col || "")
-  const [selectedSize, setSelectedSize] = useState(product?.sizes[0] || "")
-  const [quantity, setQuantity] = useState(1)
   const { addToCart } = useCart()
 
   const handleQuickAdd = () => {
@@ -29,7 +32,7 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
         <p className={styles.notFoundText}>
           Lo sentimos, no pudimos encontrar el producto que buscas.
         </p>
-        <button className={styles.backButton} onClick={() => navigate("/")}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
           Volver al catálogo
         </button>
       </div>
@@ -37,9 +40,9 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
   }
 
   // Si el producto tiene múltiples imágenes (simulado)
-  const productImages = Array.isArray(product.image)
-    ? product.image
-    : [product.image || "/placeholder.svg?height=800&width=600"];
+  const productImages = Array.isArray(product.colors)
+    ? product.colors
+    : [product.colors || { img_pro_col: img }]
 
   // Calcular descuento si hay precio original
   const discount = product.originalPrice
@@ -53,28 +56,40 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
     if (newQuantity > 0 && newQuantity <= 10) {
       setQuantity(newQuantity);
     }
-  };
+  }
+
+  useEffect(() => {
+    if (product) {
+      setSelectedColor(product?.colors[0]?.nom_col)
+      setSelectedSize(product?.sizes[0])
+    }
+  },[])
 
   return (
     <main className={styles.page}>
+    {product && (
       <main className={styles.container}>
         <header className={styles.imageGallery}>
           <div className={styles.thumbnailContainer}>
-            {productImages.map((img, index) => (
-              <img
+            {productImages?.map((imagen, index) => (
+              <picture
                 key={index}
-                src={img}
-                alt={`Vista ${index + 1} de ${product.name}`}
-                className={`${styles.thumbnail} ${
-                  selectedImage === index ? styles.active : ""
-                }`}
                 onClick={() => setSelectedImage(index)}
-              />
+              >
+                <CheckImage
+                  imgDefault={img}
+                  src={imagen.url_img}
+                  alt={`Vista ${index + 1} de ${product.nom_pro}`}
+                  className={`${styles.thumbnail} ${
+                    selectedImage === index ? styles.active : ""
+                  }`}
+                />
+              </picture>
             ))}
           </div>
           <CheckImage
-            src={product.img}
-            alt={product.name}
+            src={product?.colors[selectedImage]?.url_img}
+            alt={product.nom_pro}
             imgDefault={img}
             className={styles.mainImage}
           />
@@ -175,6 +190,7 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
           </div>
         </section>
       </main>
+    )}
     </main>
   );
 };

@@ -54,19 +54,18 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                const resOne = this.format(result[0],'colors',['nom_col','hex_col'])
-                const lastRes = this.iterar(resOne,'sizes')
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: lastRes
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    const resOne = this.format(result[0],'colors',['nom_col','hex_col','url_img','nom_img'])
+                    const lastRes = this.iterar(resOne,'sizes')
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: lastRes
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
@@ -86,17 +85,16 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: result
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
@@ -116,17 +114,16 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: result
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
@@ -146,17 +143,16 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: result
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
@@ -176,17 +172,16 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: result
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
@@ -206,17 +201,16 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: result
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
@@ -236,17 +230,16 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: result
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
@@ -265,17 +258,16 @@ class Stats {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) rej({ message: err })
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Info found",
-                        result: result
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
