@@ -1,4 +1,4 @@
--- Active: 1746130779175@@127.0.0.1@3306@e_commerce
+-- Active: 1750268475844@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 CREATE TABLE e_commerce.roles(
@@ -110,7 +110,7 @@ CREATE TABLE e_commerce.sessions (
     browser_ses VARCHAR(100),
     os_ses VARCHAR(100),
     first_visit_ses TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_activity_ses TIMESTAMP,
+    last_activity_ses TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ref_ses VARCHAR(512),
     pai_ses VARCHAR(100),
     cit_ses VARCHAR(100)

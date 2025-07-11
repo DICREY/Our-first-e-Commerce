@@ -1,2 +1,5 @@
 yarn add react react-dom lucide-react react-router-dom axios
 yarn add -D react-scripts
+
+npm i react react-dom lucide-react react-router-dom axios
+npm i -D react-scripts

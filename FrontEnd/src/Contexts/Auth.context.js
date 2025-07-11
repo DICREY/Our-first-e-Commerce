@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
             } catch (err) {
                 setUser(null)
                 console.log(err)
-                if (err.status) logout()
+                if (err.status) logout('http://localhost:3000/ecommerce')
             }
         }
         checkAuth()
