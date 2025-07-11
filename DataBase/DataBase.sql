@@ -45,7 +45,7 @@ CREATE TABLE e_commerce.productos(
     pre_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro),
     des_pro TEXT NOT NULL,
     onSale BOOLEAN DEFAULT 1,
-    sta_pro ENUM("DISPONIBLE","NO-DISPONIBLE") DEFAULT("DISPONIBLE") NOT NULL # Estado del servicio
+    sta_pro BOOLEAN DEFAULT 1 NOT NULL # Estado del servicio
 );
 
 CREATE TABLE e_commerce.colores(

@@ -88,6 +88,7 @@ BEGIN
         e_commerce.productos p
     INNER JOIN 
         e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+    ORDER BY p.id_pro DESC
     LIMIT 1000;
 END //
 CREATE PROCEDURE e_commerce.GetProductsByCategory(
@@ -159,6 +160,107 @@ BEGIN
         AND c.sta_cat_pro = 1
     LIMIT 1000;
 END //
+CREATE PROCEDURE e_commerce.RegisterProduct(
+    IN p_nom_pro VARCHAR(100),
+    IN p_pre_pro DECIMAL(10,2),
+    IN p_des_pro TEXT,
+    IN p_onSale BOOLEAN,
+    IN p_nom_cat VARCHAR(100),
+    IN p_slug_cat VARCHAR(100),
+    IN p_colores TEXT,      -- Ejemplo: 'Rojo,Verde,Azul'
+    IN p_hex_colores TEXT,  -- Ejemplo: '#FF0000,#00FF00,#0000FF'
+    IN p_tallas TEXT,       -- Ejemplo: 'S,M,L'
+    IN p_imgs TEXT          -- Ejemplo: 'url1.jpg,url2.jpg,url3.jpg'
+)
+BEGIN
+    DECLARE v_id_cat INT;
+    DECLARE v_id_pro INT;
+    DECLARE v_id_col INT;
+    DECLARE v_id_img INT;
+    DECLARE v_id_tal INT;
+    DECLARE v_color VARCHAR(100);
+    DECLARE v_hex VARCHAR(7);
+    DECLARE v_talla VARCHAR(100);
+    DECLARE v_img VARCHAR(255);
+    DECLARE i INT DEFAULT 1;
+    DECLARE total_colores INT;
+    DECLARE total_tallas INT;
+    DECLARE total_imgs INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    -- Verifica si el producto ya existe
+    IF EXISTS (SELECT 1 FROM e_commerce.productos WHERE nom_pro = p_nom_pro) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El producto ya existe';
+    END IF;
+
+    -- Verifica si la categoría existe, si no la crea
+    SELECT id_cat_pro INTO v_id_cat FROM e_commerce.cat_productos WHERE nom_cat_pro = p_nom_cat LIMIT 1;
+    IF v_id_cat IS NULL THEN
+        INSERT INTO e_commerce.cat_productos (nom_cat_pro, slug) VALUES (p_nom_cat, p_slug_cat);
+        SET v_id_cat = LAST_INSERT_ID();
+    END IF;
+
+    -- Inserta el producto
+    INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro, onSale)
+    VALUES (v_id_cat, p_nom_pro, p_pre_pro, p_des_pro, p_onSale);
+    SET v_id_pro = LAST_INSERT_ID();
+
+    -- Procesa colores e imágenes (asume que ambos tienen la misma cantidad y están separados por coma)
+    SET total_colores = LENGTH(p_colores) - LENGTH(REPLACE(p_colores, ',', '')) + 1;
+    SET total_imgs = LENGTH(p_imgs) - LENGTH(REPLACE(p_imgs, ',', '')) + 1;
+    WHILE i <= total_colores DO
+        SET v_color = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_colores, ',', i), ',', -1));
+        SET v_hex = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_hex_colores, ',', i), ',', -1));
+        SET v_img = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_imgs, ',', i), ',', -1));
+
+        -- Verifica si el color existe, si no lo crea
+        SELECT id_col INTO v_id_col FROM e_commerce.colores WHERE nom_col = v_color LIMIT 1;
+        IF v_id_col IS NULL THEN
+            INSERT INTO e_commerce.colores (nom_col, hex_col) VALUES (v_color, v_hex);
+            SET v_id_col = LAST_INSERT_ID();
+        END IF;
+
+        -- Inserta la imagen
+        INSERT INTO e_commerce.imagenes (nom_img, url_img) VALUES (CONCAT(p_nom_pro, '_', v_color), v_img);
+        SET v_id_img = LAST_INSERT_ID();
+
+        -- Inserta en productos_colores
+        INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col)
+        VALUES (v_id_img, v_id_pro, v_id_col);
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Procesa tallas
+    SET i = 1;
+    SET total_tallas = LENGTH(p_tallas) - LENGTH(REPLACE(p_tallas, ',', '')) + 1;
+    WHILE i <= total_tallas DO
+        SET v_talla = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_tallas, ',', i), ',', -1));
+        -- Verifica si la talla existe, si no la crea
+        SELECT id_tal_pro INTO v_id_tal FROM e_commerce.tallas WHERE nom_tal_pro = v_talla LIMIT 1;
+        IF v_id_tal IS NULL THEN
+            INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES (v_talla);
+            SET v_id_tal = LAST_INSERT_ID();
+        END IF;
+        -- Inserta en productos_tallas
+        INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal)
+        VALUES (v_id_pro, v_id_tal);
+
+        SET i = i + 1;
+    END WHILE;
+
+    COMMIT;
+
+    SET autocommit = 1;
+END //
 
 /* DROP PROCEDURE e_commerce.GetAllProducts; */
 /* DROP PROCEDURE e_commerce.GetProductsCategories; */
@@ -169,3 +271,20 @@ END //
 /* CALL e_commerce.GetAllProducts(); */
 /* CALL e_commerce.GetProductsCategories(); */
 /* CALL e_commerce.GetProductsByCategory('Lencería'); */
+/* CALL e_commerce.RegisterProduct('Lencería'); */
+
+/* INSERT INTO e_commerce.colores (nom_col,hex_col,key_col)
+VALUES ('test1','#test1',
+'[
+    {
+        "nombre": "paors1",
+        "hex_col": "#ffffff"
+    },
+    {
+        "nombre": "paors2",
+        "hex_col": "#ffffff"
+    },
+]'
+); */
+
+SELECT * FROM e_commerce.imagenes;

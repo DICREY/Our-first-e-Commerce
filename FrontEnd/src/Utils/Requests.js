@@ -5,7 +5,7 @@ import axios from 'axios'
 // Traer datos
 export async function GetData( URL = '', set = null ) {
     try {
-        const response = await axios.get(URL,{ 
+        const response = await axios.get(URL,{
             headers: {
                     'x-api-key': 'e_commerce'
             },

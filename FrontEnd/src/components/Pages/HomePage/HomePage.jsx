@@ -45,7 +45,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
   return (
     <div className={styles.page}>
       {/* Hero Section */}
-      <HeroSection />
+      <HeroSection imgDefault={imgProduct} />
 
       {/* Features */}
       <section className={styles.features}>

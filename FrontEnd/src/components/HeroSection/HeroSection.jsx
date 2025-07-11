@@ -1,7 +1,44 @@
-import Badge from "../Badge/Badge"
-import styles from "./HeroSection.module.css"
+// Librarys 
+import { useEffect, useState } from "react"
 
-const HeroSection = () => {
+// Imports
+import { CheckImage, errorStatusHandler } from "../../Utils/utils"
+import Badge from "../Badge/Badge"
+
+// Import styles 
+import styles from "./HeroSection.module.css"
+import { GetData, PostData } from "../../Utils/Requests"
+
+// Component 
+const HeroSection = ({ URL = '', imgDefault = '' }) => {
+  // Dynamic Vars 
+  const [ currentProduct, setCurrentProduct ] = useState()
+
+  // Vars 
+  let didFetch = false
+
+  const GetCurrentProduct = async () => {
+    if (didFetch) return
+    try {
+      didFetch = true
+      const data = await GetData(`${URL}`)
+    } catch (err) {
+      const message = errorStatusHandler(err)
+    }
+  }
+  
+  const changeCurrentProduct = async () => {
+    try {
+      const data = await PostData(`${URL}`)
+    } catch (err) {
+      const message = errorStatusHandler(err)
+    }
+  }
+
+  useEffect(() => {
+    GetCurrentProduct()
+  })
+
   return (
     <section className={styles.hero}>
       <div className={styles.container}>
@@ -49,12 +86,13 @@ const HeroSection = () => {
           </div>
 
           {/* Image */}
-          <div className={styles.imageSection}>
+          <section className={styles.imageSection}>
             <div className={styles.imageContainer}>
-              <img
+              <CheckImage
                 src="/placeholder.svg?height=600&width=480"
                 alt="Modelo usando ropa de la nueva colección"
                 className={styles.heroImage}
+                imgDefault={imgDefault}
               />
 
               {/* Floating elements */}
@@ -73,7 +111,7 @@ const HeroSection = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </section>
