@@ -76,6 +76,7 @@ Route.post('/login', limiterLog, async (req,res) => {
         res.status(200).json({ __cred: token })
 
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 

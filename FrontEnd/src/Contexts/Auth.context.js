@@ -13,15 +13,24 @@ export const AuthProvider = ({ children }) => {
     const [ roles, setRoles ] = useState(null)
     const [ mainRol, setMainRol ] = useState(null)
     const [ admin, setAdmin ] = useState(false)
+    const [ img, setImg ] = useState(null)
+    const [ loading, setLoading ] = useState(true)
+
+    // Vars 
+    let didFetch = false
 
     // Functions
     // Iniciar sesion 
     const login = async (url = '', data = {}) => {
+        if (didFetch) return
         try {            
             const response = await PostData(url, data)
+            didFetch = true
+            setLoading(null)
             if (response) {
                 const userData = decodeJWT(response.__cred)
                 setUser(userData)
+                setImg(userData.img)
                 setRoles(userData.roles?.split(', ') || ['Usuario'])
                 setMainRol(userData.roles?.split(', ')[0] || ['Usuario'])
                 setAdmin(userData.roles?.split(', ').includes('Administrador'))
@@ -31,11 +40,12 @@ export const AuthProvider = ({ children }) => {
             throw err 
         }
     }
-
+    
     // Cerrar sesion 
-    const logout = async () => {
+    const logout = async ( URL = '') => {
         try {
-            const check = await PostData('http://localhost:3000/ecommerce/cookies/clear', {})
+            const check = await PostData(`${URL}/cookies/clear`, {})
+            setLoading(null)
             if (check) {
                 setUser(null)
                 setMainRol(null)
@@ -47,29 +57,39 @@ export const AuthProvider = ({ children }) => {
             setUser(null)
         }
     }
-
+    
     // Verificar sesión al cargar
     useEffect(() => {
         const checkAuth = async () => {
+            if (didFetch) return
+            setLoading(true)
             try {
                 const check = await PostData('http://localhost:3000/ecommerce/cookies/check', { name: '__cred' })
+                didFetch = true
+                setLoading(null)
                 if (check) {
                     const userData = decodeJWT(check.data)
                     setUser(userData)
+                    setImg(userData.img)
                     setRoles(userData?.roles?.split(', ') || ['Usuario'])
                     setMainRol(userData.roles?.split(', ')[0] || 'Usuario')
-                    setAdmin(userData.roles?.split(', ').includes('Veterinario'))
+                    setAdmin(userData.roles?.split(', ').includes('Administrador')? 1: 0)
                 }
             } catch (err) {
+                setLoading(null)
                 setUser(null)
+                // if (err.status) logout('http://localhost:3000/ecommerce')
             }
         }
         checkAuth()
     }, [])
 
     return (
-        <AuthContext.Provider value={{ admin, mainRol, user, roles, login, logout }}>
-            {children}
+        <AuthContext.Provider value={{ admin, img, mainRol, user, roles, login, logout }}>
+            {loading ? (
+                <p>Cargando datos...</p>
+                ): children
+            }
         </AuthContext.Provider>
     )
 }

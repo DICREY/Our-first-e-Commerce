@@ -14,10 +14,12 @@ import ProductQuickView from "../ProductQuickView/ProductQuickView"
 import styles from "./ProductCard.module.css"
 
 // Component 
-const ProductCard = ({ product = {}, img = '', setProduct }) => {
+const ProductCard = ({ data = {}, imgDefault = '', set }) => {
   // Dynamic vars 
-  const [isLiked, setIsLiked] = useState(false)
-  const [showQuickView, setShowQuickView] = useState(false)
+  const [ isLiked, setIsLiked ] = useState(false)
+  const [ showQuickView, setShowQuickView ] = useState(false)
+  const [ showImg, setShowImg ] = useState(null)
+  const [ product, setProduct ] = useState(null)
 
   // Vars 
   const { addToCart } = useCart()
@@ -30,100 +32,109 @@ const ProductCard = ({ product = {}, img = '', setProduct }) => {
   const handleLike = () => {
     const newLiked = !isLiked
     setIsLiked(newLiked)
-    localStorage.setItem(`liked-product-${product.id}`, newLiked)
+    localStorage.setItem(`liked-product-${product.id_pro}`, newLiked)
   }
 
   const handleCardClick = () => {
-    setProduct(product)
+    set(product)
     navigate(`/producto`)
   }
 
   // Persistencia de likes en localStorage
   useEffect(() => {
-    const liked = localStorage.getItem(`liked-product-${product.id}`)
-    if (liked === "true") setIsLiked(true)
-  }, [product.id])
+    if (data) setProduct(data)
+    if (product) {
+      const liked = localStorage.getItem(`liked-product-${product?.id_pro}`)
+      if (liked === "true") setIsLiked(true)
+      setShowImg(product?.colors[0]?.url_img)
+    }
+  }, [])
 
   return (
     <>
-      <section className={styles.card} onClick={handleCardClick} style={{ cursor: "pointer" }}>
-        <div className={styles.imageContainer}>
-          <CheckImage
-            src={product.img_pro}
-            alt={product.nom_pro}
-            imgDefault={img}
-            className={styles.image}
-          />
-          {/* Badges */}
-          <div className={styles.badges}>
-            {product.onSale && <Badge variant="sale">Oferta</Badge>}
-            {product.featured && <Badge variant="featured">Destacado</Badge>}
-          </div>
+      { product && (
+        <main>
+          <section className={styles.card} onClick={handleCardClick} style={{ cursor: "pointer" }}>
+            <div className={styles.imageContainer}>
+              <CheckImage
+                src={showImg}  
+                alt={product.nom_pro}
+                imgDefault={imgDefault}
+                className={styles.image}
+              />
+              {/* Badges */}
+              <div className={styles.badges}>
+                {product.onSale && <Badge variant="sale">Oferta</Badge>}
+                {product.featured && <Badge variant="featured">Destacado</Badge>}
+              </div>
 
-          {/* Actions overlay */}
-          <div className={styles.overlay}>
-            <div className={styles.overlayActions}>
-              <Button
-                size="sm"
-                variant="secondary"
+              {/* Actions overlay */}
+              <div className={styles.overlay}>
+                <div className={styles.overlayActions}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowQuickView(true);
+                    }}
+                  >
+                    <Eye /> Vista Rápida
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={(e) => { e.stopPropagation(); handleQuickAdd() }}
+                  >
+                    <PackagePlus /> Agregar
+                  </Button>
+                </div>
+              </div>
+
+              {/* Wishlist button */}
+              <button
+                className={styles.wishlistButton}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setShowQuickView(true);
+                  handleLike();
                 }}
               >
-                <Eye /> Vista Rápida
-              </Button>
-              <Button
-                size="sm"
-                variant="primary"
-                onClick={(e) => { e.stopPropagation(); handleQuickAdd() }}
-              >
-                <PackagePlus /> Agregar
-              </Button>
-            </div>
-          </div>
-
-          {/* Wishlist button */}
-          <button
-            className={styles.wishlistButton}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleLike();
-            }}
-          >
-            <span style={{ color: isLiked ? "#ef4444" : "#6b7280" }}>
-              <Heart />
-            </span>
-          </button>
-        </div>
-
-        <div className={styles.content}>
-          <div className={styles.productInfo}>
-            <h3 className={styles.productName}>{product.nom_pro}</h3>
-
-            <div className={styles.priceContainer}>
-              <span className={styles.price}>${product.pre_pro}</span>
-              {/* {product.originalPrice && (
-                <span className={styles.originalPrice}>${product.originalPrice.toFixed(2)}</span>
-              )} */}
+                <span style={{ color: isLiked ? "#ef4444" : "#6b7280" }}>
+                  <Heart />
+                </span>
+              </button>
             </div>
 
-            <div className={styles.colors}>
-              {product?.colors?.map((color, index) => (
-                <div key={index} className={styles.colorDot} style={{ backgroundColor: color.hex_col }} />
-              ))}
-              {product?.colors?.length > 3 && <span className={styles.colorCount}>+{product?.colors?.length - 3}</span>}
-            </div>
-          </div>
-        </div>
-      </section>
+            <div className={styles.content}>
+              <div className={styles.productInfo}>
+                <h3 className={styles.productName}>{product.nom_pro}</h3>
 
-      <ProductQuickView
-        product={product}
-        isOpen={showQuickView}
-        onClose={() => setShowQuickView(false)}
-        img={img}
-      />
+                <div className={styles.priceContainer}>
+                  <span className={styles.price}>${product.pre_pro}</span>
+                  {/* {product.originalPrice && (
+                    <span className={styles.originalPrice}>${product.originalPrice.toFixed(2)}</span>
+                  )} */}
+                </div>
+
+                <div className={styles.colors}>
+                  {product?.colors?.map((color, index) => (
+                    <div key={index} className={styles.colorDot} style={{ backgroundColor: color.hex_col }} />
+                  ))}
+                  {product?.colors?.length > 3 && <span className={styles.colorCount}>+{product?.colors?.length - 3}</span>}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <ProductQuickView
+            data={product}
+            isOpen={showQuickView}
+            onClose={() => setShowQuickView(false)}
+            img={imgDefault}
+          />
+        </main>
+        )
+      }
     </>
   )
 }

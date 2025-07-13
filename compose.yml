@@ -1,0 +1,36 @@
+services:
+  database:
+    container_name: DataBaseEcommerce
+    image: mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - ecommerce-data:/var/lib/mysql
+    environment:
+      - MARIADB_USER=root
+      - MARIADB_ROOT_PASSWORD=123
+  backend:
+    container_name: BackEndEcommerce
+    image: node
+    build: 
+      context: ./back-end
+      dockerfile: DockerFile
+    ports:
+      - 3000:3000
+    volumes:
+      - ecommerce-back:/home/dicrey/Documents/Ecommerce/back-end
+
+  frontend:
+    container_name: FrontEndEcommerce
+    image: node
+    build: 
+      context: ./front-end
+      dockerfile: DockerFile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ecommerce-front:/home/dicrey/Documents/Ecommerce/front-end/
+volumes:
+  ecommerce-data:
+  ecommerce-back:
+  ecommerce-front:

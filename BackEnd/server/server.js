@@ -6,6 +6,7 @@ const credentl = require('../routes/credentials.route')
 const cookies = require('../routes/cookies.route')
 const stats = require('../routes/stats.route')
 const peoples = require('../routes/people.route')
+const products = require('../routes/product.route')
 const testing = require('../routes/test.route')
 
 // function to Define routers
@@ -21,6 +22,7 @@ function routerApi(app) {
     router.use('/cookies',cookies)
     router.use('/stats',stats)
     router.use('/peoples',peoples)
+    router.use('/products',products)
     router.use('/test',testing)
 }
 

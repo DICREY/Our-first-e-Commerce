@@ -15,22 +15,114 @@ BEGIN
     ORDER BY 
         fecha;
 END //
+CREATE PROCEDURE e_commerce.MonthlySales()
+BEGIN
+    -- Tabla de meses (1=Enero, ..., 12=Diciembre)
+    WITH meses AS (
+        SELECT 1 AS mes_num, 'Enero' AS nombre_mes UNION ALL
+        SELECT 2, 'Febrero' UNION ALL
+        SELECT 3, 'Marzo' UNION ALL
+        SELECT 4, 'Abril' UNION ALL
+        SELECT 5, 'Mayo' UNION ALL
+        SELECT 6, 'Junio' UNION ALL
+        SELECT 7, 'Julio' UNION ALL
+        SELECT 8, 'Agosto' UNION ALL
+        SELECT 9, 'Septiembre' UNION ALL
+        SELECT 10, 'Octubre' UNION ALL
+        SELECT 11, 'Noviembre' UNION ALL
+        SELECT 12, 'Diciembre'
+    ),
+    ventas AS (
+        SELECT 
+            YEAR(p.fec_ped) AS anio,
+            MONTH(p.fec_ped) AS mes_num,
+            COUNT(DISTINCT p.id_ped) AS cantidad_pedidos,
+            IFNULL(SUM(dp.subtotal), 0) AS total_vendido
+        FROM 
+            e_commerce.pedidos p
+        LEFT JOIN
+            e_commerce.detalle_pedidos dp ON dp.ped_det_ped = p.id_ped
+        WHERE 
+            p.fec_ped BETWEEN '2025-01-01' AND '2025-12-31'
+        GROUP BY 
+            anio, mes_num
+    )
+    SELECT 
+        v.anio,
+        m.mes_num,
+        m.nombre_mes,
+        IFNULL(v.cantidad_pedidos, 0) AS cantidad_pedidos,
+        IFNULL(v.total_vendido, 0) AS total_vendido
+    FROM 
+        (SELECT DISTINCT anio FROM ventas) anios
+    CROSS JOIN meses m
+    LEFT JOIN ventas v
+        ON v.anio = anios.anio AND v.mes_num = m.mes_num
+    ORDER BY 
+        anios.anio, m.mes_num;
+END //
+
+CREATE PROCEDURE e_commerce.WeeklySales()
+BEGIN
+    -- Tabla de días de la semana (1=Domingo, 2=Lunes, ..., 7=Sábado)
+    WITH dias AS (
+        SELECT 1 AS dia_num, 'Domingo' AS nombre_dia UNION ALL
+        SELECT 2, 'Lunes' UNION ALL
+        SELECT 3, 'Martes' UNION ALL
+        SELECT 4, 'Miércoles' UNION ALL
+        SELECT 5, 'Jueves' UNION ALL
+        SELECT 6, 'Viernes' UNION ALL
+        SELECT 7, 'Sábado'
+    ),
+    ventas AS (
+        SELECT 
+            YEAR(p.fec_ped) AS anio,
+            WEEK(p.fec_ped, 1) AS semana,
+            DAYOFWEEK(p.fec_ped) AS dia_num,
+            COUNT(DISTINCT p.id_ped) AS cantidad_pedidos,
+            IFNULL(SUM(dp.subtotal), 0) AS total_vendido
+        FROM 
+            e_commerce.pedidos p
+        LEFT JOIN
+            e_commerce.detalle_pedidos dp ON dp.ped_det_ped = p.id_ped
+        WHERE 
+            p.fec_ped BETWEEN '2025-01-01' AND '2025-12-31'
+        GROUP BY 
+            anio, semana, dia_num
+    )
+    SELECT 
+        semanas.anio,
+        semanas.semana,
+        d.dia_num,
+        d.nombre_dia,
+        IFNULL(v.cantidad_pedidos, 0) AS cantidad_pedidos,
+        IFNULL(v.total_vendido, 0) AS total_vendido
+    FROM 
+        (SELECT DISTINCT anio, semana FROM ventas) semanas
+    CROSS JOIN dias d
+    LEFT JOIN ventas v
+        ON v.anio = semanas.anio AND v.semana = semanas.semana AND v.dia_num = d.dia_num
+    ORDER BY 
+        semanas.anio, semanas.semana, d.dia_num;
+END //
 
 -- Productos más vendidos
 CREATE PROCEDURE e_commerce.SellestProducts()
 BEGIN
     SELECT 
+        p.id_pro,
         p.nom_pro,
         p.pre_pro,
         p.sta_pro,
         p.des_pro,
-        p.img_pro,
         c.nom_cat_pro AS cat_pro,
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
                     co.nom_col,
-                    co.hex_col
+                    co.hex_col,
+                    img.nom_img,
+                    img.url_img
                 ) 
                 SEPARATOR '---'
             )
@@ -38,6 +130,8 @@ BEGIN
                 productos_colores pco
             JOIN
                 colores co ON pco.col_pro_col = co.id_col
+            JOIN
+                imagenes img ON pco.img_pro_col = img.id_img
             WHERE
                 pco.pro_col_pro = p.id_pro
         ) AS colors,
@@ -172,4 +266,9 @@ BEGIN
 END //
 
 /* CALL SellestProducts(); */
+/* CALL e_commerce.WeeklySales(); */
+/* CALL e_commerce.MonthlySales(); */
+
 /* DROP PROCEDURE `SellestProducts`; */
+/* DROP PROCEDURE e_commerce.`WeeklySales`; */
+/* DROP PROCEDURE e_commerce.`MonthlySales`; */

@@ -21,7 +21,7 @@ CREATE TABLE e_commerce.personas(
     pas_per VARCHAR(255) NOT NULL,
     gen_per VARCHAR(100) NOT NULL,
     estado BOOLEAN DEFAULT(1) NOT NULL,
-    fot_per TEXT DEFAULT("https://imgs.search.brave.com/rL6dnhwCDXLvz02lsRs2QjVj1F8o-8D0o4pTYhmHah8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2M4L01h/cmllX0N1cmllX2Mu/XzE5MjBzLmpwZy81/MTJweC1NYXJpZV9D/dXJpZV9jLl8xOTIw/cy5qcGc") NOT NULL,
+    fot_per TEXT DEFAULT("No-registrado") NOT NULL,
     fec_cre_per DATE DEFAULT(NOW()) NOT NULL
 );
 
@@ -35,6 +35,7 @@ CREATE TABLE e_commerce.otorgar_roles(
 CREATE TABLE e_commerce.cat_productos(
     id_cat_pro INT AUTO_INCREMENT PRIMARY KEY,
     nom_cat_pro VARCHAR(100) NOT NULL,INDEX(nom_cat_pro),
+    slug VARCHAR(100) UNIQUE NOT NULL,
     sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL
 );
 
@@ -44,14 +45,26 @@ CREATE TABLE e_commerce.productos(
     nom_pro VARCHAR(100) NOT NULL,INDEX(nom_pro),
     pre_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro),
     des_pro TEXT NOT NULL,
-    img_pro TEXT DEFAULT('No-Registrado') NOT NULL,
-    sta_pro ENUM("DISPONIBLE","NO-DISPONIBLE") DEFAULT("DISPONIBLE") NOT NULL # Estado del servicio
+    onSale BOOLEAN DEFAULT 1,
+    sta_pro BOOLEAN DEFAULT 1 NOT NULL # Estado del servicio
 );
 
 CREATE TABLE e_commerce.colores(
     id_col INT AUTO_INCREMENT PRIMARY KEY,
     nom_col VARCHAR(100) NOT NULL,INDEX(nom_col),
     hex_col VARCHAR(7) NOT NULL,INDEX(hex_col)
+);
+CREATE TABLE e_commerce.imagenes(
+    id_img INT AUTO_INCREMENT PRIMARY KEY,
+    nom_img VARCHAR(100) DEFAULT('No-Registrado') NOT NULL,INDEX(nom_img),
+    url_img TEXT DEFAULT('No-Registrado') NOT NULL
+);
+
+CREATE TABLE e_commerce.productos_colores(
+    id_pro_col INT AUTO_INCREMENT PRIMARY KEY,
+    img_pro_col INT NOT NULL,INDEX(img_pro_col),FOREIGN KEY (img_pro_col) REFERENCES imagenes(id_img) ON DELETE CASCADE ON UPDATE CASCADE,
+    pro_col_pro INT NOT NULL,INDEX(pro_col_pro),FOREIGN KEY (pro_col_pro) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    col_pro_col INT NOT NULL,INDEX(col_pro_col),FOREIGN KEY (col_pro_col) REFERENCES colores(id_col) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE e_commerce.tallas(
@@ -108,7 +121,7 @@ CREATE TABLE e_commerce.sessions (
     browser_ses VARCHAR(100),
     os_ses VARCHAR(100),
     first_visit_ses TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_activity_ses TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    last_activity_ses TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ref_ses VARCHAR(512),
     pai_ses VARCHAR(100),
     cit_ses VARCHAR(100)

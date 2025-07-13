@@ -21,17 +21,16 @@ class Credentl {
 
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,by,(err,result) => {
-                if(err) rej({ message: err }) 
-                if(!result || !result[0][0]) rej({
-                    message: "Not found",
-                    status: 404
-                })
-                setTimeout(() => {
-                    res({
-                        message: "Authorized",
-                        result: result[0]
-                    })
-                },1000)
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Authorized",
+                            result: result[0]
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 

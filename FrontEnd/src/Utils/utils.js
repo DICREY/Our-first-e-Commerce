@@ -1,19 +1,27 @@
 // Librarys 
 import { useState } from "react"
 
+// Greeting
+export const Greeting = () => {
+  const hora = new Date().getHours()
+  if (hora < 12) return "Buenos días"
+  if (hora < 18) return "Buenas tardes"
+  return "Buenas noches"
+}
+
 // Verify if load img
 export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = '' }) => {
-    // Dynamic vars 
-    const [ imgSrc, setImgSrc ] = useState(src && src !== 'No-Registrado'? src : imgDefault)
+  // Dynamic vars 
+  const [imgSrc, setImgSrc] = useState(src && src !== 'No-Registrado' ? src : imgDefault)
 
-    return (
-        <img
-            className={className}
-            src={imgSrc}
-            alt={alt || 'No Registrado'}
-            onError={() => setImgSrc(imgDefault)}
-        />
-    )
+  return (
+    <img
+      className={className}
+      src={imgSrc}
+      alt={alt || 'No Registrado'}
+      onError={() => setImgSrc(imgDefault)}
+    />
+  )
 }
 
 // Convierte la primera letra en mayúscula y el resto en minúscula
@@ -196,4 +204,13 @@ export const hourTraductor = (hour) => {
     const formattedMins = minuteNum.toString().padStart(2, "0");
 
     return `${twelveHour}:${formattedMins} ${period}`;
+}
+
+// Dividir lista en partes 
+export const divideList = (array = [], size = 5) => {
+  const result = []
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size))
+  }
+  return result
 }

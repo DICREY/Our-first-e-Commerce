@@ -9,9 +9,6 @@ const { authenticateJWT, ValidatorRol, Fullinfo } = require('../middleware/valid
 // vars
 const Route = Router()
 const prodInst = new Product()
-// Middleware 
-Route.use(authenticateJWT)
-Route.use(ValidatorRol("usuario"))
 
 // Routes
 Route.get('/all', async (req,res) => {
@@ -35,6 +32,40 @@ Route.get('/categories', async (req,res) => {
         // Verifiy if exists
         const search = await productInstans.findAllCategories()
         if (!search.result) res.status(404).json({ message: "Productos no encontrados"})
+
+        res.status(200).json(search)
+    } catch (err) {
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
+Route.get('/colors', async (req,res) => {
+    try {
+        // Vars 
+        const productInstans = new Product()
+
+        // Verifiy if exists
+        const search = await productInstans.findAllColors()
+        if (!search.result) res.status(404).json({ message: "Colores no encontrados"})
+
+        res.status(200).json(search)
+    } catch (err) {
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
+Route.get('/sizes', async (req,res) => {
+    try {
+        // Vars 
+        const productInstans = new Product()
+
+        // Verifiy if exists
+        const search = await productInstans.findAllSizes()
+        if (!search.result) res.status(404).json({ message: "Tamaños no encontrados"})
 
         res.status(200).json(search)
     } catch (err) {
@@ -105,25 +136,28 @@ Route.post('/by/categorie', async (req,res) => {
     }
 })
 
+// Middleware 
+// Route.use(authenticateJWT)
+// Route.use(ValidatorRol("usuario"))
+// , ValidatorRol("administrador")
 Route.post('/register', async (req,res) => {
-    // Vars 
-    const saltRounds = 15
-    const body = req.body
-    
     try {
-        // Verifiy if exist
-        const find = await prodInst.findBy(toString(body.doc_per))
-        if (find.result[0][0].nom_per) res.status(302).json({ message: "Producto ya existe" })
+        // Vars 
+        const body = req.body
+        const prod = new Product(body)
+        const create = await prod.create()
 
-        const create = await prodInst.create({ hash_pass: await hash(body.pas_per,saltRounds), ...body })
-        res.status(201).json(create)
+        if (create.success) return res.status(201).json(create)
 
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch(err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
-Route.put('/modify', async (req,res) => {
+Route.put('/modify', ValidatorRol("administrador"),async (req,res) => {
     // Vars 
     const { body } = req
     const saltRounds = 15
@@ -147,7 +181,7 @@ Route.put('/modify', async (req,res) => {
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
-Route.delete('/delete', async (req,res) => {
+Route.delete('/delete', ValidatorRol("administrador"),async (req,res) => {
     // Vars 
     const { body } = req
     console.log(body)
@@ -162,6 +196,25 @@ Route.delete('/delete', async (req,res) => {
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch (err) {
+
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
+Route.post('/test', async (req,res) => {
+    try {
+        // Vars 
+        const body = req.body
+        const prod = new Product(body)
+        const create = await prod.test()
+
+        if (create.success) return res.status(201).json(create)
+
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
+    } catch(err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
