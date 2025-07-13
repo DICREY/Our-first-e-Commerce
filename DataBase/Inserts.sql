@@ -1,4 +1,4 @@
--- Active: 1750268475844@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 INSERT INTO e_commerce.roles (nom_rol) VALUES
 ('Administrador'),
 ('Usuario');
@@ -86,33 +86,33 @@ INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES
 -- 4. Insertar 20 productos de ropa para mujer
 INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro) VALUES
 -- Ropa casual
-(1, 'Blusa de seda estampada', 45.99, 'Blusa elegante de seda con estampado floral'),
-(1, 'Jeans skinny alto talle', 59.99, 'Jeans ajustados con tiro alto y elastano'),
-(1, 'Vestido midi floral', 65.99, 'Vestido hasta la rodilla con estampado de flores'),
+(1, 'Blusa de seda estampada', 45000.99, 'Blusa elegante de seda con estampado floral'),
+(1, 'Jeans skinny alto talle', 59000.99, 'Jeans ajustados con tiro alto y elastano'),
+(1, 'Vestido midi floral', 65000.99, 'Vestido hasta la rodilla con estampado de flores'),
 -- Abrigos y chaquetas
-(1, 'Chaqueta de denim', 89.99, 'Chaqueta estilo oversize en mezclilla'),
-(1, 'Abrigo de lana invierno', 129.99, 'Abrigo largo para clima frío con cinturón'),
+(1, 'Chaqueta de denim', 89000.99, 'Chaqueta estilo oversize en mezclilla'),
+(1, 'Abrigo de lana invierno', 129000.99, 'Abrigo largo para clima frío con cinturón'),
 -- Ropa deportiva
-(3, 'Leggings deportivos compresión', 49.99, 'Leggings de alta compresión para entrenamiento'),
-(3, 'Top deportivo soporte alto', 39.99, 'Top con soporte máximo para actividades intensas'),
+(3, 'Leggings deportivos compresión', 49000.99, 'Leggings de alta compresión para entrenamiento'),
+(3, 'Top deportivo soporte alto', 39000.99, 'Top con soporte máximo para actividades intensas'),
 -- Lencería
-(2, 'Conjunto de encaje negro', 55.99, 'Sujetador y braga de encaje con detalles delicados'),
-(2, 'Pijama de satén corto', 42.99, 'Conjunto de pijama en satén suave'),
+(2, 'Conjunto de encaje negro', 55000.99, 'Sujetador y braga de encaje con detalles delicados'),
+(2, 'Pijama de satén corto', 42000.99, 'Conjunto de pijama en satén suave'),
 -- Ropa de baño
-(1, 'Bikini estampado tropical', 49.99, 'Conjunto de bikini con estampado floral'),
-(1, 'Bañador entero deportivo', 59.99, 'Bañador de una pieza para natación'),
+(1, 'Bikini estampado tropical', 49000.99, 'Conjunto de bikini con estampado floral'),
+(1, 'Bañador entero deportivo', 59000.99, 'Bañador de una pieza para natación'),
 -- Ropa formal
-(1, 'Traje de chaqueta slim', 149.99, 'Conjunto de chaqueta y pantalón para oficina'),
-(1, 'Vestido de cóctel elegante', 119.99, 'Vestido corto para eventos especiales'),
+(1, 'Traje de chaqueta slim', 149000.99, 'Conjunto de chaqueta y pantalón para oficina'),
+(1, 'Vestido de cóctel elegante', 119000.99, 'Vestido corto para eventos especiales'),
 -- Ropa de maternidad
-(1, 'Vestido maternidad verano', 54.99, 'Vestido holgado con tirantes ajustables'),
-(1, 'Jeans maternidad elásticos', 69.99, 'Jeans con bandaja elástica para embarazo'),
+(1, 'Vestido maternidad verano', 54000.99, 'Vestido holgado con tirantes ajustables'),
+(1, 'Jeans maternidad elásticos', 69000.99, 'Jeans con bandaja elástica para embarazo'),
 -- Accesorios de moda
-(1, 'Chal de cachemira', 79.99, 'Chal fino para todas las estaciones'),
-(1, 'Fular de seda estampado', 39.99, 'Fular ligero con estampado artístico'),
+(1, 'Chal de cachemira', 79000.99, 'Chal fino para todas las estaciones'),
+(1, 'Fular de seda estampado', 39000.99, 'Fular ligero con estampado artístico'),
 -- Ropa plus size
-(1, 'Vestido plus size floral', 69.99, 'Vestido holgado con estampado grande'),
-(1, 'Blusa plus size manga larga', 49.99, 'Blusa elegante con detalles en cuello');
+(1, 'Vestido plus size floral', 69000.99, 'Vestido holgado con estampado grande'),
+(1, 'Blusa plus size manga larga', 49000.99, 'Blusa elegante con detalles en cuello');
 
 -- Asignación de colores y tallas a algunos productos
 INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col) VALUES 
@@ -149,25 +149,31 @@ INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES
 ('Transferencia Bancaria'),
 ('Billetera Digital');
 
-INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped) VALUES
-(1, 'Calle 123 #45-67, Bogotá', 1, DEFAULT),  -- Pedido 1: Cliente Juan Pérez (ID 1)
-(2, 'Av. Principal #12-34, Medellín', 3, DEFAULT), -- Pedido 2: Cliente María Gómez (ID 2)
-(3, 'Carrera 56 #78-90, Cali', 4, 'ENTREGADO'),  -- Pedido 3: Cliente Carlos Rodríguez (ID 3) - Este cliente es hombre pero podría comprar para regalo
-(4, 'Diagonal 34 #56-78, Barranquilla', 2, 'PROCESANDO'), -- Pedido 4: Cliente Ana Martínez (ID 4)
-(5, 'Transversal 12 #34-56, Cartagena', 5, DEFAULT); -- Pedido 5: Cliente Luis García (ID 5) - Compra grande
+INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped,fec_ped) VALUES
+(1, 'Calle 123 #45-67, Bogotá', 1, DEFAULT, '2025-09-20'),  -- Pedido 1: Cliente Juan Pérez (ID 1)
+(2, 'Av. Principal #12-34, Medellín', 3, DEFAULT, '2025-08-20'), -- Pedido 2: Cliente María Gómez (ID 2)
+(3, 'Carrera 56 #78-90, Cali', 4, 'ENTREGADO', '2025-01-20'),  -- Pedido 3: Cliente Carlos Rodríguez (ID 3) - Este cliente es hombre pero podría comprar para regalo
+(4, 'Diagonal 34 #56-78, Barranquilla', 2, 'PROCESANDO', '2025-07-20'), -- Pedido 4: Cliente Ana Martínez (ID 4)
+(5, 'Transversal 12 #34-56, Cartagena', 5, DEFAULT, '2025-09-20'), -- Pedido 5: Cliente Luis García (ID 5) - Compra grande
+(2, 'Calle 2 #2-2', 2, 'ENTREGADO', '2025-07-02'),
+(1, 'Calle 1 #1-1', 1, 'ENTREGADO', '2025-07-01');
 
 INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, pro_det_ped, can_det_ped, pre_uni_det_ped) VALUES
-(1, 1, 2, 45.99),  -- 2 Blusas de seda
-(1, 6, 1, 49.99),   -- 1 Legging deportivo
-(2, 3, 1, 65.99),  -- 1 Vestido midi floral
-(2, 8, 2, 55.99),  -- 2 Conjuntos de encaje
-(2, 12, 1, 119.99), -- 1 Vestido de cóctel
-(3, 5, 1, 129.99),  -- 1 Abrigo de lana
-(3, 17, 1, 79.99),   -- 1 Chal de cachemira
-(4, 7, 2, 39.99),   -- 2 Tops deportivos
-(4, 10, 1, 49.99),   -- 1 Bikini tropical
-(5, 2, 3, 59.99),   -- 3 Jeans skinny
-(5, 4, 1, 89.99),    -- 1 Chaqueta de denim
-(5, 9, 2, 42.99),    -- 2 Pijamas de satén
-(5, 13, 1, 149.99),  -- 1 Traje de chaqueta
-(5, 19, 1, 69.99);   -- 1 Vestido plus size
+(1, 1, 2, 45000.99),  -- 2 Blusas de seda
+(1, 6, 1, 49000.99),   -- 1 Legging deportivo
+(2, 3, 1, 65000.99),  -- 1 Vestido midi floral
+(2, 8, 2, 55000.99),  -- 2 Conjuntos de encaje
+(2, 12, 1, 119000.99), -- 1 Vestido de cóctel
+(3, 5, 1, 129000.99),  -- 1 Abrigo de lana
+(3, 17, 1, 79000.99),   -- 1 Chal de cachemira
+(4, 7, 2, 39000.99),   -- 2 Tops deportivos
+(4, 10, 1, 49000.99),   -- 1 Bikini tropical
+(5, 2, 3, 59000.99),   -- 3 Jeans skinny
+(5, 4, 1, 89000.99),    -- 1 Chaqueta de denim
+(5, 9, 2, 42000.99),    -- 2 Pijamas de satén
+(5, 13, 1, 149000.99),  -- 1 Traje de chaqueta
+(5, 19, 1, 69000.99),   -- 1 Vestido plus size
+(6, 1, 2, 45000.99),
+(6, 2, 1, 59000.99),
+(7, 3, 1, 65000.99),
+(7, 4, 2, 89000.99);

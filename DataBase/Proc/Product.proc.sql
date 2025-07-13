@@ -1,4 +1,4 @@
--- Active: 1750268475844@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.GetProductsCategories()
 BEGIN
     -- Verifica si hay categorias
@@ -287,4 +287,4 @@ VALUES ('test1','#test1',
 ]'
 ); */
 
-SELECT * FROM e_commerce.imagenes;
+/* SELECT * FROM e_commerce.imagenes; */

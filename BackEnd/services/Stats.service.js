@@ -73,6 +73,64 @@ class Stats {
         })
     }
 
+    // function to find Weekly Sales
+    async WeeklySales() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL WeeklySales();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,(err,result) => {
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result[0]
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
+    // function to find Monthly Sales
+    async MonthlySales() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL MonthlySales();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,(err,result) => {
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result[0]
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
     // function to find Annual sales
     async AnnualSales() {
         return new Promise((res,rej) => {

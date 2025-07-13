@@ -1,4 +1,4 @@
--- Active: 1750268475844@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 CREATE TABLE e_commerce.roles(

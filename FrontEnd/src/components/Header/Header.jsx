@@ -28,7 +28,7 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
   
   // Vars 
   const { getTotalItems } = useCart()
-  const { user, logout } = useContext(AuthContext)
+  const { user, logout, admin } = useContext(AuthContext)
 
   const getProductCategories = async () => {
     try {
@@ -46,10 +46,6 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
       console.log(message)
     }
   }
-
-  const handleLogout = () => {
-    logout(URL)
-  };
 
   useEffect(() => {
     getProductCategories()
@@ -90,6 +86,14 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
                   {item.name}
                 </a>
               ))}
+              {admin && (
+                <a
+                  className={styles.navLink} 
+                  href={'/admin/home'}
+                >
+                  Administración
+                </a>
+              )}
             </nav>
 
             {/* Actions */}
@@ -144,7 +148,7 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
                       <>
                         <a href="/profile" className={styles.menuOption}>Perfil</a>
                         <button
-                          onClick={handleLogout}
+                          onClick={() => logout(URL)}
                           className={styles.menuOption}
                           style={{ border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}
                         >

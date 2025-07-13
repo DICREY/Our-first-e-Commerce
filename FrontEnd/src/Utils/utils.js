@@ -1,6 +1,14 @@
 // Librarys 
 import { useState } from "react"
 
+// Greeting
+export const Greeting = () => {
+  const hora = new Date().getHours()
+  if (hora < 12) return "Buenos días"
+  if (hora < 18) return "Buenas tardes"
+  return "Buenas noches"
+}
+
 // Verify if load img
 export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = '' }) => {
   // Dynamic vars 
@@ -198,14 +206,11 @@ export const hourTraductor = (hour) => {
     return `${twelveHour}:${formattedMins} ${period}`;
 }
 
-// const getApi = async () => {
-//   try {
-//     const cat = await GetData(`${URL}/products/categories`)
-//     if (cat) {
-//       setCategories(cat)
-//     }
-//   } catch (err) {
-//     const message = errorStatusHandler(err)
-//     console.log(message)
-//   }
-// }
+// Dividir lista en partes 
+export const divideList = (array = [], size = 5) => {
+  const result = []
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size))
+  }
+  return result
+}

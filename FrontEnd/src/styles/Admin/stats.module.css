@@ -1,0 +1,142 @@
+/* components/WeeklySales/WeeklySales.module.css */
+.card {
+  background-color: var(--white);
+  padding: 1rem;
+  border-radius: var(--rounded);
+  box-shadow: var(--shadow);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-weight: 600;
+  color: var(--dark-gray);
+  margin: 0;
+}
+
+.stats {
+  text-align: right;
+}
+
+.amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.percentage {
+  color: var(--success-color);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.chartContainer {
+  height: 12rem;
+  color: var(--secondary-color);
+}
+
+/* components/MarketShare/MarketShare.module.css */
+.chartWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.doughnutContainer {
+  position: relative;
+  height: 10rem;
+  width: 10rem;
+}
+
+.centerText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.25rem;
+  color: var(--dark-gray);
+  font-weight: 700;
+}
+
+.legend {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--dark-gray);
+}
+
+.legend p {
+  margin: 0.25rem 0;
+}
+
+/* components/SellestProducts */
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mainProduct {
+  display: flex;
+  align-items: center;
+}
+
+.circle {
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--primary-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle span {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.productInfo {
+  margin-left: 1rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--dark-gray);
+  margin: 0;
+}
+
+.productName {
+  font-size: .925rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--gray-800);
+}
+
+.others {
+  text-align: left;
+  width: 28%;
+}
+
+.ProductPercentage {
+    font-weight: bold;
+    font-size: .9rem;
+    color: var(--gray-800);
+}
+
+/* components/TotalOrders/TotalOrders.module.css */
+.target {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.target span {
+  font-weight: 600;
+}
