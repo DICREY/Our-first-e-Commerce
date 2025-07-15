@@ -135,11 +135,11 @@ INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col)
 (36, 17, 2), (37, 17, 4),
 (38, 18, 2), (39, 18, 4),
 (40, 19, 2), (41, 19, 4);
-
+/* 
 INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
 (1, 1), (1, 2), (1, 3), (1, 4),  -- XS, S, M, L
 (2, 7), (2, 8), (2, 9), (2, 10), (2, 11),  -- 34, 36, 38, 40, 42
-(6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6);  -- XS, S, M, L, XL, XXL
+(6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6);  -- XS, S, M, L, XL, XXL */
 
 INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES 
 ('Tarjeta de Crédito'),
