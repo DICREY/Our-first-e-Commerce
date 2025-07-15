@@ -9,15 +9,11 @@
 .sidebar {
   background-color: var(--white);
   box-shadow: var(--shadow);
-  transition: var(--transition);
   height: 100vh;
   position: sticky;
   top: 0;
   overflow-y: auto;
-}
-
-.sidebar.open {
-  width: var(--sidebar-width);
+  transition: var(--transition);
 }
 
 .sidebar.closed {

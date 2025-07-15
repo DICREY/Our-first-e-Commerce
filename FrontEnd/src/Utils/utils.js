@@ -214,3 +214,11 @@ export const divideList = (array = [], size = 5) => {
   }
   return result
 }
+
+export const formatNumber = (num = 0) => {
+  if (isNaN(num)) return '0.00'
+  return num
+    .toFixed(2) // dos decimales
+    .replace('.',',')
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ".") // puntos cada 3 cifras
+}

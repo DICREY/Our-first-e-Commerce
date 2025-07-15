@@ -19,18 +19,18 @@ CREATE PROCEDURE e_commerce.MonthlySales()
 BEGIN
     -- Tabla de meses (1=Enero, ..., 12=Diciembre)
     WITH meses AS (
-        SELECT 1 AS mes_num, 'Enero' AS nombre_mes UNION ALL
-        SELECT 2, 'Febrero' UNION ALL
-        SELECT 3, 'Marzo' UNION ALL
-        SELECT 4, 'Abril' UNION ALL
-        SELECT 5, 'Mayo' UNION ALL
-        SELECT 6, 'Junio' UNION ALL
-        SELECT 7, 'Julio' UNION ALL
-        SELECT 8, 'Agosto' UNION ALL
-        SELECT 9, 'Septiembre' UNION ALL
-        SELECT 10, 'Octubre' UNION ALL
-        SELECT 11, 'Noviembre' UNION ALL
-        SELECT 12, 'Diciembre'
+        SELECT 1 AS mes_num, 'Ene' AS nombre_mes UNION ALL
+        SELECT 2, 'Feb' UNION ALL
+        SELECT 3, 'Mar' UNION ALL
+        SELECT 4, 'Abr' UNION ALL
+        SELECT 5, 'May' UNION ALL
+        SELECT 6, 'Jun' UNION ALL
+        SELECT 7, 'Jul' UNION ALL
+        SELECT 8, 'Ago' UNION ALL
+        SELECT 9, 'Sep' UNION ALL
+        SELECT 10, 'Oct' UNION ALL
+        SELECT 11, 'Nov' UNION ALL
+        SELECT 12, 'Dic'
     ),
     ventas AS (
         SELECT 
@@ -66,13 +66,13 @@ CREATE PROCEDURE e_commerce.WeeklySales()
 BEGIN
     -- Tabla de días de la semana (1=Domingo, 2=Lunes, ..., 7=Sábado)
     WITH dias AS (
-        SELECT 1 AS dia_num, 'Domingo' AS nombre_dia UNION ALL
-        SELECT 2, 'Lunes' UNION ALL
-        SELECT 3, 'Martes' UNION ALL
-        SELECT 4, 'Miércoles' UNION ALL
-        SELECT 5, 'Jueves' UNION ALL
-        SELECT 6, 'Viernes' UNION ALL
-        SELECT 7, 'Sábado'
+        SELECT 1 AS dia_num, 'Dom' AS nombre_dia UNION ALL
+        SELECT 2, 'Lun' UNION ALL
+        SELECT 3, 'Mar' UNION ALL
+        SELECT 4, 'Mié' UNION ALL
+        SELECT 5, 'Jue' UNION ALL
+        SELECT 6, 'Vie' UNION ALL
+        SELECT 7, 'Sáb'
     ),
     ventas AS (
         SELECT 
@@ -86,7 +86,8 @@ BEGIN
         LEFT JOIN
             e_commerce.detalle_pedidos dp ON dp.ped_det_ped = p.id_ped
         WHERE 
-            p.fec_ped BETWEEN '2025-01-01' AND '2025-12-31'
+            YEAR(p.fec_ped) = YEAR(CURRENT_DATE)
+            AND WEEK(p.fec_ped, 1) = WEEK(CURRENT_DATE, 1)
         GROUP BY 
             anio, semana, dia_num
     )

@@ -107,29 +107,31 @@ export const TotalSales = ({ URL = '' }) => {
     }
 
     return (
-        <aside className={styles.totalSales}>
-            <h2 className={styles.title}>Ventas Totales</h2>
+        <article className={styles.totalSalesContainer}>
+            <aside className={styles.totalSales}>
+                <h2 className={styles.title}>Ventas Totales</h2>
 
-            <header className={styles.summary}>
-                <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>Mes pasado:</span>
-                    <span className={styles.summaryValue}>${years?.lastMonth?.value || 0}</span>
-                </div>
+                <header className={styles.summary}>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>Mes pasado:</span>
+                        <span className={styles.summaryValue}>${years?.lastMonth?.value || 0}</span>
+                    </div>
 
-                <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>Año anterior:</span>
-                    <span className={styles.summaryValue}>${years?.prevYear?.value || 0}</span>
-                </div>
-            </header>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>Año anterior:</span>
+                        <span className={styles.summaryValue}>${years?.prevYear?.value || 0}</span>
+                    </div>
+                </header>
 
-            <hr className={styles.divider} />
+                <hr className={styles.divider} />
 
-            <main className={styles.chartContainer}>
-                <Line
-                    data={chartData}
-                    options={chartOptions}
-                />
-            </main>
-        </aside>
+                <main className={styles.chartContainer}>
+                    <Line
+                        data={chartData}
+                        options={chartOptions}
+                    />
+                </main>
+            </aside>
+        </article>
     )
 }

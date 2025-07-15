@@ -16,7 +16,7 @@ import {
 } from 'chart.js'
 
 // Imports
-import { divideList, errorStatusHandler } from '../../Utils/utils'
+import { divideList, errorStatusHandler, formatNumber } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 
 // Import styles 
@@ -40,11 +40,12 @@ export const WeeklySales = ({ URL = '' }) => {
     // Dynamic vars 
     const [ almcData, setAlmcData ] = useState()
     const [ totals, setTotals ] = useState()
+    const [ days, setDays ] = useState()
     
     // Vars
     let didFetch = false
     const data = {
-        labels: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        labels: days || [],
         datasets: [
         {
             label: 'Ventas ($)',
@@ -66,7 +67,7 @@ export const WeeklySales = ({ URL = '' }) => {
             grid: { display: false },
             ticks: {
             callback: function(value) {
-                return '$' + value/1000 + 'K'
+                return '$' + value / 1000 + 'K'
             }
             }
         },
@@ -79,10 +80,11 @@ export const WeeklySales = ({ URL = '' }) => {
         if (didFetch) return
         try {
             const got = await GetData(`${URL}/stats/weekly-sales`)
-            console.log(got)
             didFetch = true
             if (got) {
+                const day = got?.map(i => i.nombre_dia)
                 const MapData = got?.map(i => i.total_vendido)
+                setDays(day)
                 setAlmcData(got)
                 setTotals(MapData)
             }
@@ -100,7 +102,7 @@ export const WeeklySales = ({ URL = '' }) => {
             <header className={styles.header}>
                 <h3 className={styles.title}>Ventas Semanales</h3>
                 <div className={styles.stats}>
-                <p className={styles.amount}>${totals?.reduce((acc, val) => acc + val, 0)}</p>
+                <p className={styles.amount}>${formatNumber(totals?.reduce((acc, val) => acc + val, 0))}</p>
                 <p className={styles.percentage}>+3.5%</p>
                 </div>
             </header>
@@ -227,7 +229,7 @@ export const SellestProducts = ({ URL = '' }) => {
                     </div>
                     <div className={styles.others}>
                         <p className={styles.subtitle}>Vendido</p>
-                        <p className={styles.ProductPercentage}>${pro.ingresos_generados}/{pro.unidades_vendidas}</p>
+                        <p className={styles.ProductPercentage}>${formatNumber(pro.ingresos_generados)}/{pro.unidades_vendidas}</p>
                     </div>
                 </article>
             ))}
@@ -239,15 +241,18 @@ export const SellestProducts = ({ URL = '' }) => {
 export const TotalOrders = ({ URL = '' }) => {
     // Dynamic vars 
     const [ almcData, setAlmcData ] = useState()
+    const [ months, setMonths ] = useState()
+    const [ orders, setOrders ] = useState()
+    const [ total, setTotal ] = useState()
     
     // Vars
     let didFetch = false
     const data = {
-        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+        labels: months || [],
         datasets: [
             {
                 label: 'Órdenes',
-                data: [8500, 9200, 10500, 11200, 9800, 12400],
+                data: orders || [],
                 backgroundColor: 'var(--secondary-color)',
                 borderRadius: 6,
             },
@@ -263,7 +268,7 @@ export const TotalOrders = ({ URL = '' }) => {
                 grid: { display: false },
                 ticks: {
                     callback: function (value) {
-                        return value / 1000 + 'K'
+                        return value
                     }
                 }
             },
@@ -275,9 +280,15 @@ export const TotalOrders = ({ URL = '' }) => {
     const GetInfo = async () => {
         if (didFetch) return
         try {
-            const got = await GetData(`${URL}`)
+            const got = await GetData(`${URL}/stats/monthly-sales`)
             didFetch = true
             if (got) {
+                const month = got?.map(i => i.nombre_mes)
+                const order = got?.map(i => i.cantidad_pedidos)
+                const MapData = got?.map(i => i.total_vendido)
+                setTotal(MapData)
+                setMonths(month)
+                setOrders(order)
                 setAlmcData(got)
             }
         } catch (err) {
@@ -294,7 +305,7 @@ export const TotalOrders = ({ URL = '' }) => {
             <div className={styles.header}>
                 <h3 className={styles.title}>Total Order</h3>
                 <div className={styles.stats}>
-                    <p className={styles.amount}>58.4K</p>
+                    <p className={styles.amount}>${formatNumber(total?.reduce((acc, val) => acc + val, 0))}</p>
                     <p className={styles.percentage}>~ 13.6%</p>
                 </div>
             </div>
