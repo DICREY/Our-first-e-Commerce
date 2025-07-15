@@ -14,6 +14,7 @@
 
   --primary-color: #A7C7E7;       /* Color principal (índigo) */
   --secondary-color: #3814d8;     /* Azul pastel */
+  --secondary: #3814d8;     /* Azul pastel */
   --success-color: #10b981;
   --white: #ffffff;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

@@ -106,6 +106,34 @@ BEGIN
         semanas.anio, semanas.semana, d.dia_num;
 END //
 
+CREATE PROCEDURE e_commerce.SalesPerDay()
+BEGIN
+    -- Ventas diarias para el gráfico (últimos 12 días)
+    SELECT 
+        DATE_FORMAT(p.fec_ped, '%b %e') AS day,
+        SUM(d.subtotal) AS value
+    FROM e_commerce.pedidos p
+    JOIN e_commerce.detalle_pedidos d ON p.id_ped = d.ped_det_ped
+    WHERE p.sta_ped != 'CANCELADO'
+      AND p.fec_ped >= CURRENT_DATE - INTERVAL 12 DAY
+    GROUP BY DATE(p.fec_ped)
+    ORDER BY tipo, day;
+END //
+
+CREATE PROCEDURE e_commerce.TodaySales()
+BEGIN
+    -- Ventas diarias para el gráfico (últimos 12 días)
+    SELECT 
+        DATE_FORMAT(p.fec_ped, '%b %e') AS day,
+        SUM(d.subtotal) AS value
+    FROM e_commerce.pedidos p
+    JOIN e_commerce.detalle_pedidos d ON p.id_ped = d.ped_det_ped
+    WHERE p.sta_ped != 'CANCELADO'
+      AND p.fec_ped = CURRENT_DATE
+    GROUP BY DATE(p.fec_ped)
+    ORDER BY day;
+END //
+
 -- Productos más vendidos
 CREATE PROCEDURE e_commerce.SellestProducts()
 BEGIN
@@ -229,21 +257,6 @@ BEGIN
     WHERE
         stock_actual < stock_minimo;
 END //
--- Ventas por mes
-CREATE PROCEDURE e_commerce.SalesPerMonth()
-BEGIN
-    SELECT
-        YEAR(fec_ped) AS año,
-        MONTH(fec_ped) AS mes,
-        /* SUM(total) AS ventas_totales, */
-        COUNT(*) AS cantidad_pedidos
-    FROM
-        pedidos
-    GROUP BY
-        YEAR(fec_ped), MONTH(fec_ped)
-    ORDER BY
-        año, mes;
-END //
 
 -- Comparación interanual
 CREATE PROCEDURE e_commerce.YearOnYearComparison()
@@ -265,10 +278,45 @@ BEGIN
         mes;
 END //
 
+CREATE PROCEDURE e_commerce.StatsTotalSales()
+BEGIN
+    -- Ventas del mes anterior
+    SELECT 
+        'last_month_sales' AS tipo,
+        NULL AS day,
+        NULL AS prev_year_sales,
+        SUM(d.subtotal) AS value
+    FROM e_commerce.pedidos p
+    JOIN e_commerce.detalle_pedidos d ON p.id_ped = d.ped_det_ped
+    WHERE p.sta_ped != 'CANCELADO'
+      AND YEAR(p.fec_ped) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+      AND MONTH(p.fec_ped) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+    
+    UNION ALL
+
+    -- Ventas del año anterior (mismo mes)
+    SELECT 
+        'prev_year_sales' AS tipo,
+        NULL AS day,
+        SUM(d.subtotal) AS value,
+        NULL AS last_month_sales
+    FROM e_commerce.pedidos p
+    JOIN e_commerce.detalle_pedidos d ON p.id_ped = d.ped_det_ped
+    WHERE p.sta_ped != 'CANCELADO'
+      AND YEAR(p.fec_ped) = YEAR(CURRENT_DATE) - 1
+      AND MONTH(p.fec_ped) = MONTH(CURRENT_DATE);
+END //
+
 /* CALL SellestProducts(); */
 /* CALL e_commerce.WeeklySales(); */
 /* CALL e_commerce.MonthlySales(); */
+/* CALL e_commerce.StatsTotalSales(); */
+/* CALL e_commerce.SalesPerDay(); */
+/* CALL e_commerce.TodaySales(); */
 
 /* DROP PROCEDURE `SellestProducts`; */
 /* DROP PROCEDURE e_commerce.`WeeklySales`; */
 /* DROP PROCEDURE e_commerce.`MonthlySales`; */
+/* DROP PROCEDURE e_commerce.`StatsTotalSales`; */
+/* DROP PROCEDURE e_commerce.`SalesPerDay`; */
+/* DROP PROCEDURE e_commerce.`TodaySales`; */
