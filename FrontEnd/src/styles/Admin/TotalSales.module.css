@@ -1,0 +1,68 @@
+/* TotalSales.module.css */
+
+.totalSales {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin: 0 0 16px 0;
+}
+
+.summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryLabel {
+  font-size: 14px;
+  color: #718096;
+  margin-bottom: 4px;
+}
+
+.summaryValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 16px 0;
+}
+
+.chartContainer {
+  height: 300px;
+  position: relative;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #718096;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summary {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .chartContainer {
+    height: 250px;
+  }
+}

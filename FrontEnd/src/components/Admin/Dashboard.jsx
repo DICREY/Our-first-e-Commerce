@@ -10,6 +10,7 @@ import { DailySummary } from './DailySummary'
 
 // Import styles 
 import styles from '../../styles/Admin/Dashboard.module.css'
+import { TotalSales } from './TotalSales'
 
 // Component
 export const Dashboard = ({ URL = '', imgDefault = '' }) => {
@@ -94,6 +95,8 @@ export const Dashboard = ({ URL = '', imgDefault = '' }) => {
           <SellestProducts URL={URL} />
           <TotalOrders URL={URL} />
         </div>
+
+        <TotalSales URL={URL} />
       </main>
     </div>
   )

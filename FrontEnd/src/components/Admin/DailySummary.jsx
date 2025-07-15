@@ -3,10 +3,11 @@ import React, { useState, useEffect, useContext } from 'react'
 
 // Imports 
 import { AuthContext } from '../../Contexts/Contexts'
-import { Greeting } from '../../Utils/utils'
+import { errorStatusHandler, Greeting } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Admin/DailySummary.module.css'
+import { GetData } from '../../Utils/Requests'
 
 // Component 
 export const DailySummary = ({ URL = '' }) => {
@@ -19,44 +20,29 @@ export const DailySummary = ({ URL = '' }) => {
         unfulfilledOrders: 0
     })
     const [loading, setLoading] = useState(true)
-    const [currentTime, setCurrentTime] = useState('')
+    const [currentTime, setCurrentTime] = useState()
 
     // Vars 
     const { user } = useContext(AuthContext)
+    const now = new Date()
+
+    // Functions 
+    const GetTodaySales = async () => {
+        try {
+            const got = await GetData(`${URL}/stats/today-sales`)
+            console.log(got)
+            if (got) {
+                setStoreData(got)
+            }
+        } catch (err) {
+            const message = errorStatusHandler(err)
+        }
+    }
 
     useEffect(() => {
-        // Simular obtención de datos de la API
-        const fetchData = async () => {
-            try {
-                // En una implementación real, harías llamadas a tu API aquí
-                // Ejemplo:
-                // const response = await fetch(`/api/dashboard?userId=${userId}`)
-                // const data = await response.json()
-
-                // Datos simulados basados en tu estructura de base de datos
-                const today = new Date().toISOString().split('T')[0]
-                const simulatedData = {
-                    visits: 14209, // De la tabla sessions/page_views
-                    sales: 21349.29, // Suma de subtotales en detalle_pedidos para hoy
-                    unpublishedProducts: 5, // Productos con sta_pro=1 pero no en Facebook
-                    pendingPayments: 7, // Pedidos con sta_ped='PENDIENTE'
-                    unfulfilledOrders: 50 // Pedidos con sta_ped='PROCESANDO'
-                }
-
-                setStoreData(simulatedData)
-                setLoading(false)
-
-                // Actualizar la hora actual
-                const now = new Date()
-                setCurrentTime(`${now.toLocaleTimeString()}`)
-            } catch (error) {
-                console.error('Error fetching data:', error)
-                setLoading(false)
-            }
-        }
-
-        fetchData()
-
+        setCurrentTime(now.toLocaleTimeString())
+        GetTodaySales()
+        
         // Actualizar la hora cada minuto
         const timer = setInterval(() => {
             const now = new Date()
@@ -65,10 +51,6 @@ export const DailySummary = ({ URL = '' }) => {
 
         return () => clearInterval(timer)
     }, [])
-
-    if (loading) {
-        return <div className={styles.loading}>Loading dashboard data...</div>
-    }
 
     return (
         <article className={styles.dailySummaryContainer}>
@@ -83,31 +65,31 @@ export const DailySummary = ({ URL = '' }) => {
 
                 <main className={styles.statsRow}>
                     <div className={styles.statCard}>
-                        <h3>Today's visits</h3>
-                        <p className={styles.statValue}>{storeData.visits.toLocaleString()}</p>
+                        <h3>Visitas de hoy</h3>
+                        <p className={styles.statValue}>{storeData?.visits || 0}</p>
                     </div>
 
                     <div className={styles.statCard}>
-                        <h3>Today's total sales</h3>
-                        <p className={styles.statValue}>${storeData.sales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        <h3>Vendido hoy</h3>
+                        <p className={styles.statValue}>${storeData?.sales || 0}</p>
                     </div>
                 </main>
 
                 <article className={styles.alerts}>
                     <div className={styles.alertItem}>
-                        <span className={styles.alertBadge}>{storeData.unpublishedProducts}</span>
+                        <span className={styles.alertBadge}>{storeData?.unpublishedProducts}</span>
                         <span>products didn't publish to your Facebook page</span>
                         <a href="/admin/products" className={styles.alertLink}>View products &gt</a>
                     </div>
 
                     <div className={styles.alertItem}>
-                        <span className={styles.alertBadge}>{storeData.pendingPayments}</span>
+                        <span className={styles.alertBadge}>{storeData?.pendingPayments}</span>
                         <span>orders have payments that need to be captured</span>
                         <a href="/admin/payments" className={styles.alertLink}>View payments &gt</a>
                     </div>
 
                     <div className={styles.alertItem}>
-                        <span className={styles.alertBadge}>{storeData.unfulfilledOrders}+</span>
+                        <span className={styles.alertBadge}>{storeData?.unfulfilledOrders}+</span>
                         <span>orders need to be fulfilled</span>
                         <a href="/admin/orders" className={styles.alertLink}>View orders &gt</a>
                     </div>
