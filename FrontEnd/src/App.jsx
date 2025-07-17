@@ -10,6 +10,7 @@ import { AuthProvider } from "./Contexts/Auth.context";
 import { AuthContext } from "./Contexts/Contexts";
 import { Dashboard } from './components/Admin/Dashboard'
 import { ProductList } from "./components/Admin/Products"
+import { OrdersList } from "./components/Admin/Orders";
 import Header from "./components/Header/Header";
 import HomePage from "./components/Pages/HomePage/HomePage";
 import ProductCatalog from "./components/ProductCatalog/ProductCatalog";
@@ -117,6 +118,10 @@ const App = () => {
               <Route 
                 path="/admin/products" 
                 element={<ProductList URL={URL} imgDefault={imgProduct} />} 
+              />
+              <Route 
+                path="/admin/orders" 
+                element={<OrdersList URL={URL} imgDefault={imgProduct} />} 
               />
             </Route>
 

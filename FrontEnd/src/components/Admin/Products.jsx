@@ -1,14 +1,13 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 
 // Imports 
 import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
+import { NavAdmin } from '../Navs/NavAdmin'
 
 // Import styles 
 import styles from '../../styles/Admin/ProductList.module.css'
-import { NavAdmin } from '../Navs/NavAdmin'
 
 // Component 
 export const ProductList = ({ URL = '', imgDefault = '' }) => {
@@ -56,7 +55,7 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId)
-    const filterData = searchFilter(categoryId,productsAlmc,['nom_cat_pro'])
+    const filterData = searchFilter(categoryId,productsAlmc,['nom_cat_pro','nom_pro'])
     if (filterData) {
       setCurrentPage(1)
       setProducts(divideList(filterData,12))
@@ -88,20 +87,22 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
 
         <div className={styles.filterSection}>
           <div className={styles.categoryFilter}>
-            <label htmlFor="category">Filter by Category:</label>
-            <select 
+            <label htmlFor="category">Buscar por nombre, categoria:</label>
+            <input
               id="category"
+              list='categoryProFilter'
               value={selectedCategory}
               onChange={(e) => handleCategoryChange(e.target.value)}
               className={styles.selectInput}
-            >
+            />
+            <datalist id='categoryProFilter'>
               <option value="">All Categories</option>
               {categories?.map((category, idx) => (
                 <option key={idx + 12} value={category.nom_cat_pro}>
                   {category.nom_cat_pro}
                 </option>
               ))}
-            </select>
+            </datalist>
           </div>
         </div>
 

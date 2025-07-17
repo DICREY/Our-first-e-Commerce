@@ -40,7 +40,7 @@ export const NavAdmin = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="#">
+                        <NavLink to="/admin/orders">
                             <Package className={styles.icon} />
                             {sidebarOpen && <span>Pedidos</span>}
                         </NavLink>

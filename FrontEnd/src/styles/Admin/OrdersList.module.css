@@ -1,0 +1,283 @@
+/* OrdersList.module.css */
+.ordersMainContainer {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--light-gray);
+}
+
+.ordersContainer {
+    padding: 2rem;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    color: var(--neutral-800);
+    margin: 0;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.searchBox {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border-radius: var(--rounded);
+    border: 1px solid var(--gray-300);
+    font-size: 0.9rem;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-500);
+}
+
+.statusFilter {
+    padding: 0.5rem 1rem;
+    border-radius: var(--rounded);
+    border: 1px solid var(--gray-300);
+    background-color: var(--white);
+    color: var(--gray-800);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.ordersTable {
+    border-radius: var(--rounded);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background-color: var(--white);
+}
+
+.tableHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+    background-color: var(--neutral-50);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.headerCell {
+    padding: 0.5rem;
+}
+
+.orderRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-100);
+    transition: background-color 0.2s ease;
+}
+
+.orderRow:hover {
+    background-color: var(--neutral-50);
+}
+
+.orderCell {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.orderId {
+    font-weight: 600;
+    color: var(--neutral-800);
+}
+
+.orderCustomerEmail {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    margin-top: 0.25rem;
+}
+
+.customerName {
+    font-weight: 500;
+}
+
+.shippingAddress {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    margin-top: 0.25rem;
+}
+
+.statusBadge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.statusPending {
+    background-color: var(--warning-50);
+    color: var(--warning-500);
+    border: 1px solid var(--warning-100);
+}
+
+.statusProcessing {
+    background-color: var(--primary-50);
+    color: var(--primary-600);
+    border: 1px solid var(--primary-100);
+}
+
+.statusShipped {
+    background-color: var(--accent-50);
+    color: var(--accent-600);
+    border: 1px solid var(--accent-100);
+}
+
+.statusDelivered {
+    background-color: var(--success-50);
+    color: var(--success-600);
+    border: 1px solid var(--success-100);
+}
+
+.statusCancelled {
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+.viewButton {
+    padding: 0.25rem 0.75rem;
+    background-color: var(--primary-50);
+    color: var(--primary-600);
+    border-radius: var(--rounded);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.viewButton:hover {
+    background-color: var(--primary-100);
+}
+
+.noResults {
+    padding: 2rem;
+    text-align: center;
+    color: var(--gray-600);
+    grid-column: 1 / -1;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.paginationButton {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--gray-300);
+    background-color: var(--white);
+    color: var(--gray-700);
+    border-radius: var(--rounded);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 40px;
+}
+
+.paginationButton:hover:not(:disabled) {
+    background-color: var(--gray-100);
+}
+
+.paginationButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.paginationButton.active {
+    background-color: var(--primary-600);
+    color: var(--white);
+    border-color: var(--primary-600);
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-600);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+
+    .tableHeader,
+    .orderRow {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .headerCell:nth-child(4),
+    .headerCell:nth-child(5),
+    .headerCell:nth-child(6),
+    .orderCell:nth-child(4),
+    .orderCell:nth-child(5),
+    .orderCell:nth-child(6) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .controls {
+        flex-direction: column;
+    }
+
+    .searchBox {
+        width: 100%;
+    }
+
+    .tableHeader,
+    .orderRow {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .headerCell:nth-child(3),
+    .orderCell:nth-child(3) {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .tableHeader,
+    .orderRow {
+        grid-template-columns: 1fr;
+    }
+
+    .headerCell:not(:first-child),
+    .orderCell:not(:first-child) {
+        display: none;
+    }
+}
