@@ -1,6 +1,7 @@
--- Active: 1746130779175@@127.0.0.1@3306@e_commerce
+-- Active: 1747352860830@@127.0.0.1@3306
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
+
 CREATE TABLE e_commerce.roles(
     id_rol INT AUTO_INCREMENT PRIMARY KEY,
     nom_rol VARCHAR(100) NOT NULL,INDEX(nom_rol)
@@ -71,10 +72,20 @@ CREATE TABLE e_commerce.tallas(
     nom_tal_pro VARCHAR(100) NOT NULL,INDEX(nom_tal_pro)
 );
 
-CREATE TABLE e_commerce.productos_tallas(
-    id_pro_tal INT AUTO_INCREMENT PRIMARY KEY,
-    pro_tal_pro INT NOT NULL,INDEX(pro_tal_pro),FOREIGN KEY (pro_tal_pro) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
-    tal_pro_tal INT NOT NULL,INDEX(tal_pro_tal), FOREIGN KEY (tal_pro_tal) REFERENCES tallas(id_tal_pro) ON DELETE CASCADE ON UPDATE CASCADE
+
+CREATE TABLE e_commerce.inventario (
+    id_inv INT AUTO_INCREMENT PRIMARY KEY,
+    id_pro_inv INT NOT NULL,
+    id_col_inv INT NOT NULL,
+    id_tal_inv INT NOT NULL,
+    cantidad INT NOT NULL DEFAULT 0,
+    INDEX(id_pro_inv),
+    INDEX(id_col_inv),
+    INDEX(id_tal_inv),
+    FOREIGN KEY (id_pro_inv) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_col_inv) REFERENCES colores(id_col) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_tal_inv) REFERENCES tallas(id_tal_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE KEY unique_inventario (id_pro_inv, id_col_inv, id_tal_inv) -- Evita duplicados
 );
 
 CREATE TABLE e_commerce.metodos_pagos(

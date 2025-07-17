@@ -1,66 +1,150 @@
-// Librarys 
-import { useContext, useEffect, useRef, useState } from "react"
-import { Heart, Search, ShoppingBag } from 'lucide-react'
+import { memo, useContext, useEffect, useRef, useState, forwardRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Heart, Search, ShoppingBag } from 'lucide-react';
 
 // Imports 
-import { CheckImage, errorStatusHandler } from "../../Utils/utils"
-import { AuthContext } from "../../Contexts/Contexts"
-import { useCart } from "../../Contexts/CartContext"
-import { products } from "../data/products"
-import CartSheet from "../CartSheet/CartSheet"
-import Button from "../Button/Button"
-import FavoritesSheet from "../FavoritesSheet/FavoritesSheet"
+import { CheckImage, errorStatusHandler } from "../../Utils/utils";
+import { AuthContext } from "../../Contexts/Contexts";
+import { useCart } from "../../Contexts/CartContext";
+import { products } from "../data/products";
+import CartSheet from "../CartSheet/CartSheet";
+import Button from "../Button/Button";
+import FavoritesSheet from "../FavoritesSheet/FavoritesSheet";
 
 // Import styles 
-import styles from "./Header.module.css"
-import { GetData } from "../../Utils/Requests"
+import styles from "./Header.module.css";
+import { GetData } from "../../Utils/Requests";
 
-// Component 
-const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro = null }) => {
-  // Dynamic Vars 
-  const [ isMenuOpen, setIsMenuOpen] = useState(false)
-  const [ isCartOpen, setIsCartOpen] = useState(false)
-  const [ isFavoritesOpen, setIsFavoritesOpen ] = useState(false)
-  const [ isProfileMenuOpen, setIsProfileMenuOpen ] = useState(false)
-  const [ prductCat, setProductCat ] = useState(null)
-  const profileMenuRef = useRef()
-  const [ navigation, setNavigation] = useState()
+// Componente NavLink optimizado
+const NavLinkItem = memo(({ item, setCatPro, isActive }) => {
+  return (
+    <Link
+      to={item.href}
+      className={`${styles.navLink} ${isActive ? styles.activeLink : ''}`}
+      onClick={() => setCatPro && setCatPro(item.name)}
+    >
+      {item.name}
+    </Link>
+  );
+});
+
+// Componente ProfileMenu optimizado
+const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, user, imgDefault, handleLogout, styles }, ref) => {
+  return (
+    <aside className={styles.profileWrapper} ref={ref}>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-expanded={isOpen}
+        aria-label="Menú de perfil"
+      >
+        <CheckImage
+          src={user?.img}
+          alt={`${user?.names || ""} ${user?.lastNames || ""}`}
+          imgDefault={imgDefault}
+          className={styles.profileImage}
+        />
+      </Button>
+      {isOpen && (
+        <div className={styles.profileMenu}>
+          {user == null ? (
+            <>
+              <Link 
+                to="/login" 
+                className={styles.menuOption}
+                onClick={() => setIsOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
+              <Link 
+                to="/signup" 
+                className={styles.menuOption}
+                onClick={() => setIsOpen(false)}
+              >
+                Registrarse
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link 
+                to="/profile" 
+                className={styles.menuOption}
+                onClick={() => setIsOpen(false)}
+              >
+                Perfil
+              </Link>
+              <button
+                onClick={handleLogout}
+                className={styles.menuOption}
+              >
+                Cerrar sesión
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </aside>
+  );
+}));
+
+// Componente principal Header
+const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro = null }) => {
+  const location = useLocation();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [navigation, setNavigation] = useState([{ name: "Inicio", href: "/" }]);
+  const profileMenuRef = useRef();
+  const navigate = useNavigate();
   
-  // Vars 
-  const { getTotalItems } = useCart()
-  const { user, logout, admin } = useContext(AuthContext)
+  const { getTotalItems } = useCart();
+  const { user, logout, admin } = useContext(AuthContext);
 
   const getProductCategories = async () => {
     try {
-      const product = await GetData(`${URL}/products/categories`)
+      const product = await GetData(`${URL}/products/categories`);
       if (product) {
-        setProductCat(product)
-        const catPro = [{ name: "Inicio", href: "/" }]
-        product?.map(cat => (
-          catPro.push({ name: cat.nom_cat_pro, href: `/productos/${cat.slug?.toLowerCase()}` })
-        ))
-        setNavigation(catPro)
+        const catPro = [{ name: "Inicio", href: "/" }];
+        product?.forEach(cat => {
+          catPro.push({ 
+            name: cat.nom_cat_pro, 
+            href: `/productos/${cat.slug?.toLowerCase()}` 
+          });
+        });
+        setNavigation(catPro);
       }
     } catch (err) {
-      const message = errorStatusHandler(err)
-      console.log(message)
+      const message = errorStatusHandler(err);
+      console.log(message);
     }
-  }
+  };
 
   useEffect(() => {
-    getProductCategories()
-  },[])
+    getProductCategories();
+  }, [URL]);
 
-  // Cierra el menú si se hace click fuera
   useEffect(() => {
-    function handleClickOutside(event) {
+    const handleClickOutside = (event) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
-        setIsProfileMenuOpen(false)
+        setIsProfileMenuOpen(false);
       }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout(URL);
+    navigate('/');
+    setIsProfileMenuOpen(false);
+  };
+
+  // Función para verificar si la ruta está activa
+  const isActive = (href) => {
+    return location.pathname === href || 
+           (href !== '/' && location.pathname.startsWith(href));
+  };
 
   return (
     <>
@@ -68,119 +152,67 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
         <div className={styles.container}>
           <div className={styles.nav}>
             {/* Logo */}
-            <a href="/" className={styles.logo}>
+            <Link to="/" className={styles.logo}>
               <div className={styles.logoIcon}>
                 <span>F</span>
               </div>
               <span className={styles.logoText}>FashionHub</span>
-            </a>
+            </Link>
+            
 
             {/* Desktop Navigation */}
             <nav className={styles.navigation}>
-              {navigation?.map(item => (
-                <a key={item.name} 
-                  className={styles.navLink} 
-                  onClick={() => setCatPro(item.name)}
-                  href={item.href}
-                >
-                  {item.name}
-                </a>
+              {navigation.map((item, index) => (
+                <NavLinkItem
+                  key={`nav-${index}`}
+                  item={item}
+                  setCatPro={setCatPro}
+                  isActive={isActive(item.href)}
+                />
               ))}
               {admin && (
-                <a
-                  className={styles.navLink} 
-                  href={'/admin/home'}
+                <Link 
+                  to="/admin/home"
+                  className={`${styles.navLink} ${isActive('/admin/home') ? styles.activeLink : ''}`}
                 >
                   Administración
-                </a>
+                </Link>
               )}
             </nav>
 
             {/* Actions */}
             <div className={styles.actions}>
-              <Button variant="ghost" size="icon" className="hidden">
+              <Button variant="ghost" size="icon" className={styles.hidden}>
                 <Search />
-                {/* Buscar */}
               </Button>
 
-              {/* FAVORITES BUTTON */}
               <Button variant="ghost" size="icon" onClick={() => setIsFavoritesOpen(true)}>
                 <Heart />
-                {/* Favoritos */}
               </Button>
 
-              <aside style={{ position: "relative" }} ref={profileMenuRef}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsProfileMenuOpen((prev) => !prev)}
-                >
-                  <CheckImage
-                    src={user?.img}
-                    alt={`${user?.names || ""} ${user?.lastNames || ""}`}
-                    imgDefault={imgDefault}
-                    className='imgPerfil'
-                  />
-                  {/* Perfil */}
-                </Button>
-                {isProfileMenuOpen && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      right: 0,
-                      top: "100%",
-                      marginTop: 8,
-                      background: "#fff",
-                      border: "1px solid #e0e0e0",
-                      borderRadius: '.5rem',
-                      boxShadow: "0 .2rem 1rem rgba(0,0,0,0.08)",
-                      zIndex: 100,
-                      minWidth: 160,
-                      padding: '.5rem',
-                    }}
-                  >
-                    {user == null ? (
-                      <>
-                        <a href="/login" className={styles.menuOption}>Iniciar sesión</a>
-                        <a href="/signup" className={styles.menuOption}>Registrarse</a>
-                      </>
-                    ) : (
-                      <>
-                        <a href="/profile" className={styles.menuOption}>Perfil</a>
-                        <button
-                          onClick={() => logout(URL)}
-                          className={styles.menuOption}
-                          style={{ border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}
-                        >
-                          Cerrar sesión
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </aside>
-              {/* <Button variant="ghost" size="icon">
-              {console.log(user)}
-                <CheckImage
-                  src={user?.img}
-                  alt={`${user?.names} ${user?.lastNames}`}
-                  imgDefault={imgProductDefault}
-                  className='imgPerfil'
-                />
-              </Button> */}
+              <ProfileMenu 
+                ref={profileMenuRef}
+                isOpen={isProfileMenuOpen}
+                setIsOpen={setIsProfileMenuOpen}
+                user={user}
+                imgDefault={imgDefault}
+                handleLogout={handleLogout}
+                styles={styles}
+              />
 
-              {/* Cart */}
               <div className={styles.cartButton}>
                 <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
                   <ShoppingBag />
-                  {/* Carrito */}
                   {getTotalItems() > 0 && <span className={styles.cartBadge}>{getTotalItems()}</span>}
                 </Button>
               </div>
 
-              {/* Mobile Menu */}
               <div className={styles.mobileMenu}>
-                <button className={styles.mobileMenuButton} onClick={() => setIsMenuOpen(true)}>
+                <button 
+                  className={styles.mobileMenuButton} 
+                  onClick={() => setIsMenuOpen(true)}
+                  aria-label="Abrir menú móvil"
+                >
                   ☰
                 </button>
               </div>
@@ -189,11 +221,19 @@ const Header = ({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro =
         </div>
       </header>
 
-      <CartSheet imgProductDefault={imgProductDefault} isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <FavoritesSheet img={imgProductDefault} products={products} isOpen={isFavoritesOpen} onClose={() => setIsFavoritesOpen(false)} />
-      {/* <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} navigation={navigation} /> */}
+      <CartSheet 
+        imgProductDefault={imgProductDefault} 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+      />
+      <FavoritesSheet 
+        img={imgProductDefault} 
+        products={products} 
+        isOpen={isFavoritesOpen} 
+        onClose={() => setIsFavoritesOpen(false)} 
+      />
     </>
-  )
-}
+  );
+});
 
-export default Header
+export default Header;
