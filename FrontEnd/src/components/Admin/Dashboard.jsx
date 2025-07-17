@@ -7,10 +7,10 @@ import { MarketShare, SellestProducts, TotalOrders, WeeklySales } from './Stats'
 import { CheckImage } from '../../Utils/utils'
 import { AuthContext } from '../../Contexts/Contexts'
 import { DailySummary } from './DailySummary'
+import { TotalSales } from './TotalSales'
 
 // Import styles 
 import styles from '../../styles/Admin/Dashboard.module.css'
-import { TotalSales } from './TotalSales'
 
 // Component
 export const Dashboard = ({ URL = '', imgDefault = '' }) => {
@@ -26,9 +26,9 @@ export const Dashboard = ({ URL = '', imgDefault = '' }) => {
   }
 
   return (
-    <div className={styles.dashboardContainer}>
+    <main className={styles.dashboardContainer}>
       {/* Sidebar */}
-      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : styles.closed}`}>
+      <aside className={`${styles.sidebar} ${sidebarOpen? styles.open: styles.closed}`}>
         <div className={styles.sidebarHeader}>
           <h2>Panel Admin</h2>
           <button onClick={toggleSidebar} className={styles.toggleButton}>
@@ -98,6 +98,6 @@ export const Dashboard = ({ URL = '', imgDefault = '' }) => {
 
         <TotalSales URL={URL} />
       </main>
-    </div>
+    </main>
   )
 }

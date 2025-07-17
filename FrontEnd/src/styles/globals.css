@@ -1,7 +1,7 @@
 /* Variables de color basadas en psicología de ventas */
 :root {
-  --sidebar-width: 250px;
-  --sidebar-collapsed-width: 4.5rem;
+  --sidebar-width: 20rem;
+  --sidebar-collapsed-width: 4rem;
   --topbar-height: 60px;
   --transition: all 0.3s ease;
 

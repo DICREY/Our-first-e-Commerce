@@ -30,7 +30,6 @@ export const DailySummary = ({ URL = '' }) => {
     const GetTodaySales = async () => {
         try {
             const got = await GetData(`${URL}/stats/today-sales`)
-            console.log(got)
             if (got) {
                 setStoreData(got)
             }
