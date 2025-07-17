@@ -165,23 +165,17 @@ BEGIN
                 pco.pro_col_pro = p.id_pro
         ) AS colors,
         (
-            SELECT GROUP_CONCAT(
-                t.nom_tal_pro
-                SEPARATOR '---'
-            )
-            FROM 
-                productos_tallas pt
-            JOIN
-                tallas t ON pt.tal_pro_tal = t.id_tal_pro
-            WHERE
-                pt.pro_tal_pro = p.id_pro
+            SELECT GROUP_CONCAT(DISTINCT t.nom_tal_pro SEPARATOR '---')
+            FROM inventario inv
+            JOIN tallas t ON inv.id_tal_inv = t.id_tal_pro
+            WHERE inv.id_pro_inv = p.id_pro
         ) AS sizes,
         SUM(dp.can_det_ped) AS unidades_vendidas,
         SUM(dp.subtotal) AS ingresos_generados
     FROM
         detalle_pedidos dp
     JOIN 
-        productos p ON dp.id_det_ped = p.id_pro
+        productos p ON dp.pro_det_ped = p.id_pro
     JOIN
         cat_productos c ON p.cat_pro = c.id_cat_pro
     GROUP BY
