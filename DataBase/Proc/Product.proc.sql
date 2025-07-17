@@ -40,7 +40,6 @@ BEGIN
 END //
 CREATE PROCEDURE e_commerce.GetAllProducts()
 BEGIN
-    -- Verifica si hay productos
     IF NOT EXISTS (SELECT 1 FROM e_commerce.productos) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existen productos registrados';
     END IF;
@@ -54,6 +53,7 @@ BEGIN
         p.onSale,
         c.id_cat_pro,
         c.nom_cat_pro,
+        -- Colores disponibles para el producto
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
@@ -73,18 +73,19 @@ BEGIN
             WHERE
                 pco.pro_col_pro = p.id_pro
         ) AS colors,
+        -- Tallas disponibles para el producto (por inventario)
         (
-            SELECT GROUP_CONCAT(
-                t.nom_tal_pro
-                SEPARATOR '---'
-            )
-            FROM 
-                productos_tallas pt
-            JOIN
-                tallas t ON pt.tal_pro_tal = t.id_tal_pro
-            WHERE
-                pt.pro_tal_pro = p.id_pro
-        ) AS sizes
+            SELECT GROUP_CONCAT(DISTINCT t.nom_tal_pro SEPARATOR '---')
+            FROM inventario inv
+            JOIN tallas t ON inv.id_tal_inv = t.id_tal_pro
+            WHERE inv.id_pro_inv = p.id_pro
+        ) AS sizes,
+        -- Stock total del producto (sumando todas las combinaciones)
+        (
+            SELECT SUM(inv.cantidad)
+            FROM inventario inv
+            WHERE inv.id_pro_inv = p.id_pro
+        ) AS stock_total
     FROM 
         e_commerce.productos p
     INNER JOIN 
@@ -99,8 +100,7 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM cat_productos WHERE nom_cat_pro LIKE p_nom_cat) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La categoria no existe en el sistema';
     END IF;
-    
-    -- Verifica si existen productos en la categoría indicada por nombre
+
     IF NOT EXISTS (
         SELECT 1 
         FROM 
@@ -142,17 +142,16 @@ BEGIN
                 pco.pro_col_pro = p.id_pro
         ) AS colors,
         (
-            SELECT GROUP_CONCAT(
-                t.nom_tal_pro
-                SEPARATOR '---'
-            )
-            FROM 
-                productos_tallas pt
-            JOIN
-                tallas t ON pt.tal_pro_tal = t.id_tal_pro
-            WHERE
-                pt.pro_tal_pro = p.id_pro
-        ) AS sizes
+            SELECT GROUP_CONCAT(DISTINCT t.nom_tal_pro SEPARATOR '---')
+            FROM inventario inv
+            JOIN tallas t ON inv.id_tal_inv = t.id_tal_pro
+            WHERE inv.id_pro_inv = p.id_pro
+        ) AS sizes,
+        (
+            SELECT SUM(inv.cantidad)
+            FROM inventario inv
+            WHERE inv.id_pro_inv = p.id_pro
+        ) AS stock_total
     FROM 
         e_commerce.productos p
     INNER JOIN 
