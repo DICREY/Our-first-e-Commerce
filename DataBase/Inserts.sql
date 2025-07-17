@@ -1,7 +1,10 @@
 -- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Roles
 INSERT INTO e_commerce.roles (nom_rol) VALUES
 ('Administrador'),
 ('Usuario');
+
+-- Personas
 INSERT INTO e_commerce.personas (nom_per, ape_per, fec_nac_per, tip_doc_per, doc_per, dir_per, cel_per, cel2_per, email_per, pas_per,gen_per,fot_per) VALUES
 ('Juan', 'Pérez',NOW(), 'CC', '123450989', 'Calle 123 #45-67', '3001234567', NULL, 'juanperez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','Masculino',DEFAULT),
 ('María', 'Gómez',NOW(), 'CC', '876254321', 'Av. Principal #12-34', '3102345678', '3203456789', 'mariagomez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','Femenino',DEFAULT),
@@ -9,31 +12,24 @@ INSERT INTO e_commerce.personas (nom_per, ape_per, fec_nac_per, tip_doc_per, doc
 ('Carlos', 'Rodríguez',NOW(), 'CE', '091234456', 'Carrera 56 #78-90', '3154567890', NULL, 'carlosrod@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','Masculino',DEFAULT),
 ('Ana', 'Martínez',NOW(), 'CC', '112230944', 'Diagonal 34 #56-78', '3175678901', NULL, 'anamartinez@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','Femenino', DEFAULT),
 ('Luis', 'García',NOW(), 'TI', '987654092', 'Transversal 12 #34-56', '3186789012', '3197890123', 'luisgarcia@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','Masculino', DEFAULT);
-INSERT INTO e_commerce.otorgar_roles (id_rol, id_per) VALUES
-(1,1),
-(2,1),
-(1,2),
-(2,2),
-(1,3),
-(2,3),
-(2,4),
-(1,5),
-(2,5),
-(1,6),
-(2,6);
 
--- 1. Insertar categorías
+-- Otorgar roles
+INSERT INTO e_commerce.otorgar_roles (id_rol, id_per) VALUES
+(1,1),(2,1),(1,2),(2,2),(1,3),(2,3),(2,4),(1,5),(2,5),(1,6),(2,6);
+
+-- Categorías
 INSERT INTO e_commerce.cat_productos (nom_cat_pro,slug) VALUES 
 ('Ropa de Mujer','ropa-de-mujer'), 
 ('Lencería','lenceria'),
 ('Ropa Deportiva Mujer','ropa-deportiva-mujer');  
 
--- 2. Insertar colores
+-- Colores
 INSERT INTO e_commerce.colores (nom_col, hex_col) VALUES 
 ('Rojo', '#FF0000'), ('Negro', '#000000'), ('Blanco', '#FFFFFF'),
 ('Azul Marino', '#000080'), ('Rosa', '#FFC0CB'), ('Beige', '#F5F5DC'),
 ('Verde Oliva', '#808000'), ('Morado', '#800080'), ('Gris', '#808080');
 
+-- Imágenes
 INSERT INTO e_commerce.imagenes (nom_img, url_img) VALUES
 ('img_1_2', 'url_1_2'), -- id_img = 1
 ('img_1_3', 'url_1_3'), -- id_img = 2
@@ -77,13 +73,13 @@ INSERT INTO e_commerce.imagenes (nom_img, url_img) VALUES
 ('img_19_2', 'url_19_2'), -- id_img = 40
 ('img_19_4', 'url_19_4'); -- id_img = 41
 
--- 3. Insertar tallas específicas para mujer
+-- Tallas
 INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES 
 ('XS'), ('S'), ('M'), ('L'), ('XL'), ('XXL'),
 ('34'), ('36'), ('38'), ('40'), ('42'), ('44'),
 ('Única');
 
--- 4. Insertar 20 productos de ropa para mujer
+-- Productos
 INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro) VALUES
 -- Ropa casual
 (1, 'Blusa de seda estampada', 45000.99, 'Blusa elegante de seda con estampado floral'),
@@ -114,7 +110,7 @@ INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro) VALUES
 (1, 'Vestido plus size floral', 69000.99, 'Vestido holgado con estampado grande'),
 (1, 'Blusa plus size manga larga', 49000.99, 'Blusa elegante con detalles en cuello');
 
--- Asignación de colores y tallas a algunos productos
+-- Relación producto-color-imagen
 INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col) VALUES 
 (1, 1, 2), (2, 1, 3), (3, 1, 5),
 (4, 2, 2), (5, 2, 4),
@@ -135,12 +131,25 @@ INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col)
 (36, 17, 2), (37, 17, 4),
 (38, 18, 2), (39, 18, 4),
 (40, 19, 2), (41, 19, 4);
-/* 
-INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal) VALUES 
-(1, 1), (1, 2), (1, 3), (1, 4),  -- XS, S, M, L
-(2, 7), (2, 8), (2, 9), (2, 10), (2, 11),  -- 34, 36, 38, 40, 42
-(6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6);  -- XS, S, M, L, XL, XXL */
 
+-- Inventario: producto, color, talla, cantidad
+INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
+-- Blusa de seda estampada (id_pro=1), Negro (id_col=2), Tallas XS(1)-L(4)
+(1, 2, 1, 10), (1, 2, 2, 8), (1, 2, 3, 5), (1, 2, 4, 2),
+-- Blusa de seda estampada, Blanco (3), Tallas XS(1)-L(4)
+(1, 3, 1, 7), (1, 3, 2, 6), (1, 3, 3, 4), (1, 3, 4, 1),
+-- Blusa de seda estampada, Rosa (5), Tallas XS(1)-L(4)
+(1, 5, 1, 3), (1, 5, 2, 2), (1, 5, 3, 1), (1, 5, 4, 0),
+-- Jeans skinny alto talle (id_pro=2), Negro (2), Tallas 34(7)-42(11)
+(2, 2, 7, 5), (2, 2, 8, 4), (2, 2, 9, 3), (2, 2, 10, 2), (2, 2, 11, 1),
+-- Jeans skinny alto talle, Azul Marino (4), Tallas 34(7)-42(11)
+(2, 4, 7, 6), (2, 4, 8, 5), (2, 4, 9, 4), (2, 4, 10, 3), (2, 4, 11, 2),
+-- Leggings deportivos compresión (id_pro=6), Rojo (1), Tallas XS(1)-XL(5)
+(6, 1, 1, 10), (6, 1, 2, 10), (6, 1, 3, 10), (6, 1, 4, 10), (6, 1, 5, 10),
+-- Top deportivo soporte alto (id_pro=7), Negro (2), Tallas XS(1)-XL(5)
+(7, 2, 1, 8), (7, 2, 2, 8), (7, 2, 3, 8), (7, 2, 4, 8), (7, 2, 5, 8);
+
+-- Métodos de pago
 INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES 
 ('Tarjeta de Crédito'),
 ('Tarjeta de Débito'),
@@ -149,30 +158,32 @@ INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES
 ('Transferencia Bancaria'),
 ('Billetera Digital');
 
+-- Pedidos
 INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped,fec_ped) VALUES
-(1, 'Calle 123 #45-67, Bogotá', 1, DEFAULT, '2025-09-20'),  -- Pedido 1: Cliente Juan Pérez (ID 1)
-(2, 'Av. Principal #12-34, Medellín', 3, DEFAULT, '2025-08-20'), -- Pedido 2: Cliente María Gómez (ID 2)
-(3, 'Carrera 56 #78-90, Cali', 4, 'ENTREGADO', '2025-01-20'),  -- Pedido 3: Cliente Carlos Rodríguez (ID 3) - Este cliente es hombre pero podría comprar para regalo
-(4, 'Diagonal 34 #56-78, Barranquilla', 2, 'PROCESANDO', '2025-07-20'), -- Pedido 4: Cliente Ana Martínez (ID 4)
-(5, 'Transversal 12 #34-56, Cartagena', 5, DEFAULT, '2025-09-20'), -- Pedido 5: Cliente Luis García (ID 5) - Compra grande
+(1, 'Calle 123 #45-67, Bogotá', 1, DEFAULT, '2025-09-20'),
+(2, 'Av. Principal #12-34, Medellín', 3, DEFAULT, '2025-08-20'),
+(3, 'Carrera 56 #78-90, Cali', 4, 'ENTREGADO', '2025-01-20'),
+(4, 'Diagonal 34 #56-78, Barranquilla', 2, 'PROCESANDO', '2025-07-20'),
+(5, 'Transversal 12 #34-56, Cartagena', 5, DEFAULT, '2025-09-20'),
 (2, 'Calle 2 #2-2', 2, 'ENTREGADO', '2025-07-02'),
 (1, 'Calle 1 #1-1', 1, 'ENTREGADO', '2025-07-01');
 
+-- Detalle de pedidos
 INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, pro_det_ped, can_det_ped, pre_uni_det_ped) VALUES
-(1, 1, 2, 45000.99),  -- 2 Blusas de seda
-(1, 6, 1, 49000.99),   -- 1 Legging deportivo
-(2, 3, 1, 65000.99),  -- 1 Vestido midi floral
-(2, 8, 2, 55000.99),  -- 2 Conjuntos de encaje
-(2, 12, 1, 119000.99), -- 1 Vestido de cóctel
-(3, 5, 1, 129000.99),  -- 1 Abrigo de lana
-(3, 17, 1, 79000.99),   -- 1 Chal de cachemira
-(4, 7, 2, 39000.99),   -- 2 Tops deportivos
-(4, 10, 1, 49000.99),   -- 1 Bikini tropical
-(5, 2, 3, 59000.99),   -- 3 Jeans skinny
-(5, 4, 1, 89000.99),    -- 1 Chaqueta de denim
-(5, 9, 2, 42000.99),    -- 2 Pijamas de satén
-(5, 13, 1, 149000.99),  -- 1 Traje de chaqueta
-(5, 19, 1, 69000.99),   -- 1 Vestido plus size
+(1, 1, 2, 45000.99),
+(1, 6, 1, 49000.99),
+(2, 3, 1, 65000.99),
+(2, 8, 2, 55000.99),
+(2, 12, 1, 119000.99),
+(3, 5, 1, 129000.99),
+(3, 17, 1, 79000.99),
+(4, 7, 2, 39000.99),
+(4, 10, 1, 49000.99),
+(5, 2, 3, 59000.99),
+(5, 4, 1, 89000.99),
+(5, 9, 2, 42000.99),
+(5, 13, 1, 149000.99),
+(5, 19, 1, 69000.99),
 (6, 1, 2, 45000.99),
 (6, 2, 1, 59000.99),
 (7, 3, 1, 65000.99),
