@@ -98,18 +98,6 @@ const App = () => {
             <Route path="/login" element={<LoginForm URL={URL} />} />
             <Route path="/signup" element={<RegisterForm URL={URL} />} />
 
-            {/* Admin routes  */}
-            <Route path="/admin/home" element={
-              <AdminRoute children={
-                <Dashboard URL={URL} imgDefault={imgUser} />
-              } />
-            } />
-            <Route path="/admin/products" element={
-              <AdminRoute children={
-                <ProductList URL={URL} imgDefault={imgProduct} />
-              } />
-            } />
-            
             {/* Private User Routes with Layout */}
             <Route element={<PrivateRoute />}>
               <Route element={<MainLayout />}>
@@ -125,6 +113,10 @@ const App = () => {
               <Route 
                 path="/admin/home" 
                 element={<Dashboard URL={URL} imgDefault={imgUser} />} 
+              />
+              <Route 
+                path="/admin/products" 
+                element={<ProductList URL={URL} imgDefault={imgProduct} />} 
               />
             </Route>
 
