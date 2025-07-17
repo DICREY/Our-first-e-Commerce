@@ -1,6 +1,5 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 
 // Imports 
 import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
