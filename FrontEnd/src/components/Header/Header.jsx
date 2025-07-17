@@ -15,6 +15,11 @@ import FavoritesSheet from "../FavoritesSheet/FavoritesSheet";
 import styles from "./Header.module.css";
 import { GetData } from "../../Utils/Requests";
 
+// Cache para las categorías
+let categoriesCache = null;
+let lastFetchTime = 0;
+const CACHE_DURATION = 60 * 60 * 1000; // 60 minutos en milisegundos
+
 // Componente NavLink optimizado
 const NavLinkItem = memo(({ item, setCatPro, isActive }) => {
   return (
@@ -100,8 +105,16 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   
   const { getTotalItems } = useCart();
   const { user, logout, admin } = useContext(AuthContext);
+  const [hasFetched, setHasFetched] = useState(false);
 
   const getProductCategories = async () => {
+    // Verificar si ya tenemos datos en caché y si no han expirado
+    const now = Date.now();
+    if (categoriesCache && (now - lastFetchTime < CACHE_DURATION)) {
+      setNavigation(categoriesCache);
+      return;
+    }
+
     try {
       const product = await GetData(`${URL}/products/categories`);
       if (product) {
@@ -112,7 +125,13 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
             href: `/productos/${cat.slug?.toLowerCase()}` 
           });
         });
+        
+        // Actualizar caché
+        categoriesCache = catPro;
+        lastFetchTime = now;
+        
         setNavigation(catPro);
+        setHasFetched(true);
       }
     } catch (err) {
       const message = errorStatusHandler(err);
@@ -121,8 +140,10 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   };
 
   useEffect(() => {
-    getProductCategories();
-  }, [URL]);
+    if (!hasFetched) {
+      getProductCategories();
+    }
+  }, [URL, hasFetched]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -158,13 +179,12 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
               </div>
               <span className={styles.logoText}>FashionHub</span>
             </Link>
-            
 
             {/* Desktop Navigation */}
             <nav className={styles.navigation}>
               {navigation.map((item, index) => (
                 <NavLinkItem
-                  key={`nav-${index}`}
+                  key={`nav-${index}-${item.href}`} // Clave más única
                   item={item}
                   setCatPro={setCatPro}
                   isActive={isActive(item.href)}
