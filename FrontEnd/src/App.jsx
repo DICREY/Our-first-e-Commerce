@@ -13,6 +13,7 @@ import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/ProductCatalog/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage";
 import { Dashboard } from './components/Admin/Dashboard'
+import { ProductList } from "./components/Admin/Products"
 
 // Main Module 
 const App = () => {
@@ -96,6 +97,11 @@ const App = () => {
             <Route path="/admin/home" element={
               <AdminRoute children={
                 <Dashboard URL={URL} imgDefault={imgUser} />
+              } />
+            } />
+            <Route path="/admin/products" element={
+              <AdminRoute children={
+                <ProductList URL={URL} imgDefault={imgProduct} />
               } />
             } />
           </Routes>

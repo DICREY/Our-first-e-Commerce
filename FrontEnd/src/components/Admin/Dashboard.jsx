@@ -1,6 +1,5 @@
 // Librarys 
-import { useContext, useState } from 'react'
-import { ArrowLeft, ArrowRight, Box, ChartNoAxesCombined, Package, Settings, Users } from 'lucide-react'
+import { useContext } from 'react'
 
 // Imports
 import { MarketShare, SellestProducts, TotalOrders, WeeklySales } from './Stats'
@@ -8,69 +7,19 @@ import { CheckImage } from '../../Utils/utils'
 import { AuthContext } from '../../Contexts/Contexts'
 import { DailySummary } from './DailySummary'
 import { TotalSales } from './TotalSales'
+import { NavAdmin } from '../Navs/NavAdmin'
 
 // Import styles 
 import styles from '../../styles/Admin/Dashboard.module.css'
 
 // Component
-export const Dashboard = ({ URL = '', imgDefault = '' }) => {
-  // Dynamic vars 
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-
+export const Dashboard = ({ URL = '', imgDefault = '' }) => {  
   // Vars 
   const { user, img } = useContext(AuthContext)
 
-  // Functions 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen)
-  }
-
   return (
     <main className={styles.dashboardContainer}>
-      {/* Sidebar */}
-      <aside className={`${styles.sidebar} ${sidebarOpen? styles.open: styles.closed}`}>
-        <div className={styles.sidebarHeader}>
-          <h2>Panel Admin</h2>
-          <button onClick={toggleSidebar} className={styles.toggleButton}>
-            {sidebarOpen ? <ArrowLeft /> : <ArrowRight />}
-          </button>
-        </div>
-        
-        <nav className={styles.navMenu}>
-          <ul>
-            <li className={styles.active}>
-              <a href="#">
-                <ChartNoAxesCombined className={styles.icon} />
-                {sidebarOpen && <span>Dashboard</span>}
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <Box className={styles.icon} />
-                {sidebarOpen && <span>Productos</span>}
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <Package className={styles.icon} />
-                {sidebarOpen && <span>Pedidos</span>}
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <Users className={styles.icon} />
-                {sidebarOpen && <span>Clientes</span>}
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <Settings className={styles.icon} />
-                {sidebarOpen && <span>Configuración</span>}
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+      <NavAdmin />
 
       {/* Main Content */}
       <main className={styles.mainContent}>

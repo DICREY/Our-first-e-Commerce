@@ -51,6 +51,7 @@ BEGIN
         p.pre_pro,
         p.des_pro,
         p.sta_pro,
+        p.onSale,
         c.id_cat_pro,
         c.nom_cat_pro,
         (
@@ -118,6 +119,7 @@ BEGIN
         p.pre_pro,
         p.des_pro,
         p.sta_pro,
+        p.onSale,
         c.nom_cat_pro,
         c.sta_cat_pro,
         (

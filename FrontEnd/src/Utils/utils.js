@@ -90,18 +90,18 @@ export const formatDate = (dateString = "") => {
 
 // Function to filter
 export const searchFilter = (term = '', data = [], headers = []) => {
-    if (!term || !data || !headers || !Array.isArray(data) || !Array.isArray(headers)) return
+  if (!term || !data || !headers || !Array.isArray(data) || !Array.isArray(headers)) return data
 
-    // const termLower = term == ''? term.toLowerCase(): term
-    const termLower = term.toLowerCase().trim()
+  // const termLower = term == ''? term.toLowerCase(): term
+  const termLower = term.toLowerCase().trim()
 
-    const find = data?.filter(item => {
-        return headers?.some(field =>
-            item[field]?.toLowerCase().includes(termLower)
-        )
-    })
+  const find = data?.filter(item => {
+      return headers?.some(field =>
+          item[field]?.toLowerCase().includes(termLower)
+      )
+  })
 
-    if (find) return find
+  if (find) return find
 }
 
 // Get age of birthday
