@@ -1,64 +1,161 @@
-// Librarys 
 import { useState, useMemo, useEffect } from "react"
-
-// Imports 
 import ProductCard from "../ProductCard/ProductCard"
 import { errorStatusHandler } from "../../Utils/utils"
 import { GetData } from "../../Utils/Requests"
-
-// Import styles 
 import styles from "./ProductCatalog.module.css"
 
-// Component 
 const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', setProduct }) => {
-  const [selectedCategory, setSelectedCategory] = useState("Todos")
+  const [selectedCategory, setSelectedCategory] = useState(preSelectedCat || "Todos")
   const [search, setSearch] = useState("")
   const [selectedColor, setSelectedColor] = useState("")
-  const [ categories, setCategories ] = useState()
-  const [ products, setProducts ] = useState()
-  const [ colors, setColors ] = useState()
-  const [ sizes, setSizes ] = useState()
+  const [categories, setCategories] = useState([])
+  const [products, setProducts] = useState([])
+  const [colors, setColors] = useState([])
+  const [sizes, setSizes] = useState([])
   const [selectedSizes, setSelectedSizes] = useState([])
   const [sort, setSort] = useState("default")
   const [priceRange, setPriceRange] = useState([0, 200])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Calcula el rango de precios real
-  const minPrice = products && Math.min(...products.map((p) => p.pre_pro))
-  const maxPrice = products && Math.max(...products.map((p) => p.pre_pro))
+  // Función para procesar los productos del backend
+  const processProducts = (rawProducts) => {
+    return rawProducts.map(product => {
+      // Procesar colores - manejar diferentes formatos
+      let productColors = [];
+      if (product.colors) {
+        if (typeof product.colors === 'string') {
+          // Formato string con separadores
+          productColors = product.colors.split('---').map(colorStr => {
+            const [nom_col, hex_col, nom_img, url_img] = colorStr.split(';');
+            return { nom_col, hex_col, nom_img, url_img };
+          });
+        } else if (Array.isArray(product.colors)) {
+          // Si ya es un array, usarlo directamente
+          productColors = product.colors.map(color => ({
+            nom_col: color.nom_col || '',
+            hex_col: color.hex_col || '',
+            nom_img: color.nom_img || '',
+            url_img: color.url_img || ''
+          }));
+        }
+      }
+
+      // Procesar tallas - manejar diferentes formatos
+      let productSizes = [];
+      if (product.sizes) {
+        if (typeof product.sizes === 'string') {
+          productSizes = product.sizes.split('---');
+        } else if (Array.isArray(product.sizes)) {
+          productSizes = product.sizes;
+        }
+      }
+
+      return {
+        ...product,
+        colors: productColors,
+        sizes: productSizes,
+        stock_total: product.stock_total || 0
+      };
+    });
+  };
+
+  // Cargar datos iniciales
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true)
+
+        // Cargar categorías
+        const catData = await GetData(`${URL}/products/categories`)
+        if (catData) setCategories(catData)
+
+        // Cargar colores
+        const colorsData = await GetData(`${URL}/products/colors`)
+        if (colorsData) setColors(colorsData)
+
+        // Cargar tallas
+        const sizesData = await GetData(`${URL}/products/sizes`)
+        if (sizesData) setSizes(sizesData)
+
+        // Cargar productos
+        const prodsData = await GetData(`${URL}/products/all`)
+        if (prodsData) {
+          const processedProducts = processProducts(prodsData)
+          setProducts(processedProducts)
+        }
+      } catch (err) {
+        console.error(errorStatusHandler(err))
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadData()
+  }, [URL])
+
+  // Calcular rango de precios
+  const minPrice = useMemo(() => {
+    return products.length > 0 ? Math.min(...products.map(p => p.pre_pro)) : 0
+  }, [products])
+
+  const maxPrice = useMemo(() => {
+    return products.length > 0 ? Math.max(...products.map(p => p.pre_pro)) : 200
+  }, [products])
 
   // Filtros y ordenamiento
   const filteredProducts = useMemo(() => {
-    let filtered = products? products: []
+    if (isLoading) return []
 
+    let filtered = [...products]
+
+    // Filtro por categoría
     if (selectedCategory !== "Todos") {
-      filtered = filtered?.filter((p) => p.nom_cat_pro === selectedCategory)
+      filtered = filtered.filter(p =>
+        p.nom_cat_pro?.toLowerCase() === selectedCategory.toLowerCase()
+      )
     }
+
+    // Filtro por búsqueda
     if (search.trim()) {
-      filtered = filtered?.filter((p) =>
-        p.nom_pro.toLowerCase().includes(search.trim().toLowerCase())
+      const searchTerm = search.trim().toLowerCase()
+      filtered = filtered.filter(p =>
+        p.nom_pro.toLowerCase().includes(searchTerm)
       )
     }
+
+    // Filtro por color
     if (selectedColor) {
-      filtered = filtered?.filter((p) =>
-        p.colors?.map((c) => c.nom_col.toLowerCase()).includes(selectedColor.toLowerCase())
+      filtered = filtered.filter(p =>
+        p.colors?.some(c => c.nom_col.toLowerCase() === selectedColor.toLowerCase())
       )
     }
+
+    // Filtro por tallas
     if (selectedSizes.length > 0) {
-      filtered = filtered?.filter((p) =>
-        selectedSizes.some((size) => p.sizes?.includes(size))
+      filtered = filtered.filter(p =>
+        selectedSizes.some(size => p.sizes?.includes(size))
       )
     }
-    filtered = filtered?.filter(
-      (p) => p.pre_pro >= priceRange[0] && p.pre_pro <= priceRange[1]
+
+    // Filtro por rango de precio
+    filtered = filtered.filter(p =>
+      p.pre_pro >= priceRange[0] && p.pre_pro <= priceRange[1]
     )
 
-    if (sort === "price-asc") filtered = [...filtered].sort((a, b) => a.pre_pro - b.pre_pro)
-    if (sort === "price-desc") filtered = [...filtered].sort((a, b) => b.pre_pro - a.pre_pro)
-    if (sort === "name-asc") filtered = [...filtered].sort((a, b) => a.nom_pro.localeCompare(b.nom_pro))
-    if (sort === "name-desc") filtered = [...filtered].sort((a, b) => b.nom_pro.localeCompare(a.nom_pro))
-
-    return filtered
-  }, [selectedCategory, search, selectedColor, selectedSizes, sort, priceRange])
+    // Ordenamiento
+    switch (sort) {
+      case "price-asc":
+        return [...filtered].sort((a, b) => a.pre_pro - b.pre_pro)
+      case "price-desc":
+        return [...filtered].sort((a, b) => b.pre_pro - a.pre_pro)
+      case "name-asc":
+        return [...filtered].sort((a, b) => a.nom_pro.localeCompare(b.nom_pro))
+      case "name-desc":
+        return [...filtered].sort((a, b) => b.nom_pro.localeCompare(a.nom_pro))
+      default:
+        return filtered
+    }
+  }, [products, selectedCategory, search, selectedColor, selectedSizes, sort, priceRange, isLoading])
 
   const handleSizeChange = (size) => {
     setSelectedSizes(prev =>
@@ -67,61 +164,6 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
         : [...prev, size]
     )
   }
-
-  const getProductCategories = async () => {
-    try {
-      const cat = await GetData(`${URL}/products/categories`)
-      if (cat) {
-        setCategories(cat)
-      }
-    } catch (err) {
-      const message = errorStatusHandler(err)
-      console.log(message)
-    }
-  }
-  const getProductColors = async () => {
-    try {
-      const data = await GetData(`${URL}/products/colors`)
-      if (data) {
-        setColors(data)
-      }
-    } catch (err) {
-      const message = errorStatusHandler(err)
-      console.log(message)
-    }
-  }
-
-  const getProductSizes = async () => {
-    try {
-      const data = await GetData(`${URL}/products/sizes`)
-      if (data) {
-        setSizes(data)
-      }
-    } catch (err) {
-      const message = errorStatusHandler(err)
-      console.log(message)
-    }
-  }
-
-  const getProducts = async () => {
-    try {
-      const prods = await GetData(`${URL}/products/all`)
-      if (prods) {
-        setProducts(prods)
-      }
-    } catch (err) {
-      const message = errorStatusHandler(err)
-      console.log(message)
-    }
-  }
-
-  useEffect(() => {
-    getProductCategories()
-    getProductColors()
-    getProductSizes()
-    getProducts()
-    if (preSelectedCat) setSelectedCategory(preSelectedCat)
-  },[])
 
   return (
     <main className={styles.catalogPage}>
@@ -140,15 +182,16 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
             >
               Todos
             </button>
-            {categories?.map((cat, index) => (
-                <button
-                  key={index + 89}
-                  className={`${styles.categoryBtn} ${selectedCategory === cat.nom_cat_pro ? styles.active : ""}`}
-                  onClick={() => setSelectedCategory(cat.nom_cat_pro)}
-                >
-                  {cat.nom_cat_pro}
-                </button>
-              ))}
+            {categories.map((cat, index) => (
+              <button
+                key={`cat-${index}`}
+                className={`${styles.categoryBtn} ${selectedCategory === cat.nom_cat_pro ? styles.active : ""
+                  }`}
+                onClick={() => setSelectedCategory(cat.nom_cat_pro)}
+              >
+                {cat.nom_cat_pro}
+              </button>
+            ))}
           </address>
         </nav>
 
@@ -186,8 +229,8 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
                 onChange={(e) => setSelectedColor(e.target.value)}
               >
                 <option value="">Todos los colores</option>
-                {colors?.map((color, index) => (
-                  <option key={index + 8} value={color.nom_col}>
+                {colors.map((color, index) => (
+                  <option key={`color-${index}`} value={color.nom_col}>
                     {color.nom_col}
                   </option>
                 ))}
@@ -195,10 +238,10 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
             </div>
 
             <div className={styles.filterGroup}>
-              <div className={styles.priceproRange}>
+              <div className={styles.priceRange}>
                 <div className={styles.priceLabels}>
-                  <span>${priceRange[0]}</span>
-                  <span>${priceRange[1]}</span>
+                  <span>${priceRange[0].toFixed(2)}</span>
+                  <span>${priceRange[1].toFixed(2)}</span>
                 </div>
                 <input
                   type="range"
@@ -228,8 +271,8 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
         <div className={styles.filterSection}>
           <span className={styles.sectionTitle}>Tallas</span>
           <div className={styles.sizeFilter}>
-            {sizes?.map((size, index) => (
-              <div key={index}>
+            {sizes.map((size, index) => (
+              <div key={`size-${index}`}>
                 <input
                   type="checkbox"
                   id={`size-${size.nom_tal_pro}`}
@@ -246,23 +289,28 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
         </div>
       </section>
 
-      <div className={styles.productsGrid}>
-        {filteredProducts?.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>🔍</div>
-            <p className={styles.emptyText}>No encontramos productos con esos filtros</p>
-          </div>
-        ) : (
-          filteredProducts?.map((product) => (
-            <ProductCard 
-              key={product.id_pro} 
-              data={product} 
-              imgDefault={imgDefault} 
+      {isLoading ? (
+        <div className={styles.loadingState}>
+          <div className={styles.loadingSpinner}></div>
+          <p>Cargando productos...</p>
+        </div>
+      ) : filteredProducts.length === 0 ? (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>🔍</div>
+          <p className={styles.emptyText}>No encontramos productos con esos filtros</p>
+        </div>
+      ) : (
+        <div className={styles.productsGrid}>
+          {filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id_pro}
+              data={product}
+              imgDefault={imgDefault}
               set={setProduct}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </main>
   )
 }
