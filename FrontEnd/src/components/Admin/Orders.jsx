@@ -168,8 +168,6 @@ export const OrdersList = ({ URL = '' }) => {
             )}
           </div>
 
-          {console.log(orders)}
-
           <Paginacion 
             data={orders} 
             setCurrentPage={setCurrentPage}
