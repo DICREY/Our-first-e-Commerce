@@ -1,0 +1,26 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.pageButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gray-300);
+  background-color: var(--white);
+  color: var(--gray-700);
+  border-radius: var(--rounded);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pageButton:hover {
+  background-color: var(--gray-100);
+}
+
+.pageButton.active {
+  background-color: var(--primary-600);
+  color: var(--white);
+  border-color: var(--primary-600);
+}
