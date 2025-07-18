@@ -26,6 +26,8 @@ const App = () => {
   const URL = 'http://localhost:3000/ecommerce';
   const imgProduct = require('./Imgs/ProductDefault.png');
   const imgUser = require('./Imgs/UserDefault.webp');
+  const domain = process.env.REACT_APP_AUTH0_DOMAIN;
+  const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
 
   // Layout Component
   const MainLayout = ({ children }) => {
@@ -41,16 +43,25 @@ const App = () => {
 
   // Route Protectors
   const PrivateRoute = () => {
+    const { isAuthenticated } = useAuth0();
     const { user } = useContext(AuthContext);
-    return user ? <Outlet /> : <Navigate to="/login" />;
+    return isAuthenticated || user ? <Outlet /> : <Navigate to="/login" />;
   };
 
   const AdminRoute = () => {
+    const { isAuthenticated } = useAuth0();
     const { admin } = useContext(AuthContext);
-    return admin ? <Outlet /> : <Navigate to="/login" />;
+    return isAuthenticated || admin ? <Outlet /> : <Navigate to="/login" />;
   };
 
   return (
+    <Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+        // audience: `${URL}`,
+      }}>
     <AuthProvider>
       <CartProvider>
         <Router>
@@ -60,26 +71,26 @@ const App = () => {
               <Route 
                 path="/" 
                 element={<HomePage URL={URL} imgProduct={imgProduct} setProduct={setProduct} />} 
-              />
+                />
               <Route 
                 path="/productos/ropa-deportiva-mujer" 
                 element={
                   <ProductCatalog 
-                    URL={URL} 
-                    imgDefault={imgProduct} 
-                    setProduct={setProduct} 
-                    preSelectedCat='Lencería'
+                  URL={URL} 
+                  imgDefault={imgProduct} 
+                  setProduct={setProduct} 
+                  preSelectedCat='Lencería'
                   />
                 } 
-              />
+                />
               <Route 
                 path="/productos/lenceria" 
                 element={
                   <ProductCatalog 
-                    URL={URL} 
-                    imgDefault={imgProduct} 
-                    setProduct={setProduct} 
-                    preSelectedCat='Lencería'
+                  URL={URL} 
+                  imgDefault={imgProduct} 
+                  setProduct={setProduct} 
+                  preSelectedCat='Lencería'
                   />
                 } 
               />
@@ -87,13 +98,13 @@ const App = () => {
                 path="/productos/ropa-de-mujer" 
                 element={
                   <ProductCatalog 
-                    URL={URL} 
-                    imgDefault={imgProduct} 
-                    setProduct={setProduct} 
-                    preSelectedCat='Ropa de Mujer'
+                  URL={URL} 
+                  imgDefault={imgProduct} 
+                  setProduct={setProduct} 
+                  preSelectedCat='Ropa de Mujer'
                   />
                 } 
-              />
+                />
             </Route>
 
             {/* Auth Routes without Layout */}
@@ -106,7 +117,7 @@ const App = () => {
                 <Route 
                   path="/perfil" 
                   element={<div>Perfil de Usuario (en construcción)</div>} 
-                />
+                  />
               </Route>
             </Route>
 
@@ -115,15 +126,15 @@ const App = () => {
               <Route 
                 path="/admin/home" 
                 element={<Dashboard URL={URL} imgDefault={imgUser} />} 
-              />
+                />
               <Route 
                 path="/admin/products" 
                 element={<ProductList URL={URL} imgDefault={imgProduct} />} 
-              />
+                />
               <Route 
                 path="/admin/orders" 
                 element={<OrdersList URL={URL} imgDefault={imgProduct} />} 
-              />
+                />
             </Route>
 
             {/* 404 Not Found */}
@@ -132,6 +143,7 @@ const App = () => {
         </Router>
       </CartProvider>
     </AuthProvider>
+    </Auth0Provider>
   );
 };
 
