@@ -46,7 +46,7 @@ BEGIN
         INNER JOIN e_commerce.metodos_pagos mp ON p.met_pag_ped = mp.id_met_pag
         INNER JOIN e_commerce.detalle_pedidos dp ON dp.ped_det_ped = p.id_ped
         GROUP BY p.id_ped
-        ORDER BY p.fec_ped DESC, p.id_ped DESC;
+        ORDER BY p.id_ped;
     END IF;
 END //
 

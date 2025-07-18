@@ -15,6 +15,7 @@ import Header from "./components/Header/Header";
 import HomePage from "./components/Pages/HomePage/HomePage";
 import ProductCatalog from "./components/ProductCatalog/ProductCatalog";
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage";
+import { Customers } from "./components/Admin/Clients";
 // Main Module 
 const App = () => {
   // Dynamic vars
@@ -91,8 +92,7 @@ const App = () => {
                     setProduct={setProduct} 
                     preSelectedCat='Ropa de Mujer'
                   />
-                } 
-              />
+                } />
             </Route>
 
             {/* Auth Routes without Layout */}
@@ -122,6 +122,10 @@ const App = () => {
               <Route 
                 path="/admin/orders" 
                 element={<OrdersList URL={URL} imgDefault={imgProduct} />} 
+              />
+              <Route 
+                path="/admin/customers" 
+                element={<Customers URL={URL} imgDefault={imgUser} />}
               />
             </Route>
 

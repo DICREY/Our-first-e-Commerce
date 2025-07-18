@@ -46,7 +46,7 @@ export const NavAdmin = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="#">
+                        <NavLink to="/admin/customers">
                             <Users className={styles.icon} />
                             {sidebarOpen && <span>Clientes</span>}
                         </NavLink>

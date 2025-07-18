@@ -12,7 +12,7 @@ const Route = Router()
 
 // Middleware 
 Route.use(authenticateJWT)
-Route.use(ValidatorRol("administrador"))
+// Route.use(ValidatorRol("administrador"))
 
 // Routes
 Route.get('/all', async (req,res) => {
