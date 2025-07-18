@@ -165,6 +165,13 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
     )
   }
 
+  useEffect(() => {
+    if (products.length > 0) {
+      setPriceRange([minPrice, maxPrice]);
+    }
+    // eslint-disable-next-line
+  }, [minPrice, maxPrice, products.length]);
+
   return (
     <main className={styles.catalogPage}>
       <header className={styles.header}>
