@@ -8,8 +8,8 @@
 
 .customersContainer {
     padding: 2rem;
-    max-width: 100rem;
-    margin: 0 auto;
+    width: 100%;
+    overflow: auto;
 }
 
 .header {
