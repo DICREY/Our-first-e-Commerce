@@ -1,6 +1,7 @@
 // Librarys 
 import { useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 // Imports 
 import { CartProvider } from "./Contexts/CartContext";
