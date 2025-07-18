@@ -8,6 +8,7 @@ import { NavAdmin } from '../Navs/NavAdmin'
 
 // Import styles 
 import styles from '../../styles/Admin/ProductList.module.css'
+import { Paginacion } from '../Global/Paginacion'
 
 // Component 
 export const ProductList = ({ URL = '', imgDefault = '' }) => {
@@ -16,7 +17,6 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
   const [ productsAlmc, setProductsAlmc ] = useState(null)
   const [ loading, setLoading ] = useState(true)
   const [ currentPage, setCurrentPage ] = useState(1)
-  const [ totalProducts, setTotalProducts ] = useState(0)
   const [ selectedCategory, setSelectedCategory ] = useState('')
   const [ categories, setCategories ] = useState([])
 
@@ -62,10 +62,6 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
     }
   }
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber)
-  }
-
   const calculateDiscount = (currentPrice, originalPrice) => {
     return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
   }
@@ -107,7 +103,8 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
         </div>
 
         <div className={styles.productsGrid}>
-          {products && products[currentPage - 1]?.map((product,idx) => (
+          {products?
+           products[currentPage - 1]?.map((product,idx) => (
             <div key={idx + 192} className={styles.productCard}>
               <div className={styles.productImageContainer}>
                 <CheckImage 
@@ -161,20 +158,18 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
                 </div>
               </div>
             </div>
-          ))}
+          )):(
+            <div className={styles.noResults}>
+                No se encontraron productos registrados en el sistema
+            </div>
+          )}
         </div>
 
-        <div className={styles.pagination}>
-          {products?.map((i,idx) => (
-            <button
-              key={idx}
-              onClick={() => handlePageChange(idx + 1)}
-              className={`${styles.pageButton} ${currentPage === idx + 1 ? styles.active : ''}`}
-            >
-              {idx + 1}
-            </button>
-          ))}
-        </div>
+        <Paginacion 
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+          data={products}
+        />
       </main>
     </main>
   )

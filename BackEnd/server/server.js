@@ -7,6 +7,7 @@ const cookies = require('../routes/cookies.route')
 const stats = require('../routes/stats.route')
 const peoples = require('../routes/people.route')
 const products = require('../routes/product.route')
+const orders = require('../routes/order.route')
 const testing = require('../routes/test.route')
 
 // function to Define routers
@@ -23,6 +24,7 @@ function routerApi(app) {
     router.use('/stats',stats)
     router.use('/peoples',peoples)
     router.use('/products',products)
+    router.use('/orders',orders)
     router.use('/test',testing)
 }
 

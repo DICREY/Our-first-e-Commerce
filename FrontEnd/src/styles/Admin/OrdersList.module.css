@@ -4,11 +4,13 @@
     justify-content: center;
     height: 100vh;
     background-color: var(--light-gray);
+    overflow: auto;
 }
 
 .ordersContainer {
     padding: 2rem;
     margin: 0 auto;
+    overflow: auto;
 }
 
 .header {

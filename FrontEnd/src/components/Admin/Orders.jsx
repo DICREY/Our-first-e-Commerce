@@ -2,90 +2,67 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+// Imports
+import { NavAdmin } from '../Navs/NavAdmin'
+import { GetData } from '../../Utils/Requests'
+import { Paginacion } from '../Global/Paginacion'
+import { divideList, errorStatusHandler, formatDate, formatNumber, searchFilter } from '../../Utils/utils'
+
 // Import styles
 import styles from '../../styles/Admin/OrdersList.module.css'
-import { NavAdmin } from '../Navs/NavAdmin'
 
 // Component 
 export const OrdersList = ({ URL = '' }) => {
-  const [orders, setOrders] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const ordersPerPage = 10
+  // Dynamic vars 
+  const [ orders, setOrders ] = useState(null)
+  const [ ordersAlmc, setOrdersAlmc ] = useState(null)
+  const [ loading, setLoading ] = useState(true)
+  const [ statusFilter, setStatusFilter ] = useState('all')
+  const [ currentPage, setCurrentPage ] = useState(1)
 
-  useEffect(() => {
-    // Simular obtención de datos de la API
-    const fetchData = async () => {
-      try {
-        // Datos simulados basados en tu estructura de base de datos
-        const simulatedOrders = [
-          {
-            id_ped: 181,
-            cliente: {
-              id_per: 1,
-              nom_per: 'Ricky',
-              ape_per: 'Antony',
-              email_per: 'ricky@example.com'
-            },
-            fec_ped: '2019-04-20',
-            dir_env_ped: '2392 Main Avenue, Penasauka, New Jersey 02149',
-            metodo_envio: 'Flat Rate',
-            sta_ped: 'ENTREGADO',
-            total: 1250.75
-          },
-          {
-            id_ped: 182,
-            cliente: {
-              id_per: 2,
-              nom_per: 'Kin',
-              ape_per: 'Rossow',
-              email_per: 'kin@example.com'
-            },
-            fec_ped: '2019-04-20',
-            dir_env_ped: '1 Hollywood Blvd, Beverly Hills, California 90210',
-            metodo_envio: 'Free Shipping',
-            sta_ped: 'ENVIADO',
-            total: 899.99
-          },
-          // Más pedidos simulados...
-        ]
-        
-        setOrders(simulatedOrders)
-        setLoading(false)
-      } catch (error) {
-        console.error('Error fetching orders:', error)
+  // Functions 
+  const getOrders = async () => {
+    try {
+      const ord = await GetData(`${URL}/orders/all`)
+      if (ord) {
+        setOrders(divideList(ord,12))
+        setOrdersAlmc(ord)
         setLoading(false)
       }
+    } catch (err) {
+      setLoading(false)
+      const message = errorStatusHandler(err)
+      console.log(message)
     }
-
-    fetchData()
-  }, [])
-
-  const filteredOrders = orders.filter(order => {
-    // Filtrar por término de búsqueda
-    const matchesSearch = 
-      `#${order.id_ped}`.includes(searchTerm) ||
-      `${order.cliente.nom_per} ${order.cliente.ape_per}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.cliente.email_per.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    // Filtrar por estado
-    const matchesStatus = statusFilter === 'all' || order.sta_ped === statusFilter
-    
-    return matchesSearch && matchesStatus
-  })
-
-  // Paginación
-  const indexOfLastOrder = currentPage * ordersPerPage
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage)
-
-  const formatDate = (dateString) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' }
-    return new Date(dateString).toLocaleDateString('en-GB', options)
   }
+
+  const handleFilter = (term) => {
+    const filterData = searchFilter(term,ordersAlmc, [
+      'nom_per',
+      'ape_per',
+      'nom_met_pag',
+      'fec_ped'
+    ])
+    if (filterData) {
+      setCurrentPage(1)
+      setOrders(divideList(filterData,12))
+    }
+  }
+
+  const handleFilterToState = (term) => {
+    setStatusFilter(term)
+    if (term === 'all') setOrders(divideList(ordersAlmc,12))
+
+    const filterData = searchFilter(term,ordersAlmc, ['sta_ped'])
+    if (filterData) {
+      setCurrentPage(1)
+      setOrders(divideList(filterData,12))
+    }
+  }
+
+  useEffect(() => {
+    getOrders()
+  }, [])
 
   const getStatusBadgeClass = (status) => {
     switch(status) {
@@ -107,50 +84,48 @@ export const OrdersList = ({ URL = '' }) => {
         <NavAdmin />
         <main className={styles.ordersContainer}>
         <div className={styles.header}>
-            <h1>Orders</h1>
+            <h1>Pedidos</h1>
             <div className={styles.controls}>
-            <div className={styles.searchBox}>
-                <input
-                type="text"
-                placeholder="Search orders..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.searchInput}
-                />
-                <span className={styles.searchIcon}>🔍</span>
-            </div>
-            
-            <select
+              <div className={styles.searchBox}>
+                  <input
+                    type="text"
+                    placeholder="Search orders..."
+                    onChange={(e) => handleFilter(e.target.value)}
+                    className={styles.searchInput}
+                  />
+                  <span className={styles.searchIcon}>🔍</span>
+              </div>
+              
+              <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => handleFilterToState(e.target.value)}
                 className={styles.statusFilter}
-            >
-                <option value="all">All Status</option>
-                <option value="PENDIENTE">Pending</option>
-                <option value="PROCESANDO">Processing</option>
-                <option value="ENVIADO">Shipped</option>
-                <option value="ENTREGADO">Delivered</option>
-                <option value="CANCELADO">Cancelled</option>
-            </select>
+              >
+                <option value="all">Todo</option>
+                <option value="PENDIENTE">Pendiente</option>
+                <option value="PROCESANDO">Procesando</option>
+                <option value="ENVIADO">Enviado</option>
+                <option value="ENTREGADO">Entregado</option>
+                <option value="CANCELADO">Cancelado</option>
+              </select>
             </div>
         </div>
 
         <div className={styles.ordersTable}>
             <div className={styles.tableHeader}>
-            <div className={styles.headerCell}>Order</div>
-            <div className={styles.headerCell}>Date</div>
-            <div className={styles.headerCell}>Customer</div>
-            <div className={styles.headerCell}>Status</div>
+            <div className={styles.headerCell}>Pedido</div>
+            <div className={styles.headerCell}>Fecha</div>
+            <div className={styles.headerCell}>Cliente</div>
+            <div className={styles.headerCell}>Estado</div>
             <div className={styles.headerCell}>Total</div>
-            <div className={styles.headerCell}>Actions</div>
+            <div className={styles.headerCell}>Acción</div>
             </div>
-
-            {currentOrders.length > 0 ? (
-            currentOrders.map(order => (
+            {orders ? (
+              orders[currentPage -1]?.map(order => (
                 <div key={order.id_ped} className={styles.orderRow}>
                 <div className={styles.orderCell}>
                     <div className={styles.orderId}>#{order.id_ped}</div>
-                    <div className={styles.orderCustomerEmail}>{order.cliente.email_per}</div>
+                    <div className={styles.orderCustomerEmail}>{order.email_per}</div>
                 </div>
                 
                 <div className={styles.orderCell}>
@@ -159,7 +134,7 @@ export const OrdersList = ({ URL = '' }) => {
                 
                 <div className={styles.orderCell}>
                     <div className={styles.customerName}>
-                    {order.cliente.nom_per} {order.cliente.ape_per}
+                    {order.nom_per} {order.ape_per}
                     </div>
                     <div className={styles.shippingAddress}>
                     {order.dir_env_ped} Via {order.metodo_envio}
@@ -173,13 +148,13 @@ export const OrdersList = ({ URL = '' }) => {
                 </div>
                 
                 <div className={styles.orderCell}>
-                    ${order.total.toFixed(2)}
+                    ${formatNumber(order.total_pedido)}
                 </div>
                 
                 <div className={styles.orderCell}>
                     <Link 
-                    to={`/orders/${order.id_ped}`} 
-                    className={styles.viewButton}
+                      to={`/orders/${order.id_ped}`} 
+                      className={styles.viewButton}
                     >
                     View
                     </Link>
@@ -187,41 +162,19 @@ export const OrdersList = ({ URL = '' }) => {
                 </div>
             ))
             ) : (
-            <div className={styles.noResults}>
-                No orders found matching your criteria.
-            </div>
+              <div className={styles.noResults}>
+                  No se encontraron pedidos registrados en el sistema
+              </div>
             )}
-        </div>
+          </div>
 
-        {filteredOrders.length > ordersPerPage && (
-            <div className={styles.pagination}>
-            <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className={styles.paginationButton}
-            >
-                Previous
-            </button>
-            
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`${styles.paginationButton} ${currentPage === page ? styles.active : ''}`}
-                >
-                {page}
-                </button>
-            ))}
-            
-            <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className={styles.paginationButton}
-            >
-                Next
-            </button>
-            </div>
-        )}
+          {console.log(orders)}
+
+          <Paginacion 
+            data={orders} 
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage} 
+          />
         </main>
     </main>
   )

@@ -112,13 +112,13 @@ BEGIN
     -- Ventas diarias para el gráfico (últimos 12 días)
     SELECT 
         DATE_FORMAT(p.fec_ped, '%b %e') AS day,
-        SUM(d.subtotal) AS value
+        SUM(dp.subtotal) AS value
     FROM e_commerce.pedidos p
-    JOIN e_commerce.detalle_pedidos d ON p.id_ped = d.ped_det_ped
+    JOIN e_commerce.detalle_pedidos dp ON p.id_ped = dp.ped_det_ped
     WHERE p.sta_ped != 'CANCELADO'
       AND p.fec_ped >= CURRENT_DATE - INTERVAL 12 DAY
     GROUP BY DATE(p.fec_ped)
-    ORDER BY tipo, day;
+    ORDER BY p.fec_ped ASC;
 END //
 
 CREATE PROCEDURE e_commerce.TodaySales()

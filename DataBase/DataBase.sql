@@ -105,10 +105,18 @@ CREATE TABLE e_commerce.pedidos (
 CREATE TABLE e_commerce.detalle_pedidos (
     id_det_ped INT AUTO_INCREMENT PRIMARY KEY,
     ped_det_ped INT NOT NULL COMMENT 'Pedido',INDEX(ped_det_ped),FOREIGN KEY (ped_det_ped) REFERENCES pedidos(id_ped) ON DELETE CASCADE ON UPDATE CASCADE,
-    pro_det_ped INT NOT NULL COMMENT 'Producto',INDEX(pro_det_ped),FOREIGN KEY (pro_det_ped) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
     can_det_ped INT NOT NULL COMMENT 'Cantidad',
     pre_uni_det_ped DECIMAL(10,2) NOT NULL COMMENT 'Precio por unidad',
     subtotal DECIMAL(12,2) GENERATED ALWAYS AS (can_det_ped * pre_uni_det_ped) STORED
+);
+
+CREATE TABLE e_commerce.productos_pedidos(
+    id_det_ped INT NOT NULL COMMENT 'ID detalle de Pedido',INDEX(id_det_ped),FOREIGN KEY (id_det_ped) REFERENCES detalle_pedidos(id_det_ped) ON DELETE CASCADE ON UPDATE CASCADE,
+    pro_ped INT NOT NULL COMMENT 'Producto',INDEX(pro_ped),FOREIGN KEY (pro_ped) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    col_pro_ped INT NOT NULL COMMENT 'Color de producto',INDEX(col_pro_ped),FOREIGN KEY (col_pro_ped) REFERENCES colores(id_col) ON DELETE CASCADE ON UPDATE CASCADE,
+    img_pro_ped INT NOT NULL COMMENT 'Imagen del producto',INDEX(img_pro_ped),FOREIGN KEY (img_pro_ped) REFERENCES imagenes(id_img) ON DELETE CASCADE ON UPDATE CASCADE,
+    tal_pro_ped INT NOT NULL COMMENT 'Talla del producto',INDEX(tal_pro_ped),FOREIGN KEY (tal_pro_ped) REFERENCES tallas(id_tal_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY(id_det_ped, pro_ped)
 );
 
 -- Tabla para sesiones/usuarios únicos
