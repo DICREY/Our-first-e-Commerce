@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom'
 
 // Imports 
 import { Paginacion } from '../Global/Paginacion'
+import { divideList, errorStatusHandler } from '../../Utils/utils'
+import { GetData } from '../../Utils/Requests'
+import { NavAdmin } from '../Navs/NavAdmin'
 
 // Import styles 
 import styles from '../../styles/Admin/CustomersList.module.css'
-import { divideList, errorStatusHandler } from '../../Utils/utils'
-import { GetData } from '../../Utils/Requests'
 
 // Component 
 export const Customers = ({ URL = '', ImgDefault = '' }) => {
@@ -48,6 +49,7 @@ export const Customers = ({ URL = '', ImgDefault = '' }) => {
 
     return (
         <main className={styles.customersMainContainer}>
+            <NavAdmin />
             <main className={styles.customersContainer}>
                 <div className={styles.header}>
                     <h1>Customers</h1>
@@ -84,8 +86,8 @@ export const Customers = ({ URL = '', ImgDefault = '' }) => {
                     </div>
 
                     {customers? (
-                        customers[currentPage -1]?.map(customer => (
-                            <div key={customer.id_per} className={styles.customerRow}>
+                        customers[currentPage -1]?.map((customer, idx) => (
+                            <div key={idx} className={styles.customerRow}>
                                 <div className={styles.customerCell}>
                                     <div className={styles.customerAvatar}>
                                         {formatInitials(customer.nom_per, customer.ape_per)}
