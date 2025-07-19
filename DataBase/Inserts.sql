@@ -31,8 +31,8 @@ INSERT INTO e_commerce.colores (nom_col, hex_col) VALUES
 
 -- Imágenes
 INSERT INTO e_commerce.imagenes (nom_img, url_img) VALUES
-('img_1_2', 'url_1_2'), -- id_img = 1
-('img_1_3', 'url_1_3'), -- id_img = 2
+('img_1_2', 'https://i.pinimg.com/1200x/33/90/eb/3390eb933e22bf3a238bcf66eb2f3cfa.jpg'), -- id_img = 1
+('img_1_3', 'https://i.pinimg.com/736x/06/e7/22/06e72242f6b362f6f7c4b9a0d27c2209.jpg'), -- id_img = 2
 ('img_1_5', 'url_1_5'), -- id_img = 3
 ('img_2_2', 'url_2_2'), -- id_img = 4
 ('img_2_4', 'url_2_4'), -- id_img = 5
@@ -112,7 +112,7 @@ INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro) VALUES
 
 -- Relación producto-color-imagen
 INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col) VALUES 
-(1, 1, 2), (2, 1, 3), (3, 1, 5),
+(1, 1, 3), (2, 1, 2), (3, 1, 5),
 (4, 2, 2), (5, 2, 4),
 (6, 3, 1), (7, 3, 4),
 (8, 4, 2), (9, 4, 3),
@@ -169,44 +169,70 @@ INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped,fec_p
 (1, 'Calle 1 #1-1', 1, 'ENTREGADO', '2025-07-01');
 
 -- Detalle de pedidos
-INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, can_det_ped, pre_uni_det_ped) VALUES
-(1, 2, 45000.99),
-(1, 1, 49000.99),
-(2, 1, 65000.99),
-(2, 2, 55000.99),
-(2, 1, 119000.99),
-(3, 1, 129000.99),
-(3, 1, 79000.99),
-(4, 2, 39000.99),
-(4, 1, 49000.99),
-(5, 3, 59000.99),
-(5, 1, 89000.99),
-(5, 2, 42000.99),
-(5, 1, 149000.99),
-(5, 1, 69000.99),
-(6, 2, 45000.99),
-(6, 1, 59000.99),
-(7, 1, 65000.99),
-(7, 2, 89000.99);
+INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, pre_uni_det_ped) VALUES
+(1, 45000.99),
+(1, 49000.99),
+(2, 65000.99),
+(2, 55000.99),
+(2, 119000.99),
+(3, 129000.99),
+(3, 79000.99),
+(4, 39000.99),
+(4, 49000.99),
+(5, 59000.99),
+(5, 89000.99),
+(5, 42000.99),
+(5, 149000.99),
+(5, 69000.99),
+(6, 45000.99),
+(6, 59000.99),
+(7, 65000.99),
+(7, 89000.99);
 
-INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped) VALUES
-(1, 1, 2, 1, 1),
-(1, 6, 1, 12, 1),
-(2, 3, 1, 6, 3),
-(2, 9, 2, 20, 2),
-(2, 14, 2, 30, 4),
-(3, 5, 2, 10, 2),
-(3, 18, 2, 38, 1),
-(4, 8, 2, 18, 2),
-(4, 6, 1, 12, 3),
-(5, 2, 2, 4, 7),
-(5, 5, 2, 10, 2),
-(5, 13, 2, 28, 1),
-(5, 1, 2, 1, 1),
-(5, 7, 2, 16, 2),
-(6, 6, 1, 12, 2),
-(6, 2, 2, 4, 8),
-(7, 3, 1, 6, 1),
-(7, 4, 2, 8, 2),
-(7, 9, 2, 20, 2),
-(7, 14, 2, 30, 4);
+INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped, can_pro_ped) VALUES
+(1, 1, 2, 1, 1, 2),
+(1, 6, 1, 12, 1, 1),
+(2, 3, 1, 6, 3, 1),
+(2, 9, 2, 20, 2, 2),
+(2, 14, 2, 30, 4, 1),
+(3, 5, 2, 10, 2, 1),
+(3, 18, 2, 38, 1, 1),
+(4, 8, 2, 18, 2, 2),
+(4, 6, 1, 12, 3, 1),
+(5, 2, 2, 4, 7, 3),
+(5, 5, 2, 10, 2, 1),
+(5, 13, 2, 28, 1, 2),
+(5, 1, 2, 1, 1, 1),
+(5, 7, 2, 16, 2, 1),
+(6, 6, 1, 12, 2, 2),
+(6, 2, 2, 4, 8, 1),
+(7, 3, 1, 6, 1, 1),
+(7, 4, 2, 8, 2, 2),
+(7, 9, 2, 20, 2, 1),
+(7, 14, 2, 30, 4, 1);
+
+/* Test */
+-- Insertar el pedido con fecha del año pasado (2023)
+INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped, fec_ped) 
+VALUES (
+  3, -- ID del cliente (Nikola Tesla en tus datos)
+  'Carrera 56 #78-90, Cali', -- Dirección de envío
+  4, -- Método de pago: Contraentrega (Efectivo)
+  'ENTREGADO', -- Estado del pedido
+  '2024-08-15' -- Fecha del pedido (15 de noviembre de 2023)
+);
+
+-- Obtener el ID del pedido recién insertado (supongamos que es el ID 8)
+SET @last_pedido_id = LAST_INSERT_ID();
+
+-- Insertar detalles del pedido
+INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, can_det_ped, pre_uni_det_ped) 
+VALUES 
+  (@last_pedido_id, 1, 129000.99), -- Abrigo de lana invierno
+  (@last_pedido_id, 2, 39000.99);  -- 2 Fulares de seda estampado
+
+-- Insertar relación productos-pedido (usando IDs de productos existentes)
+INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped) 
+VALUES 
+  (19, 5, 2, 10, 2), -- Abrigo de lana invierno, color negro, imagen 10, talla M
+  (20, 16, 2, 34, 13); -- Fular de seda estampado, color negro, imagen 34, talla única

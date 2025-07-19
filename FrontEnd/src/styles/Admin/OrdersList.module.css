@@ -1,15 +1,8 @@
 /* OrdersList.module.css */
-.ordersMainContainer {
-    display: flex;
-    justify-content: center;
-    height: 100vh;
-    background-color: var(--light-gray);
-    overflow: auto;
-}
-
-.ordersContainer {
+.mainContent {
     padding: 2rem;
     margin: 0 auto;
+    width: 100%;
     overflow: auto;
 }
 
@@ -75,7 +68,7 @@
 
 .tableHeader {
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr 2fr 1fr 1fr .5fr;
     background-color: var(--neutral-50);
     border-bottom: 1px solid var(--gray-200);
     padding: 1rem;
@@ -89,7 +82,7 @@
 
 .orderRow {
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr 2fr 1fr 1fr .5fr;
     padding: 1rem;
     border-bottom: 1px solid var(--gray-100);
     transition: background-color 0.2s ease;

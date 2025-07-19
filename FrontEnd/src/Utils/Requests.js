@@ -19,7 +19,7 @@ export async function GetData( URL = '', set = null ) {
     }
 }
 // Enviar datos 
-export async function PostData( URL = '', datas = {}, set = null ) {
+export async function PostCookie( URL = '', datas = {}) {
     try {
         const response = await axios.post( URL, {...datas}, { 
             headers: {
@@ -29,7 +29,25 @@ export async function PostData( URL = '', datas = {}, set = null ) {
   
         // Manejar diferentes códigos de estado
         if(200 >= response.status <= 299) {
-            return set? set(response.data): response.data
+            return response.data
+        } else throw response
+
+  
+    } catch (error) {
+        throw error
+    }
+}
+export async function PostData( URL = '', datas = {}) {
+    try {
+        const response = await axios.post( URL, {...datas}, { 
+            headers: {
+                'x-api-key': 'e_commerce'
+            },
+            withCredentials: true} )
+  
+        // Manejar diferentes códigos de estado
+        if(200 >= response.status <= 299) {
+            return response.data.result
         } else throw response
 
   

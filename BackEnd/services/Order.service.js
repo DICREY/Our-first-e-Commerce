@@ -157,6 +157,49 @@ class Order {
             this.database.conection.end()
         })
     }
+
+    // function to find by
+    async findBy() {
+        return new Promise((res,rej) => {
+            // vars
+            const params = this.args[0]?.trim()
+            const proc = "CALL GetOrderBy(?);"
+            const keys = [
+                'id_pro',
+                'nom_pro',
+                'pre_pro',
+                'des_pro',
+                'sta_pro',
+                'onSale',
+                'url_img',
+                'nom_col',
+                'hex_col',
+                'nom_tal_pro'
+            ]
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,[params],(err,result) => {
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    const resOne = this.global.format(result[0],'products',keys)
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: resOne
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
    
     async test() {
         return new Promise((res,rej) => {

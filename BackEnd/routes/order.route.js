@@ -25,9 +25,27 @@ Route.get('/all', async (req,res) => {
 })
 
 // Middleware 
+Route.use(Fullinfo('empty'))
 // Route.use(authenticateJWT)
-// Route.use(ValidatorRol("usuario"))
 // , ValidatorRol("administrador")
+Route.post('/by', async (req,res) => {
+    try {
+        // Vars 
+        const by = String(req.body.by)
+        const ord = new Order(by)
+        const find = await ord.findBy()
+
+        if (find) return res.status(200).json(find)
+
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
+    } catch(err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
 Route.post('/register', async (req,res) => {
     try {
         // Vars 

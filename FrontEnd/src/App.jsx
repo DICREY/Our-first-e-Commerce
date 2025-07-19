@@ -11,15 +11,19 @@ import { AuthContext } from "./Contexts/Contexts";
 import { Dashboard } from './components/Admin/Dashboard'
 import { ProductList } from "./components/Admin/Products"
 import { OrdersList } from "./components/Admin/Orders";
+import { Customers } from "./components/Admin/Clients";
+import { NavAdmin } from "./components/Navs/NavAdmin";
 import Header from "./components/Header/Header";
 import HomePage from "./components/Pages/HomePage/HomePage";
 import ProductCatalog from "./components/ProductCatalog/ProductCatalog";
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage";
-import { Customers } from "./components/Admin/Clients";
+import { OrderDetail } from "./components/Details/OrdersDetails";
+
 // Main Module 
 const App = () => {
   // Dynamic vars
   const [product, setProduct] = useState();
+  const [order, setOrder] = useState();
   const [catPro, setCatPro] = useState();
 
   // Vars 
@@ -47,8 +51,13 @@ const App = () => {
 
   const AdminRoute = () => {
     const { admin } = useContext(AuthContext);
-    return admin ? <Outlet /> : <Navigate to="/login" />;
-  };
+    return admin? (
+      <main className='mainContainerAdmin'>
+        <NavAdmin />
+        <Outlet />
+      </main>
+    ):<Navigate to="/login" />
+  }
 
   return (
     <AuthProvider>
@@ -94,6 +103,15 @@ const App = () => {
                   />
                 } />
             </Route>
+            <Route 
+              path="/product" 
+              element={
+                <ProductDetailPage 
+                  URL={URL} 
+                  img={imgProduct} 
+                  product={product}
+                />
+              } />
 
             {/* Auth Routes without Layout */}
             <Route path="/login" element={<LoginForm URL={URL} />} />
@@ -121,7 +139,11 @@ const App = () => {
               />
               <Route 
                 path="/admin/orders" 
-                element={<OrdersList URL={URL} imgDefault={imgProduct} />} 
+                element={<OrdersList URL={URL} imgDefault={imgProduct} setIdOrder={setOrder} />} 
+              />
+              <Route 
+                path="/admin/orders/details" 
+                element={<OrderDetail URL={URL} id_ped={order} />} 
               />
               <Route 
                 path="/admin/customers" 

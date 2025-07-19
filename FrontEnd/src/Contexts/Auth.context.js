@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 // Imports 
 import { decodeJWT } from '../Utils/utils'
-import { PostData } from '../Utils/Requests'
+import { PostCookie } from '../Utils/Requests'
 import { AuthContext } from './Contexts'
 
 // Component
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (url = '', data = {}) => {
         if (didFetch) return
         try {            
-            const response = await PostData(url, data)
+            const response = await PostCookie(url, data)
             didFetch = true
             setLoading(null)
             if (response) {
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
     // Cerrar sesion 
     const logout = async ( URL = '') => {
         try {
-            const check = await PostData(`${URL}/cookies/clear`, {})
+            const check = await PostCookie(`${URL}/cookies/clear`, {})
             setLoading(null)
             if (check) {
                 setUser(null)
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
             if (didFetch) return
             setLoading(true)
             try {
-                const check = await PostData('http://localhost:3000/ecommerce/cookies/check', { name: '__cred' })
+                const check = await PostCookie('http://localhost:3000/ecommerce/cookies/check', { name: '__cred' })
                 didFetch = true
                 setLoading(null)
                 if (check) {

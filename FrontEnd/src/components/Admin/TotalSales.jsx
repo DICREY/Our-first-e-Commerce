@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 
 // Imports 
-import { errorStatusHandler } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 
 // Import styles 
@@ -30,14 +30,9 @@ export const TotalSales = ({ URL = '' }) => {
 
     const GetInfo = async () => {
         try {
-            const got = await GetData(`${URL}/stats/last-sales`)
-            if (got) {
-                const prevYear = got?.map(i => i.tipo === "prev_year_sales")
-                const lastMonth = got?.map(i => i.tipo === "last_month_sales")
-                setYears({
-                    prevYear: prevYear,
-                    lastMonth: lastMonth
-                })
+            const got = await GetData(`${URL}/stats/sales-summary`)
+            if (got && got[0]) {
+                setYears(got[0])
             }
         } catch (err) {
             const message = errorStatusHandler(err)
@@ -114,12 +109,20 @@ export const TotalSales = ({ URL = '' }) => {
                 <header className={styles.summary}>
                     <div className={styles.summaryItem}>
                         <span className={styles.summaryLabel}>Mes pasado:</span>
-                        <span className={styles.summaryValue}>${years?.lastMonth?.value || 0}</span>
+                        <span className={styles.summaryValue}>${formatNumber(years?.month_previous)}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>Mes actual:</span>
+                        <span className={styles.summaryValue}>${formatNumber(years?.month_current)}</span>
                     </div>
 
                     <div className={styles.summaryItem}>
                         <span className={styles.summaryLabel}>Año anterior:</span>
-                        <span className={styles.summaryValue}>${years?.prevYear?.value || 0}</span>
+                        <span className={styles.summaryValue}>${formatNumber(years?.year_previous)}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>Año actual:</span>
+                        <span className={styles.summaryValue}>${formatNumber(years?.year_current)}</span>
                     </div>
                 </header>
 

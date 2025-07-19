@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Box, ChartNoAxesCombined, Package, Settings, Users } from 'lucide-react'
 
 // Import styles 
-import styles from '../../styles/Admin/Dashboard.module.css'
+import styles from '../../styles/Navs/NavAdmin.module.css'
 
 // Component 
 export const NavAdmin = () => {
@@ -52,9 +52,15 @@ export const NavAdmin = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="#">
+                        <NavLink to="/user/perfil">
                             <Settings className={styles.icon} />
                             {sidebarOpen && <span>Configuración</span>}
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/">
+                            <Settings className={styles.icon} />
+                            {sidebarOpen && <span>Home</span>}
                         </NavLink>
                     </li>
                 </ul>

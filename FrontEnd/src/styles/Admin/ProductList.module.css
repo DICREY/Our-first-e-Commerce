@@ -6,11 +6,12 @@
   background-color: var(--light-gray);
 }
 
-.productListContainer {
+.mainContent {
+  flex: 1;
   padding: 2rem;
-  border: 2px solid red;
-  min-width: 90%;
+  width: 100%;
   overflow: auto;
+  transition: var(--transition);
 }
 
 .header {

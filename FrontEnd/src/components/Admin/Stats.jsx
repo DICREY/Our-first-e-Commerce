@@ -16,7 +16,7 @@ import {
 } from 'chart.js'
 
 // Imports
-import { divideList, errorStatusHandler, formatNumber } from '../../Utils/utils'
+import { divideList, errorStatusHandler, formatNumber, PriceCompare } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 
 // Import styles 
@@ -38,9 +38,11 @@ ChartJS.register(
 // Component WeeklySales
 export const WeeklySales = ({ URL = '' }) => {
     // Dynamic vars 
-    const [ almcData, setAlmcData ] = useState()
+    const [ almcData, setAlmcData ] = useState(null)
     const [ totals, setTotals ] = useState()
+    const [ sales, setSales ] = useState(null)
     const [ days, setDays ] = useState()
+    const [ compare, setCompare ] = useState()
     
     // Vars
     let didFetch = false
@@ -77,10 +79,8 @@ export const WeeklySales = ({ URL = '' }) => {
 
     // Functions 
     const GetInfo = async () => {
-        if (didFetch) return
         try {
             const got = await GetData(`${URL}/stats/weekly-sales`)
-            didFetch = true
             if (got) {
                 const day = got?.map(i => i.nombre_dia)
                 const MapData = got?.map(i => i.total_vendido)
@@ -93,17 +93,35 @@ export const WeeklySales = ({ URL = '' }) => {
         }
     }
 
+    const GetSalesSummary = async () => {
+        try {
+            const got = await GetData(`${URL}/stats/sales-summary`)
+            if (got && got[0]) {
+                setSales(got[0])
+            }
+            didFetch = true
+        } catch (err) {
+            const message = errorStatusHandler(err)
+        }
+    }
+
     useEffect(() => {
+        if (didFetch) return
         GetInfo()
+        GetSalesSummary()
     },[])
+
+    useEffect(() => {
+        setCompare(PriceCompare(sales?.week_previous,sales?.week_current))
+    },[sales])
 
     return (
         <aside className={styles.card}>
             <header className={styles.header}>
                 <h3 className={styles.title}>Ventas Semanales</h3>
                 <div className={styles.stats}>
-                <p className={styles.amount}>${formatNumber(totals?.reduce((acc, val) => acc + val, 0))}</p>
-                <p className={styles.percentage}>+3.5%</p>
+                <p className={styles.amount}>${formatNumber(sales?.week_current)}</p>
+                <p className={styles.percentage}>{compare?.direccion} {compare?.diferencia}</p>
                 </div>
             </header>
             <div className={styles.chartContainer}>
@@ -244,6 +262,7 @@ export const TotalOrders = ({ URL = '' }) => {
     const [ months, setMonths ] = useState()
     const [ orders, setOrders ] = useState()
     const [ total, setTotal ] = useState()
+    const [ lastTotal, setLastTotal ] = useState(null)
     
     // Vars
     let didFetch = false
@@ -281,7 +300,6 @@ export const TotalOrders = ({ URL = '' }) => {
         if (didFetch) return
         try {
             const got = await GetData(`${URL}/stats/monthly-sales`)
-            didFetch = true
             if (got) {
                 const month = got?.map(i => i.nombre_mes)
                 const order = got?.map(i => i.cantidad_pedidos)
@@ -296,17 +314,35 @@ export const TotalOrders = ({ URL = '' }) => {
         }
     }
 
+    const GetSalesSummary = async () => {
+        try {
+            const got = await GetData(`${URL}/stats/sales-summary`)
+            if (got && got[0]) {
+                const compare = PriceCompare(got[0]?.year_previous,got[0]?.year_current)
+                setLastTotal({
+                    ...got[0],
+                    ...compare
+                })
+            }
+            didFetch = true
+        } catch (err) {
+            const message = errorStatusHandler(err)
+        }
+    }
+
+
     useEffect(() => {
         GetInfo()
+        GetSalesSummary()
     },[])
 
     return (
         <div className={styles.card}>
             <div className={styles.header}>
-                <h3 className={styles.title}>Total Order</h3>
+                <h3 className={styles.title}>Pedidos del año</h3>
                 <div className={styles.stats}>
-                    <p className={styles.amount}>${formatNumber(total?.reduce((acc, val) => acc + val, 0))}</p>
-                    <p className={styles.percentage}>~ 13.6%</p>
+                    <p className={styles.amount}>${formatNumber(lastTotal?.year_current)}</p>
+                    <p className={styles.percentage}>{lastTotal?.direccion} {lastTotal?.diferencia}</p>
                 </div>
             </div>
             <div className={styles.chartContainer}>

@@ -1,14 +1,14 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
+import { Eye } from 'lucide-react'
 
 // Imports 
 import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
-import { NavAdmin } from '../Navs/NavAdmin'
+import { Paginacion } from '../Global/Paginacion'
 
 // Import styles 
 import styles from '../../styles/Admin/ProductList.module.css'
-import { Paginacion } from '../Global/Paginacion'
 
 // Component 
 export const ProductList = ({ URL = '', imgDefault = '' }) => {
@@ -71,48 +71,48 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
   }
 
   return (
-    <main className={styles.productListMainContainer}>
-      <NavAdmin />
-      <main className={styles.productListContainer}>
-        <div className={styles.header}>
-          <h1>Products</h1>
-          <div className={styles.resultsInfo}>
-            Mostrando pagina {currentPage}–{products?.length} de {productsAlmc?.length} Productos
-          </div>
+    <main className={styles.mainContent}>
+      <header className={styles.header}>
+        <h1>Products</h1>
+        <div className={styles.resultsInfo}>
+          Mostrando pagina {currentPage}–{products?.length} de {productsAlmc?.length} Productos
         </div>
+      </header>
 
-        <div className={styles.filterSection}>
-          <div className={styles.categoryFilter}>
-            <label htmlFor="category">Buscar por nombre, categoria:</label>
-            <input
-              id="category"
-              list='categoryProFilter'
-              value={selectedCategory}
-              onChange={(e) => handleCategoryChange(e.target.value)}
-              className={styles.selectInput}
-            />
-            <datalist id='categoryProFilter'>
-              <option value="">All Categories</option>
-              {categories?.map((category, idx) => (
-                <option key={idx + 12} value={category.nom_cat_pro}>
-                  {category.nom_cat_pro}
-                </option>
-              ))}
-            </datalist>
-          </div>
+      <nav className={styles.filterSection}>
+        <div className={styles.categoryFilter}>
+          <label htmlFor="category">Buscar por nombre, categoria:</label>
+          <input
+            id="category"
+            list='categoryProFilter'
+            value={selectedCategory}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+            className={styles.selectInput}
+          />
+          <datalist id='categoryProFilter'>
+            <option value="">All Categories</option>
+            {categories?.map((category, idx) => (
+              <option key={idx + 12} value={category.nom_cat_pro}>
+                {category.nom_cat_pro}
+              </option>
+            ))}
+          </datalist>
         </div>
+      </nav>
 
-        <div className={styles.productsGrid}>
-          {products?
-           products[currentPage - 1]?.map((product,idx) => (
+      <section className={styles.productsGrid}>
+        {products ?
+          products[currentPage - 1]?.map((product, idx) => (
             <div key={idx + 192} className={styles.productCard}>
               <div className={styles.productImageContainer}>
-                <CheckImage 
-                  src={product.image} 
-                  alt={product.nom_pro} 
-                  className={styles.productImage}
-                  imgDefault={imgDefault}
-                />
+                {product?.colors[0]?.url_img && (
+                  <CheckImage
+                    src={product?.colors[0]?.url_img}
+                    alt={product.nom_pro}
+                    className={styles.productImage}
+                    imgDefault={imgDefault}
+                  />
+                )}
                 {product.onSale && (
                   <div className={styles.saleBadge}>
                     -{calculateDiscount(product.pre_pro, product.pre_pro)}%
@@ -143,34 +143,33 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
                 </div>
 
                 <div className={styles.additionalInfo}>
-                  <div className={styles.rating}>({product.rating})</div>
-                  <div className={styles.shipping}>Shipping Cost: ${product.pre_pro}</div>
+                  {/* <div className={styles.rating}>({idx + 1})</div> */}
+                  <div className={styles.shipping}>Shipping Cost: ${formatNumber(product.pre_pro)}</div>
                   <div className={styles.stock}>{product.stock}</div>
                 </div>
 
                 <div className={styles.actionButtons}>
                   <button className={styles.favoriteButton}>
-                    <span className={styles.icon}>♥</span> Favourite
+                    <Eye className={styles.icon}></Eye> Ver
                   </button>
                   <button className={styles.addToCartButton}>
-                    Add to Cart
+                    Editar
                   </button>
                 </div>
               </div>
             </div>
-          )):(
+          )) : (
             <div className={styles.noResults}>
-                No se encontraron productos registrados en el sistema
+              No se encontraron productos registrados en el sistema
             </div>
           )}
-        </div>
+      </section>
 
-        <Paginacion 
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
-          data={products}
-        />
-      </main>
+      <Paginacion
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+        data={products}
+      />
     </main>
   )
 }

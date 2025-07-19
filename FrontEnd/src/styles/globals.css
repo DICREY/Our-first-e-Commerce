@@ -336,10 +336,22 @@ body {
   }
 }
 
+.mainContainerAdmin {
+  display: flex;
+  height: 100vh;
+  background-color: var(--light-gray);
+  overflow: auto;
+}
+
 .imgPerfil {
   height: 2.1rem;
   width: 2.1rem;
   object-fit: cover;
   object-position: center;
   border-radius: 50%;
+}
+
+.active {
+  background-color: var(--primary-color);
+  color: var(--white);
 }

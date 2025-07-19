@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 // Imports 
 import { useCart } from "../../../Contexts/CartContext"
-import { CheckImage } from "../../../Utils/utils"
+import { CheckImage, formatNumber } from "../../../Utils/utils"
 
 // Import styles
 import styles from "./ProductDetailPage.module.css"
@@ -12,7 +12,7 @@ import styles from "./ProductDetailPage.module.css"
 // Component
 const ProductDetailPage = ({ img = '', product = {} }) => {
   // Dynamic vars 
-  const [ selectedImage, setSelectedImage ] = useState(0)
+  const [ selectedImage, setSelectedImage ] = useState(null)
   const [ selectedColor, setSelectedColor ] = useState("")
   const [ selectedSize, setSelectedSize ] = useState(null)
   const [ quantity, setQuantity ] = useState(1)
@@ -25,7 +25,7 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
     addToCart(product, product.sizes[0], product.colors[0])
   }
 
-  if (!product) {
+  if (!product.nom_pro) {
     return (
       <div className={styles.notFound}>
         <h2 className={styles.notFoundTitle}>Producto no encontrado</h2>
@@ -40,14 +40,12 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
   }
 
   // Si el producto tiene múltiples imágenes (simulado)
-  const productImages = Array.isArray(product.colors)
-    ? product.colors
-    : [product.colors || { img_pro_col: img }]
+  const productImages = product?.colors
 
   // Calcular descuento si hay precio original
-  const discount = product.originalPrice
+  const discount = product.price
     ? Math.round(
-        ((product.originalPrice - product.price) / product.originalPrice) * 100
+        ((product.price - product.price) / product.price) * 100
       )
     : 0;
 
@@ -61,6 +59,7 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
   useEffect(() => {
     if (product) {
       setSelectedColor(product?.colors[0]?.nom_col)
+      setSelectedImage(product?.colors[0]?.url_img)
       setSelectedSize(product?.sizes[0])
     }
   },[])
@@ -74,7 +73,7 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
             {productImages?.map((imagen, index) => (
               <picture
                 key={index}
-                onClick={() => setSelectedImage(index)}
+                onClick={() => setSelectedImage(imagen.url_img)}
               >
                 <CheckImage
                   imgDefault={img}
@@ -87,12 +86,19 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
               </picture>
             ))}
           </div>
-          <CheckImage
-            src={product?.colors[selectedImage]?.url_img}
-            alt={product.nom_pro}
-            imgDefault={img}
-            className={styles.mainImage}
-          />
+          {selectedImage? (
+            <img
+              src={selectedImage}
+              alt={product.nom_pro}
+              className={styles.mainImage}
+            />
+          ):(
+            <img
+              src={img}
+              alt={product.nom_pro}
+              className={styles.mainImage}
+            />
+          )}
         </header>
 
         <section className={styles.details}>
@@ -104,7 +110,7 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
           </div>
 
           <div className={styles.priceContainer}>
-            <p className={styles.price}>${product.pre_pro.toFixed(2)}</p>
+            <p className={styles.price}>${formatNumber(product.pre_pro)}</p>
             {product.originalPrice && (
               <>
                 <p className={styles.originalPrice}>
@@ -131,7 +137,10 @@ const ProductDetailPage = ({ img = '', product = {} }) => {
                         selectedColor === color.nom_col ? styles.active : ""
                       }`}
                       style={{ backgroundColor: color.hex_col }}
-                      onClick={() => setSelectedColor(color.nom_col)}
+                      onClick={() => {
+                        setSelectedColor(color.nom_col)
+                        setSelectedImage(color.url_img)
+                      }}
                       title={color.nom_col}
                     />
                   ))}

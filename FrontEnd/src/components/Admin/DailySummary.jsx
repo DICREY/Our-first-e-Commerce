@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react'
 
 // Imports 
 import { AuthContext } from '../../Contexts/Contexts'
-import { errorStatusHandler, Greeting } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, Greeting } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Admin/DailySummary.module.css'
@@ -70,7 +70,7 @@ export const DailySummary = ({ URL = '' }) => {
 
                     <div className={styles.statCard}>
                         <h3>Vendido hoy</h3>
-                        <p className={styles.statValue}>${storeData?.sales || 0}</p>
+                        <p className={styles.statValue}>${formatNumber(storeData?.sales)}</p>
                     </div>
                 </main>
 

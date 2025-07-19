@@ -175,7 +175,9 @@ BEGIN
     FROM
         detalle_pedidos dp
     JOIN 
-        productos p ON dp.pro_det_ped = p.id_pro
+        productos_pedidos pp ON pp.id_det_ped = dp.id_det_ped
+    JOIN 
+        productos p ON pp.pro_ped = p.id_pro
     JOIN
         cat_productos c ON p.cat_pro = c.id_cat_pro
     GROUP BY
@@ -273,33 +275,32 @@ BEGIN
         mes;
 END //
 
-CREATE PROCEDURE e_commerce.StatsTotalSales()
+CREATE PROCEDURE e_commerce.SalesSummary()
 BEGIN
-    -- Ventas del mes anterior
-    SELECT 
-        'last_month_sales' AS tipo,
-        NULL AS day,
-        NULL AS prev_year_sales,
-        SUM(d.subtotal) AS value
-    FROM e_commerce.pedidos p
-    JOIN e_commerce.detalle_pedidos d ON p.id_ped = d.ped_det_ped
-    WHERE p.sta_ped != 'CANCELADO'
-      AND YEAR(p.fec_ped) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
-      AND MONTH(p.fec_ped) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-    
-    UNION ALL
+    SELECT
+        -- Total pedidos año actual
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE) THEN dp.subtotal END), 0) AS year_current,
+        -- Total pedidos año anterior
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE) - 1 THEN dp.subtotal END), 0) AS year_previous,
+        -- Total pedidos mes actual
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE) AND MONTH(p.fec_ped) = MONTH(CURRENT_DATE) THEN dp.subtotal END), 0) AS month_current,
+        -- Total pedidos mes anterior
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(p.fec_ped) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) THEN dp.subtotal END), 0) AS month_previous,
+        -- Total pedidos semana actual
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE) AND WEEK(p.fec_ped, 1) = WEEK(CURRENT_DATE, 1) THEN dp.subtotal END), 0) AS week_current,
+        -- Total pedidos semana anterior
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE - INTERVAL 1 WEEK) AND WEEK(p.fec_ped, 1) = WEEK(CURRENT_DATE - INTERVAL 1 WEEK, 1) THEN dp.subtotal END), 0) AS week_previous,
+        -- Total pedidos dia actual
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE) AND DAY(p.fec_ped) = DAY(CURRENT_DATE) THEN dp.subtotal END), 0) AS day_current,
+        -- Total pedidos dia anterior
+        IFNULL(SUM(CASE WHEN YEAR(p.fec_ped) = YEAR(CURRENT_DATE) AND DAY(p.fec_ped) = DAY(CURRENT_DATE - INTERVAL 1 DAY) THEN dp.subtotal END), 0) AS day_previous
 
-    -- Ventas del año anterior (mismo mes)
-    SELECT 
-        'prev_year_sales' AS tipo,
-        NULL AS day,
-        SUM(d.subtotal) AS value,
-        NULL AS last_month_sales
-    FROM e_commerce.pedidos p
-    JOIN e_commerce.detalle_pedidos d ON p.id_ped = d.ped_det_ped
-    WHERE p.sta_ped != 'CANCELADO'
-      AND YEAR(p.fec_ped) = YEAR(CURRENT_DATE) - 1
-      AND MONTH(p.fec_ped) = MONTH(CURRENT_DATE);
+    FROM
+        e_commerce.pedidos p
+    JOIN
+        e_commerce.detalle_pedidos dp ON p.id_ped = dp.ped_det_ped
+    WHERE
+        p.sta_ped != 'CANCELADO';
 END //
 
 /* CALL SellestProducts(); */
@@ -308,8 +309,10 @@ END //
 /* CALL e_commerce.StatsTotalSales(); */
 /* CALL e_commerce.SalesPerDay(); */
 /* CALL e_commerce.TodaySales(); */
+/* CALL e_commerce.SalesSummary(); */
 
-/* DROP PROCEDURE `SellestProducts`; */
+/* DROP PROCEDURE e_commerce.`SellestProducts`; */
+/* DROP PROCEDURE e_commerce.`SalesSummary`; */
 /* DROP PROCEDURE e_commerce.`WeeklySales`; */
 /* DROP PROCEDURE e_commerce.`MonthlySales`; */
 /* DROP PROCEDURE e_commerce.`StatsTotalSales`; */

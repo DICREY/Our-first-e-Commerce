@@ -10,7 +10,9 @@ CREATE TABLE e_commerce.roles(
 CREATE TABLE e_commerce.personas(
     id_per INT AUTO_INCREMENT PRIMARY KEY,
     nom_per VARCHAR(100) NOT NULL,
+    nom2_per VARCHAR(100) DEFAULT 'No-registrado' NOT NULL,
     ape_per VARCHAR(100) NOT NULL,
+    ape2_per VARCHAR(100) DEFAULT 'No-registrado' NOT NULL,
     fec_nac_per DATE NOT NULL,
     tip_doc_per VARCHAR(10) NOT NULL,
     doc_per VARCHAR(20) UNIQUE NOT NULL,INDEX(doc_per),
@@ -36,6 +38,7 @@ CREATE TABLE e_commerce.cat_productos(
     id_cat_pro INT AUTO_INCREMENT PRIMARY KEY,
     nom_cat_pro VARCHAR(100) NOT NULL,INDEX(nom_cat_pro),
     slug VARCHAR(100) UNIQUE NOT NULL,
+    des_cat_pro INT(3) DEFAULT 0 COMMENT 'Descuento de la categoria',
     sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL
 );
 
@@ -44,6 +47,7 @@ CREATE TABLE e_commerce.productos(
     cat_pro INT NOT NULL,INDEX(cat_pro), FOREIGN KEY(cat_pro) REFERENCES cat_productos(id_cat_pro) ON DELETE CASCADE ON UPDATE CASCADE,
     nom_pro VARCHAR(100) NOT NULL,INDEX(nom_pro),
     pre_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro),
+    des_pre_pro INT(3) DEFAULT 0 COMMENT 'Descuento del producto',
     des_pro TEXT NOT NULL,
     onSale BOOLEAN DEFAULT 1,
     sta_pro BOOLEAN DEFAULT 1 NOT NULL # Estado del servicio
@@ -116,6 +120,7 @@ CREATE TABLE e_commerce.productos_pedidos(
     col_pro_ped INT NOT NULL COMMENT 'Color de producto',INDEX(col_pro_ped),FOREIGN KEY (col_pro_ped) REFERENCES colores(id_col) ON DELETE CASCADE ON UPDATE CASCADE,
     img_pro_ped INT NOT NULL COMMENT 'Imagen del producto',INDEX(img_pro_ped),FOREIGN KEY (img_pro_ped) REFERENCES imagenes(id_img) ON DELETE CASCADE ON UPDATE CASCADE,
     tal_pro_ped INT NOT NULL COMMENT 'Talla del producto',INDEX(tal_pro_ped),FOREIGN KEY (tal_pro_ped) REFERENCES tallas(id_tal_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    can_pro_ped INT NOT NULL COMMENT 'Cantidad de este producto',
     PRIMARY KEY(id_det_ped, pro_ped)
 );
 
