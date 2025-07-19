@@ -24,6 +24,7 @@ BEGIN
                         pr.des_pro,
                         pr.sta_pro,
                         pr.onSale,
+                        pp.can_pro_ped,
                         img.url_img,
                         col.nom_col,
                         col.hex_col,

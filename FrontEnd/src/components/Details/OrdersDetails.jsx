@@ -150,7 +150,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{order?.products?.length}</td>
+                                    <td>{product.can_pro_ped}</td>
                                     <td>${product.subtotal}</td>
                                     <td>${formatNumber(Number(product.pre_pro))}</td>
                                 </tr>

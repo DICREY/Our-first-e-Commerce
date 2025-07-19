@@ -169,7 +169,7 @@ INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped,fec_p
 (1, 'Calle 1 #1-1', 1, 'ENTREGADO', '2025-07-01');
 
 -- Detalle de pedidos
-INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, pre_uni_det_ped) VALUES
+INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, can_det_ped, pre_uni_det_ped) VALUES
 (1, 2, 45000.99),
 (1, 1, 49000.99),
 (2, 1, 65000.99),
@@ -232,7 +232,7 @@ VALUES
   (@last_pedido_id, 2, 39000.99);  -- 2 Fulares de seda estampado
 
 -- Insertar relación productos-pedido (usando IDs de productos existentes)
-INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped) 
+INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped, can_pro_ped) 
 VALUES 
-  (19, 5, 2, 10, 2), -- Abrigo de lana invierno, color negro, imagen 10, talla M
-  (20, 16, 2, 34, 13); -- Fular de seda estampado, color negro, imagen 34, talla única
+  (19, 5, 2, 10, 2, 2), -- Abrigo de lana invierno, color negro, imagen 10, talla M
+  (20, 16, 2, 34, 13, 2); -- Fular de seda estampado, color negro, imagen 34, talla única
