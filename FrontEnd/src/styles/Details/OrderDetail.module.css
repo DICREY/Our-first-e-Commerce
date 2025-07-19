@@ -1,0 +1,287 @@
+/* OrderDetail.module.css */
+.mainContent {
+    width: 100%;
+    padding: 2rem;
+    background-color: var(--white);
+    border-radius: var(--rounded);
+    box-shadow: var(--shadow-md);
+    overflow: auto;
+}
+
+.header {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    color: var(--neutral-800);
+    margin: 0 0 0.5rem 0;
+}
+
+.orderDate {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.backButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--primary-600);
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.backButton:hover {
+    text-decoration: underline;
+}
+
+.statusSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.statusSection h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: var(--gray-700);
+}
+
+.statusBadge {
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.statusPending {
+    background-color: var(--warning-50);
+    color: var(--warning-500);
+    border: 1px solid var(--warning-100);
+}
+
+.statusProcessing {
+    background-color: var(--primary-50);
+    color: var(--primary-600);
+    border: 1px solid var(--primary-100);
+}
+
+.statusShipped {
+    background-color: var(--accent-50);
+    color: var(--accent-600);
+    border: 1px solid var(--accent-100);
+}
+
+.statusCompleted {
+    background-color: var(--success-50);
+    color: var(--success-600);
+    border: 1px solid var(--success-100);
+}
+
+.statusCancelled {
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--gray-200);
+    margin: 1.5rem 0;
+}
+
+.section {
+    margin-bottom: 1.5rem;
+}
+
+.section h2 {
+    font-size: 1.2rem;
+    color: var(--gray-700);
+    margin: 0 0 1rem 0;
+}
+
+.addressDetails,
+.paymentDetails {
+    line-height: 1.6;
+    color: var(--gray-700);
+}
+
+.addressDetails a,
+.paymentDetails a {
+    color: var(--primary-600);
+    text-decoration: none;
+}
+
+.addressDetails a:hover,
+.paymentDetails a:hover {
+    text-decoration: underline;
+}
+
+.productsSection {
+    margin-bottom: 1.5rem;
+}
+
+.productsSection h2 {
+    font-size: 1.2rem;
+    color: var(--gray-700);
+    margin: 0 0 1rem 0;
+}
+
+.productItem {
+    margin-bottom: 2rem;
+}
+
+.productName {
+    font-size: 1.1rem;
+    color: var(--neutral-800);
+    margin: 0 0 0.5rem 0;
+}
+
+.productDescription {
+    color: var(--gray-600);
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.quantityTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.quantityTable th,
+.quantityTable td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.quantityTable th {
+    font-weight: 600;
+    color: var(--gray-700);
+    background-color: var(--gray-50);
+}
+
+.totalsSection {
+    margin: 2rem 0;
+}
+
+.totalRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.95rem;
+}
+
+.totalRow:last-child {
+    border-bottom: none;
+}
+
+.grandTotal {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--neutral-800);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.printButton,
+.emailButton {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--rounded);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.printButton {
+    background-color: var(--white);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+.printButton:hover {
+    background-color: var(--gray-50);
+}
+
+.emailButton {
+    background-color: var(--primary-600);
+    color: var(--white);
+    border: none;
+}
+
+.emailButton:hover {
+    background-color: var(--primary-700);
+}
+
+.loading,
+.error,
+.notFound {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-600);
+}
+
+.error {
+    color: var(--red-500);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .orderDetailContainer {
+        padding: 1rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .backButton {
+        position: static;
+        margin-top: 1rem;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .printButton,
+    .emailButton {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .quantityTable {
+        font-size: 0.8rem;
+    }
+
+    .quantityTable th,
+    .quantityTable td {
+        padding: 0.5rem;
+    }
+
+    .totalRow {
+        font-size: 0.9rem;
+    }
+
+    .grandTotal {
+        font-size: 1rem;
+    }
+}
