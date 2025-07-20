@@ -13,17 +13,19 @@ import { ProductList } from "./components/Admin/Products"
 import { OrdersList } from "./components/Admin/Orders";
 import { Customers } from "./components/Admin/Clients";
 import { NavAdmin } from "./components/Navs/NavAdmin";
+import { OrderDetail } from "./components/Details/OrdersDetails";
+import { CustomerDetail } from "./components/Details/CustomersDetails";
 import Header from "./components/Header/Header";
 import HomePage from "./components/Pages/HomePage/HomePage";
 import ProductCatalog from "./components/ProductCatalog/ProductCatalog";
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage";
-import { OrderDetail } from "./components/Details/OrdersDetails";
 
 // Main Module 
 const App = () => {
   // Dynamic vars
   const [product, setProduct] = useState();
   const [order, setOrder] = useState();
+  const [customer, setCustomer] = useState();
   const [catPro, setCatPro] = useState();
 
   // Vars 
@@ -142,12 +144,16 @@ const App = () => {
                 element={<OrdersList URL={URL} imgDefault={imgProduct} setIdOrder={setOrder} />} 
               />
               <Route 
-                path="/admin/orders/details" 
+                path="/admin/orders/details"
                 element={<OrderDetail URL={URL} id_ped={order} />} 
               />
               <Route 
                 path="/admin/customers" 
-                element={<Customers URL={URL} imgDefault={imgUser} />}
+                element={<Customers URL={URL} imgDefault={imgUser} setCustomer={setCustomer} />}
+              />
+              <Route 
+                path="/admin/customers/details" 
+                element={<CustomerDetail URL={URL} imgDefault={imgUser} customer={customer} />}
               />
             </Route>
 

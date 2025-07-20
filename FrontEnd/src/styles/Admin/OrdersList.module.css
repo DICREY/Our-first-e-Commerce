@@ -81,14 +81,16 @@
 }
 
 .orderRow {
+    cursor: pointer;
     display: grid;
     grid-template-columns: 1.5fr 1fr 2fr 1fr 1fr .5fr;
     padding: 1rem;
     border-bottom: 1px solid var(--gray-100);
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .orderRow:hover {
+    box-shadow: var(--shadow-md);
     background-color: var(--neutral-50);
 }
 
@@ -160,17 +162,20 @@
 }
 
 .viewButton {
+    cursor: pointer;
     padding: 0.25rem 0.75rem;
     background-color: var(--primary-50);
-    color: var(--primary-600);
+    color: var(--primary-700);
     border-radius: var(--rounded);
+    border: none;
     text-decoration: none;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.2s ease;
 }
 
 .viewButton:hover {
+    box-shadow: var(--shadow-md);
     background-color: var(--primary-100);
 }
 

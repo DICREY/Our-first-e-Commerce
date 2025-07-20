@@ -1,6 +1,6 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 // Imports 
 import { Paginacion } from '../Global/Paginacion'
@@ -12,7 +12,7 @@ import { NavAdmin } from '../Navs/NavAdmin'
 import styles from '../../styles/Admin/CustomersList.module.css'
 
 // Component 
-export const Customers = ({ URL = '', ImgDefault = '' }) => {
+export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
     // Dynamic vars
     const [ customers, setCustomers ] = useState(null)
     const [ customersAlmc, setCustomersAlmc ] = useState(null)
@@ -20,6 +20,10 @@ export const Customers = ({ URL = '', ImgDefault = '' }) => {
     const [ searchTerm, setSearchTerm   ] = useState('')
     const [ currentPage, setCurrentPage ] = useState(1)
 
+    // Vars 
+    const navigate = useNavigate()
+
+    // Functions 
     const getCustomers = async () => {
         try {
             const cust = await GetData(`${URL}/peoples/all`)
@@ -90,7 +94,14 @@ export const Customers = ({ URL = '', ImgDefault = '' }) => {
 
                 {customers? (
                     customers[currentPage -1]?.map((customer, idx) => (
-                        <div key={idx} className={styles.customerRow}>
+                        <div 
+                            key={idx} 
+                            className={styles.customerRow}
+                            onClick={() => {
+                                setCustomer(customer)
+                                navigate('/admin/customers/details')
+                            }}
+                        >
                             <div className={styles.customerCell}>
                                 <div className={styles.customerAvatar}>
                                     {formatInitials(customer.nom_per, customer.ape_per)}

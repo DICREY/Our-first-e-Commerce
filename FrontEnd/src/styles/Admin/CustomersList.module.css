@@ -105,14 +105,16 @@
 }
 
 .customerRow {
+    cursor: pointer;
     display: grid;
     grid-template-columns: 2fr 2fr 1.5fr 3fr 1.5fr;
     padding: 1rem;
     border-bottom: 1px solid var(--gray-100);
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .customerRow:hover {
+    box-shadow: var(--shadow-md);
     background-color: var(--neutral-50);
 }
 

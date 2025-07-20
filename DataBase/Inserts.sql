@@ -158,38 +158,22 @@ INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES
 ('Transferencia Bancaria'),
 ('Billetera Digital');
 
+-- Métodos de envio
+INSERT INTO e_commerce.metodos_envios (nom_met_env, pre_met_env, des_met_env) VALUES 
+('Servientrega', 5000, 'Envio rapido por medio de transporte terrestre');
+
 -- Pedidos
-INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped,fec_ped) VALUES
-(1, 'Calle 123 #45-67, Bogotá', 1, DEFAULT, '2025-09-20'),
-(2, 'Av. Principal #12-34, Medellín', 3, DEFAULT, '2025-08-20'),
-(3, 'Carrera 56 #78-90, Cali', 4, 'ENTREGADO', '2025-01-20'),
-(4, 'Diagonal 34 #56-78, Barranquilla', 2, 'PROCESANDO', '2025-07-20'),
-(5, 'Transversal 12 #34-56, Cartagena', 5, DEFAULT, '2025-09-20'),
-(2, 'Calle 2 #2-2', 2, 'ENTREGADO', '2025-07-02'),
-(1, 'Calle 1 #1-1', 1, 'ENTREGADO', '2025-07-01');
+INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, met_env_ped, sta_ped,fec_ped) VALUES
+(1, 'Calle 123 #45-67, Bogotá', 1, 1, DEFAULT, '2025-09-20'),
+(2, 'Av. Principal #12-34, Medellín', 3, 1, DEFAULT, '2025-08-20'),
+(3, 'Carrera 56 #78-90, Cali', 4, 1, 'ENTREGADO', '2025-01-20'),
+(4, 'Diagonal 34 #56-78, Barranquilla', 2, 1, 'PROCESANDO', '2025-07-20'),
+(5, 'Transversal 12 #34-56, Cartagena', 5, 1, DEFAULT, '2025-09-20'),
+(2, 'Calle 2 #2-2', 2, 1, 'ENTREGADO', '2025-07-02'),
+(1, 'Calle 1 #1-1', 1, 1, 'ENTREGADO', '2025-07-01');
 
 -- Detalle de pedidos
-INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, can_det_ped, pre_uni_det_ped) VALUES
-(1, 2, 45000.99),
-(1, 1, 49000.99),
-(2, 1, 65000.99),
-(2, 2, 55000.99),
-(2, 1, 119000.99),
-(3, 1, 129000.99),
-(3, 1, 79000.99),
-(4, 2, 39000.99),
-(4, 1, 49000.99),
-(5, 3, 59000.99),
-(5, 1, 89000.99),
-(5, 2, 42000.99),
-(5, 1, 149000.99),
-(5, 1, 69000.99),
-(6, 2, 45000.99),
-(6, 1, 59000.99),
-(7, 1, 65000.99),
-(7, 2, 89000.99);
-
-INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped, can_pro_ped) VALUES
+INSERT INTO e_commerce.productos_pedidos (id_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped, can_pro_ped) VALUES
 (1, 1, 2, 1, 1, 2),
 (1, 6, 1, 12, 1, 1),
 (2, 3, 1, 6, 3, 1),
@@ -213,11 +197,12 @@ INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_
 
 /* Test */
 -- Insertar el pedido con fecha del año pasado (2023)
-INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, sta_ped, fec_ped) 
+INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, met_env_ped, sta_ped, fec_ped) 
 VALUES (
   3, -- ID del cliente (Nikola Tesla en tus datos)
   'Carrera 56 #78-90, Cali', -- Dirección de envío
   4, -- Método de pago: Contraentrega (Efectivo)
+  1, -- Método de envio: Didi
   'ENTREGADO', -- Estado del pedido
   '2024-08-15' -- Fecha del pedido (15 de noviembre de 2023)
 );
@@ -225,14 +210,8 @@ VALUES (
 -- Obtener el ID del pedido recién insertado (supongamos que es el ID 8)
 SET @last_pedido_id = LAST_INSERT_ID();
 
--- Insertar detalles del pedido
-INSERT INTO e_commerce.detalle_pedidos (ped_det_ped, can_det_ped, pre_uni_det_ped) 
-VALUES 
-  (@last_pedido_id, 1, 129000.99), -- Abrigo de lana invierno
-  (@last_pedido_id, 2, 39000.99);  -- 2 Fulares de seda estampado
-
 -- Insertar relación productos-pedido (usando IDs de productos existentes)
-INSERT INTO e_commerce.productos_pedidos (id_det_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped, can_pro_ped) 
+INSERT INTO e_commerce.productos_pedidos (id_ped, pro_ped, col_pro_ped, img_pro_ped, tal_pro_ped, can_pro_ped) 
 VALUES 
-  (19, 5, 2, 10, 2, 2), -- Abrigo de lana invierno, color negro, imagen 10, talla M
-  (20, 16, 2, 34, 13, 2); -- Fular de seda estampado, color negro, imagen 34, talla única
+  (@last_pedido_id, 5, 2, 10, 2, 2), -- Abrigo de lana invierno, color negro, imagen 10, talla M
+  (@last_pedido_id, 16, 2, 34, 13, 2); -- Fular de seda estampado, color negro, imagen 34, talla única

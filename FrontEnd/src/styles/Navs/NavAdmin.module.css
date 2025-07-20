@@ -1,12 +1,15 @@
-/* Sidebar Styles */
+/* NavAdmin.module.css */
 .sidebar {
   background-color: var(--white);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-md);
   height: 100vh;
   position: sticky;
   top: 0;
-  transition: var(--transition);
-  overflow: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
 }
 
 .sidebar.closed {
@@ -14,22 +17,23 @@
 }
 
 .sidebar.open {
-    padding: 0;
-  width: auto;
+  width: 280px;
 }
 
 .sidebarHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 1.5rem 1.25rem;
   height: var(--topbar-height);
-  border-bottom: 1px solid var(--medium-gray);
+  border-bottom: 1px solid var(--neutral-200);
 }
 
 .sidebarHeader h2 {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   margin: 0;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -38,48 +42,185 @@
 .toggleButton {
   background: none;
   border: none;
-  font-size: 1.2rem;
   cursor: pointer;
   padding: 0.5rem;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggleButton:hover {
+  background-color: var(--neutral-100);
+  color: var(--text-primary);
+}
+
+.navMenu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem;
 }
 
 .navMenu ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.navMenu li a {
+.navItemContainer {
+  position: relative;
+  display: flex;
+}
+
+.navLink {
   display: flex;
   align-items: center;
-  padding: 1rem;
-  color: var(--gray-700);
+  padding: 0.75rem 1rem;
+  color: var(--text-secondary);
   font-weight: 500;
   text-decoration: none;
-  white-space: nowrap;
-  transition: var(--transition);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex: 1;
+  gap: 0.75rem;
+  position: relative;
 }
 
-.navMenu li a:hover {
-  background-color: var(--primary-color);
-  color: var(--white);
+.navLink:hover {
+  background-color: var(--neutral-100);
+  color: var(--text-primary);
+}
+
+.navLink.active {
+  background-color: var(--primary-50);
+  color: var(--primary-600);
+  font-weight: 600;
+}
+
+.navLink.active .icon {
+  color: var(--primary-600);
 }
 
 .icon {
-  margin-right: 1rem;
-  font-size: 1.2rem;
-  min-width: 1.5rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
 }
 
-@media (max-width: 768px) {
-    .sidebar.open {
-        position: fixed;
-        z-index: 1000;
-        height: 100%;
-    }
+.label {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-    .sidebar.closed+.mainContent {
-        margin-left: 0;
-    }
+.chevron {
+  transition: transform 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.chevron.rotated {
+  transform: rotate(90deg);
+}
+
+.submenuToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submenuToggle:hover {
+  color: var(--text-primary);
+}
+
+.submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0.75rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.submenuLink {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.submenuLink:hover {
+  background-color: var(--neutral-100);
+  color: var(--text-primary);
+}
+
+.submenuLink.active {
+  background-color: var(--primary-50);
+  color: var(--primary-600);
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar.open {
+    position: fixed;
+    z-index: 1000;
+    height: 100%;
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .sidebar.closed {
+    width: 72px;
+  }
+  
+  .sidebarHeader h2 {
+    display: none;
+  }
+  
+  .navLink {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+  
+  .sidebar.closed .navLink {
+    justify-content: center;
+  }
+  
+  .sidebar.closed .label,
+  .sidebar.closed .chevron {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar.closed {
+    width: 60px;
+  }
+  
+  .navLink {
+    padding: 0.75rem 0.5rem;
+  }
 }

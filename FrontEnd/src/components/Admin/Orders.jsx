@@ -155,7 +155,7 @@ export const OrdersList = ({ URL = '', setIdOrder }) => {
               </div>
 
               <div className={styles.orderCell}>
-                ${formatNumber(order.total_pedido)}
+                ${formatNumber(order.subtotal_ped)}
               </div>
 
               <div className={styles.orderCell}>
