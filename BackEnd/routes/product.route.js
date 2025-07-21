@@ -103,14 +103,15 @@ Route.post('/all/by', async (req,res) => {
 })
 
 Route.post('/by', async (req,res) => {
-    // Vars 
-    const { by } = req.body
-    
     try {
+        // Vars 
+        const by = String(req.body.by)
+        const inst = new Product(by)
+
         if (!by) return res.status(400).json({ message: "Petición invalida, faltan datos"})
 
         // Verifiy if exist
-        const search = await prodInst.findBy(by)
+        const search = await inst.findBy()
         if (!search.result) res.status(404).json({ message: "Producto no encontrado" })
 
         res.status(200).json(search)

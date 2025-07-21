@@ -1,6 +1,7 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
-import { Eye } from 'lucide-react'
+import { Eye, Edit, Search, Filter, Download, ChevronLeft } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 // Imports 
 import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
@@ -11,14 +12,20 @@ import { Paginacion } from '../Global/Paginacion'
 import styles from '../../styles/Admin/ProductList.module.css'
 
 // Component 
-export const ProductList = ({ URL = '', imgDefault = '' }) => {
+export const ProductList = ({ URL = '', imgDefault = '', set }) => {
   // Dynamic vars 
-  const [ products, setProducts ] = useState(null)
-  const [ productsAlmc, setProductsAlmc ] = useState(null)
-  const [ loading, setLoading ] = useState(true)
-  const [ currentPage, setCurrentPage ] = useState(1)
-  const [ selectedCategory, setSelectedCategory ] = useState('')
-  const [ categories, setCategories ] = useState([])
+  const [products, setProducts] = useState(null);
+  const [productsAlmc, setProductsAlmc] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedState, setSelectedState] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
+  // Vars 
+  const navigate = useNavigate()
 
   // Functions 
   const getProductCategories = async () => {
@@ -29,7 +36,7 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
       }
     } catch (err) {
       const message = errorStatusHandler(err)
-      console.log(message)
+      console.error(message)
     }
   }
   
@@ -37,15 +44,20 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
     try {
       const prods = await GetData(`${URL}/products/all`)
       if (prods) {
-        setProducts(divideList(prods,12))
+        setProducts(divideList(prods, 12))
         setProductsAlmc(prods)
         setLoading(false)
       }
     } catch (err) {
       setLoading(false)
       const message = errorStatusHandler(err)
-      console.log(message)
+      console.error(message)
     }
+  }
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+    // if (!sidebarOpen) setActiveSubmenu(null)
   }
 
   useEffect(() => {
@@ -53,123 +65,242 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
     getProducts()
   }, [])
 
-  const handleCategoryChange = (categoryId) => {
-    setSelectedCategory(categoryId)
-    const filterData = searchFilter(categoryId,productsAlmc,['nom_cat_pro','nom_pro'])
-    if (filterData) {
+  useEffect(() => {
+    if (productsAlmc) {
+      let filteredData = [...productsAlmc]
+      
+      // Aplicar filtro de categoría
+      if (selectedCategory) {
+        filteredData = searchFilter(selectedCategory, filteredData, ['nom_cat_pro', 'nom_pro'])
+      }
+      
+      // Aplicar filtro de estado
+      if (selectedState) {
+        filteredData = searchFilter(selectedState, filteredData, ['sta_pro'])
+      }
+
+      // Aplicar filtro de búsqueda
+      if (searchQuery) {
+        filteredData = searchFilter(searchQuery, filteredData, ['nom_pro', 'des_pro', 'nom_cat_pro'])
+      }
+
       setCurrentPage(1)
-      setProducts(divideList(filterData,12))
+      setProducts(divideList(filteredData, 12))
     }
-  }
+  }, [selectedCategory, searchQuery, productsAlmc, selectedState])
 
   const calculateDiscount = (currentPrice, originalPrice) => {
     return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
   }
 
   if (loading) {
-    return <div className={styles.loading}>Loading products...</div>
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner}></div>
+        <p>Cargando productos...</p>
+      </div>
+    )
   }
 
   return (
-    <main className={styles.mainContent}>
-      <header className={styles.header}>
-        <h1>Products</h1>
-        <div className={styles.resultsInfo}>
-          Mostrando pagina {currentPage}–{products?.length} de {productsAlmc?.length} Productos
+    <div className={styles.adminContainer}>
+      <header className={styles.adminHeader}>
+        <h1>Administración de Productos</h1>
+        <div className={styles.headerActions}>
+          <div className={styles.searchBar}>
+            <Search size={18} className={styles.searchIcon} />
+            <input
+              type="text"
+              placeholder="Buscar productos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <button className={styles.exportButton}>
+            <Download size={16} />
+            Exportar
+          </button>
         </div>
       </header>
 
-      <nav className={styles.filterSection}>
-        <div className={styles.categoryFilter}>
-          <label htmlFor="category">Buscar por nombre, categoria:</label>
-          <input
-            id="category"
-            list='categoryProFilter'
-            value={selectedCategory}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-            className={styles.selectInput}
-          />
-          <datalist id='categoryProFilter'>
-            <option value="">All Categories</option>
-            {categories?.map((category, idx) => (
-              <option key={idx + 12} value={category.nom_cat_pro}>
-                {category.nom_cat_pro}
-              </option>
-            ))}
-          </datalist>
-        </div>
-      </nav>
-
-      <section className={styles.productsGrid}>
-        {products ?
-          products[currentPage - 1]?.map((product, idx) => (
-            <div key={idx + 192} className={styles.productCard}>
-              <div className={styles.productImageContainer}>
-                {product?.colors[0]?.url_img && (
-                  <CheckImage
-                    src={product?.colors[0]?.url_img}
-                    alt={product.nom_pro}
-                    className={styles.productImage}
-                    imgDefault={imgDefault}
-                  />
-                )}
-                {product.onSale && (
-                  <div className={styles.saleBadge}>
-                    -{calculateDiscount(product.pre_pro, product.pre_pro)}%
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.productInfo}>
-                <h3 className={styles.productTitle}>{product.nom_pro}</h3>
-                <div className={styles.productCategory}>{product.nom_cat_pro}</div>
-
-                {/* <ul className={styles.featuresList}>
-                  {product.features.map((feature, index) => (
-                    <li key={index} className={styles.featureItem}>• {feature}</li>
+      <aside className={styles.adminContent}>
+      {sidebarOpen? (
+          <aside className={`${styles.filterPanel} ${sidebarOpen ? styles.open : styles.closed}`}>
+            <span className={styles.filterPanelHeader}>
+              <h3><Filter size={18} />Filtros</h3>
+              <button 
+                onClick={toggleSidebar} 
+                className={styles.toggleButton}
+                aria-label={"Cerrar menú"}
+              >
+                <ChevronLeft size={20} />
+              </button>
+            </span>
+            
+              <article className={styles.filterGroup}>
+                <label>Categorías</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className={styles.filterSelect}
+                >
+                  <option value="">Todas las categorías</option>
+                  {categories?.map((category, idx) => (
+                    <option key={idx} value={category.nom_cat_pro}>
+                      {category.nom_cat_pro}
+                    </option>
                   ))}
-                </ul> */}
+                </select>
+              </article>
 
-                <div className={styles.priceContainer}>
-                  <span className={styles.currentPrice}>${formatNumber(product.pre_pro)}</span>
-                  {product.onSale && (
-                    <>
-                      <span className={styles.originalPrice}>${formatNumber(product.pre_pro)}</span>
-                      <span className={styles.discount}>
-                        -{calculateDiscount(product.pre_pro, product.pre_pro)}%
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                <div className={styles.additionalInfo}>
-                  {/* <div className={styles.rating}>({idx + 1})</div> */}
-                  <div className={styles.shipping}>Shipping Cost: ${formatNumber(product.pre_pro)}</div>
-                  <div className={styles.stock}>{product.stock}</div>
-                </div>
-
-                <div className={styles.actionButtons}>
-                  <button className={styles.favoriteButton}>
-                    <Eye className={styles.icon}></Eye> Ver
-                  </button>
-                  <button className={styles.addToCartButton}>
-                    Editar
-                  </button>
-                </div>
+              <div className={styles.filterGroup}>
+                <label>Estado</label>
+                <select
+                 className={styles.filterSelect}
+                 onChange={(e) => setSelectedState(e.target.value)}
+                >
+                  <option value=''>Todos</option>
+                  <option value='DISPONIBLE'>Disponible</option>
+                  <option value='NO-DISPONIBLE'>No disponible</option>
+                </select>
               </div>
-            </div>
-          )) : (
-            <div className={styles.noResults}>
-              No se encontraron productos registrados en el sistema
-            </div>
-          )}
-      </section>
 
-      <Paginacion
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
-        data={products}
-      />
-    </main>
+              <div className={styles.filterGroup}>
+                <label>Inventario</label>
+                <select className={styles.filterSelect} disabled>
+                  <option>(En mantenimiento)</option>
+                </select>
+              </div>
+          </aside>
+        ):(
+          <button
+            className={styles.toggleFilterPanel}
+            onClick={toggleSidebar}
+          >
+            <Filter size={18} />Filtros
+          </button>
+        )}
+
+        <main className={styles.productContent}>
+          <div className={styles.statsBar}>
+            <div className={styles.statCard}>
+              <span>Productos totales</span>
+              <strong>{productsAlmc?.length || 0}</strong>
+            </div>
+            <div className={styles.statCard}>
+              <span>En oferta</span>
+              <strong>{productsAlmc?.filter(p => p.onSale).length || 0}</strong>
+            </div>
+            <div className={styles.statCard}>
+              <span>Agotados</span>
+              <strong>{productsAlmc?.filter(p => p.stock <= 0).length || 0}</strong>
+            </div>
+          </div>
+
+          <div className={styles.productsTableContainer}>
+            {products ? (
+              <>
+                <table className={styles.productsTable}>
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Categoría</th>
+                      <th>Precio</th>
+                      <th>Stock</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products[currentPage - 1]?.map((product, idx) => (
+                      <tr 
+                        key={idx} 
+                        className={styles.productRow}
+                        onClick={() => {
+                          set(product.id_pro)
+                          navigate('/admin/products/details')
+                        }}
+                      >
+                        <td>
+                          <div className={styles.productCell}>
+                            <CheckImage
+                              src={product.img_default}
+                              alt={product.nom_pro}
+                              className={styles.productThumbnail}
+                              imgDefault={imgDefault}
+                            />
+                            <div>
+                              <div className={styles.productName}>{product.nom_pro}</div>
+                              <div className={styles.productId}>ID: {product.id_pro}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{product.nom_cat_pro}</td>
+                        <td>
+                          <div className={styles.priceCell}>
+                            ${formatNumber(product.pre_pro)}
+                            {product.onSale && (
+                              <span className={styles.saleTag}>
+                                -{calculateDiscount(product.pre_pro, product.pre_pro)}%
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className={`${styles.stockCell} ${
+                            product.stock <= 0 ? styles.outOfStock : 
+                            product.stock < 10 ? styles.lowStock : ''
+                          }`}>
+                            {product.stock}
+                          </div>
+                        </td>
+                        <td>
+                          <div className={`${styles.statusBadge} ${
+                            product.stock <= 0 ? styles.statusInactive :
+                            product.onSale ? styles.statusSale :
+                            styles.statusActive
+                          }`}>
+                            {product.stock <= 0 ? 'Agotado' : 
+                             product.onSale ? 'En oferta' : 'Activo'}
+                          </div>
+                        </td>
+                        <td>
+                          <div className={styles.actionButtons}>
+                            <button className={styles.viewButton}>
+                              <Eye size={16} />
+                            </button>
+                            <button className={styles.editButton}>
+                              <Edit size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className={styles.tableFooter}>
+                  <div className={styles.resultsInfo}>
+                    Mostrando {products[currentPage - 1]?.length} de {productsAlmc?.length} productos
+                  </div>
+                  <Paginacion
+                    setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
+                    data={products}
+                  />
+                </div>
+              </>
+            ) : (
+              <div className={styles.noResults}>
+                <p>No se encontraron productos</p>
+                <button className={styles.addProductButton}>
+                  + Agregar nuevo producto
+                </button>
+              </div>
+            )}
+          </div>
+        </main>
+      </aside>
+    </div>
   )
 }

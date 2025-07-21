@@ -1,5 +1,6 @@
 /* CustomerDetail.module.css */
 .mainContent {
+    flex: 1;
     width: 100%;
     padding: 2rem;
     background-color: var(--neutral-50);
@@ -247,6 +248,7 @@
     align-items: center;
     justify-content: center;
     padding: 4rem;
+    margin: 0 auto;
     text-align: center;
 }
 

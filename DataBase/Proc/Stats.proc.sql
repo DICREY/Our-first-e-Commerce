@@ -119,7 +119,7 @@ BEGIN
     WHERE p.sta_ped != 'CANCELADO'
       AND p.fec_ped >= CURRENT_DATE - INTERVAL 12 DAY
     GROUP BY DATE(p.fec_ped)
-    ORDER BY p.fec_ped ASC;
+    ORDER BY p.fec_ped ASC
     LIMIT 40;
 END //
 

@@ -297,10 +297,10 @@ class Product {
     }
 
     // function to find by
-    async findBy(data) {
+    async findBy() {
         return new Promise((res,rej) => {
             // vars
-            const by = data?.replace(":","").replace(" ","")
+            const by = this.args[0]?.trim()
             const proc = "CALL GetProductBy(?);"
 
             // conect to database
@@ -308,14 +308,16 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,by,(err,result) => {
+            if (this.database) this.database.conection.query(proc,[by],(err,result) => {
                 if(err) {
                     rej({ message: err })
                 } else if (result) {
+                    const resOne = this.global.format(result[0],'colors',['nom_col','hex_col','nom_img','url_img'])
+                    const lastRes = this.global.iterar(resOne,'sizes')
                     setTimeout(() => {
                         res({
-                            message: "Products found",
-                            result: result[0]
+                            message: "Info found",
+                            result: lastRes
                         })
                     },1000)
                 } else rej({ message: 'Error interno', status: 500 })

@@ -80,35 +80,37 @@ INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES
 ('Única');
 
 -- Productos
-INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro) VALUES
+INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro, sta_pro) VALUES
 -- Ropa casual
-(1, 'Blusa de seda estampada', 45000.99, 'Blusa elegante de seda con estampado floral'),
-(1, 'Jeans skinny alto talle', 59000.99, 'Jeans ajustados con tiro alto y elastano'),
-(1, 'Vestido midi floral', 65000.99, 'Vestido hasta la rodilla con estampado de flores'),
+(1, 'Blusa de seda estampada', 45000.99, 'Blusa elegante de seda con estampado floral', DEFAULT),
+(1, 'Jeans skinny alto talle', 59000.99, 'Jeans ajustados con tiro alto y elastano', DEFAULT),
+(1, 'Vestido midi floral', 65000.99, 'Vestido hasta la rodilla con estampado de flores', DEFAULT),
 -- Abrigos y chaquetas
-(1, 'Chaqueta de denim', 89000.99, 'Chaqueta estilo oversize en mezclilla'),
-(1, 'Abrigo de lana invierno', 129000.99, 'Abrigo largo para clima frío con cinturón'),
+(1, 'Chaqueta de denim', 89000.99, 'Chaqueta estilo oversize en mezclilla', DEFAULT),
+(1, 'Abrigo de lana invierno', 129000.99, 'Abrigo largo para clima frío con cinturón', DEFAULT),
 -- Ropa deportiva
-(3, 'Leggings deportivos compresión', 49000.99, 'Leggings de alta compresión para entrenamiento'),
-(3, 'Top deportivo soporte alto', 39000.99, 'Top con soporte máximo para actividades intensas'),
+(3, 'Leggings deportivos compresión', 49000.99, 'Leggings de alta compresión para entrenamiento', DEFAULT),
+(3, 'Top deportivo soporte alto', 39000.99, 'Top con soporte máximo para actividades intensas', DEFAULT),
 -- Lencería
-(2, 'Conjunto de encaje negro', 55000.99, 'Sujetador y braga de encaje con detalles delicados'),
-(2, 'Pijama de satén corto', 42000.99, 'Conjunto de pijama en satén suave'),
+(2, 'Conjunto de encaje negro', 55000.99, 'Sujetador y braga de encaje con detalles delicados', DEFAULT),
+(2, 'Pijama de satén corto', 42000.99, 'Conjunto de pijama en satén suave', DEFAULT),
 -- Ropa de baño
-(1, 'Bikini estampado tropical', 49000.99, 'Conjunto de bikini con estampado floral'),
-(1, 'Bañador entero deportivo', 59000.99, 'Bañador de una pieza para natación'),
+(1, 'Bikini estampado tropical', 49000.99, 'Conjunto de bikini con estampado floral', DEFAULT),
+(1, 'Bañador entero deportivo', 59000.99, 'Bañador de una pieza para natación', DEFAULT),
 -- Ropa formal
-(1, 'Traje de chaqueta slim', 149000.99, 'Conjunto de chaqueta y pantalón para oficina'),
-(1, 'Vestido de cóctel elegante', 119000.99, 'Vestido corto para eventos especiales'),
+(1, 'Traje de chaqueta slim', 149000.99, 'Conjunto de chaqueta y pantalón para oficina', DEFAULT),
+(1, 'Vestido de cóctel elegante', 119000.99, 'Vestido corto para eventos especiales', DEFAULT),
 -- Ropa de maternidad
-(1, 'Vestido maternidad verano', 54000.99, 'Vestido holgado con tirantes ajustables'),
-(1, 'Jeans maternidad elásticos', 69000.99, 'Jeans con bandaja elástica para embarazo'),
+(1, 'Vestido maternidad verano', 54000.99, 'Vestido holgado con tirantes ajustables', DEFAULT),
+(1, 'Jeans maternidad elásticos', 69000.99, 'Jeans con bandaja elástica para embarazo', DEFAULT),
 -- Accesorios de moda
-(1, 'Chal de cachemira', 79000.99, 'Chal fino para todas las estaciones'),
-(1, 'Fular de seda estampado', 39000.99, 'Fular ligero con estampado artístico'),
+(1, 'Chal de cachemira', 79000.99, 'Chal fino para todas las estaciones', DEFAULT),
+(1, 'Fular de seda estampado', 39000.99, 'Fular ligero con estampado artístico', DEFAULT),
 -- Ropa plus size
-(1, 'Vestido plus size floral', 69000.99, 'Vestido holgado con estampado grande'),
-(1, 'Blusa plus size manga larga', 49000.99, 'Blusa elegante con detalles en cuello');
+(1, 'Vestido plus size floral', 69000.99, 'Vestido holgado con estampado grande', DEFAULT),
+(1, 'Blusa plus size manga larga', 49000.99, 'Blusa elegante con detalles en cuello', DEFAULT),
+
+(1, 'Vestido plus size', 89000.99, 'Vestido holgado', 'NO-DISPONIBLE');
 
 -- Relación producto-color-imagen
 INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col) VALUES 

@@ -1,0 +1,459 @@
+// Librarys 
+import React, { useState, useEffect } from 'react'
+import {
+    ArrowLeft,
+    Edit,
+    Package,
+    Tag,
+    BarChart2,
+    Layers,
+    Truck,
+    AlertCircle,
+    CheckCircle,
+    XCircle,
+    Image as ImageIcon,
+    Check,
+    Trash2
+} from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+// Imports 
+import { PostData } from '../../Utils/Requests'
+import { calculateDiscount, CheckImage, errorStatusHandler, formatDate, formatNumber } from '../../Utils/utils'
+
+// Import styles 
+import styles from '../../styles/Details/ProductDetail.module.css'
+
+// Component 
+export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) => {
+    // Dynamic vars 
+    const [product, setProduct] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [activeTab, setActiveTab] = useState('details')
+    const [currentImage, setCurrentImage] = useState(0)
+    
+    // Vars
+    const navigate = useNavigate()
+    let didFetch = false
+
+    const fetchProduct = async () => {
+        if (didFetch) return
+        try {
+            const data = await PostData(`${URL}/products/by`,{ by: dataProduct })
+            didFetch = true
+            setLoading(false)
+            if (data && data[0]) {
+                setProduct(data[0])
+            }
+        } catch (err) {
+            setLoading(false)
+            const message = errorStatusHandler(err)
+            console.error('Error fetching product:', message)
+        }
+    }
+
+    // Effects
+    useEffect(() => {
+        if (dataProduct) fetchProduct()
+    }, [dataProduct, URL])
+
+    const handleStatusChange = (newStatus) => {
+        // Aquí iría la lógica para actualizar el estado del producto
+        console.log(`Cambiando estado a: ${newStatus}`)
+        // setProduct({...product, status: newStatus})
+    }
+
+    if (loading) {
+        return (
+            <div className={styles.loadingContainer}>
+                <div className={styles.spinner}></div>
+                <p>Cargando detalles del producto...</p>
+            </div>
+        )
+    }
+
+    if (!product) {
+        return (
+            <div className={styles.notFoundContainer}>
+                <h2>Producto no encontrado</h2>
+                <p>No se pudo cargar la información del producto solicitado.</p>
+                <button
+                    onClick={() => navigate('/admin/products')}
+                    className={styles.backButton}
+                >
+                    <ArrowLeft size={16} /> Volver a productos
+                </button>
+            </div>
+        )
+    }
+
+    return (
+        <main className={styles.adminProductDetail}>
+            <header className={styles.header}>
+                <button
+                    onClick={() => navigate('/admin/products')}
+                    className={styles.backButton}
+                >
+                    <ArrowLeft size={18} /> Volver
+                </button>
+                <h1>{product.nom_pro}</h1>
+                <div className={styles.headerActions}>
+                    <span className={`${styles.statusBadge} ${product.stock <= 0 ? styles.statusInactive :
+                            product.onSale ? styles.statusSale :
+                                styles.statusActive
+                        }`}>
+                        {product.stock <= 0 ? (
+                            <>
+                                <XCircle size={16} /> Agotado
+                            </>
+                        ) : product.onSale ? (
+                            <>
+                                <Tag size={16} /> En oferta
+                            </>
+                        ) : (
+                            <>
+                                <CheckCircle size={16} /> Activo
+                            </>
+                        )}
+                    </span>
+                    <button
+                        onClick={() => navigate(`/admin/products/edit/${id}`)}
+                        className={styles.editButton}
+                    >
+                        <Edit size={16} /> Editar
+                    </button>
+                    {product?.sta_pro === "NO-DISPONIBLE"? (
+                        <button
+                            onClick={() => handleStatusChange(product.sta_pro)}
+                            className={styles.activeButton}
+                        >
+                            <Check size={16} />
+                            Activar
+                        </button>
+                    ):(
+                        <button
+                            onClick={() => handleStatusChange(product.sta_pro)}
+                            className={styles.deleteButton}
+                        >
+                            <Trash2 size={16} />
+                            Desactivar
+                        </button>
+                    )}
+                </div>
+            </header>
+
+            <section className={styles.contentContainer}>
+                <div className={styles.productGallery}>
+                    {product?.colors? (
+                        <>
+                            <div className={styles.mainImage}>
+                                <CheckImage
+                                    src={currentImage}
+                                    alt={product.nom_pro}
+                                    imgDefault={imgDefault}
+                                />
+                            </div>
+                            <div className={styles.thumbnailContainer}>
+                                {product?.colors?.map((color, index) => (
+                                    <div
+                                        key={index}
+                                        className={`${styles.thumbnail} ${currentImage === index ? styles.active : ''}`}
+                                        onClick={() => setCurrentImage(color.url_img)}
+                                    >
+                                        <CheckImage 
+                                            src={color.url_img} 
+                                            alt={`Variante ${color.nom_col}`} 
+                                            imgDefault={imgDefault}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        <div className={styles.noImages}>
+                            <ImageIcon size={48} />
+                            <p>No hay imágenes disponibles</p>
+                        </div>
+                    )}
+                </div>
+
+                <div className={styles.productContent}>
+                    <nav className={styles.tabs}>
+                        <button
+                            className={`${styles.tab} ${activeTab === 'details' ? styles.active : ''}`}
+                            onClick={() => setActiveTab('details')}
+                        >
+                            <Package size={18} /> Detalles
+                        </button>
+                        <button
+                            className={`${styles.tab} ${activeTab === 'inventory' ? styles.active : ''}`}
+                            onClick={() => setActiveTab('inventory')}
+                        >
+                            <Layers size={18} /> Inventario
+                        </button>
+                        <button
+                            className={`${styles.tab} ${activeTab === 'pricing' ? styles.active : ''}`}
+                            onClick={() => setActiveTab('pricing')}
+                        >
+                            <Tag size={18} /> Precios
+                        </button>
+                        <button
+                            className={`${styles.tab} ${activeTab === 'shipping' ? styles.active : ''}`}
+                            onClick={() => setActiveTab('shipping')}
+                        >
+                            <Truck size={18} /> Envío
+                        </button>
+                        <button
+                            className={`${styles.tab} ${activeTab === 'analytics' ? styles.active : ''}`}
+                            onClick={() => setActiveTab('analytics')}
+                        >
+                            <BarChart2 size={18} /> Analytics
+                        </button>
+                    </nav>
+
+                    <div className={styles.tabContent}>
+                        {activeTab === 'details' && (
+                            <div className={styles.detailsSection}>
+                                <div className={styles.detailRow}>
+                                    <span className={styles.detailLabel}>ID del producto:</span>
+                                    <span className={styles.detailValue}>#{product.id_pro}</span>
+                                </div>
+                                <div className={styles.detailRow}>
+                                    <span className={styles.detailLabel}>Nombre del Producto:</span>
+                                    <span className={styles.detailValue}>{product.nom_pro}</span>
+                                </div>
+                                <div className={styles.detailRow}>
+                                    <span className={styles.detailLabel}>Categoría:</span>
+                                    <span className={styles.detailValue}>{product.nom_cat_pro}</span>
+                                </div>
+                                <div className={styles.detailRow}>
+                                    <span className={styles.detailLabel}>Descripción:</span>
+                                    <p className={styles.detailValue}>{product.des_pro || 'No hay descripción disponible'}</p>
+                                </div>
+                                <div className={styles.detailRow}>
+                                    <span className={styles.detailLabel}>Fecha de creación:</span>
+                                    <span className={styles.detailValue}>
+                                        {formatDate(product.created_at)}
+                                    </span>
+                                </div>
+                                <div className={styles.detailRow}>
+                                    <span className={styles.detailLabel}>Última actualización:</span>
+                                    <span className={styles.detailValue}>
+                                        {formatDate(product.updated_at)}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'inventory' && (
+                            <div className={styles.inventorySection}>
+                                <div className={styles.stockStatus}>
+                                    <div className={styles.stockIndicator}>
+                                        <span className={styles.stockLabel}>Stock disponible:</span>
+                                        <span className={`${styles.stockValue} ${product.stock <= 0 ? styles.outOfStock :
+                                                product.stock < 10 ? styles.lowStock : ''
+                                            }`}>
+                                            {product.stock} unidades
+                                        </span>
+                                    </div>
+                                    <div className={styles.stockActions}>
+                                        <button className={styles.stockButton}>
+                                            Añadir stock
+                                        </button>
+                                        <button className={styles.stockButton}>
+                                            Registrar entrada
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <h3>Variantes de color</h3>
+                                <div className={styles.variantsGrid}>
+                                    {product.colors? (
+                                        product?.colors?.map((color, index) => (
+                                            <div key={index} className={styles.variantCard}>
+                                                <div className={styles.variantColor} style={{ backgroundColor: color.hex_col }}>
+                                                    <CheckImage 
+                                                        src={color.url_img} 
+                                                        alt={color.nom_col} 
+                                                        imgDefault={imgDefault}
+                                                    />
+                                                </div>
+                                                <div className={styles.variantInfo}>
+                                                    <span className={styles.variantName}>{color.nom_col}</span>
+                                                    <span className={styles.variantStock}>{color.hex_col || 0} </span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className={styles.noVariants}>
+                                            <AlertCircle size={24} />
+                                            <p>No hay variantes de color registradas</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'pricing' && (
+                            <div className={styles.pricingSection}>
+                                <div className={styles.priceRow}>
+                                    <span className={styles.priceLabel}>Precio base:</span>
+                                    <span className={styles.priceValue}>${formatNumber(product.pre_pro)}</span>
+                                </div>
+                                <div className={styles.priceRow}>
+                                    <span className={styles.priceLabel}>Costo:</span>
+                                    <span className={styles.priceValue}>${formatNumber(product.costo || 'N/A')}</span>
+                                </div>
+                                <div className={styles.priceRow}>
+                                    <span className={styles.priceLabel}>Margen de ganancia:</span>
+                                    <span className={styles.priceValue}>
+                                        {product.costo ?
+                                            `${Math.round(((product.pre_pro - product.costo) / product.costo) * 100)}%` :
+                                            'N/A'}
+                                    </span>
+                                </div>
+
+                                {product.onSale && (
+                                    <>
+                                        <div className={styles.divider}></div>
+                                        <div className={styles.priceRow}>
+                                            <span className={styles.priceLabel}>En oferta:</span>
+                                            <span className={styles.saleBadge}>Sí</span>
+                                        </div>
+                                        <div className={styles.priceRow}>
+                                            <span className={styles.priceLabel}>Precio original:</span>
+                                            <span className={styles.originalPrice}>${formatNumber(product.pre_pro)}</span>
+                                        </div>
+                                        <div className={styles.priceRow}>
+                                            <span className={styles.priceLabel}>Descuento:</span>
+                                            <span className={styles.discountValue}>
+                                                {calculateDiscount(product.pre_pro, product.pre_pro)}%
+                                            </span>
+                                        </div>
+                                        <div className={styles.priceRow}>
+                                            <span className={styles.priceLabel}>Fecha fin oferta:</span>
+                                            <span className={styles.priceValue}>
+                                                {product.saleEndDate ?
+                                                    formatDate(product.saleEndDate) :
+                                                    'No especificada'}
+                                            </span>
+                                        </div>
+                                    </>
+                                )}
+
+                                <div className={styles.pricingActions}>
+                                    <button className={styles.primaryButton}>
+                                        {product.onSale ? 'Modificar oferta' : 'Crear oferta'}
+                                    </button>
+                                    <button className={styles.secondaryButton}>
+                                        Historial de precios
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'shipping' && (
+                            <div className={styles.shippingSection}>
+                                <div className={styles.shippingInfo}>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>Peso:</span>
+                                        <span className={styles.infoValue}>{product.peso || 'N/A'} kg</span>
+                                    </div>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>Dimensiones:</span>
+                                        <span className={styles.infoValue}>
+                                            {product.ancho || 'N/A'} x {product.alto || 'N/A'} x {product.profundidad || 'N/A'} cm
+                                        </span>
+                                    </div>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>Tipo de envío:</span>
+                                        <span className={styles.infoValue}>
+                                            {product.tipo_envio || 'Estándar'}
+                                        </span>
+                                    </div>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>Costo de envío:</span>
+                                        <span className={styles.infoValue}>
+                                            ${formatNumber(product.costo_envio || 0)}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.shippingRestrictions}>
+                                    <h3>Restricciones de envío</h3>
+                                    <div className={styles.restrictionItem}>
+                                        <input type="checkbox" id="international" checked={product.envio_internacional} readOnly />
+                                        <label htmlFor="international">Disponible para envío internacional</label>
+                                    </div>
+                                    <div className={styles.restrictionItem}>
+                                        <input type="checkbox" id="fragile" checked={product.fragil} readOnly />
+                                        <label htmlFor="fragile">Producto frágil</label>
+                                    </div>
+                                    <div className={styles.restrictionItem}>
+                                        <input type="checkbox" id="oversized" checked={product.gran_tamano} readOnly />
+                                        <label htmlFor="oversized">Producto de gran tamaño</label>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'analytics' && (
+                            <div className={styles.analyticsSection}>
+                                <div className={styles.analyticsGrid}>
+                                    <div className={styles.metricCard}>
+                                        <div className={styles.metricHeader}>
+                                            <BarChart2 size={20} />
+                                            <span>Vistas</span>
+                                        </div>
+                                        <div className={styles.metricValue}>1,245</div>
+                                        <div className={styles.metricTrend}>
+                                            <span className={styles.trendUp}>+12%</span> vs último mes
+                                        </div>
+                                    </div>
+                                    <div className={styles.metricCard}>
+                                        <div className={styles.metricHeader}>
+                                            <Package size={20} />
+                                            <span>Ventas</span>
+                                        </div>
+                                        <div className={styles.metricValue}>87</div>
+                                        <div className={styles.metricTrend}>
+                                            <span className={styles.trendUp}>+5%</span> vs último mes
+                                        </div>
+                                    </div>
+                                    <div className={styles.metricCard}>
+                                        <div className={styles.metricHeader}>
+                                            <Tag size={20} />
+                                            <span>Tasa de conversión</span>
+                                        </div>
+                                        <div className={styles.metricValue}>6.99%</div>
+                                        <div className={styles.metricTrend}>
+                                            <span className={styles.trendDown}>-0.5%</span> vs último mes
+                                        </div>
+                                    </div>
+                                    <div className={styles.metricCard}>
+                                        <div className={styles.metricHeader}>
+                                            <Truck size={20} />
+                                            <span>Devoluciones</span>
+                                        </div>
+                                        <div className={styles.metricValue}>3</div>
+                                        <div className={styles.metricTrend}>
+                                            <span className={styles.trendDown}>-2%</span> vs último mes
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className={styles.chartPlaceholder}>
+                                    <p>Gráfico de rendimiento del producto</p>
+                                    <div className={styles.chart}>
+                                        {/* Aquí iría un gráfico real en implementación */}
+                                        <div className={styles.chartLines}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </section>
+        </main>
+    )
+}

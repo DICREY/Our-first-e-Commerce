@@ -51,8 +51,20 @@ BEGIN
         p.des_pro,
         p.sta_pro,
         p.onSale,
+        p.created_at,
+        p.updated_at,
         c.id_cat_pro,
         c.nom_cat_pro,
+        (
+            SELECT img.url_img
+            FROM 
+                productos_colores pco
+            JOIN
+                imagenes img ON pco.img_pro_col = img.id_img
+            WHERE
+                pco.pro_col_pro = p.id_pro
+            LIMIT 1
+        ) AS img_default,
         -- Colores disponibles para el producto
         (
             SELECT GROUP_CONCAT(
@@ -93,6 +105,83 @@ BEGIN
     ORDER BY p.id_pro DESC
     LIMIT 1000;
 END //
+
+CREATE PROCEDURE e_commerce.GetProductBy(
+    IN p_by VARCHAR(100)
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM e_commerce.productos
+        WHERE id_pro LIKE p_by OR nom_pro LIKE p_by
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existen productos registrados';
+    END IF;
+
+    SELECT 
+        p.id_pro,
+        p.nom_pro,
+        p.pre_pro,
+        p.des_pro,
+        p.sta_pro,
+        p.onSale,
+        p.created_at,
+        p.updated_at,
+        c.id_cat_pro,
+        c.nom_cat_pro,
+        (
+            SELECT img.url_img
+            FROM 
+                productos_colores pco
+            JOIN
+                imagenes img ON pco.img_pro_col = img.id_img
+            WHERE
+                pco.pro_col_pro = p.id_pro
+            LIMIT 1
+        ) AS img_default,
+        -- Colores disponibles para el producto
+        (
+            SELECT GROUP_CONCAT(
+                CONCAT_WS(';',
+                    co.nom_col,
+                    co.hex_col,
+                    img.nom_img,
+                    img.url_img
+                ) 
+                SEPARATOR '---'
+            )
+            FROM 
+                productos_colores pco
+            JOIN
+                colores co ON pco.col_pro_col = co.id_col
+            JOIN
+                imagenes img ON pco.img_pro_col = img.id_img
+            WHERE
+                pco.pro_col_pro = p.id_pro
+        ) AS colors,
+        -- Tallas disponibles para el producto (por inventario)
+        (
+            SELECT GROUP_CONCAT(DISTINCT t.nom_tal_pro SEPARATOR '---')
+            FROM inventario inv
+            JOIN tallas t ON inv.id_tal_inv = t.id_tal_pro
+            WHERE inv.id_pro_inv = p.id_pro
+        ) AS sizes,
+        -- Stock total del producto (sumando todas las combinaciones)
+        (
+            SELECT SUM(inv.cantidad)
+            FROM inventario inv
+            WHERE inv.id_pro_inv = p.id_pro
+        ) AS stock_total
+    FROM 
+        e_commerce.productos p
+    INNER JOIN 
+        e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+    WHERE 
+        p.id_pro LIKE p_by
+        OR p.nom_pro LIKE p_by
+    ORDER BY p.id_pro DESC
+    LIMIT 1000;
+END //
+
 CREATE PROCEDURE e_commerce.GetProductsByCategory(
     IN p_nom_cat VARCHAR(100)
 )
@@ -120,8 +209,20 @@ BEGIN
         p.des_pro,
         p.sta_pro,
         p.onSale,
+        p.created_at,
+        p.updated_at,
         c.nom_cat_pro,
         c.sta_cat_pro,
+        (
+            SELECT img.url_img
+            FROM 
+                productos_colores pco
+            JOIN
+                imagenes img ON pco.img_pro_col = img.id_img
+            WHERE
+                pco.pro_col_pro = p.id_pro
+            LIMIT 1
+        ) AS img_default,
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
@@ -264,6 +365,7 @@ BEGIN
 END //
 
 /* DROP PROCEDURE e_commerce.GetAllProducts; */
+/* DROP PROCEDURE e_commerce.`GetProductBy`; */
 /* DROP PROCEDURE e_commerce.GetProductsCategories; */
 /* DROP PROCEDURE e_commerce.`GetProductsColors`; */
 /* DROP PROCEDURE e_commerce.`GetProductsSizes`; */
@@ -287,5 +389,3 @@ VALUES ('test1','#test1',
     },
 ]'
 ); */
-
-/* SELECT * FROM e_commerce.imagenes; */

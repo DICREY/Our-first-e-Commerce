@@ -2,11 +2,15 @@
 .mainContent {
   flex: 1;
   padding: 0;
+  height: 100vh;
   width: 100%;
+  overflow: auto;
   transition: var(--transition);
 }
 
 .topBar {
+  position: sticky;
+  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,6 +19,7 @@
   background-color: var(--white);
   box-shadow: var(--shadow);
   color: var(--primary-700);
+  z-index: 50;
 }
 
 .userInfo {

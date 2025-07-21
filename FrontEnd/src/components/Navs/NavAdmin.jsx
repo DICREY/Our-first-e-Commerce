@@ -2,15 +2,14 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { 
-  ArrowLeft, 
-  ArrowRight, 
   Box, 
   ChartNoAxesCombined, 
   Package, 
   Users, 
   Settings,
   Home,
-  ChevronRight
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react'
 
 // Import styles 
@@ -42,20 +41,14 @@ export const NavAdmin = () => {
         {
             path: "/admin/products",
             icon: <Box size={20} />,
-            label: "Productos",
-            submenu: [
-                { path: "/admin/products/list", label: "Todos los productos" },
-                { path: "/admin/products/categories", label: "Categorías" },
-                { path: "/admin/products/inventory", label: "Inventario" }
-            ]
+            label: "Productos"
         },
         {
             path: "/admin/orders",
             icon: <Package size={20} />,
             label: "Pedidos",
             submenu: [
-                { path: "/admin/orders/pending", label: "Pendientes" },
-                { path: "/admin/orders/completed", label: "Completados" },
+                { path: "/admin/orders/canceled", label: "Cancelados" },
                 { path: "/admin/orders/returns", label: "Devoluciones" }
             ]
         },
@@ -70,8 +63,7 @@ export const NavAdmin = () => {
             label: "Configuración",
             submenu: [
                 { path: "/admin/settings/general", label: "Generales" },
-                { path: "/admin/settings/users", label: "Usuarios" },
-                { path: "/admin/settings/integrations", label: "Integraciones" }
+                { path: "/admin/settings/Preferens", label: "Integraciones" }
             ]
         },
         {
@@ -83,14 +75,17 @@ export const NavAdmin = () => {
 
     return (    
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : styles.closed}`}>
-            <div className={styles.sidebarHeader}>
+            <div 
+                className={styles.sidebarHeader}
+                onClick={toggleSidebar}
+            >
                 {sidebarOpen && <h2>Panel Administrativo</h2>}
                 <button 
                     onClick={toggleSidebar} 
                     className={styles.toggleButton}
                     aria-label={sidebarOpen ? "Cerrar menú" : "Abrir menú"}
                 >
-                    {sidebarOpen ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}
+                    {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
                 </button>
             </div>
 
@@ -101,6 +96,7 @@ export const NavAdmin = () => {
                             <div className={styles.navItemContainer}>
                                 <NavLink 
                                     to={item.path}
+                                    title={item.label}
                                     onClick={() => toggleSubmenu(item.label)}
                                     className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
                                     end={item.exact}
@@ -129,6 +125,7 @@ export const NavAdmin = () => {
                                             <NavLink 
                                                 to={subItem.path}
                                                 className={({ isActive }) => `${styles.submenuLink} ${isActive ? styles.active : ''}`}
+                                                // onClick={() => setFilterFetch(subItem.filter)}
                                             >
                                                 {subItem.label}
                                             </NavLink>

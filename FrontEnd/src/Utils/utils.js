@@ -253,3 +253,8 @@ export const formatNumber = (num = 0) => {
     .replace('.',',')
     .replace(/\B(?=(\d{3})+(?!\d))/g, ".") // puntos cada 3 cifras
 }
+
+// Función auxiliar para calcular descuentos
+export const calculateDiscount = (currentPrice, originalPrice) => {
+  return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
+}

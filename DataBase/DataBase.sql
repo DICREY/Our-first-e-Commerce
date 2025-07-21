@@ -4,7 +4,9 @@ CREATE DATABASE e_commerce;
 
 CREATE TABLE e_commerce.roles(
     id_rol INT AUTO_INCREMENT PRIMARY KEY,
-    nom_rol VARCHAR(100) NOT NULL,INDEX(nom_rol)
+    nom_rol VARCHAR(100) NOT NULL,INDEX(nom_rol),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.personas(
@@ -24,13 +26,14 @@ CREATE TABLE e_commerce.personas(
     gen_per VARCHAR(100) NOT NULL,
     estado BOOLEAN DEFAULT(1) NOT NULL,
     fot_per TEXT DEFAULT("No-registrado") NOT NULL,
-    fec_cre_per DATE DEFAULT(NOW()) NOT NULL
+    fec_cre_per TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.otorgar_roles(
     id_rol INT NOT NULL,INDEX(id_rol),FOREIGN KEY(id_rol) REFERENCES roles(id_rol) ON DELETE CASCADE ON UPDATE CASCADE,
     id_per INT NOT NULL,INDEX(id_per),FOREIGN KEY(id_per) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE,
-    fec_oto DATE DEFAULT(NOW()) NOT NULL,
+    fec_oto DATE DEFAULT(CURRENT_DATE) NOT NULL,
     PRIMARY KEY(id_rol,id_per)
 );
 
@@ -39,7 +42,9 @@ CREATE TABLE e_commerce.cat_productos(
     nom_cat_pro VARCHAR(100) NOT NULL,INDEX(nom_cat_pro),
     slug VARCHAR(100) UNIQUE NOT NULL,
     des_cat_pro INT(3) DEFAULT 0 COMMENT 'Descuento de la categoria',
-    sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL
+    sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.productos(
@@ -50,7 +55,9 @@ CREATE TABLE e_commerce.productos(
     des_pre_pro INT(3) DEFAULT 0 COMMENT 'Descuento del producto',
     des_pro TEXT NOT NULL,
     onSale BOOLEAN DEFAULT 1,
-    sta_pro BOOLEAN DEFAULT 1 NOT NULL # Estado del servicio
+    sta_pro ENUM('DISPONIBLE','NO-DISPONIBLE') DEFAULT 'DISPONIBLE' NOT NULL, # Estado del producto
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.colores(
@@ -94,14 +101,18 @@ CREATE TABLE e_commerce.inventario (
 
 CREATE TABLE e_commerce.metodos_pagos(
     id_met_pag INT AUTO_INCREMENT PRIMARY KEY,
-    nom_met_pag VARCHAR(100) NOT NULL,INDEX(nom_met_pag)
+    nom_met_pag VARCHAR(100) NOT NULL,INDEX(nom_met_pag),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.metodos_envios(
     id_met_env INT AUTO_INCREMENT PRIMARY KEY,
     nom_met_env VARCHAR(100) NOT NULL,INDEX(nom_met_env),
     des_met_env TEXT DEFAULT 'No-registrado',
-    pre_met_env DECIMAL(10,2) DEFAULT 0
+    pre_met_env DECIMAL(10,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.pedidos (
@@ -110,6 +121,8 @@ CREATE TABLE e_commerce.pedidos (
     fec_ped DATE DEFAULT(CURRENT_DATE()),
     sta_ped ENUM('PENDIENTE', 'PROCESANDO', 'ENVIADO', 'ENTREGADO', 'CANCELADO') DEFAULT 'PENDIENTE',INDEX(sta_ped),
     dir_env_ped VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
     met_pag_ped INT NOT NULL,INDEX(met_pag_ped),FOREIGN KEY (met_pag_ped) REFERENCES metodos_pagos(id_met_pag) ON DELETE CASCADE ON UPDATE CASCADE,
     met_env_ped INT NOT NULL,INDEX(met_env_ped),FOREIGN KEY (met_env_ped) REFERENCES metodos_envios(id_met_env) ON DELETE CASCADE ON UPDATE CASCADE
 );

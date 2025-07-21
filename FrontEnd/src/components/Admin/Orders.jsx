@@ -9,9 +9,10 @@ import { divideList, errorStatusHandler, formatDate, formatNumber, searchFilter 
 
 // Import styles
 import styles from '../../styles/Admin/OrdersList.module.css'
+import { Search } from 'lucide-react'
 
 // Component 
-export const OrdersList = ({ URL = '', setIdOrder }) => {
+export const OrdersList = ({ URL = '', setIdOrder = null, filterFetch = null }) => {
   // Dynamic vars 
   const [orders, setOrders] = useState(null)
   const [ordersAlmc, setOrdersAlmc] = useState(null)
@@ -21,17 +22,21 @@ export const OrdersList = ({ URL = '', setIdOrder }) => {
 
   // Vars
   const navigate = useNavigate()
+  let didFetch = false
 
   // Functions 
   const getOrders = async () => {
+    if (didFetch) return
     try {
       const ord = await GetData(`${URL}/orders/all`)
+      didFetch = true
       if (ord) {
         setOrders(divideList(ord, 12))
         setOrdersAlmc(ord)
         setLoading(false)
       }
     } catch (err) {
+      didFetch = true
       setLoading(false)
       const message = errorStatusHandler(err)
       console.log(message)
@@ -64,6 +69,10 @@ export const OrdersList = ({ URL = '', setIdOrder }) => {
 
   useEffect(() => {
     getOrders()
+    if (filterFetch) {
+      const data = searchFilter(filterFetch,ordersAlmc,['sta_ped'])
+      if(data) setOrders(data)
+    }
   }, [])
 
   const getStatusBadgeClass = (status) => {
@@ -93,7 +102,7 @@ export const OrdersList = ({ URL = '', setIdOrder }) => {
               onChange={(e) => handleFilter(e.target.value)}
               className={styles.searchInput}
             />
-            <span className={styles.searchIcon}>🔍</span>
+            <span className={styles.searchIcon}><Search size={14} /></span>
           </div>
 
           <select
@@ -101,7 +110,7 @@ export const OrdersList = ({ URL = '', setIdOrder }) => {
             onChange={(e) => handleFilterToState(e.target.value)}
             className={styles.statusFilter}
           >
-            <option value="all">Todo</option>
+            <option value="">Todo</option>
             <option value="PENDIENTE">Pendiente</option>
             <option value="PROCESANDO">Procesando</option>
             <option value="ENVIADO">Enviado</option>
