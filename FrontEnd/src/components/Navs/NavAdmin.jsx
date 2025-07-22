@@ -58,7 +58,7 @@ export const NavAdmin = () => {
             label: "Clientes"
         },
         {
-            path: "/admin/settings",
+            path: "/admin/perfil",
             icon: <Settings size={20} />,
             label: "Configuración",
             submenu: [

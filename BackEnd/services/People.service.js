@@ -69,10 +69,10 @@ class People {
     }
 
     // function to find by
-    async findBy(data) {
+    async findBy() {
         return new Promise((res,rej) => {
             // vars
-            const by = data?.replace(":","").replace(" ","")
+            const by = this.args[0]?.trim()
             const proc = "CALL SearchPeopleBy(?);"
 
             // conect to database
@@ -80,7 +80,7 @@ class People {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,by,(err,result) => {
+            if (this.database) this.database.conection.query(proc,[by],(err,result) => {
                 if(err) {
                     rej({ message: err })
                 } else if (result) {

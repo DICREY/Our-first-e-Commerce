@@ -47,27 +47,26 @@ Route.get('/all:by', async (req,res) => {
     }
 })
 
-Route.get('/by:by', async (req,res) => {
-    // Vars 
-    const by = req.params.by
-    
-    try {
-        if (!by) return res.status(400).json({ message: "Petición invalida, faltan datos"})
+// Call Middleware for verify the request data
+Route.use(Fullinfo(['cel2_per']))
 
+Route.post('/by', async (req,res) => {
+    try {
+        // Vars 
+        const by = req.body.by
+        const inst = new People(by)
+    
         // Verifiy if exist
-        const search = await people.findBy(by)
-        if (!search.result) res.status(404).json({ message: "Usuario no encontrado" })
+        const search = await inst.findBy(by)
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
-
-// Call Middleware for verify the request data
-Route.use(Fullinfo(['cel2_per']))
 
 Route.post('/register', async (req,res) => {
     // Vars 
