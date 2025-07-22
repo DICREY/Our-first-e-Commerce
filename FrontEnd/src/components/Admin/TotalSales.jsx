@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 
 // Imports 
-import { errorStatusHandler } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, PriceCompare } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 
 // Import styles 
@@ -12,14 +12,15 @@ import styles from '../../styles/Admin/TotalSales.module.css'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-// Component 
 export const TotalSales = ({ URL = '' }) => {
     const [dailySales, setDailySales] = useState(null)
-    const [years, setYears] = useState(null)
+    const [salesSummary, setSalesSummary] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     const GetDailySales = async () => {
         try {
             const got = await GetData(`${URL}/stats/sales-per-day`)
+            setLoading(false)
             if (got) {
                 setDailySales(got)
             }
@@ -27,19 +28,22 @@ export const TotalSales = ({ URL = '' }) => {
             const message = errorStatusHandler(err)
         }
     }
-
+    
     const GetInfo = async () => {
         try {
-            const got = await GetData(`${URL}/stats/last-sales`)
-            if (got) {
-                const prevYear = got?.map(i => i.tipo === "prev_year_sales")
-                const lastMonth = got?.map(i => i.tipo === "last_month_sales")
-                setYears({
-                    prevYear: prevYear,
-                    lastMonth: lastMonth
+            const got = await GetData(`${URL}/stats/sales-summary`)
+            setLoading(false)
+            if (got && got[0]) {
+                const compareMonth = PriceCompare(got[0]?.month_previous,got[0]?.month_current)
+                const compareYear = PriceCompare(got[0]?.year_previous,got[0]?.year_current)
+                setSalesSummary({
+                    ...got[0],
+                    compareMonths: compareMonth,
+                    compareYears: compareYear
                 })
             }
         } catch (err) {
+            setLoading(false)
             const message = errorStatusHandler(err)
         }
     }
@@ -49,9 +53,8 @@ export const TotalSales = ({ URL = '' }) => {
         GetInfo()
     }, [])
 
-    // Preparar datos para el gráfico
     const chartData = {
-        labels: dailySales?.map(item => item.day),
+        labels: dailySales?.map(item => item.day) || [],
         datasets: [
             {
                 label: 'Daily Sales ($)',
@@ -106,32 +109,68 @@ export const TotalSales = ({ URL = '' }) => {
         maintainAspectRatio: false
     }
 
+    if (loading) {
+        return (
+            <div className={styles.loadingContainer}>
+                <div className={styles.loadingSpinner}></div>
+                <p>Cargando datos de ventas...</p>
+            </div>
+        )
+    }
+
     return (
-        <article className={styles.totalSalesContainer}>
-            <aside className={styles.totalSales}>
-                <h2 className={styles.title}>Ventas Totales</h2>
+        <div className={styles.totalSalesContainer}>
+            <div className={styles.totalSalesCard}>
+                <div className={styles.cardHeader}>
+                    <h2 className={styles.cardTitle}>Análisis de Ventas</h2>
+                    <div className={styles.timeRange}>
+                        <span className={styles.activeRange}>Últimos días</span>
+                    </div>
+                </div>
 
-                <header className={styles.summary}>
-                    <div className={styles.summaryItem}>
-                        <span className={styles.summaryLabel}>Mes pasado:</span>
-                        <span className={styles.summaryValue}>${years?.lastMonth?.value || 0}</span>
+                <div className={styles.summaryGrid}>
+                    <div className={styles.summaryCard} style={{ borderLeftColor: 'var(--success-500)' }}>
+                        <span className={styles.summaryLabel}>Mes Actual</span>
+                        <span className={styles.summaryValue}>${formatNumber(salesSummary?.month_current)}</span>
+                        <div className={styles.comparison}>
+                            <span className={styles.comparisonValue}>
+                                {salesSummary?.compareMonths?.direccion} {salesSummary?.compareMonths?.diferencia}
+                            </span>
+                            <span className={styles.comparisonLabel}>vs mes anterior</span>
+                        </div>
                     </div>
 
-                    <div className={styles.summaryItem}>
-                        <span className={styles.summaryLabel}>Año anterior:</span>
-                        <span className={styles.summaryValue}>${years?.prevYear?.value || 0}</span>
+                    <div className={styles.summaryCard} style={{ borderLeftColor: '#8fb4ff' }}>
+                        <span className={styles.summaryLabel}>Año Actual</span>
+                        <span className={styles.summaryValue}>${formatNumber(salesSummary?.year_current)}</span>
+                        <div className={styles.comparison}>
+                            <span className={styles.comparisonValue}>
+                                {salesSummary?.compareYears?.direccion} {salesSummary?.compareYears?.diferencia}
+                            </span>
+                            <span className={styles.comparisonLabel}>vs año anterior</span>
+                        </div>
                     </div>
-                </header>
+                </div>
 
-                <hr className={styles.divider} />
+                <div className={styles.chartContainer}>
+                    <Line data={chartData} options={chartOptions} />
+                </div>
 
-                <main className={styles.chartContainer}>
-                    <Line
-                        data={chartData}
-                        options={chartOptions}
-                    />
-                </main>
-            </aside>
-        </article>
+                <div className={styles.statsFooter}>
+                    <div className={styles.statItem}>
+                        <span className={styles.statLabel}>Mejor día:</span>
+                        <span className={styles.statValue}>
+                            {dailySales?.reduce((max, day) => max.value > day.value ? max : day, {value: 0})?.day || 'N/A'}
+                        </span>
+                    </div>
+                    <div className={styles.statItem}>
+                        <span className={styles.statLabel}>Ventas promedio:</span>
+                        <span className={styles.statValue}>
+                            ${dailySales?.length ? formatNumber(Math.round(dailySales.reduce((sum, day) => sum + day.value, 0) / dailySales.length)) : '0'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }

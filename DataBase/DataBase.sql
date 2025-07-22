@@ -4,13 +4,17 @@ CREATE DATABASE e_commerce;
 
 CREATE TABLE e_commerce.roles(
     id_rol INT AUTO_INCREMENT PRIMARY KEY,
-    nom_rol VARCHAR(100) NOT NULL,INDEX(nom_rol)
+    nom_rol VARCHAR(100) NOT NULL,INDEX(nom_rol),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.personas(
     id_per INT AUTO_INCREMENT PRIMARY KEY,
     nom_per VARCHAR(100) NOT NULL,
+    nom2_per VARCHAR(100) DEFAULT 'No-registrado' NOT NULL,
     ape_per VARCHAR(100) NOT NULL,
+    ape2_per VARCHAR(100) DEFAULT 'No-registrado' NOT NULL,
     fec_nac_per DATE NOT NULL,
     tip_doc_per VARCHAR(10) NOT NULL,
     doc_per VARCHAR(20) UNIQUE NOT NULL,INDEX(doc_per),
@@ -20,15 +24,16 @@ CREATE TABLE e_commerce.personas(
     email_per VARCHAR(100) UNIQUE NOT NULL,INDEX(email_per),
     pas_per VARCHAR(255) NOT NULL,
     gen_per VARCHAR(100) NOT NULL,
-    estado BOOLEAN DEFAULT(1) NOT NULL,
+    estado ENUM('DISPONIBLE','NO-DISPONIBLE') DEFAULT 'DISPONIBLE' NOT NULL, # Estado de la persona
     fot_per TEXT DEFAULT("No-registrado") NOT NULL,
-    fec_cre_per DATE DEFAULT(NOW()) NOT NULL
+    fec_cre_per TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.otorgar_roles(
     id_rol INT NOT NULL,INDEX(id_rol),FOREIGN KEY(id_rol) REFERENCES roles(id_rol) ON DELETE CASCADE ON UPDATE CASCADE,
     id_per INT NOT NULL,INDEX(id_per),FOREIGN KEY(id_per) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE,
-    fec_oto DATE DEFAULT(NOW()) NOT NULL,
+    fec_oto DATE DEFAULT(CURRENT_DATE) NOT NULL,
     PRIMARY KEY(id_rol,id_per)
 );
 
@@ -36,7 +41,10 @@ CREATE TABLE e_commerce.cat_productos(
     id_cat_pro INT AUTO_INCREMENT PRIMARY KEY,
     nom_cat_pro VARCHAR(100) NOT NULL,INDEX(nom_cat_pro),
     slug VARCHAR(100) UNIQUE NOT NULL,
-    sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL
+    des_cat_pro INT(3) DEFAULT 0 COMMENT 'Descuento de la categoria',
+    sta_cat_pro BOOLEAN DEFAULT(1) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.productos(
@@ -44,9 +52,12 @@ CREATE TABLE e_commerce.productos(
     cat_pro INT NOT NULL,INDEX(cat_pro), FOREIGN KEY(cat_pro) REFERENCES cat_productos(id_cat_pro) ON DELETE CASCADE ON UPDATE CASCADE,
     nom_pro VARCHAR(100) NOT NULL,INDEX(nom_pro),
     pre_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro),
+    des_pre_pro INT(3) DEFAULT 0 COMMENT 'Descuento del producto',
     des_pro TEXT NOT NULL,
     onSale BOOLEAN DEFAULT 1,
-    sta_pro BOOLEAN DEFAULT 1 NOT NULL # Estado del servicio
+    sta_pro ENUM('DISPONIBLE','NO-DISPONIBLE') DEFAULT 'DISPONIBLE' NOT NULL, # Estado del producto
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.colores(
@@ -90,7 +101,18 @@ CREATE TABLE e_commerce.inventario (
 
 CREATE TABLE e_commerce.metodos_pagos(
     id_met_pag INT AUTO_INCREMENT PRIMARY KEY,
-    nom_met_pag VARCHAR(100) NOT NULL,INDEX(nom_met_pag)
+    nom_met_pag VARCHAR(100) NOT NULL,INDEX(nom_met_pag),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
+);
+
+CREATE TABLE e_commerce.metodos_envios(
+    id_met_env INT AUTO_INCREMENT PRIMARY KEY,
+    nom_met_env VARCHAR(100) NOT NULL,INDEX(nom_met_env),
+    des_met_env TEXT DEFAULT 'No-registrado',
+    pre_met_env DECIMAL(10,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
 CREATE TABLE e_commerce.pedidos (
@@ -99,24 +121,20 @@ CREATE TABLE e_commerce.pedidos (
     fec_ped DATE DEFAULT(CURRENT_DATE()),
     sta_ped ENUM('PENDIENTE', 'PROCESANDO', 'ENVIADO', 'ENTREGADO', 'CANCELADO') DEFAULT 'PENDIENTE',INDEX(sta_ped),
     dir_env_ped VARCHAR(200) NOT NULL,
-    met_pag_ped INT NOT NULL,INDEX(met_pag_ped),FOREIGN KEY (met_pag_ped) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE e_commerce.detalle_pedidos (
-    id_det_ped INT AUTO_INCREMENT PRIMARY KEY,
-    ped_det_ped INT NOT NULL COMMENT 'Pedido',INDEX(ped_det_ped),FOREIGN KEY (ped_det_ped) REFERENCES pedidos(id_ped) ON DELETE CASCADE ON UPDATE CASCADE,
-    can_det_ped INT NOT NULL COMMENT 'Cantidad',
-    pre_uni_det_ped DECIMAL(10,2) NOT NULL COMMENT 'Precio por unidad',
-    subtotal DECIMAL(12,2) GENERATED ALWAYS AS (can_det_ped * pre_uni_det_ped) STORED
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
+    met_pag_ped INT NOT NULL,INDEX(met_pag_ped),FOREIGN KEY (met_pag_ped) REFERENCES metodos_pagos(id_met_pag) ON DELETE CASCADE ON UPDATE CASCADE,
+    met_env_ped INT NOT NULL,INDEX(met_env_ped),FOREIGN KEY (met_env_ped) REFERENCES metodos_envios(id_met_env) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE e_commerce.productos_pedidos(
-    id_det_ped INT NOT NULL COMMENT 'ID detalle de Pedido',INDEX(id_det_ped),FOREIGN KEY (id_det_ped) REFERENCES detalle_pedidos(id_det_ped) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_ped INT NOT NULL COMMENT 'ID detalle de Pedido',INDEX(id_ped),FOREIGN KEY (id_ped) REFERENCES pedidos(id_ped) ON DELETE CASCADE ON UPDATE CASCADE,
     pro_ped INT NOT NULL COMMENT 'Producto',INDEX(pro_ped),FOREIGN KEY (pro_ped) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
     col_pro_ped INT NOT NULL COMMENT 'Color de producto',INDEX(col_pro_ped),FOREIGN KEY (col_pro_ped) REFERENCES colores(id_col) ON DELETE CASCADE ON UPDATE CASCADE,
     img_pro_ped INT NOT NULL COMMENT 'Imagen del producto',INDEX(img_pro_ped),FOREIGN KEY (img_pro_ped) REFERENCES imagenes(id_img) ON DELETE CASCADE ON UPDATE CASCADE,
     tal_pro_ped INT NOT NULL COMMENT 'Talla del producto',INDEX(tal_pro_ped),FOREIGN KEY (tal_pro_ped) REFERENCES tallas(id_tal_pro) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY(id_det_ped, pro_ped)
+    can_pro_ped INT NOT NULL COMMENT 'Cantidad de este producto',
+    PRIMARY KEY(id_ped, pro_ped)
 );
 
 -- Tabla para sesiones/usuarios únicos

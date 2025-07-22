@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 // Imports 
 import { useCart } from "../../Contexts/CartContext"
-import { CheckImage } from "../../Utils/utils"
+import { CheckImage, formatNumber } from "../../Utils/utils"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
 import ProductQuickView from "../ProductQuickView/ProductQuickView"
@@ -16,8 +16,8 @@ import styles from "./ProductCard.module.css"
 // Component 
 const ProductCard = ({ data = {}, imgDefault = '', set }) => {
   // Dynamic vars 
-  const [ isLiked, setIsLiked ] = useState(false)
-  const [ showQuickView, setShowQuickView ] = useState(false)
+  const [ isLiked, setIsLiked ] = useState(null)
+  const [ showQuickView, setShowQuickView ] = useState(null)
   const [ showImg, setShowImg ] = useState(null)
   const [ product, setProduct ] = useState(null)
 
@@ -37,7 +37,7 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
 
   const handleCardClick = () => {
     set(product)
-    navigate(`/producto`)
+    navigate(`/product`)
   }
 
   // Persistencia de likes en localStorage
@@ -46,8 +46,8 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
     if (product) {
       const liked = localStorage.getItem(`liked-product-${product?.id_pro}`)
       if (liked === "true") setIsLiked(true)
-      setShowImg(product?.colors[0]?.url_img)
-    }
+      }
+    setShowImg(data?.colors[0]?.url_img || 'url')
   }, [])
 
   return (
@@ -56,12 +56,14 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
         <main>
           <section className={styles.card} onClick={handleCardClick} style={{ cursor: "pointer" }}>
             <div className={styles.imageContainer}>
-              <CheckImage
-                src={showImg}  
-                alt={product.nom_pro}
-                imgDefault={imgDefault}
-                className={styles.image}
-              />
+              {showImg && (
+                <CheckImage
+                  src={showImg}  
+                  alt={product.nom_pro}
+                  imgDefault={imgDefault}
+                  className={styles.image}
+                />
+              )}
               {/* Badges */}
               <div className={styles.badges}>
                 {product.onSale && <Badge variant="sale">Oferta</Badge>}
@@ -110,7 +112,7 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
                 <h3 className={styles.productName}>{product.nom_pro}</h3>
 
                 <div className={styles.priceContainer}>
-                  <span className={styles.price}>${product.pre_pro}</span>
+                  <span className={styles.price}>${formatNumber(product.pre_pro)}</span>
                   {/* {product.originalPrice && (
                     <span className={styles.originalPrice}>${product.originalPrice.toFixed(2)}</span>
                   )} */}

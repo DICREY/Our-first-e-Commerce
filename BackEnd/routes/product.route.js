@@ -18,6 +18,7 @@ Route.get('/all', async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -35,6 +36,7 @@ Route.get('/categories', async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -52,6 +54,7 @@ Route.get('/colors', async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -69,6 +72,7 @@ Route.get('/sizes', async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -91,6 +95,7 @@ Route.post('/all/by', async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -98,18 +103,20 @@ Route.post('/all/by', async (req,res) => {
 })
 
 Route.post('/by', async (req,res) => {
-    // Vars 
-    const { by } = req.body
-    
     try {
+        // Vars 
+        const by = String(req.body.by)
+        const inst = new Product(by)
+
         if (!by) return res.status(400).json({ message: "Petición invalida, faltan datos"})
 
         // Verifiy if exist
-        const search = await prodInst.findBy(by)
+        const search = await inst.findBy()
         if (!search.result) res.status(404).json({ message: "Producto no encontrado" })
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -130,6 +137,7 @@ Route.post('/by/categorie', async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -175,6 +183,7 @@ Route.put('/modify', ValidatorRol("administrador"),async (req,res) => {
 
         if (modified.modified) return res.status(200).json(modified)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({ message: err.message })
 

@@ -88,6 +88,37 @@ export const formatDate = (dateString = "") => {
     return false
 }
 
+// Diferencia porcentual
+export const PriceCompare = (precioOriginal = 0, precioNuevo = 0) => {
+  // Validación de entradas
+  if (typeof precioOriginal !== 'number' || typeof precioNuevo !== 'number') {
+    throw new Error('Ambos parámetros deben ser números');
+  }
+
+  // Cálculo de la diferencia
+  const diferencia = precioNuevo - precioOriginal;
+  let porcentaje = precioOriginal === 0? 100: (diferencia / precioOriginal) * 100
+  const porcentajeRedondeado = (porcentaje * 100) / 100;
+
+  // Determinar dirección del cambio
+  let direccion;
+  if (porcentaje > 0) {
+    direccion = '+';
+  } else if (porcentaje < 0) {
+    direccion = '-';
+  } else {
+    direccion = '=';
+  }
+
+  return {
+    diferencia: `${formatNumber(porcentajeRedondeado)}%`,
+    direccion: direccion,
+    precioOriginal: precioOriginal,
+    precioNuevo: precioNuevo,
+    diferenciaAbsoluta: diferencia
+  };
+}
+
 // Function to filter
 export const searchFilter = (term = '', data = [], headers = []) => {
   if (!term || !data || !headers || !Array.isArray(data) || !Array.isArray(headers)) return data
@@ -221,4 +252,9 @@ export const formatNumber = (num = 0) => {
     .toFixed(2) // dos decimales
     .replace('.',',')
     .replace(/\B(?=(\d{3})+(?!\d))/g, ".") // puntos cada 3 cifras
+}
+
+// Función auxiliar para calcular descuentos
+export const calculateDiscount = (currentPrice, originalPrice) => {
+  return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
 }

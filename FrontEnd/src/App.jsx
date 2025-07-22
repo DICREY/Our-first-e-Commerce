@@ -4,29 +4,37 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-
 import { Auth0Provider } from "@auth0/auth0-react";
 
 // Imports 
-import { CartProvider } from "./Contexts/CartContext";
-import { LoginForm } from "./components/Forms/Login";
-import { RegisterForm } from "./components/Forms/Register";
-import { AuthProvider } from "./Contexts/Auth.context";
-import { AuthContext } from "./Contexts/Contexts";
+import { CartProvider } from "./Contexts/CartContext"
+import { LoginForm } from "./components/Forms/Login"
+import { RegisterForm } from "./components/Forms/Register"
+import { AuthProvider } from "./Contexts/Auth.context"
+import { AuthContext } from "./Contexts/Contexts"
 import { Dashboard } from './components/Admin/Dashboard'
 import { ProductList } from "./components/Admin/Products"
-import { OrdersList } from "./components/Admin/Orders";
-import Header from "./components/Header/Header";
-import HomePage from "./components/Pages/HomePage/HomePage";
-import ProductCatalog from "./components/ProductCatalog/ProductCatalog";
-import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage";
-import { Customers } from "./components/Admin/Clients";
+import { OrdersList } from "./components/Admin/Orders"
+import { Customers } from "./components/Admin/Clients"
+import { NavAdmin } from "./components/Navs/NavAdmin"
+import { OrderDetail } from "./components/Details/OrdersDetails"
+import { CustomerDetail } from "./components/Details/CustomersDetails"
+import Header from "./components/Header/Header"
+import HomePage from "./components/Pages/HomePage/HomePage"
+import ProductCatalog from "./components/ProductCatalog/ProductCatalog"
+import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
+import { ProductDetailAdmin } from "./components/Details/ProductDetail"
+
 // Main Module 
 const App = () => {
   // Dynamic vars
-  const [product, setProduct] = useState();
-  const [catPro, setCatPro] = useState();
+  const [product, setProduct] = useState()
+  const [order, setOrder] = useState()
+  const [customer, setCustomer] = useState()
+  const [catPro, setCatPro] = useState()
+  const [filterFetch, setFilterFetch] = useState(null)
 
   // Vars 
-  const URL = 'http://localhost:3000/ecommerce';
-  const imgProduct = require('./Imgs/ProductDefault.png');
-  const imgUser = require('./Imgs/UserDefault.webp');
+  const URL = 'http://localhost:3000/ecommerce'
+  const imgProduct = require('./Imgs/ProductDefault.png')
+  const imgUser = require('./Imgs/UserDefault.webp')
 
   // Layout Component
   const MainLayout = ({ children }) => {
@@ -37,19 +45,24 @@ const App = () => {
           {children || <Outlet />}
         </main>
       </div>
-    );
-  };
+    )
+  }
 
   // Route Protectors
   const PrivateRoute = () => {
-    const { user } = useContext(AuthContext);
-    return user ? <Outlet /> : <Navigate to="/login" />;
-  };
+    const { user } = useContext(AuthContext)
+    return user ? <Outlet /> : <Navigate to="/login" />
+  }
 
   const AdminRoute = () => {
-    const { admin } = useContext(AuthContext);
-    return admin ? <Outlet /> : <Navigate to="/login" />;
-  };
+    const { admin } = useContext(AuthContext)
+    return admin? (
+      <main className='mainContainerAdmin'>
+        <NavAdmin setFilterFetch={setFilterFetch} />
+        <Outlet />
+      </main>
+    ):<Navigate to="/login" />
+  }
 
   return (
     <AuthProvider>
@@ -95,6 +108,15 @@ const App = () => {
                   />
                 } />
             </Route>
+            <Route 
+              path="/product" 
+              element={
+                <ProductDetailPage 
+                  URL={URL} 
+                  img={imgProduct} 
+                  product={product}
+                />
+              } />
 
             {/* Auth Routes without Layout */}
             <Route path="/login" element={<LoginForm URL={URL} />} />
@@ -118,15 +140,27 @@ const App = () => {
               />
               <Route 
                 path="/admin/products" 
-                element={<ProductList URL={URL} imgDefault={imgProduct} />} 
+                element={<ProductList URL={URL} imgDefault={imgProduct} filterFetch={filterFetch} set={setProduct} />} 
+              />
+              <Route 
+                path="/admin/products/details" 
+                element={<ProductDetailAdmin URL={URL} imgDefault={imgProduct} dataProduct={product} />} 
               />
               <Route 
                 path="/admin/orders" 
-                element={<OrdersList URL={URL} imgDefault={imgProduct} />} 
+                element={<OrdersList URL={URL} imgDefault={imgProduct} setIdOrder={setOrder} />} 
+              />
+              <Route 
+                path="/admin/orders/details"
+                element={<OrderDetail URL={URL} id_ped={order} />} 
               />
               <Route 
                 path="/admin/customers" 
-                element={<Customers URL={URL} imgDefault={imgUser} />}
+                element={<Customers URL={URL} imgDefault={imgUser} setCustomer={setCustomer} />}
+              />
+              <Route 
+                path="/admin/customers/details" 
+                element={<CustomerDetail URL={URL} imgDefault={imgUser} customer={customer} />}
               />
             </Route>
 
@@ -136,7 +170,7 @@ const App = () => {
         </Router>
       </CartProvider>
     </AuthProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

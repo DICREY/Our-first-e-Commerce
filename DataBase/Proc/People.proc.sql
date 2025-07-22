@@ -114,7 +114,9 @@ BEGIN
         p.email_per,
         p.pas_per,
         p.gen_per,
+        p.estado,
         p.fec_cre_per,
+        p.fot_per,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 
         personas p
@@ -123,7 +125,7 @@ BEGIN
     JOIN
         roles r ON otr.id_rol = r.id_rol
     WHERE
-        p.estado = 1
+        p.estado LIKE 'DISPONIBLE'
     GROUP BY 
         p.id_per
     LIMIT 100;
@@ -144,7 +146,9 @@ BEGIN
         p.email_per,
         p.pas_per,
         p.gen_per,
+        p.estado,
         p.fec_cre_per,
+        p.fot_per,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 
         personas p
@@ -153,7 +157,7 @@ BEGIN
     JOIN
         roles r ON otr.id_rol = r.id_rol
     WHERE
-        p.estado = 1
+        p.estado LIKE 'DISPONIBLE'
         AND (
             p.doc_per = p_by
             OR p.email_per LIKE p_by
@@ -179,6 +183,7 @@ BEGIN
         p.email_per,
         p.pas_per,
         p.gen_per,
+        p.estado,
         p.fec_cre_per,
         p.fot_per,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
@@ -189,7 +194,7 @@ BEGIN
     JOIN
         roles r ON otr.id_rol = r.id_rol
     WHERE
-        p.estado = 1
+        p.estado LIKE 'DISPONIBLE'
         AND (
             r.nom_rol = p_by
             OR p.nom_per LIKE CONCAT('%',p_by,'%')
@@ -225,9 +230,9 @@ BEGIN
     UPDATE
         personas p
     SET 
-        p.estado = 0
+        p.estado = 'NO-DISPONIBLE'
     WHERE
-        p.estado = 1
+        p.estado LIKE 'DISPONIBLE'
         AND (
             p.doc_per LIKE p_by
             OR p.email_per LIKE p_by
@@ -237,5 +242,9 @@ BEGIN
 
     SET autocommit = 1;
 END //
+
+/* DROP PROCEDURE e_commerce.SearchPeoples; */
+/* DROP PROCEDURE e_commerce.`SearchPeoplesBy`; */
+/* DROP PROCEDURE e_commerce.`SearchPeopleBy`; */
 
 /* CALL `SearchPeoples`(); */

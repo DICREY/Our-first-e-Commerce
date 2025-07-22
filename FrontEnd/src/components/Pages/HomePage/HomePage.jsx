@@ -1,8 +1,7 @@
 // Librarys 
 import { useEffect, useState } from "react"
 
-// Imports 
-import { categories } from "../../data/products"
+// Imports
 import HeroSection from "../../HeroSection/HeroSection"
 import ProductCard from "../../ProductCard/ProductCard"
 import Badge from "../../Badge/Badge"
@@ -17,7 +16,7 @@ import styles from "./HomePage.module.css"
 const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
   // Dynamic vars 
   const [selectedCategory, setSelectedCategory] = useState("Todos")
-  const [sellest, setSellest] = useState([])
+  const [sellest, setSellest] = useState(null)
   const [categorie, setCategories] = useState([])
   const saleProducts = sellest?.filter((product) => product.onSale)
 
@@ -109,7 +108,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
       </section>
 
       {/* Sale Section */}
-      {saleProducts.length > 0 && (
+      {saleProducts && (
         <section className={styles.saleSection}>
           <div className="container">
             <div className={styles.sectionHeader}>
@@ -121,7 +120,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
             </div>
 
             <div className={styles.productsGrid}>
-              {saleProducts.map((product, index) => (
+              {saleProducts?.map((product, index) => (
                 <ProductCard 
                   key={index + 98} 
                   data={product} 
@@ -146,7 +145,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
 
           <div className={styles.tabs}>
             <div className={styles.tabsList}>
-              {categories.map((category) => (
+              {categorie?.map((category) => (
                 <button
                   key={category}
                   className={`${styles.tab} ${selectedCategory === category ? styles.tabActive : ""}`}
@@ -160,8 +159,8 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
             <div className={styles.tabContent}>
               <div className={styles.productsGrid}>
                 {(selectedCategory === "Todos" ? sellest : sellest?.filter((p) => p.cat_pro === selectedCategory))
-                  .slice(0, 8)
-                  .map((product, index) => (
+                  ?.slice(0, 8)
+                  ?.map((product, index) => (
                     <ProductCard 
                       key={index + 789} 
                       data={product} 
