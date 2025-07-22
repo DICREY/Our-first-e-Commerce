@@ -9,6 +9,7 @@ import { errorStatusHandler, formatNumber } from '../../Utils/utils'
 // Import styles 
 import styles from '../../styles/Details/OrderDetail.module.css'
 import { Calendar, Check, ChevronLeft, Clock, Mail, Package, PinOff, Printer, RefreshCw, Truck } from 'lucide-react'
+import AdminLoadingScreen from '../Global/Loading'
 
 // Component 
 export const OrderDetail = ({ URL = '', id_ped = null }) => {
@@ -76,10 +77,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
 
     if (loading) {
         return (
-            <div className={styles.loadingState}>
-                <div className={styles.spinner}></div>
-                <p className={styles.loadingText}>Cargando detalles del pedido...</p>
-            </div>
+            <AdminLoadingScreen message='Cargando detalles del cliente' />
         )
     }
 

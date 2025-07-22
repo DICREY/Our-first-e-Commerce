@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 import { Paginacion } from '../Global/Paginacion'
+import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
 import styles from '../../styles/Admin/ProductList.module.css'
@@ -95,10 +96,7 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
 
   if (loading) {
     return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>Cargando productos...</p>
-      </div>
+      <AdminLoadingScreen message='Cargando Información de productos' />
     )
   }
 
@@ -116,10 +114,10 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <button className={styles.exportButton}>
+          {/* <button className={styles.exportButton}>
             <Download size={16} />
             Exportar
-          </button>
+          </button> */}
         </div>
       </header>
 

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react'
 import { decodeJWT } from '../Utils/utils'
 import { PostCookie } from '../Utils/Requests'
 import { AuthContext } from './Contexts'
+import AdminLoadingScreen from '../components/Global/Loading'
 
 // Component
 export const AuthProvider = ({ children }) => {
@@ -87,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{ admin, img, mainRol, user, roles, login, logout }}>
             {loading ? (
-                <p>Cargando datos...</p>
+                <AdminLoadingScreen fullScreen message='Cargando datos...' />
                 ): children
             }
         </AuthContext.Provider>

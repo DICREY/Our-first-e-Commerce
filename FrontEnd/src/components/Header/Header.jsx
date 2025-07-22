@@ -5,8 +5,7 @@ import { Heart, Search, ShoppingBag } from 'lucide-react';
 // Imports 
 import { CheckImage, errorStatusHandler } from "../../Utils/utils";
 import { AuthContext } from "../../Contexts/Contexts";
-import { useCart } from "../../Contexts/CartContext";
-import { products } from "../data/products";
+import { useCart } from "../../Contexts/CartContext"
 import CartSheet from "../CartSheet/CartSheet";
 import Button from "../Button/Button";
 import FavoritesSheet from "../FavoritesSheet/FavoritesSheet";
@@ -248,7 +247,6 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
       />
       <FavoritesSheet 
         img={imgProductDefault} 
-        products={products} 
         isOpen={isFavoritesOpen} 
         onClose={() => setIsFavoritesOpen(false)} 
       />

@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom'
 // Imports 
 import { PostData } from '../../Utils/Requests'
 import { calculateDiscount, CheckImage, errorStatusHandler, formatDate, formatNumber } from '../../Utils/utils'
+import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
 import styles from '../../styles/Details/ProductDetail.module.css'
@@ -65,10 +66,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
 
     if (loading) {
         return (
-            <div className={styles.loadingContainer}>
-                <div className={styles.spinner}></div>
-                <p>Cargando detalles del producto...</p>
-            </div>
+            <AdminLoadingScreen message='Cargando detalles del cliente' />
         )
     }
 

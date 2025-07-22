@@ -6,6 +6,7 @@ import { Check, Mail, PenOff, Plus, SquarePen } from 'lucide-react'
 
 // Import styles
 import styles from '../../styles/Details/CustomerDetail.module.css'
+import AdminLoadingScreen from '../Global/Loading'
 
 // Component 
 export const CustomerDetail = ({ URL = '' , customer }) => {
@@ -33,10 +34,7 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
 
     if (isLoading) {
         return (
-            <div className={styles.loadingState}>
-                <div className={styles.spinner}></div>
-                <p className={styles.loadingText}>Cargando información del cliente...</p>
-            </div>
+            <AdminLoadingScreen message='Cargando detalles del cliente' />
         )
     }
 

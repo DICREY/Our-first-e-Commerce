@@ -24,7 +24,7 @@ CREATE TABLE e_commerce.personas(
     email_per VARCHAR(100) UNIQUE NOT NULL,INDEX(email_per),
     pas_per VARCHAR(255) NOT NULL,
     gen_per VARCHAR(100) NOT NULL,
-    estado BOOLEAN DEFAULT(1) NOT NULL,
+    estado ENUM('DISPONIBLE','NO-DISPONIBLE') DEFAULT 'DISPONIBLE' NOT NULL, # Estado de la persona
     fot_per TEXT DEFAULT("No-registrado") NOT NULL,
     fec_cre_per TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'

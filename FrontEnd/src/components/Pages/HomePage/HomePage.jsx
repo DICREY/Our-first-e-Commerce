@@ -1,8 +1,7 @@
 // Librarys 
 import { useEffect, useState } from "react"
 
-// Imports 
-import { categories } from "../../data/products"
+// Imports
 import HeroSection from "../../HeroSection/HeroSection"
 import ProductCard from "../../ProductCard/ProductCard"
 import Badge from "../../Badge/Badge"
@@ -146,7 +145,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
 
           <div className={styles.tabs}>
             <div className={styles.tabsList}>
-              {categories?.map((category) => (
+              {categorie?.map((category) => (
                 <button
                   key={category}
                   className={`${styles.tab} ${selectedCategory === category ? styles.tabActive : ""}`}

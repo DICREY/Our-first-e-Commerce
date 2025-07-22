@@ -10,6 +10,7 @@ import { divideList, errorStatusHandler, formatDate, formatNumber, searchFilter 
 // Import styles
 import styles from '../../styles/Admin/OrdersList.module.css'
 import { Search } from 'lucide-react'
+import AdminLoadingScreen from '../Global/Loading'
 
 // Component 
 export const OrdersList = ({ URL = '', setIdOrder = null, filterFetch = null }) => {
@@ -87,7 +88,7 @@ export const OrdersList = ({ URL = '', setIdOrder = null, filterFetch = null }) 
   }
 
   if (loading) {
-    return <div className={styles.loading}>Loading orders...</div>
+    return <AdminLoadingScreen message='Cargando pedidos...' />
   }
 
   return (
