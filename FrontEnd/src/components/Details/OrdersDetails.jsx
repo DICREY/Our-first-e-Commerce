@@ -225,7 +225,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                     </div>
                 </section>
 
-                <div className={styles.actions}>
+                {/* <div className={styles.actions}>
                     <button className={styles.printButton}>
                         <Printer />
                         Imprimir factura
@@ -234,7 +234,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                         <Mail />
                         Enviar por email
                     </button>
-                </div>
+                </div> */}
             </div>
         </main>
     )
