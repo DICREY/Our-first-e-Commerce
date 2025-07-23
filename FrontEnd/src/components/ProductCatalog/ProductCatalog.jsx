@@ -172,6 +172,8 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
     // eslint-disable-next-line
   }, [minPrice, maxPrice, products.length]);
 
+
+
   return (
     <main className={styles.catalogPage}>
       <header className={styles.header}>
@@ -179,72 +181,34 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
         <p className={styles.subtitle}>Encuentra lo que buscas entre nuestra selección</p>
       </header>
 
-      <section className={styles.filtersBar}>
-        <nav className={styles.filterSection}>
-          <span className={styles.sectionTitle}>Categorías</span>
-          <address className={styles.categories}>
-            <button
-              className={`${styles.categoryBtn} ${selectedCategory === "Todos" ? styles.active : ""}`}
-              onClick={() => setSelectedCategory("Todos")}
-            >
-              Todos
-            </button>
-            {categories.map((cat, index) => (
-              <button
-                key={`cat-${index}`}
-                className={`${styles.categoryBtn} ${selectedCategory === cat.nom_cat_pro ? styles.active : ""
-                  }`}
-                onClick={() => setSelectedCategory(cat.nom_cat_pro)}
-              >
-                {cat.nom_cat_pro}
-              </button>
-            ))}
-          </address>
-        </nav>
-
-        <section className={styles.filterSection}>
-          <span className={styles.sectionTitle}>Filtrar productos</span>
-          <div className={styles.filterRow}>
-            <div className={styles.filterGroup}>
-              <input
-                className={styles.searchInput}
-                type="text"
-                placeholder="Buscar productos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <div className={styles.filterGroup}>
-              <select
-                className={styles.select}
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-              >
-                <option value="default">Ordenar por</option>
-                <option value="price-asc">Precio: menor a mayor</option>
-                <option value="price-desc">Precio: mayor a menor</option>
-                <option value="name-asc">Nombre: A-Z</option>
-                <option value="name-desc">Nombre: Z-A</option>
-              </select>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <select
-                className={styles.select}
-                value={selectedColor}
-                onChange={(e) => setSelectedColor(e.target.value)}
-              >
-                <option value="">Todos los colores</option>
-                {colors.map((color, index) => (
-                  <option key={`color-${index}`} value={color.nom_col}>
-                    {color.nom_col}
-                  </option>
+      <div className={styles.contentWrapper}>
+        {/* Filters sidebar - moved to left side */}
+        <aside className={styles.filtersSidebar}>
+          <div className={styles.filtersContent}>
+            <section className={styles.filterSection}>
+              <span className={styles.sectionTitle}>Categorías</span>
+              <div className={styles.categories}>
+                <button
+                  className={`${styles.categoryBtn} ${selectedCategory === "Todos" ? styles.active : ""}`}
+                  onClick={() => setSelectedCategory("Todos")}
+                >
+                  Todos
+                </button>
+                {categories.map((cat, index) => (
+                  <button
+                    key={`cat-${index}`}
+                    className={`${styles.categoryBtn} ${selectedCategory === cat.nom_cat_pro ? styles.active : ""
+                      }`}
+                    onClick={() => setSelectedCategory(cat.nom_cat_pro)}
+                  >
+                    {cat.nom_cat_pro}
+                  </button>
                 ))}
-              </select>
-            </div>
+              </div>
+            </section>
 
-            <div className={styles.filterGroup}>
+            <section className={styles.filterSection}>
+              <span className={styles.sectionTitle}>Filtrar por precio</span>
               <div className={styles.priceRange}>
                 <div className={styles.priceLabels}>
                   <span>${priceRange[0].toFixed(2)}</span>
@@ -271,53 +235,100 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
                   className={styles.rangeSlider}
                 />
               </div>
+            </section>
+
+            <section className={styles.filterSection}>
+              <span className={styles.sectionTitle}>Filtrar por color</span>
+              <select
+                className={styles.select}
+                value={selectedColor}
+                onChange={(e) => setSelectedColor(e.target.value)}
+              >
+                <option value="">Todos los colores</option>
+                {colors.map((color, index) => (
+                  <option key={`color-${index}`} value={color.nom_col}>
+                    {color.nom_col}
+                  </option>
+                ))}
+              </select>
+            </section>
+
+            <section className={styles.filterSection}>
+              <span className={styles.sectionTitle}>Filtrar por tallas</span>
+              <div className={styles.sizeFilter}>
+                {sizes.map((size, index) => (
+                  <div key={`size-${index}`}>
+                    <input
+                      type="checkbox"
+                      id={`size-${size.nom_tal_pro}`}
+                      className={styles.sizeOption}
+                      checked={selectedSizes.includes(size.nom_tal_pro)}
+                      onChange={() => handleSizeChange(size.nom_tal_pro)}
+                    />
+                    <label htmlFor={`size-${size.nom_tal_pro}`} className={styles.sizeLabel}>
+                      {size.nom_tal_pro}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </aside>
+
+        {/* Main content area */}
+        <div className={styles.mainContent}>
+          {/* Search and sort bar */}
+          <div className={styles.searchSortBar}>
+            <div className={styles.searchGroup}>
+              <input
+                className={styles.searchInput}
+                type="text"
+                placeholder="Buscar productos..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.sortGroup}>
+              <select
+                className={styles.select}
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
+                <option value="default">Ordenar por</option>
+                <option value="price-asc">Precio: menor a mayor</option>
+                <option value="price-desc">Precio: mayor a menor</option>
+                <option value="name-asc">Nombre: A-Z</option>
+                <option value="name-desc">Nombre: Z-A</option>
+              </select>
             </div>
           </div>
-        </section>
 
-        <div className={styles.filterSection}>
-          <span className={styles.sectionTitle}>Tallas</span>
-          <div className={styles.sizeFilter}>
-            {sizes.map((size, index) => (
-              <div key={`size-${index}`}>
-                <input
-                  type="checkbox"
-                  id={`size-${size.nom_tal_pro}`}
-                  className={styles.sizeOption}
-                  checked={selectedSizes.includes(size.nom_tal_pro)}
-                  onChange={() => handleSizeChange(size.nom_tal_pro)}
+          {/* Products grid */}
+          {isLoading ? (
+            <div className={styles.loadingState}>
+              <div className={styles.loadingSpinner}></div>
+              <p>Cargando productos...</p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>🔍</div>
+              <p className={styles.emptyText}>No encontramos productos con esos filtros</p>
+            </div>
+          ) : (
+            <div className={styles.productsGrid}>
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id_pro}
+                  data={product}
+                  imgDefault={imgDefault}
+                  set={setProduct}
                 />
-                <label htmlFor={`size-${size.nom_tal_pro}`} className={styles.sizeLabel}>
-                  {size.nom_tal_pro}
-                </label>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
-      </section>
-
-      {isLoading ? (
-        <div className={styles.loadingState}>
-          <div className={styles.loadingSpinner}></div>
-          <p>Cargando productos...</p>
-        </div>
-      ) : filteredProducts.length === 0 ? (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>🔍</div>
-          <p className={styles.emptyText}>No encontramos productos con esos filtros</p>
-        </div>
-      ) : (
-        <div className={styles.productsGrid}>
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id_pro}
-              data={product}
-              imgDefault={imgDefault}
-              set={setProduct}
-            />
-          ))}
-        </div>
-      )}
+      </div>
     </main>
   )
 }

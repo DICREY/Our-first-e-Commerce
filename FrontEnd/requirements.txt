@@ -1,7 +1,7 @@
-yarn add react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2
+yarn add react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 @auth0/auth0-react
 yarn add -D react-scripts
 
-npm i react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2
+npm i react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 @auth0/auth0-react
 npm i -D react-scripts  
 
 yarn add @mui/material @emotion/react @emotion/styled @mui/icons-material prop-types
