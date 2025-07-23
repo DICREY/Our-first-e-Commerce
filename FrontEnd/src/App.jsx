@@ -16,11 +16,12 @@ import { Customers } from "./components/Admin/Clients"
 import { NavAdmin } from "./components/Navs/NavAdmin"
 import { OrderDetail } from "./components/Details/OrdersDetails"
 import { CustomerDetail } from "./components/Details/CustomersDetails"
+import { ProductDetailAdmin } from "./components/Details/ProductDetail"
+import { AdminProfile } from "./components/People/AdminProfile"
 import Header from "./components/Header/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/ProductCatalog/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
-import { ProductDetailAdmin } from "./components/Details/ProductDetail"
 
 // Main Module 
 const App = () => {
@@ -126,7 +127,7 @@ const App = () => {
             <Route element={<PrivateRoute />}>
               <Route element={<MainLayout />}>
                 <Route 
-                  path="/perfil" 
+                  path="/user/perfil" 
                   element={<div>Perfil de Usuario (en construcción)</div>} 
                 />
               </Route>
@@ -161,6 +162,10 @@ const App = () => {
               <Route 
                 path="/admin/customers/details" 
                 element={<CustomerDetail URL={URL} imgDefault={imgUser} customer={customer} />}
+              />
+              <Route 
+                path="/admin/perfil"
+                element={<AdminProfile URL={URL} imgDefault={imgUser} />} 
               />
             </Route>
 
