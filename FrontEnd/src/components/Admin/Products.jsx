@@ -165,7 +165,11 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
 
               <div className={styles.filterGroup}>
                 <label>Inventario</label>
-                <select className={styles.filterSelect} disabled>
+                <select 
+                  className={styles.filterSelect} 
+                  onClick={() => alert('No sirve papi te me calmas!!')}
+                  disabled
+                >
                   <option>(En mantenimiento)</option>
                 </select>
               </div>

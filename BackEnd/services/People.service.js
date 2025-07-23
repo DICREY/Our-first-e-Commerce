@@ -140,19 +140,21 @@ class People {
         return new Promise((res,rej) => {
             // data 
             const newUser = [
-                data.nom,
-                data.ape,
-                data.fecNac,
-                data.tdo,
-                data.doc,
-                data.dir,
-                data.cel,
-                data.cel2,
-                data.email,
+                data.nom_per,
+                data.nom2_per,
+                data.ape_per,
+                data.ape2_per,
+                data.fec_nac_per,
+                data.doc_per,
+                data.dir_per,
+                data.cel_per,
+                data.cel2_per,
+                data.email_per,
                 data.hash_pass,
-                data.gen
+                data.gen_per,
+                data.fot_per || 'No-registrado',
             ]
-            const procedure = "CALL ModifyPeople(?,?,?,?,?,?,?,?,?,?,?);"
+            const procedure = "CALL ModifyPeople(?,?,?,?,?,?,?,?,?,?,?,?,?);"
 
             // conect to database
             this.database = new DataBase()
@@ -163,7 +165,7 @@ class People {
                 if(err) rej(err) 
                 setTimeout(() => res({
                     message: "User Modify",
-                    modified: 1,
+                    success: 1,
                 }),1000)
             })
 

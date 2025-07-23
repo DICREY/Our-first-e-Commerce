@@ -48,7 +48,7 @@ Route.get('/all:by', async (req,res) => {
 })
 
 // Call Middleware for verify the request data
-Route.use(Fullinfo(['cel2_per']))
+Route.use(Fullinfo(['nom2_per', 'cel2_per', 'fot_per']))
 
 Route.post('/by', async (req,res) => {
     try {
@@ -87,15 +87,12 @@ Route.post('/register', async (req,res) => {
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
+
 Route.put('/modify', async (req,res) => {
-    // Vars 
-    const { body } = req
-    const saltRounds = 15
-        
     try {
-        // Verifiy if exist
-        const find = await people.findBy(body.doc_per)
-        if (!find.result) res.status(404).json({ message: "Usuario no encontrado" })
+        // Vars 
+        const { body } = req
+        const saltRounds = 15
 
         const passwd = body.pas_per.length < 50? await hash(body.pas_per,saltRounds): String(body.pas_per)
 
@@ -103,8 +100,9 @@ Route.put('/modify', async (req,res) => {
             await people.modify({ hash_pass: passwd,...body })
             :res.status(400).json({ message: "Petición no valida"})
 
-        if (modified.modified) return res.status(200).json(modified)
+        if (modified.success) return res.status(200).json(modified)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({ message: err.message })
 
