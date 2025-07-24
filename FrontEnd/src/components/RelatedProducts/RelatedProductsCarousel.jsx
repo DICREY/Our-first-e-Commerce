@@ -1,16 +1,15 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { PostData } from "../../Utils/Requests";
 import ProductCard from "../ProductCard/ProductCard";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from "./RelatedProductsCarousel.module.css";
 
 const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const carouselRef = useRef(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [page, setPage] = useState(1);
+  const productsPerLoad = 10; // Cargar de 10 en 10 para mantener múltiplos de 5
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
@@ -24,8 +23,13 @@ const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
           by: categoryId 
         });
         
-        const productsData = response?.result || response || [];
-        setProducts(Array.isArray(productsData) ? productsData : [productsData]);
+        let productsData = response?.result || response || [];
+        productsData = Array.isArray(productsData) ? productsData : [productsData];
+        
+        // Mezclar los productos para orden aleatorio
+        const shuffledProducts = [...productsData].sort(() => Math.random() - 0.5);
+        setAllProducts(shuffledProducts);
+        setDisplayedProducts(shuffledProducts.slice(0, 10)); // Mostrar 10 inicialmente (2 filas de 5)
       } catch (err) {
         console.error("Error fetching related products:", err);
         setError("Error al cargar productos relacionados");
@@ -37,79 +41,45 @@ const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
     fetchRelatedProducts();
   }, [URL, categoryId]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (carouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-        setShowLeftArrow(scrollLeft > 0);
-        setShowRightArrow(scrollLeft < scrollWidth - clientWidth);
-      }
-    };
-
-    if (carouselRef.current) {
-      carouselRef.current.addEventListener('scroll', handleScroll);
-      handleScroll(); // Verificar estado inicial
-    }
-
-    return () => {
-      if (carouselRef.current) {
-        carouselRef.current.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [products]); // Dependencia de products para recalcular cuando cambien
-
-  const scroll = (direction) => {
-    if (carouselRef.current) {
-      const { clientWidth } = carouselRef.current;
-      const scrollAmount = direction === 'left' ? -clientWidth : clientWidth;
-      carouselRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth'
-      });
-    }
+  const loadMoreProducts = () => {
+    const nextPage = page + 1;
+    const newProducts = allProducts.slice(0, nextPage * productsPerLoad);
+    setDisplayedProducts(newProducts);
+    setPage(nextPage);
   };
 
   if (loading) return <div className={styles.loading}>Cargando productos relacionados...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
-  if (products.length === 0) return null;
+  if (allProducts.length === 0) return null;
+
+  const hasMoreProducts = displayedProducts.length < allProducts.length;
 
   return (
-    <section className={styles.carouselContainer}>
+    <section className={styles.productsContainer}>
       <h2 className={styles.title}>Más productos de esta categoría</h2>
       
-      <div className={styles.carouselWrapper}>
-        {showLeftArrow && (
-          <button 
-            className={`${styles.arrowButton} ${styles.leftArrow}`}
-            onClick={() => scroll('left')}
-            aria-label="Desplazar hacia la izquierda"
-          >
-            <ChevronLeft size={32} />
-          </button>
-        )}
-
-        <div className={styles.carousel} ref={carouselRef}>
-          {products.map((product) => (
-            <div key={product.id_pro} className={styles.productWrapper}>
-              <ProductCard 
-                data={product} 
-                imgDefault={img} 
-                set={() => {}}
-              />
-            </div>
-          ))}
-        </div>
-
-        {showRightArrow && (
-          <button 
-            className={`${styles.arrowButton} ${styles.rightArrow}`}
-            onClick={() => scroll('right')}
-            aria-label="Desplazar hacia la derecha"
-          >
-            <ChevronRight size={32} />
-          </button>
-        )}
+      <div className={styles.productsGrid}>
+        {displayedProducts.map((product) => (
+          <div key={product.id_pro} className={styles.productWrapper}>
+            <ProductCard 
+              data={product} 
+              imgDefault={img} 
+              set={() => {}}
+            />
+          </div>
+        ))}
       </div>
+
+      {hasMoreProducts && (
+        <div className={styles.loadMoreContainer}>
+          <button 
+            className={styles.loadMoreButton}
+            onClick={loadMoreProducts}
+          >
+            Ver más productos ({allProducts.length - displayedProducts.length} disponibles)
+          </button>
+        </div>
+      )}
     </section>
   );
 };

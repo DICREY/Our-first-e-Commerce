@@ -1,7 +1,9 @@
-.carouselContainer {
+.productsContainer {
   margin: 3rem 0;
   padding: 0 1rem;
-  position: relative;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .title {
@@ -12,27 +14,14 @@
   font-weight: 600;
 }
 
-.carouselWrapper {
-  position: relative;
-}
-
-.carousel {
-  display: flex;
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 1.5rem;
-  overflow-x: auto;
   padding: 1rem 0;
-  scrollbar-width: none; /* Ocultar scrollbar en Firefox */
-  -ms-overflow-style: none; /* Ocultar scrollbar en IE/Edge */
-  scroll-behavior: smooth;
-}
-
-.carousel::-webkit-scrollbar {
-  display: none; /* Ocultar scrollbar en Chrome/Safari */
 }
 
 .productWrapper {
-  flex: 0 0 auto;
-  width: 250px;
   transition: transform 0.3s ease;
 }
 
@@ -40,35 +29,26 @@
   transform: translateY(-5px);
 }
 
-.arrowButton {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  background-color: white;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+.loadMoreContainer {
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 1;
+  margin-top: 2rem;
+}
+
+.loadMoreButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.arrowButton:hover {
-  background-color: #f5f5f5;
-  transform: translateY(-50%) scale(1.1);
-}
-
-.leftArrow {
-  left: -20px;
-}
-
-.rightArrow {
-  right: -20px;
+.loadMoreButton:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
 }
 
 .loading {
@@ -87,21 +67,20 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .arrowButton {
-    width: 32px;
-    height: 32px;
+@media (max-width: 1200px) {
+  .productsGrid {
+    grid-template-columns: repeat(4, 1fr);
   }
-  
-  .leftArrow {
-    left: -10px;
+}
+
+@media (max-width: 900px) {
+  .productsGrid {
+    grid-template-columns: repeat(3, 1fr);
   }
-  
-  .rightArrow {
-    right: -10px;
-  }
-  
-  .productWrapper {
-    width: 220px;
+}
+
+@media (max-width: 600px) {
+  .productsGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
