@@ -7,7 +7,7 @@ import { Check, Mail, PenOff, Plus, SquarePen } from 'lucide-react'
 // Import styles
 import styles from '../../styles/Details/CustomerDetail.module.css'
 import AdminLoadingScreen from '../Global/Loading'
-import { errorStatusHandler } from '../../Utils/utils'
+import { errorStatusHandler, formatDate, getAge } from '../../Utils/utils'
 import { ModifyData } from '../../Utils/Requests'
 
 // Component 
@@ -20,7 +20,7 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
         ...customer,
         email: customer?.email_per || '',
         vat: customer?.vat_number || 'No VAT number',
-        description: customer?.description || 'No Description'
+        des_per: customer?.des_per || 'No Description'
     })
 
     const handleAddNote = () => {
@@ -29,18 +29,18 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
     }
 
     const handleSaveChanges = async () => {
-        console.log('Datos actualizados:', customerData)
-        setIsLoading(true)
-    
         try {
+            console.log('Datos actualizados:', customerData)
+            setIsLoading(true)
+            customerData.fec_nac_per = formatDate(customerData.fec_nac_per)
             const response = await ModifyData(`${URL}/peoples/modify`, customerData)
             
-            if (response.success) {
+            if (response?.success) {
                 setIsEditing(false)
             }
         } catch (error) {
             const message = errorStatusHandler(error)
-            console.error('Error:', message)
+            console.log('Error:', message)
         } finally {
             setIsLoading(false)
         }
@@ -60,10 +60,6 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
             </div>
         )
     }
-
-    useEffect(() => {
-        setIsLoading(false)
-    },[])
 
     return (
         <main className={styles.mainContent}>
@@ -89,7 +85,7 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
 
                 <div className={styles.metaInfo}>
                     <span>
-                        Cliente registrado el {new Date(customer?.fec_cre_per).toLocaleDateString()} a las {new Date(customer?.fec_cre_per).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        Cliente registrado el {formatDate(customer?.fec_cre_per)} a las {new Date(customer?.fec_cre_per).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                 </div>
 
@@ -107,31 +103,77 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
                         </div>
                         
                         <div className={styles.detailItem}>
-                            <span className={styles.detailLabel}>Email:</span>
+                            <span className={styles.detailLabel}>Nombre:</span>
                             {isEditing ? (
                                 <input
-                                    type="email"
-                                    value={customerData.email}
-                                    onChange={(e) => setCustomerData({ ...customerData, email_per: e.target.value })}
+                                    type="text"
+                                    value={customerData.nom_per}
+                                    onChange={(e) => setCustomerData({ ...customerData, nom_per: e.target.value })}
                                     className={styles.editInput}
-                                    placeholder="Ingrese el email"
+                                    placeholder="Ingrese el nombre"
                                 />
                             ) : (
-                                <span className={styles.detailValue}>{customerData.email}</span>
+                                <span className={styles.detailValue}>{customerData.nom_per}</span>
                             )}
                         </div>
+
                         <div className={styles.detailItem}>
-                            <span className={styles.detailLabel}>Email:</span>
+                            <span className={styles.detailLabel}>Segundo nombre:</span>
                             {isEditing ? (
                                 <input
-                                    type="email"
-                                    value={customerData.email}
-                                    onChange={(e) => setCustomerData({ ...customerData, email_per: e.target.value })}
+                                    type="text"
+                                    value={customerData.nom2_per}
+                                    onChange={(e) => setCustomerData({ ...customerData, nom2_per: e.target.value })}
                                     className={styles.editInput}
-                                    placeholder="Ingrese el email"
+                                    placeholder="Ingrese el segundo nombre"
                                 />
                             ) : (
-                                <span className={styles.detailValue}>{customerData.email}</span>
+                                <span className={styles.detailValue}>{customerData.nom2_per}</span>
+                            )}
+                        </div>
+
+                        <div className={styles.detailItem}>
+                            <span className={styles.detailLabel}>Apellido:</span>
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={customerData.ape_per}
+                                    onChange={(e) => setCustomerData({ ...customerData, ape_per: e.target.value })}
+                                    className={styles.editInput}
+                                    placeholder="Ingrese el segundo apellido"
+                                />
+                            ) : (
+                                <span className={styles.detailValue}>{customerData.ape_per}</span>
+                            )}
+                        </div>
+
+                        <div className={styles.detailItem}>
+                            <span className={styles.detailLabel}>Segundo apellido:</span>
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={customerData.ape2_per}
+                                    onChange={(e) => setCustomerData({ ...customerData, ape2_per: e.target.value })}
+                                    className={styles.editInput}
+                                    placeholder="Ingrese el apellido"
+                                />
+                            ) : (
+                                <span className={styles.detailValue}>{customerData.ape2_per}</span>
+                            )}
+                        </div>
+
+                        <div className={styles.detailItem}>
+                            <span className={styles.detailLabel}>Fecha nacimiento:</span>
+                            {isEditing ? (
+                                <input
+                                    type="date"
+                                    value={formatDate(customerData.fec_nac_per || '00-00-0000')}
+                                    onChange={(e) => setCustomerData({ ...customerData, fec_nac_per: e.target.value })}
+                                    className={styles.editInput}
+                                    placeholder="Ingrese la fecha de nacimiento"
+                                />
+                            ) : (
+                                <span className={styles.detailValue}>{formatDate(customerData.fec_nac_per)} ({getAge(customerData.fec_nac_per)})</span>
                             )}
                         </div>
                         
@@ -139,19 +181,34 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
                             <span className={styles.detailLabel}>Descripción:</span>
                             {isEditing ? (
                                 <textarea
-                                    value={customerData.description}
+                                    value={customerData.des_per}
                                     onChange={(e) => setCustomerData({ ...customerData, des_per: e.target.value })}
                                     className={styles.editTextarea}
                                     placeholder="Agregue una descripción"
                                 />
                             ) : (
-                                <span className={styles.detailValue}>{customerData.description}</span>
+                                <span className={styles.detailValue}>{customerData.des_per}</span>
                             )}
                         </div>
                     </div>
 
                     <div className={styles.detailsColumn}>
                         <h3 className={styles.detailsSubtitle}>Información de Contacto</h3>
+
+                        <div className={styles.detailItem}>
+                            <span className={styles.detailLabel}>Email:</span>
+                            {isEditing ? (
+                                <input
+                                    type="email"
+                                    value={customerData.email}
+                                    onChange={(e) => setCustomerData({ ...customerData, email_per: e.target.value })}
+                                    className={styles.editInput}
+                                    placeholder="Ingrese el email"
+                                />
+                            ) : (
+                                <span className={styles.detailValue}>{customerData.email}</span>
+                            )}
+                        </div>
                         
                         <div className={styles.detailItem}>
                             <span className={styles.detailLabel}>Dirección:</span>
@@ -195,7 +252,7 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
                                     value={customerData.cel2_per || ''}
                                     onChange={(e) => setCustomerData({ ...customerData, cel2_per: e.target.value })}
                                     className={styles.editInput}
-                                    placeholder="Número de celular"
+                                    placeholder="Número de celular secundario"
                                 />
                             ) : (
                                 <span className={styles.detailValue}>{customerData.cel2_per}</span>
