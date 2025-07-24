@@ -107,17 +107,19 @@ const App = () => {
                     setProduct={setProduct} 
                     preSelectedCat='Ropa de Mujer'
                   />
-                } />
+                } 
+              />
+              <Route 
+                path="/product/:productId" 
+                element={
+                  <ProductDetailPage 
+                    URL={URL} 
+                    img={imgProduct} 
+                    product={product}
+                  />
+                } 
+              />
             </Route>
-            <Route 
-              path="/product" 
-              element={
-                <ProductDetailPage 
-                  URL={URL} 
-                  img={imgProduct} 
-                  product={product}
-                />
-              } />
 
             {/* Auth Routes without Layout */}
             <Route path="/login" element={<LoginForm URL={URL} />} />

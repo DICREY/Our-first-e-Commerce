@@ -37,7 +37,7 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
 
   const handleCardClick = () => {
     set(product)
-    navigate(`/product`)
+    navigate(`/product/${product.id_pro}`)
   }
 
   // Persistencia de likes en localStorage
