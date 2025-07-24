@@ -92,15 +92,12 @@ Route.put('/modify', async (req,res) => {
     try {
         // Vars 
         const { body } = req
-        const saltRounds = 15
 
-        const passwd = body.pas_per.length < 50? await hash(body.pas_per,saltRounds): String(body.pas_per)
-
-        const modified = await passwd?
-            await people.modify({ hash_pass: passwd,...body })
-            :res.status(400).json({ message: "Petición no valida"})
-
+        const modified = await people.modify(body)
+        
         if (modified.success) return res.status(200).json(modified)
+            
+        res.status(400).json({ message: "Petición no valida"})
     } catch (err) {
         console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })

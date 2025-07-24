@@ -1,81 +1,97 @@
-// Librarys
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { 
+  Search, Filter, Eye,
+  Calendar, User, CreditCard, Truck, CheckCircle, 
+  XCircle, Clock, RefreshCw, ArrowUpDown 
+} from 'lucide-react'
 
-// Imports
+// Imports 
 import { GetData } from '../../Utils/Requests'
 import { Paginacion } from '../Global/Paginacion'
 import { divideList, errorStatusHandler, formatDate, formatNumber, searchFilter } from '../../Utils/utils'
-
-// Import styles
-import styles from '../../styles/Admin/OrdersList.module.css'
-import { Search } from 'lucide-react'
 import AdminLoadingScreen from '../Global/Loading'
 
+// Import styles 
+import styles from '../../styles/Admin/OrdersList.module.css'
+
 // Component 
-export const OrdersList = ({ URL = '', setIdOrder = null, filterFetch = null }) => {
-  // Dynamic vars 
+export const OrdersList = ({ URL = '', setIdOrder = null }) => {
+  // State management
   const [orders, setOrders] = useState(null)
   const [ordersAlmc, setOrdersAlmc] = useState(null)
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortConfig, setSortConfig] = useState({ key: 'fec_ped', direction: 'desc' })
+  const [expandedFilters, setExpandedFilters] = useState(false)
 
-  // Vars
   const navigate = useNavigate()
   let didFetch = false
 
-  // Functions 
+  // Data fetching
   const getOrders = async () => {
     if (didFetch) return
     try {
+      setLoading(true)
       const ord = await GetData(`${URL}/orders/all`)
       didFetch = true
       if (ord) {
-        setOrders(divideList(ord, 12))
-        setOrdersAlmc(ord)
-        setLoading(false)
+        const sortedOrders = sortOrders(ord, sortConfig.key, sortConfig.direction)
+        setOrders(divideList(sortedOrders, 10))
+        setOrdersAlmc(sortedOrders)
       }
     } catch (err) {
-      didFetch = true
+      console.error('Error fetching orders:', errorStatusHandler(err))
+    } finally {
       setLoading(false)
-      const message = errorStatusHandler(err)
-      console.log(message)
     }
   }
 
-  const handleFilter = (term) => {
-    const filterData = searchFilter(term, ordersAlmc, [
-      'nom_per',
-      'ape_per',
-      'nom_met_pag',
-      'fec_ped'
-    ])
-    if (filterData) {
-      setCurrentPage(1)
-      setOrders(divideList(filterData, 12))
+  // Sorting functionality
+  const sortOrders = (orders, key, direction) => {
+    return [...orders].sort((a, b) => {
+      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1
+      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1
+      return 0
+    })
+  }
+
+  const requestSort = (key) => {
+    let direction = 'asc'
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc'
     }
+    setSortConfig({ key, direction })
+    
+    const sortedOrders = sortOrders(ordersAlmc, key, direction)
+    setOrders(divideList(sortedOrders, 10))
+    setOrdersAlmc(sortedOrders)
+  }
+
+  // Filtering functions
+  const handleFilter = (term) => {
+    setSearchTerm(term)
+    const filterData = term 
+      ? searchFilter(term, ordersAlmc, ['nom_per', 'ape_per', 'nom_met_pag', 'fec_ped'])
+      : ordersAlmc
+    
+    setCurrentPage(1)
+    setOrders(divideList(filterData, 10))
   }
 
   const handleFilterToState = (term) => {
     setStatusFilter(term)
-    if (term === 'all') setOrders(divideList(ordersAlmc, 12))
-
-    const filterData = searchFilter(term, ordersAlmc, ['sta_ped'])
-    if (filterData) {
-      setCurrentPage(1)
-      setOrders(divideList(filterData, 12))
-    }
+    const filterData = term === 'all' 
+      ? ordersAlmc 
+      : searchFilter(term, ordersAlmc, ['sta_ped'])
+    
+    setCurrentPage(1)
+    setOrders(divideList(filterData, 10))
   }
 
-  useEffect(() => {
-    getOrders()
-    if (filterFetch) {
-      const data = searchFilter(filterFetch,ordersAlmc,['sta_ped'])
-      if(data) setOrders(data)
-    }
-  }, [])
-
+  // Status badge styling and icons
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'PENDIENTE': return styles.statusPending
@@ -83,56 +99,170 @@ export const OrdersList = ({ URL = '', setIdOrder = null, filterFetch = null }) 
       case 'ENVIADO': return styles.statusShipped
       case 'ENTREGADO': return styles.statusDelivered
       case 'CANCELADO': return styles.statusCancelled
+      case 'REEMBOLSADO': return styles.statusRefunded
       default: return ''
     }
   }
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'PENDIENTE': return <Clock size={14} />
+      case 'PROCESANDO': return <RefreshCw size={14} />
+      case 'ENVIADO': return <Truck size={14} />
+      case 'ENTREGADO': return <CheckCircle size={14} />
+      case 'CANCELADO': return <XCircle size={14} />
+      default: return null
+    }
+  }
+
+  // Initial data load
+  useEffect(() => {
+    getOrders()
+  }, [])
 
   if (loading) {
     return <AdminLoadingScreen message='Cargando pedidos...' />
   }
 
-  return (
-    <main className={styles.mainContent}>
-      <header className={styles.header}>
-        <h1>Pedidos</h1>
+  return (  
+    <div className={styles.adminContainer}>
+      {/* Header Section */}
+      <div className={styles.header}>
+        <div className={styles.headerTitle}>
+          <h1>Pedidos Recientes</h1>
+          <p>Gestiona y monitorea los pedidos de tu tienda</p>
+        </div>
+        
         <div className={styles.controls}>
-          <div className={styles.searchBox}>
+          {/* Search Bar */}
+          <div className={styles.searchContainer}>
+            <Search size={16} className={styles.searchIcon} />
             <input
               type="text"
-              placeholder="Search orders..."
+              placeholder="Buscar pedidos..."
+              value={searchTerm}
               onChange={(e) => handleFilter(e.target.value)}
               className={styles.searchInput}
             />
-            <span className={styles.searchIcon}><Search size={14} /></span>
           </div>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => handleFilterToState(e.target.value)}
-            className={styles.statusFilter}
+          {/* Filter Button */}
+          <button 
+            className={`${styles.filterButton} ${expandedFilters ? styles.active : ''}`}
+            onClick={() => setExpandedFilters(!expandedFilters)}
           >
-            <option value="">Todo</option>
-            <option value="PENDIENTE">Pendiente</option>
-            <option value="PROCESANDO">Procesando</option>
-            <option value="ENVIADO">Enviado</option>
-            <option value="ENTREGADO">Entregado</option>
-            <option value="CANCELADO">Cancelado</option>
-          </select>
-        </div>
-      </header>
+            <Filter size={16} />
+            <span>Filtrar</span>
+          </button>
 
-      <main className={styles.ordersTable}>
-        <div className={styles.tableHeader}>
-          <div className={styles.headerCell}>Pedido</div>
-          <div className={styles.headerCell}>Fecha</div>
-          <div className={styles.headerCell}>Cliente</div>
-          <div className={styles.headerCell}>Estado</div>
-          <div className={styles.headerCell}>Total</div>
-          <div className={styles.headerCell}>Acción</div>
+          {/* Refresh Button */}
+          <button 
+            className={styles.refreshButton}
+            onClick={getOrders}
+          >
+            <RefreshCw size={16} />
+          </button>
         </div>
-        {orders ? (
-          orders[currentPage - 1]?.map(order => (
-            <section 
+
+        {/* Expanded Filters */}
+        {expandedFilters && (
+          <div className={styles.filterPanel}>
+            <div className={styles.filterGroup}>
+              <label>Estado del pedido</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => handleFilterToState(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="all">Todos los estados</option>
+                <option value="PENDIENTE">Pendiente</option>
+                <option value="PROCESANDO">Procesando</option>
+                <option value="ENVIADO">Enviado</option>
+                <option value="ENTREGADO">Entregado</option>
+                <option value="CANCELADO">Cancelado</option>
+              </select>
+            </div>
+
+            <div className={styles.filterGroup}>
+              <label>Ordenar por</label>
+              <select
+                value={sortConfig.key}
+                onChange={(e) => requestSort(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="fec_ped">Fecha</option>
+                <option value="subtotal_ped">Total</option>
+                <option value="nom_per">Cliente</option>
+                <option value="id_ped">Número</option>
+              </select>
+              <button
+                onClick={() => requestSort(sortConfig.key)}
+                className={styles.sortDirection}
+              >
+                <ArrowUpDown size={14} />
+                {sortConfig.direction === 'asc' ? 'Asc' : 'Desc'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Orders Table */}
+      <div className={styles.tableContainer}>
+        <div className={styles.tableHeader}>
+          <div 
+            className={`${styles.headerCell} ${styles.orderId}`}
+            onClick={() => requestSort('id_ped')}
+          >
+            <span>Pedido</span>
+            {sortConfig.key === 'id_ped' && (
+              <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+            )}
+          </div>
+          <div 
+            className={`${styles.headerCell} ${styles.orderDate}`}
+            onClick={() => requestSort('fec_ped')}
+          >
+            <Calendar size={14} />
+            <span>Fecha</span>
+            {sortConfig.key === 'fec_ped' && (
+              <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+            )}
+          </div>
+          <div 
+            className={`${styles.headerCell} ${styles.customer}`}
+            onClick={() => requestSort('nom_per')}
+          >
+            <User size={14} />
+            <span>Cliente</span>
+            {sortConfig.key === 'nom_per' && (
+              <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+            )}
+          </div>
+          <div className={`${styles.headerCell} ${styles.payment}`}>
+            <CreditCard size={14} />
+            <span>Pago</span>
+          </div>
+          <div className={`${styles.headerCell} ${styles.status}`}>
+            <span>Estado</span>
+          </div>
+          <div 
+            className={`${styles.headerCell} ${styles.amount}`}
+            onClick={() => requestSort('subtotal_ped')}
+          >
+            <span>Total</span>
+            {sortConfig.key === 'subtotal_ped' && (
+              <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+            )}
+          </div>
+          <div className={`${styles.headerCell} ${styles.actions}`}>
+            <span>Acciones</span>
+          </div>
+        </div>
+
+        {orders && orders[currentPage - 1]?.length > 0 ? (
+          orders[currentPage - 1].map(order => (
+            <div 
               key={order.id_ped} 
               className={styles.orderRow}
               onClick={() => {
@@ -140,59 +270,97 @@ export const OrdersList = ({ URL = '', setIdOrder = null, filterFetch = null }) 
                 navigate('/admin/orders/details')
               }}
             >
-              <div className={styles.orderCell}>
-                <div className={styles.orderId}>#{order.id_ped}</div>
-                <div className={styles.orderCustomerEmail}>{order.email_per}</div>
+              <div className={`${styles.orderCell} ${styles.orderId}`}>
+                <div className={styles.orderIdText}>#{order.id_ped}</div>
               </div>
 
-              <div className={styles.orderCell}>
-                {formatDate(order.fec_ped)}
+              <div className={`${styles.orderCell} ${styles.orderDate}`}>
+                <div className={styles.dateText}>
+                  {formatDate(order.fec_ped, 'DD MMM YYYY')}
+                </div>
+                <div className={styles.timeText}>
+                  {formatDate(order.fec_ped, 'HH:mm')}
+                </div>
               </div>
 
-              <div className={styles.orderCell}>
+              <div className={`${styles.orderCell} ${styles.customer}`}>
                 <div className={styles.customerName}>
                   {order.nom_per} {order.ape_per}
                 </div>
-                <div className={styles.shippingAddress}>
-                  {order.dir_env_ped} Via {order.metodo_envio}
+                <div className={styles.customerEmail}>
+                  {order.email_per}
                 </div>
               </div>
 
-              <div className={styles.orderCell}>
-                <span className={`${styles.statusBadge} ${getStatusBadgeClass(order.sta_ped)}`}>
-                  {order.sta_ped}
-                </span>
+              <div className={`${styles.orderCell} ${styles.payment}`}>
+                <div className={styles.paymentMethod}>
+                  {order.nom_met_pag || 'N/A'}
+                </div>
               </div>
 
-              <div className={styles.orderCell}>
-                ${formatNumber(order.subtotal_ped)}
+              <div className={`${styles.orderCell} ${styles.status}`}>
+                <div className={`${styles.statusBadge} ${getStatusBadgeClass(order.sta_ped)}`}>
+                  {getStatusIcon(order.sta_ped)}
+                  <span>{order.sta_ped}</span>
+                </div>
               </div>
 
-              <div className={styles.orderCell}>
+              <div className={`${styles.orderCell} ${styles.amount}`}>
+                <div className={styles.amountText}>
+                  ${formatNumber(order.subtotal_ped)}
+                </div>
+                {order.des_ped > 0 && (
+                  <div className={styles.discountBadge}>
+                    {order.des_ped}% OFF
+                  </div>
+                )}
+              </div>
+
+              <div className={`${styles.orderCell} ${styles.actions}`}>
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation()
                     setIdOrder(order.id_ped)
                     navigate('/admin/orders/details')
                   }}
-                  className={styles.viewButton}
+                  className={styles.detailsButton}
                 >
-                  View
+                  <Eye size={14} />
+                  <span>Detalles</span>
                 </button>
               </div>
-            </section>
+            </div>
           ))
         ) : (
           <div className={styles.noResults}>
-            No se encontraron pedidos registrados en el sistema
+            <div className={styles.noResultsContent}>
+              <p>No se encontraron pedidos</p>
+              {searchTerm && (
+                <button 
+                  onClick={() => {
+                    setSearchTerm('')
+                    handleFilter('')
+                  }}
+                  className={styles.clearFiltersButton}
+                >
+                  Limpiar filtros
+                </button>
+              )}
+            </div>
           </div>
         )}
-      </main>
+      </div>
 
-      <Paginacion
-        data={orders}
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
-      />
-    </main>
+      {/* Pagination */}
+      {orders && orders.length > 1 && (
+        <div className={styles.paginationContainer}>
+          <Paginacion
+            data={orders}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+          />
+        </div>
+      )}
+    </div>
   )
 }

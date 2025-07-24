@@ -83,10 +83,8 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
 
     try {
       formData.fec_nac_per = formatDate(formData.fec_nac_per)
-      // Aquí iría la llamada a tu API para actualizar los datos
       const response = await ModifyData(`${URL}/peoples/modify`, formData)
       
-      didFetch = false
       if (response.success) {
         fetchData()
         setIsEditing(false)

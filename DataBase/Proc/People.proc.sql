@@ -66,7 +66,6 @@ CREATE PROCEDURE e_commerce.ModifyPeople(
     IN p_cel_per VARCHAR(20),
     IN p_cel2_per VARCHAR(20),
     IN p_email_per VARCHAR(100),
-    IN p_cont_per VARCHAR(255),
     IN p_gen_per VARCHAR(20),
     IN p_img_per VARCHAR(255)
 )
@@ -97,7 +96,6 @@ BEGIN
         p.cel_per = p_cel_per,
         p.cel2_per = p_cel2_per,
         p.email_per = p_email_per,
-        p.pas_per = p_cont_per,
         p.gen_per = p_gen_per,
         p.fot_per = p_img_per
     WHERE

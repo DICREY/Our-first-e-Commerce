@@ -1,286 +1,454 @@
-/* OrdersList.module.css */
-.mainContent {
+.adminContainer {
     flex: 1;
-    padding: 2rem;
-    margin: 0 auto;
-    width: 100%;
-    overflow: auto;
-    background-color: var(--light-gray);
-    transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: auto;
 }
 
+/* Header Styles */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 1.5rem 0;
+  background-color: var(--white);
 }
 
-.header h1 {
-    font-size: 1.8rem;
-    color: var(--neutral-800);
-    margin: 0;
+.headerTitle h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin: 0;
+}
+
+.headerTitle p {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin: 0;
 }
 
 .controls {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 }
 
-.searchBox {
-    position: relative;
-    flex: 1;
-    min-width: 250px;
-}
-
-.searchInput {
-    width: 100%;
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
-    border-radius: var(--rounded);
-    border: 1px solid var(--gray-300);
-    font-size: 0.9rem;
+/* Search Styles */
+.searchContainer {
+  position: relative;
+  flex-grow: 1;
 }
 
 .searchIcon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray-500);
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
 }
 
-.statusFilter {
-    padding: 0.5rem 1rem;
-    border-radius: var(--rounded);
-    border: 1px solid var(--gray-300);
-    background-color: var(--white);
-    color: var(--gray-800);
-    cursor: pointer;
-    font-size: 0.9rem;
+.searchInput {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.25rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background-color: var(--gray-50);
 }
 
-.ordersTable {
-    border-radius: var(--rounded);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    background-color: var(--white);
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: var(--white);
+}
+
+/* Button Styles */
+.filterButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+  background-color: var(--gray-50);
+  border-color: var(--gray-300);
+}
+
+.filterButton.active {
+  background-color: var(--primary-50);
+  color: var(--primary-600);
+  border-color: var(--primary-100);
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refreshButton:hover {
+  background-color: var(--gray-50);
+  border-color: var(--gray-300);
+}
+
+/* Filter Panel */
+.filterPanel {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+  background-color: var(--gray-50);
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  border: 1px solid var(--gray-200);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 200px;
+}
+
+.filterGroup label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterSelect {
+  padding: 0.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background-color: var(--white);
+}
+
+.sortDirection {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+/* Table Styles */
+.tableContainer {
+  flex: 1;
+  overflow-x: auto;
 }
 
 .tableHeader {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 2fr 1fr 1fr .5fr;
-    background-color: var(--neutral-50);
-    border-bottom: 1px solid var(--gray-200);
-    padding: 1rem;
-    font-weight: 600;
-    color: var(--gray-700);
+  display: grid;
+  grid-template-columns: .7fr repeat(6, 1fr);
+  padding: 1rem 1.5rem;
+  background-color: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .headerCell {
-    padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.headerCell:hover {
+  color: var(--primary-600);
 }
 
 .orderRow {
-    cursor: pointer;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 2fr 1fr 1fr .5fr;
-    padding: 1rem;
-    border-bottom: 1px solid var(--gray-100);
-    transition: all 0.2s ease;
+  display: grid;    
+  grid-template-columns: .7fr repeat(6, 1fr);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--gray-200);
+  transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .orderRow:hover {
-    box-shadow: var(--shadow-md);
-    background-color: var(--neutral-50);
+  background-color: var(--gray-50);
 }
 
 .orderCell {
-    padding: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+  overflow: hidden;
 }
 
-.orderId {
-    font-weight: 600;
-    color: var(--neutral-800);
+.orderIdText {
+  font-weight: 500;
+  color: var(--primary-600);
 }
 
-.orderCustomerEmail {
-    font-size: 0.8rem;
-    color: var(--gray-600);
-    margin-top: 0.25rem;
+.dateText {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.timeText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .customerName {
-    font-weight: 500;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
-.shippingAddress {
-    font-size: 0.8rem;
-    color: var(--gray-600);
-    margin-top: 0.25rem;
+.customerEmail {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.paymentMethod {
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+}
+
+/* Status Badges */
 .statusBadge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
 }
 
 .statusPending {
-    background-color: var(--warning-50);
-    color: var(--warning-500);
-    border: 1px solid var(--warning-100);
+  background-color: var(--warning-50);
+  color: var(--warning-500);
 }
 
 .statusProcessing {
-    background-color: var(--primary-50);
-    color: var(--primary-600);
-    border: 1px solid var(--primary-100);
+  background-color: #e0f2fe;
+  color: #0369a1;
 }
 
 .statusShipped {
-    background-color: var(--accent-50);
-    color: var(--accent-600);
-    border: 1px solid var(--accent-100);
+  background-color: #e0e7ff;
+  color: #4338ca;
 }
 
 .statusDelivered {
-    background-color: var(--success-50);
-    color: var(--success-600);
-    border: 1px solid var(--success-100);
+  background-color: var(--success-50);
+  color: var(--success-600);
 }
 
 .statusCancelled {
-    background-color: var(--gray-100);
-    color: var(--gray-700);
-    border: 1px solid var(--gray-200);
+  background-color: #fee2e2;
+  color: #b91c1c;
 }
 
-.viewButton {
-    cursor: pointer;
-    padding: 0.25rem 0.75rem;
-    background-color: var(--primary-50);
-    color: var(--primary-700);
-    border-radius: var(--rounded);
-    border: none;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+.statusRefunded {
+  background-color: #f3e8ff;
+  color: #7e22ce;
 }
 
-.viewButton:hover {
-    box-shadow: var(--shadow-md);
-    background-color: var(--primary-100);
+/* Amount Styles */
+.amountText {
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
+.discountBadge {
+  font-size: 0.6875rem;
+  background-color: #ecfdf5;
+  color: #059669;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.75rem;
+  margin-top: 0.25rem;
+  width: fit-content;
+}
+
+/* Action Buttons */
+.detailsButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detailsButton:hover {
+  background-color: var(--gray-50);
+  border-color: var(--gray-300);
+}
+
+/* No Results */
 .noResults {
-    padding: 2rem;
-    text-align: center;
-    color: var(--gray-600);
-    grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  grid-column: 1 / -1;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    flex-wrap: wrap;
+.noResultsContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
-.paginationButton {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--gray-300);
-    background-color: var(--white);
-    color: var(--gray-700);
-    border-radius: var(--rounded);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 40px;
+.noResults p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }
 
-.paginationButton:hover:not(:disabled) {
-    background-color: var(--gray-100);
+.clearFiltersButton {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-600);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.paginationButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.clearFiltersButton:hover {
+  background-color: var(--primary-700);
 }
 
-.paginationButton.active {
-    background-color: var(--primary-600);
-    color: var(--white);
-    border-color: var(--primary-600);
+/* Pagination */
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  border-top: 1px solid var(--gray-200);
 }
 
-.loading {
-    text-align: center;
-    padding: 2rem;
-    color: var(--gray-600);
-}
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 1024px) {
-
-    .tableHeader,
-    .orderRow {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    .headerCell:nth-child(4),
-    .headerCell:nth-child(5),
-    .headerCell:nth-child(6),
-    .orderCell:nth-child(4),
-    .orderCell:nth-child(5),
-    .orderCell:nth-child(6) {
-        display: none;
-    }
+  .tableHeader,
+  .orderRow {
+    grid-template-columns: 80px 100px minmax(150px, 1fr) 100px 120px 90px 90px;
+  }
 }
 
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .controls {
-        flex-direction: column;
-    }
-
-    .searchBox {
-        width: 100%;
-    }
-
-    .tableHeader,
-    .orderRow {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .headerCell:nth-child(3),
-    .orderCell:nth-child(3) {
-        display: none;
-    }
-}
-
-@media (max-width: 480px) {
-
-    .tableHeader,
-    .orderRow {
-        grid-template-columns: 1fr;
-    }
-
-    .headerCell:not(:first-child),
-    .orderCell:not(:first-child) {
-        display: none;
-    }
+  .adminContainer {
+    border-radius: 0;
+  }
+  
+  .header {
+    padding: 1rem;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .searchContainer {
+    width: 100%;
+  }
+  
+  .filterPanel {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .tableHeader {
+    display: none;
+  }
+  
+  .orderRow {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "id status amount"
+      "date customer actions";
+    gap: 0.75rem;
+    padding: 1.25rem;
+    position: relative;
+  }
+  
+  .orderCell {
+    padding: 0;
+  }
+  
+  .orderId {
+    grid-area: id;
+  }
+  
+  .orderDate {
+    grid-area: date;
+  }
+  
+  .customer {
+    grid-area: customer;
+  }
+  
+  .status {
+    grid-area: status;
+    justify-content: flex-end;
+  }
+  
+  .amount {
+    grid-area: amount;
+    align-items: flex-end;
+  }
+  
+  .actions {
+    grid-area: actions;
+    align-items: flex-end;
+  }
+  
+  .detailsButton {
+    padding: 0.5rem;
+  }
+  
+  .detailsButton span {
+    display: none;
+  }
 }

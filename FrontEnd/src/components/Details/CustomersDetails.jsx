@@ -7,6 +7,8 @@ import { Check, Mail, PenOff, Plus, SquarePen } from 'lucide-react'
 // Import styles
 import styles from '../../styles/Details/CustomerDetail.module.css'
 import AdminLoadingScreen from '../Global/Loading'
+import { errorStatusHandler } from '../../Utils/utils'
+import { ModifyData } from '../../Utils/Requests'
 
 // Component 
 export const CustomerDetail = ({ URL = '' , customer }) => {
@@ -15,9 +17,8 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [customerData, setCustomerData] = useState({
+        ...customer,
         email: customer?.email_per || '',
-        phone: customer?.cel_per || '',
-        address: customer?.dir_per || '',
         vat: customer?.vat_number || 'No VAT number',
         description: customer?.description || 'No Description'
     })
@@ -27,9 +28,22 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
         setNote('')
     }
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
         console.log('Datos actualizados:', customerData)
-        setIsEditing(false)
+        setIsLoading(true)
+    
+        try {
+            const response = await ModifyData(`${URL}/peoples/modify`, customerData)
+            
+            if (response.success) {
+                setIsEditing(false)
+            }
+        } catch (error) {
+            const message = errorStatusHandler(error)
+            console.error('Error:', message)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     if (isLoading) {
@@ -98,7 +112,21 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
                                 <input
                                     type="email"
                                     value={customerData.email}
-                                    onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
+                                    onChange={(e) => setCustomerData({ ...customerData, email_per: e.target.value })}
+                                    className={styles.editInput}
+                                    placeholder="Ingrese el email"
+                                />
+                            ) : (
+                                <span className={styles.detailValue}>{customerData.email}</span>
+                            )}
+                        </div>
+                        <div className={styles.detailItem}>
+                            <span className={styles.detailLabel}>Email:</span>
+                            {isEditing ? (
+                                <input
+                                    type="email"
+                                    value={customerData.email}
+                                    onChange={(e) => setCustomerData({ ...customerData, email_per: e.target.value })}
                                     className={styles.editInput}
                                     placeholder="Ingrese el email"
                                 />
@@ -112,7 +140,7 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
                             {isEditing ? (
                                 <textarea
                                     value={customerData.description}
-                                    onChange={(e) => setCustomerData({ ...customerData, description: e.target.value })}
+                                    onChange={(e) => setCustomerData({ ...customerData, des_per: e.target.value })}
                                     className={styles.editTextarea}
                                     placeholder="Agregue una descripción"
                                 />
@@ -129,16 +157,16 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
                             <span className={styles.detailLabel}>Dirección:</span>
                             {isEditing ? (
                                 <textarea
-                                    value={customerData.address}
-                                    onChange={(e) => setCustomerData({ ...customerData, address: e.target.value })}
+                                    value={customerData.dir_per}
+                                    onChange={(e) => setCustomerData({ ...customerData, dir_per: e.target.value })}
                                     className={styles.editTextarea}
                                     rows={3}
                                     placeholder="Dirección completa"
                                 />
                             ) : (
                                 <span className={styles.detailValue}>
-                                    {customerData.address?.split(',').map((line, i) => (
-                                        <span key={i}>{line.trim()}<br /></span>
+                                    {customerData?.dir_per?.split(',')?.map((line, i) => (
+                                        <span key={i}>{line?.trim()}<br /></span>
                                     ))}
                                 </span>
                             )}
@@ -149,13 +177,28 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
                             {isEditing ? (
                                 <input
                                     type="tel"
-                                    value={customerData.phone}
-                                    onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
+                                    value={customerData.cel_per}
+                                    onChange={(e) => setCustomerData({ ...customerData, cel_per: e.target.value })}
                                     className={styles.editInput}
                                     placeholder="Número de celular"
                                 />
                             ) : (
-                                <span className={styles.detailValue}>{customerData.phone}</span>
+                                <span className={styles.detailValue}>{customerData.cel_per}</span>
+                            )}
+                        </div>
+
+                        <div className={styles.detailItem}>
+                            <span className={styles.detailLabel}>Celular Secundario:</span>
+                            {isEditing ? (
+                                <input
+                                    type="tel"
+                                    value={customerData.cel2_per || ''}
+                                    onChange={(e) => setCustomerData({ ...customerData, cel2_per: e.target.value })}
+                                    className={styles.editInput}
+                                    placeholder="Número de celular"
+                                />
+                            ) : (
+                                <span className={styles.detailValue}>{customerData.cel2_per}</span>
                             )}
                         </div>
                         

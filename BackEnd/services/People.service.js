@@ -150,11 +150,10 @@ class People {
                 data.cel_per,
                 data.cel2_per,
                 data.email_per,
-                data.hash_pass,
                 data.gen_per,
                 data.fot_per || 'No-registrado',
             ]
-            const procedure = "CALL ModifyPeople(?,?,?,?,?,?,?,?,?,?,?,?,?);"
+            const procedure = "CALL ModifyPeople(?,?,?,?,?,?,?,?,?,?,?,?);"
 
             // conect to database
             this.database = new DataBase()
