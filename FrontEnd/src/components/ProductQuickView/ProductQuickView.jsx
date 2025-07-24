@@ -31,6 +31,15 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
     }
   },[])
 
+  const safeColors = Array.isArray(product?.colors)
+    ? product.colors
+    : typeof product?.colors === "string"
+      ? product.colors.split("---").map(colorStr => {
+          const [nom_col, hex_col, nom_img, url_img] = colorStr.split(";");
+          return { nom_col, hex_col, nom_img, url_img };
+        })
+      : [];
+
   return (
     <>
       {product && (
@@ -70,7 +79,11 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
               <div>
                 <p className={styles.sectionTitle}>Tallas disponibles</p>
                 <div className={styles.attributes}>
-                  {product?.sizes?.map((size, index) => (
+                  {(Array.isArray(product?.sizes) ? product.sizes : 
+                    typeof product?.sizes === "string"
+                      ? product.sizes.split("---")
+                      : []
+                  ).map((size, index) => (
                     <span key={index + 1209} className={styles.attribute}>
                       {size}
                     </span>
@@ -81,7 +94,7 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
               <div>
                 <p className={styles.sectionTitle}>Colores disponibles</p>
                 <div className={styles.attributes}>
-                  {product?.colors?.map((color, index) => (
+                  {safeColors?.map((color, index) => (
                     <span key={index + 120} className={styles.attribute}>
                       {color.nom_col}
                     </span>

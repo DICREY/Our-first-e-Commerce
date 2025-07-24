@@ -7,6 +7,7 @@ import { useCart } from "../../../Contexts/CartContext"
 import { CheckImage, formatNumber, errorStatusHandler } from "../../../Utils/utils"
 import { GetData, PostData } from "../../../Utils/Requests"
 import ProductCard from "../../ProductCard/ProductCard"
+import RelatedProductsCarousel from "../../RelatedProducts/RelatedProductsCarousel"
 
 //Styles
 import styles from "./ProductDetailPage.module.css"
@@ -21,7 +22,7 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
   const [relatedProducts, setRelatedProducts] = useState([])
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
-  const { productId } = useParams(); 
+  const { productId } = useParams();
   const [activeTab, setActiveTab] = useState('description')
 
   // Get product ID from URL params
@@ -29,39 +30,40 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
   const { addToCart } = useCart()
 
   // Fetch product data
-useEffect(() => {
-  const fetchProductData = async () => {
-    try {
-      setLoading(true);
-      console.log("Fetching product data for ID:", productId);
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        setLoading(true);
+        console.log("Fetching product data for ID:", productId);
 
-      const productData = await PostData(`${URL}/products/by`, { by: productId });
-      console.log("Product data fetched:", productData);
-      
-      // Extrae el primer producto del array result
-      const prod = productData?.[0] || productData?.result?.[0] || productData?.product || productData;
-      console.log("Product extracted:", prod);
+        const productData = await PostData(`${URL}/products/by`, { by: productId });
+        console.log("Product data fetched:", productData);
 
-      if (prod?.nom_pro) {  // Verifica usando nom_pro
-        setProduct(prod);
-        setSelectedColor(prod?.colors?.[0]?.nom_col || '');
-        setSelectedImage(prod?.colors?.[0]?.url_img || '');
-        setSelectedSize(prod?.sizes?.[0] || null);
-      } else {
+        const prod = productData?.[0] || productData?.result?.[0] || productData?.product || productData;
+        console.log("Product extracted:", prod);
+
+        if (prod?.nom_pro) {
+          setProduct(prod);
+          setSelectedColor(prod?.colors?.[0]?.nom_col || '');
+          setSelectedImage(prod?.colors?.[0]?.url_img || '');
+          setSelectedSize(prod?.sizes?.[0] || null);
+
+          // Elimina la sección de relatedProducts del estado ya que ahora usamos el componente separado
+        } else {
+          setProduct({});
+        }
+      } catch (err) {
+        console.error("Error loading product:", errorStatusHandler(err));
         setProduct({});
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error loading product:", errorStatusHandler(err));
-      setProduct({});
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  if (productId) {  // Solo ejecuta si hay un productId
-    fetchProductData();
-  }
-}, [URL, productId]);  // Usa productId en las dependencias
+    if (productId) {
+      fetchProductData();
+    }
+  }, [URL, productId]);
 
   const handleQuickAdd = () => {
     addToCart(product, selectedSize, selectedColor, quantity)
@@ -329,24 +331,14 @@ useEffect(() => {
             )}
           </div>
         </section>
-
-        {/* Related Products Section */}
-        {relatedProducts.length > 0 && (
-          <section className={styles.relatedProducts}>
-            <h2 className={styles.sectionTitle}>Productos relacionados</h2>
-            <div className={styles.productsGrid}>
-              {relatedProducts.map((relatedProduct) => (
-                <ProductCard
-                  key={relatedProduct.id_pro}
-                  data={relatedProduct}
-                  imgDefault={img}
-                  set={setProduct}
-                />
-              ))}
-            </div>
-          </section>
-        )}
       </div>
+      {product.nom_cat_pro && (
+        <RelatedProductsCarousel
+          URL={URL}
+          img={img}
+          categoryId={product.nom_cat_pro}
+        />
+      )}
     </main>
   )
 }
