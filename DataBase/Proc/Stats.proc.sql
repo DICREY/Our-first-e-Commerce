@@ -1,5 +1,6 @@
--- Active: 1746130779175@@127.0.0.1@3306@e_commerce
--- Ventas totales por período
+-- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+USE e_commerce;
+
 CREATE PROCEDURE e_commerce.MonthlySales()
 BEGIN
     -- Tabla de meses (1=Enero, ..., 12=Diciembre)

@@ -64,25 +64,22 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
     const loadData = async () => {
       try {
         setIsLoading(true)
+        const [
+          catData,
+          colorsData,
+          sizesData,
+          prodsData
+        ] = await Promise.all([
+          GetData(`${URL}/products/categories`),
+          GetData(`${URL}/products/colors`),
+          GetData(`${URL}/products/sizes`),
+          GetData(`${URL}/products/all`)
+        ]);
 
-        // Cargar categorías
-        const catData = await GetData(`${URL}/products/categories`)
         if (catData) setCategories(catData)
-
-        // Cargar colores
-        const colorsData = await GetData(`${URL}/products/colors`)
         if (colorsData) setColors(colorsData)
-
-        // Cargar tallas
-        const sizesData = await GetData(`${URL}/products/sizes`)
         if (sizesData) setSizes(sizesData)
-
-        // Cargar productos
-        const prodsData = await GetData(`${URL}/products/all`)
-        if (prodsData) {
-          const processedProducts = processProducts(prodsData)
-          setProducts(processedProducts)
-        }
+        if (prodsData) setProducts(processProducts(prodsData))
       } catch (err) {
         console.error(errorStatusHandler(err))
       } finally {

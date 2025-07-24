@@ -1,3 +1,4 @@
+-- Active: 1747352860830@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.GetAllOrders()
 BEGIN
     -- Si no hay pedidos, mostrar señal
