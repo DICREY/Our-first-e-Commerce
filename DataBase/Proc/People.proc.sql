@@ -1,7 +1,9 @@
 -- Active: 1747352860830@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.RegistPeoples(
     IN p_nom_per VARCHAR(100),
+    IN p_nom2_per VARCHAR(100),
     IN p_ape_per VARCHAR(100),
+    IN p_ape2_per VARCHAR(100),
     IN p_fec_nac_per DATE,
     IN p_tip_doc_per VARCHAR(10),
     IN p_doc_per VARCHAR(20),
@@ -37,10 +39,10 @@ BEGIN
     END IF;
 
     INSERT INTO personas (
-        nom_per,ape_per,fec_nac_per,tip_doc_per,doc_per,dir_per,cel_per,cel2_per,email_per,pas_per,gen_per,fot_per
+        nom_per,nom2_per,ape_per,ape2_per,fec_nac_per,tip_doc_per,doc_per,dir_per,cel_per,cel2_per,email_per,pas_per,gen_per,fot_per
     )
     VALUES (
-        p_nom_per,p_ape_per,p_fec_nac_per,p_tip_doc_per,p_doc_per,p_dir_per,p_cel_per,p_cel2_per,p_email_per,p_cont_per,p_gen_per,p_img_per
+        p_nom_per,p_nom2_per,p_ape_per,p_ape2_per,p_fec_nac_per,p_tip_doc_per,p_doc_per,p_dir_per,p_cel_per,p_cel2_per,p_email_per,p_cont_per,p_gen_per,p_img_per
     );
 
     SET p_id_persona = LAST_INSERT_ID();
@@ -55,7 +57,9 @@ BEGIN
 END //
 CREATE PROCEDURE e_commerce.ModifyPeople(
     IN p_nom_per VARCHAR(100),
+    IN p_nom2_per VARCHAR(100),
     IN p_ape_per VARCHAR(100),
+    IN p_ape2_per VARCHAR(100),     
     IN p_fec_nac_per DATE,
     IN p_doc_per VARCHAR(20),
     IN p_dir_per VARCHAR(100),
@@ -85,7 +89,9 @@ BEGIN
         personas p
     SET
         p.nom_per = p_nom_per,
+        p.nom2_per = p_nom2_per,
         p.ape_per = p_ape_per,
+        p.ape2_per = p_ape2_per,
         p.fec_nac_per = p_fec_nac_per,
         p.dir_per = p_dir_per,
         p.cel_per = p_cel_per,
@@ -102,9 +108,15 @@ BEGIN
 END //
 CREATE PROCEDURE e_commerce.SearchPeoples()
 BEGIN
+    IF NOT EXISTS(SELECT id_per FROM personas LIMIT 1) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No ahi personas registradas en el sistema';
+    END IF;
+
     SELECT
         p.nom_per,
+        p.nom2_per,
         p.ape_per,
+        p.ape2_per,
         p.fec_nac_per,
         p.tip_doc_per,
         p.doc_per,
@@ -134,9 +146,18 @@ CREATE PROCEDURE e_commerce.SearchPeopleBy(
     IN p_by VARCHAR(100)
 )
 BEGIN
+    IF NOT EXISTS(
+        SELECT id_per FROM personas p WHERE p.doc_per = p_by
+            OR p.email_per LIKE p_by LIMIT 1
+        ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontro esta registrada en el sistema';
+    END IF;
+
     SELECT
         p.nom_per,
+        p.nom2_per,
         p.ape_per,
+        p.ape2_per,
         p.fec_nac_per,
         p.tip_doc_per,
         p.doc_per,
@@ -173,7 +194,9 @@ CREATE PROCEDURE e_commerce.SearchPeoplesBy(
 BEGIN
     SELECT
         p.nom_per,
+        p.nom2_per,
         p.ape_per,
+        p.ape2_per,
         p.fec_nac_per,
         p.tip_doc_per,
         p.doc_per,
@@ -243,6 +266,8 @@ BEGIN
     SET autocommit = 1;
 END //
 
+/* DROP PROCEDURE e_commerce.`ModifyPeople`; */
+/* DROP PROCEDURE e_commerce.`RegistPeoples`; */
 /* DROP PROCEDURE e_commerce.SearchPeoples; */
 /* DROP PROCEDURE e_commerce.`SearchPeoplesBy`; */
 /* DROP PROCEDURE e_commerce.`SearchPeopleBy`; */

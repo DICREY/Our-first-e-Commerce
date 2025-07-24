@@ -137,6 +137,15 @@ CREATE TABLE e_commerce.productos_pedidos(
     PRIMARY KEY(id_ped, pro_ped)
 );
 
+-- Tabla para preferencias de usuarios
+CREATE TABLE e_commerce.preferencias(
+    id_pre INT AUTO_INCREMENT PRIMARY KEY,
+    per_pre INT NOT NULL,INDEX(per_pre),FOREIGN KEY (per_pre) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE,
+    theme ENUM('DARK','LIGHT') DEFAULT 'LIGHT',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
+);
+
 -- Tabla para sesiones/usuarios únicos
 CREATE TABLE e_commerce.sessions (
     id_ses VARCHAR(255) PRIMARY KEY,

@@ -258,3 +258,11 @@ export const formatNumber = (num = 0) => {
 export const calculateDiscount = (currentPrice, originalPrice) => {
   return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
 }
+
+export const LegalAge = () => {
+  const currentDate = new Date()
+
+  currentDate.setFullYear(currentDate.getFullYear() - 18)
+
+  return currentDate.toLocaleDateString('en-CA')
+}
