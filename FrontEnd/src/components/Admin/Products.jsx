@@ -1,7 +1,7 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
-import { Eye, Edit, Search, Filter, Download, ChevronLeft } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Eye, Edit, Search, Filter, Download, ChevronLeft, Plus } from 'lucide-react'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 // Imports 
 import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
@@ -114,10 +114,13 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {/* <button className={styles.exportButton}>
-            <Download size={16} />
-            Exportar
-          </button> */}
+          <NavLink 
+            className={styles.exportButton}
+            to={'/admin/products/register'}
+          >
+            <Plus size={16} />
+            Nuevo Producto
+          </NavLink>
         </div>
       </header>
 

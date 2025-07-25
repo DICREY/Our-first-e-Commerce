@@ -114,28 +114,28 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
       return;
     }
 
-    try {
-      const product = await GetData(`${URL}/products/categories`);
-      if (product) {
-        const catPro = [{ name: "Inicio", href: "/" }];
-        product?.forEach(cat => {
-          catPro.push({ 
-            name: cat.nom_cat_pro, 
-            href: `/productos/${cat.slug?.toLowerCase()}` 
+      try {
+        const product = await GetData(`${URL}/products/categories`);
+        if (product) {
+          const catPro = [{ name: "Inicio", href: "/" }];
+          product?.forEach(cat => {
+            catPro.push({ 
+              name: cat.nom_cat_pro, 
+              href: `/productos/${cat.slug?.toLowerCase()}` 
+            });
           });
-        });
-        
-        // Actualizar caché
-        categoriesCache = catPro;
-        lastFetchTime = now;
-        
-        setNavigation(catPro);
-        setHasFetched(true);
+          
+          // Actualizar caché
+          categoriesCache = catPro;
+          lastFetchTime = now;
+          
+          setNavigation(catPro);
+          setHasFetched(true);
+        }
+      } catch (err) {
+        const message = errorStatusHandler(err);
+        console.log(message);
       }
-    } catch (err) {
-      const message = errorStatusHandler(err);
-      console.log(message);
-    }
   };
 
   useEffect(() => {

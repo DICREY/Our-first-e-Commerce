@@ -19,6 +19,7 @@ import { CustomerDetail } from "./components/Details/CustomersDetails"
 import { ProductDetailAdmin } from "./components/Details/ProductDetail"
 import { AdminProfile } from "./components/People/AdminProfile"
 import { CustomerRegister } from "./components/People/CustomerRegister";
+import { ProductRegister } from "./components/Products/ProductRegister";
 import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
@@ -149,6 +150,10 @@ const App = () => {
               <Route 
                 path="/admin/products/details" 
                 element={<ProductDetailAdmin URL={URL} imgDefault={imgProduct} dataProduct={product} />} 
+              />
+              <Route 
+                path="/admin/products/register"
+                element={<ProductRegister URL={URL} imgDefault={imgProduct} />} 
               />
               <Route 
                 path="/admin/orders" 

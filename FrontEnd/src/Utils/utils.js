@@ -14,10 +14,6 @@ export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = ''
   // Dynamic vars 
   const [imgSrc, setImgSrc] = useState(src && src !== 'No-Registrado' ? src : imgDefault)
 
-  useEffect(() => {
-    setImgSrc(src)
-  },[src])
-
   return (
     <img
       className={className}
