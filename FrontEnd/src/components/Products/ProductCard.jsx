@@ -193,3 +193,4 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
 }
 
 export default ProductCard
+
