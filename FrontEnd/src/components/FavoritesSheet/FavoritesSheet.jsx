@@ -27,7 +27,7 @@ const FavoritesSheet = ({ products, isOpen, onClose, img = '' }) => {
     }
   }, [isOpen])
 
-  const likedProducts = products?.filter((p) => likedIds.includes(p.id))
+  const likedProducts = products?.filter((p) => likedIds.includes(String(p.id_pro)))
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Tus Favoritos">
@@ -52,7 +52,7 @@ const FavoritesSheet = ({ products, isOpen, onClose, img = '' }) => {
         ) : (
           <div className={styles.productsGrid}>
             {likedProducts?.map((product, index) => (
-              <ProductCard key={index + 129} data={product} imgDefaultg={img} />
+              <ProductCard key={index + 129} data={product} imgDefault={img} />
             ))}
           </div>
         )}
