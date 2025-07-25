@@ -69,19 +69,16 @@ Route.post('/by', async (req,res) => {
 })
 
 Route.post('/register', async (req,res) => {
-    // Vars 
-    const saltRounds = 15
-    const body = req.body
-    
     try {
-        // Verifiy if exist
-        const find = await people.findBy(toString(body.doc_per))
-        if (find.result[0][0].nom_per) res.status(302).json({ message: "Usuario ya existe" })
+        // Vars 
+        const saltRounds = 15
+        const body = req.body
 
         const create = await people.create({ hash_pass: await hash(body.pas_per,saltRounds), ...body })
-        res.status(201).json(create)
 
+        res.status(201).json(create)
     } catch(err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })

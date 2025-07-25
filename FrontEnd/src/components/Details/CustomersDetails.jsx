@@ -1,17 +1,17 @@
 // Librarys 
 import React, { useEffect, useState } from 'react'
-import { Check, Mail, PenOff, Plus, SquarePen } from 'lucide-react'
+import { Check, Mail, PenOff, Plus, SquarePen, User } from 'lucide-react'
 
 // Imports 
+import { CheckImage, errorStatusHandler, formatDate, getAge } from '../../Utils/utils'
+import { ModifyData } from '../../Utils/Requests'
+import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles
 import styles from '../../styles/Details/CustomerDetail.module.css'
-import AdminLoadingScreen from '../Global/Loading'
-import { errorStatusHandler, formatDate, getAge } from '../../Utils/utils'
-import { ModifyData } from '../../Utils/Requests'
 
 // Component 
-export const CustomerDetail = ({ URL = '' , customer }) => {
+export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
     // Dynamic vars 
     const [note, setNote] = useState('')
     const [isEditing, setIsEditing] = useState(false)
@@ -30,7 +30,6 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
 
     const handleSaveChanges = async () => {
         try {
-            console.log('Datos actualizados:', customerData)
             setIsLoading(true)
             customerData.fec_nac_per = formatDate(customerData.fec_nac_per)
             const response = await ModifyData(`${URL}/peoples/modify`, customerData)
@@ -65,13 +64,27 @@ export const CustomerDetail = ({ URL = '' , customer }) => {
         <main className={styles.mainContent}>
             <div className={styles.customerDetail}>
                 <header className={styles.header}>
-                    <div className={styles.customerTitle}>
-                        <h1>{customer?.nom_per} {customer?.ape_per}</h1>
-                        <p className={styles.customerEmail}>
-                            <Mail />
-                            {customer?.email_per}
-                        </p>
-                    </div>
+                    <span>
+                        {customer?.fot_per && (
+                            <CheckImage 
+                                className={styles.customerAvatar}
+                                src={customer.fot_per}
+                                imgDefault={imgDefault}
+                                alt=''
+                            />
+                        )}
+                        <div className={styles.customerTitle}>
+                            <h1>{customer?.nom_per} {customer?.ape_per}</h1>
+                            <p className={styles.customerEmail}>
+                                <Mail />
+                                {customer?.email_per}
+                            </p>
+                            <p className={styles.customerEmail}>
+                                <User />
+                                {customer?.roles}
+                            </p>
+                        </div>
+                    </span>
                     <button 
                         className={styles.addNoteButton}
                         onClick={() => document.getElementById('noteInput').focus()}

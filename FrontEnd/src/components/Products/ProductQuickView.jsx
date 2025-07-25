@@ -7,7 +7,7 @@ import Button from "../Button/Button"
 import { CheckImage } from "../../Utils/utils"
 
 // Import styles 
-import styles from "./ProductQuickView.module.css"
+import styles from "../../styles/Products/ProductQuickView.module.css"
 
 // Component 
 const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {

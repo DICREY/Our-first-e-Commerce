@@ -1,7 +1,7 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, Plus, Download, Eye, Edit, ChevronDown, ChevronUp } from 'lucide-react'
+import { Search, Plus, Eye, Edit, ChevronDown, ChevronUp } from 'lucide-react'
 
 // Imports 
 import { Paginacion } from '../Global/Paginacion'
@@ -178,9 +178,7 @@ export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
                     </div>
 
                     <div className={styles.actions}>
-                        <Link to="#" className={styles.primaryButton}
-                            onClick={() => alert('No sirve papi te me calmas!!')}
-                        >
+                        <Link to="/admin/customers/register" className={styles.primaryButton}>
                             <Plus size={16} /> Nuevo Cliente
                         </Link>
                     </div>

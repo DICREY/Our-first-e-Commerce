@@ -1,10 +1,17 @@
+// Librarys 
 import { useState, useMemo, useEffect } from "react"
-import ProductCard from "../ProductCard/ProductCard"
+
+// Imports 
 import { errorStatusHandler } from "../../Utils/utils"
 import { GetData } from "../../Utils/Requests"
-import styles from "./ProductCatalog.module.css"
+import ProductCard from "./ProductCard"
 
+// Import styles 
+import styles from "../../styles/Products/ProductCatalog.module.css"
+
+// Component 
 const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', setProduct }) => {
+  // Dynamic vars 
   const [selectedCategory, setSelectedCategory] = useState(preSelectedCat || "Todos")
   const [search, setSearch] = useState("")
   const [selectedColor, setSelectedColor] = useState("")

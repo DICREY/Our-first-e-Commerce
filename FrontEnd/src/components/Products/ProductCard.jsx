@@ -1,18 +1,24 @@
-import { useState, useEffect } from "react";
-import { Heart, PackagePlus, Eye } from 'lucide-react';
-import { useNavigate } from "react-router-dom";
-import { useCart } from "../../Contexts/CartContext";
-import { CheckImage, formatNumber } from "../../Utils/utils";
-import Button from "../Button/Button";
-import Badge from "../Badge/Badge";
-import ProductQuickView from "../ProductQuickView/ProductQuickView";
-import styles from "./ProductCard.module.css";
+// Librarys 
+import { useState, useEffect } from "react"
+import { Heart, PackagePlus, Eye } from 'lucide-react'
+import { useNavigate } from "react-router-dom"
 
+// Imports
+import { useCart } from "../../Contexts/CartContext"
+import { CheckImage, formatNumber } from "../../Utils/utils"
+import Button from "../Button/Button"
+import Badge from "../Badge/Badge"
+import ProductQuickView from "./ProductQuickView"
+
+// Import styles 
+import styles from "../../styles/Products/ProductCard.module.css"
+
+// Component 
 const ProductCard = ({ data = {}, imgDefault = '', set }) => {
-  // Estado inicial seguro
-  const [isLiked, setIsLiked] = useState(false);
-  const [showQuickView, setShowQuickView] = useState(false);
-  const [showImg, setShowImg] = useState(imgDefault);
+  // Dynamic vars 
+  const [isLiked, setIsLiked] = useState(false)
+  const [showQuickView, setShowQuickView] = useState(false)
+  const [showImg, setShowImg] = useState(imgDefault)
   const [product, setProduct] = useState({
     id_pro: '',
     nom_pro: '',
@@ -22,14 +28,14 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
     onSale: false,
     featured: false,
     ...data
-  });
+  })
 
-  const { addToCart } = useCart();
-  const navigate = useNavigate();
+  const { addToCart } = useCart()
+  const navigate = useNavigate()
 
   // Normalizar los datos del producto
   const normalizeProductData = (productData) => {
-    if (!productData) return null;
+    if (!productData) return null
     
     return {
       id_pro: productData.id_pro || '',
@@ -40,61 +46,61 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
       onSale: Boolean(productData.onSale),
       featured: Boolean(productData.featured),
       ...productData
-    };
-  };
+    }
+  }
 
   // Inicializar el componente
   useEffect(() => {
-    const normalizedProduct = normalizeProductData(data);
+    const normalizedProduct = normalizeProductData(data)
     if (normalizedProduct) {
-      setProduct(normalizedProduct);
+      setProduct(normalizedProduct)
       
       // Establecer imagen por defecto
       const firstColorImg =
         Array.isArray(normalizedProduct.colors) && normalizedProduct.colors[0]
           ? normalizedProduct.colors[0].url_img
-          : null;
-      setShowImg(firstColorImg || imgDefault);
+          : null
+      setShowImg(firstColorImg || imgDefault)
       
       // Verificar si el producto está en favoritos
       if (normalizedProduct.id_pro) {
-        const liked = localStorage.getItem(`liked-product-${normalizedProduct.id_pro}`) === "true";
-        setIsLiked(liked);
+        const liked = localStorage.getItem(`liked-product-${normalizedProduct.id_pro}`) === "true"
+        setIsLiked(liked)
       }
     }
-  }, [data, imgDefault]);
+  }, [data, imgDefault])
 
   // Manejar agregar al carrito
   const handleQuickAdd = (e) => {
-    e?.stopPropagation();
-    const defaultSize = product?.sizes?.[0] || '';
-    const defaultColor = product?.colors?.[0]?.nom_col || '';
-    addToCart(product, defaultSize, defaultColor);
-  };
+    e?.stopPropagation()
+    const defaultSize = product?.sizes?.[0] || ''
+    const defaultColor = product?.colors?.[0]?.nom_col || ''
+    addToCart(product, defaultSize, defaultColor)
+  }
 
   // Manejar favoritos
   const handleLike = (e) => {
-    e?.stopPropagation();
-    const newLiked = !isLiked;
-    setIsLiked(newLiked);
+    e?.stopPropagation()
+    const newLiked = !isLiked
+    setIsLiked(newLiked)
     if (product?.id_pro) {
-      localStorage.setItem(`liked-product-${product.id_pro}`, newLiked);
+      localStorage.setItem(`liked-product-${product.id_pro}`, newLiked)
     }
-  };
+  }
 
   // Manejar clic en la tarjeta
   const handleCardClick = () => {
     if (set && product?.id_pro) {
-      set(product);
-      navigate(`/product/${product.id_pro}`);
+      set(product)
+      navigate(`/product/${product.id_pro}`)
     }
-  };
+  }
 
   // No renderizar si no hay datos válidos
-  if (!product?.id_pro) return null;
+  if (!product?.id_pro) return null
 
   // Obtener colores para mostrar (asegurando que sea un array)
-  const displayColors = Array.isArray(product.colors) ? product.colors : [];
+  const displayColors = Array.isArray(product.colors) ? product.colors : []
 
   return (
     <div className={styles.card} onClick={handleCardClick}>
@@ -119,8 +125,8 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
               size="sm"
               variant="secondary"
               onClick={(e) => {
-                e.stopPropagation();
-                setShowQuickView(true);
+                e.stopPropagation()
+                setShowQuickView(true)
               }}
             >
               <Eye /> Vista Rápida
@@ -183,7 +189,7 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
         img={imgDefault}
       />
     </div>
-  );
-};
+  )
+}
 
-export default ProductCard;
+export default ProductCard

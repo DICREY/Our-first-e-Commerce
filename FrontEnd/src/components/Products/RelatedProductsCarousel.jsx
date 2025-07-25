@@ -1,9 +1,16 @@
+// Librarys 
 import { useEffect, useState } from "react";
-import { PostData } from "../../Utils/Requests";
-import ProductCard from "../ProductCard/ProductCard";
-import styles from "./RelatedProductsCarousel.module.css";
 
+// Imports 
+import { PostData } from "../../Utils/Requests";
+import ProductCard from "./ProductCard";
+
+// Import styles 
+import styles from "../../styles/Products/RelatedProductsCarousel.module.css";
+
+// Component 
 const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
+  // Dynamic vars 
   const [allProducts, setAllProducts] = useState([]);
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 // Imports
 import HeroSection from "../../HeroSection/HeroSection"
-import ProductCard from "../../ProductCard/ProductCard"
+import ProductCard from "../../Products/ProductCard"
 import Badge from "../../Badge/Badge"
 import Button from "../../Button/Button"
 import { errorStatusHandler } from "../../../Utils/utils"

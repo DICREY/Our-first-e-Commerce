@@ -6,8 +6,8 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useCart } from "../../../Contexts/CartContext"
 import { CheckImage, formatNumber, errorStatusHandler } from "../../../Utils/utils"
 import { GetData, PostData } from "../../../Utils/Requests"
-import ProductCard from "../../ProductCard/ProductCard"
-import RelatedProductsCarousel from "../../RelatedProducts/RelatedProductsCarousel"
+import ProductCard from "../../Products/ProductCard"
+import RelatedProductsCarousel from "../../Products/RelatedProductsCarousel"
 
 //Styles
 import styles from "./ProductDetailPage.module.css"

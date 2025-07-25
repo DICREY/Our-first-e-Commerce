@@ -1,5 +1,5 @@
 // Librarys 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // Greeting
 export const Greeting = () => {
@@ -13,6 +13,10 @@ export const Greeting = () => {
 export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = '' }) => {
   // Dynamic vars 
   const [imgSrc, setImgSrc] = useState(src && src !== 'No-Registrado' ? src : imgDefault)
+
+  useEffect(() => {
+    setImgSrc(src)
+  },[src])
 
   return (
     <img

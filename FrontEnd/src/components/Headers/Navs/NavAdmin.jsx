@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 // Import styles 
-import styles from '../../styles/Navs/NavAdmin.module.css'
+import styles from '../../../styles/Navs/NavAdmin.module.css'
 
 // Component 
 export const NavAdmin = () => {

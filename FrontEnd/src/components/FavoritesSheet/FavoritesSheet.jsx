@@ -4,7 +4,7 @@ import { Heart } from 'lucide-react'
 
 // Imports 
 import Modal from "../Modal/Modal"
-import ProductCard from "../ProductCard/ProductCard"
+import ProductCard from "../Products/ProductCard"
 
 // Import styles 
 import styles from "./FavoritesSheet.module.css"

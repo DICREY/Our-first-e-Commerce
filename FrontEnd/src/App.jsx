@@ -13,14 +13,15 @@ import { Dashboard } from './components/Admin/Dashboard'
 import { ProductList } from "./components/Admin/Products"
 import { OrdersList } from "./components/Admin/Orders"
 import { Customers } from "./components/Admin/Clients"
-import { NavAdmin } from "./components/Navs/NavAdmin"
+import { NavAdmin } from "./components/Headers/Navs/NavAdmin"
 import { OrderDetail } from "./components/Details/OrdersDetails"
 import { CustomerDetail } from "./components/Details/CustomersDetails"
 import { ProductDetailAdmin } from "./components/Details/ProductDetail"
 import { AdminProfile } from "./components/People/AdminProfile"
-import Header from "./components/Header/Header"
+import { CustomerRegister } from "./components/People/CustomerRegister";
+import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
-import ProductCatalog from "./components/ProductCatalog/ProductCatalog"
+import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
 
 // Main Module 
@@ -164,6 +165,10 @@ const App = () => {
               <Route 
                 path="/admin/customers/details" 
                 element={<CustomerDetail URL={URL} imgDefault={imgUser} customer={customer} />}
+              />
+              <Route 
+                path="/admin/customers/register"
+                element={<CustomerRegister URL={URL} imgDefault={imgUser} />}
               />
               <Route 
                 path="/admin/perfil"
