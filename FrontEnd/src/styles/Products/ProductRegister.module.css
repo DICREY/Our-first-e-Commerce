@@ -1,0 +1,382 @@
+/* ProductRegister.module.css */
+.container {
+    flex: 1;
+    width: 100%;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: var(--rounded);
+    box-shadow: var(--shadow-md);
+    overflow: auto;
+}
+
+.header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.formColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formGroup label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+/* Sección Integrada */
+.integratedSection {
+    grid-column: span 2;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--neutral-200);
+}
+
+.colorImageGroup {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--neutral-50);
+    border-radius: var(--rounded);
+    border: 1px solid var(--neutral-200);
+}
+
+.colorHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.colorName {
+    font-weight: 500;
+    flex-grow: 1;
+}
+
+.imageInputGroup {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.colorImagesPreview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+}
+
+.newColorGroup {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--neutral-300);
+}
+
+.input, .select, .textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--rounded);
+    font-size: 0.9rem;
+    transition: var(--transition);
+    background-color: var(--neutral-50);
+}
+
+.input:focus, .select:focus, .textarea:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.inputWithSymbol {
+    display: flex;
+    align-items: center;
+}
+
+.inputWithSymbol span {
+    padding: 0.75rem;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    border-right: none;
+    border-radius: var(--rounded) 0 0 var(--rounded);
+    color: var(--text-secondary);
+}
+
+.inputWithSymbol input {
+    border-radius: 0 var(--rounded) var(--rounded) 0;
+    flex: 1;
+}
+
+.toggleSwitch {
+    position: relative;
+    margin-left: auto;
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background: var(--neutral-300);
+    border-radius: 20px;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.toggleSwitch:checked {
+    background: var(--primary-500);
+}
+
+.toggleSwitch::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--white);
+    top: 2px;
+    left: 2px;
+    transition: var(--transition);
+}
+
+.toggleSwitch:checked::before {
+    transform: translateX(20px);
+}
+
+.multiInputGroup {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.multiInputGroup input {
+    flex: 1;
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    background: var(--primary-500);
+    color: var(--white);
+    border: none;
+    border-radius: var(--rounded);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.addButton:hover {
+    background: var(--primary-600);
+}
+
+.colorPickerWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 120px;
+}
+
+.colorPickerWrapper input[type="color"] {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.colorPickerWrapper span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.tagsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.colorTag, .sizeTag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--neutral-100);
+    border-radius: var(--rounded);
+    font-size: 0.8rem;
+}
+
+.colorBadge {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid var(--neutral-300);
+}
+
+.tagRemove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--dark-gray);
+    cursor: pointer;
+    padding: 0;
+    transition: var(--transition);
+}
+
+.tagRemove:hover {
+    color: var(--accent-800);
+}
+
+.imagePreviews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.imagePreviewItem {
+    position: relative;
+    border-radius: var(--rounded);
+    overflow: hidden;
+    border: 1px solid var(--neutral-200);
+}
+
+.imagePreviewItem img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+}
+
+.imageRemove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    color: var(--white);
+    border: none;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.imageRemove:hover {
+    background: rgba(0,0,0,0.7);
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--neutral-200);
+}
+
+.cancelButton, .submitButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--rounded);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cancelButton {
+    background: var(--neutral-100);
+    color: var(--text-secondary);
+    border: 1px solid var(--neutral-300);
+}
+
+.cancelButton:hover {
+    background: var(--neutral-200);
+}
+
+.submitButton {
+    background: var(--primary-500);
+    color: var(--white);
+    border: none;
+}
+
+.submitButton:hover:not(:disabled) {
+    background: var(--primary-600);
+    box-shadow: var(--shadow-sm);
+}
+
+.submitButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.hasError input, .hasError select, .hasError textarea {
+    border-color: var(--accent-800);
+}
+
+.errorText {
+    color: var(--accent-800);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.formError {
+    padding: 1rem;
+    background: var(--error-100);
+    color: var(--accent-800);
+    border-radius: var(--rounded);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--error-200);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+}
