@@ -1,0 +1,280 @@
+.container {
+    flex: 1;
+    width: 100%;
+  padding: 2rem;
+  background: var(--white);
+  border-radius: var(--rounded);
+  box-shadow: var(--shadow-md);
+  overflow: auto;
+}
+
+.header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+    position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.input, .select, .textarea {
+    position: relative;
+  padding: 0.75rem;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--rounded);
+  font-size: 0.9rem;
+  transition: var(--transition);
+  background-color: var(--neutral-50);
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.hasError .input, 
+.hasError .select, 
+.hasError .textarea {
+  border-color: var(--accent-800);
+}
+
+.errorText {
+  color: var(--accent-800);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.formError {
+  padding: 1rem;
+  background: var(--error-100);
+  color: var(--accent-800);
+  border-radius: var(--rounded);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--error-200);
+}
+
+/* Products Section */
+.productsSection {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--neutral-200);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+}
+
+.addProductForm {
+  background: var(--neutral-50);
+  padding: 1rem;
+  border-radius: var(--rounded);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--neutral-200);
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--primary-500);
+  color: var(--white);
+  border: none;
+  border-radius: var(--rounded);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.addButton:hover {
+  background: var(--primary-600);
+}
+
+.productsList {
+  margin-top: 1rem;
+}
+
+.emptyList {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--neutral-50);
+  border-radius: var(--rounded);
+  border: 1px dashed var(--neutral-300);
+}
+
+.productsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.productsTable th, 
+.productsTable td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.productsTable th {
+  background: var(--neutral-50);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.productsTable tbody tr:hover {
+  background: var(--neutral-50);
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--dark-gray);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.removeButton:hover {
+  background: var(--error-100);
+  color: var(--accent-800);
+}
+
+.totalLabel {
+  font-weight: 500;
+  text-align: right;
+  padding-right: 1rem;
+}
+
+.totalAmount {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Form Actions */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--neutral-200);
+}
+
+.cancelButton, .submitButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--rounded);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancelButton {
+  background: var(--neutral-100);
+  color: var(--text-secondary);
+  border: 1px solid var(--neutral-300);
+}
+
+.cancelButton:hover {
+  background: var(--neutral-200);
+}
+
+.submitButton {
+  background: var(--primary-500);
+  color: var(--white);
+  border: none;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--primary-600);
+  box-shadow: var(--shadow-sm);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .productGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+}
