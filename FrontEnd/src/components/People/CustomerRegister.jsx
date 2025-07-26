@@ -127,12 +127,6 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
         setIsLoading(false)
     },[])
 
-    if (isLoading) {
-        return (
-            <AdminLoadingScreen message='Cargando...' />
-        )
-    }
-
     return (
         <main className={styles.registerContainer}>
             <header className={styles.registerHeader}>
@@ -382,6 +376,9 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                     </button>
                 </div>
             </form>
+            {isLoading && (
+                <AdminLoadingScreen message='Cargando...' />
+            )}
         </main>
     )
 }

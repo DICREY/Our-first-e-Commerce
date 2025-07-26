@@ -24,6 +24,7 @@ import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
+import { OrderRegister } from "./components/Admin/OrderRegister";
 
 // Main Module 
 const App = () => {
@@ -162,6 +163,10 @@ const App = () => {
               <Route 
                 path="/admin/orders/details"
                 element={<OrderDetail URL={URL} id_ped={order} />} 
+              />
+              <Route 
+                path="/admin/orders/register"
+                element={<OrderRegister URL={URL}  />} 
               />
               <Route 
                 path="/admin/customers" 

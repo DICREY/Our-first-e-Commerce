@@ -75,12 +75,6 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
         }
     }
 
-    if (loading) {
-        return (
-            <AdminLoadingScreen message='Cargando detalles del cliente' />
-        )
-    }
-
     if (error) {
         return (
             <div className={styles.errorState}>
@@ -236,6 +230,9 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                     </button>
                 </div> */}
             </div>
+            {loading && (
+                <AdminLoadingScreen message='Cargando detalles del pedido' />
+            )}
         </main>
     )
 }

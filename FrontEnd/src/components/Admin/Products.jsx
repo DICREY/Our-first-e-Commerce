@@ -94,14 +94,8 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
     return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
   }
 
-  if (loading) {
-    return (
-      <AdminLoadingScreen message='Cargando Información de productos' />
-    )
-  }
-
   return (
-    <div className={styles.adminContainer}>
+    <main className={styles.adminContainer}>
       <header className={styles.adminHeader}>
         <h1>Administración de Productos</h1>
         <div className={styles.headerActions}>
@@ -306,6 +300,9 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
           </div>
         </main>
       </aside>
-    </div>
+      {loading && (
+        <AdminLoadingScreen message='Cargando Información de productos' />
+      )}
+    </main>
   )
 }

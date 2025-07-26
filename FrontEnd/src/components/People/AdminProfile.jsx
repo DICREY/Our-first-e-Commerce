@@ -134,21 +134,15 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
     fetchData()
   }, [user?.doc])
 
-  if (isLoading) {
-    return (
-      <AdminLoadingScreen message='Cargando información del perfil...' />
-    )
-  }
-
   return (
-    <div className={styles.profileEditorContainer}>
-      <div className={styles.profileHeader}>
+    <main className={styles.profileEditorContainer}>
+      <header className={styles.profileHeader}>
         <h2>Perfil de {user.names} {user.lastNames} </h2>
         <p>{isEditing ? 'Edita tu información personal' : 'Visualiza tu información personal'}</p>
-      </div>
+      </header>
 
       <form onSubmit={handleSubmit} className={styles.profileForm}>
-        <div className={styles.avatarSection}>
+        <nav className={styles.avatarSection}>
           <div className={styles.avatarUpload}>
             <CheckImage
               className={styles.avatarPreview}
@@ -187,7 +181,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
               </>
             )}
           </div>
-        </div>
+        </nav>
 
         {!isEditing && (
           <button
@@ -415,6 +409,9 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
           </div>
         )}
       </form>
-    </div>
+      {isLoading && (
+        <AdminLoadingScreen message='Cargando información del perfil...' />
+      )}
+    </main>
   )
 }

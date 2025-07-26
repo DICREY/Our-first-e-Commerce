@@ -50,7 +50,7 @@ Route.post('/register', async (req,res) => {
     try {
         // Vars 
         const body = req.body
-        const prod = new Product(body)
+        const prod = new Order(body)
         const create = await prod.create()
 
         if (create.success) return res.status(201).json(create)

@@ -15,18 +15,13 @@ class Order {
     async create() {
         return new Promise((res,rej) => {
             // vars
-            const proc = "CALL RegisterProduct(?,?,?,?,?,?,?,?,?,?);"
+            const proc = "CALL RegisterOrder(?,?,?,?,?);"
             const params = [
-                this.args[0].nom_pro,
-                this.args[0].pre_pro,
-                this.args[0].des_pro,
-                this.args[0].onSale,
-                this.args[0].nom_cat,
-                this.args[0].slug_cat,
-                this.args[0].colores,
-                this.args[0].hex_colores,
-                this.args[0].tallas,
-                this.args[0].imgs
+                this.args[0].documento_cliente,
+                this.args[0].direccion_envio,
+                this.args[0].metodo_pago_nombre,
+                this.args[0].metodo_envio_nombre,
+                this.args[0].productos_json
             ]
 
             // conect to database

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { 
   Search, Filter, Eye,
   Calendar, User, CreditCard, Truck, CheckCircle, 
-  XCircle, Clock, RefreshCw, ArrowUpDown 
+  XCircle, Clock, RefreshCw, ArrowUpDown, 
+  Plus
 } from 'lucide-react'
 
 // Imports 
@@ -120,18 +121,25 @@ export const OrdersList = ({ URL = '', setIdOrder = null }) => {
     getOrders()
   }, [])
 
-  if (loading) {
-    return <AdminLoadingScreen message='Cargando pedidos...' />
-  }
-
   return (  
-    <div className={styles.adminContainer}>
+    <main className={styles.adminContainer}>
       {/* Header Section */}
       <div className={styles.header}>
-        <div className={styles.headerTitle}>
-          <h1>Pedidos Recientes</h1>
-          <p>Gestiona y monitorea los pedidos de tu tienda</p>
-        </div>
+        <header className={styles.headerTitle}>
+          <header>
+            <h1>Pedidos Recientes</h1>
+            <p>Gestiona y monitorea los pedidos de tu tienda</p>
+          </header>
+          <nav>
+            <NavLink 
+              className={styles.filterButton}
+              to={'/admin/orders/register'}
+            >
+              <Plus size={16} />
+              Nuevo Producto
+            </NavLink>
+          </nav>
+        </header>
         
         <div className={styles.controls}>
           {/* Search Bar */}
@@ -307,7 +315,7 @@ export const OrdersList = ({ URL = '', setIdOrder = null }) => {
 
               <div className={`${styles.orderCell} ${styles.amount}`}>
                 <div className={styles.amountText}>
-                  ${formatNumber(order.subtotal_ped)}
+                  ${formatNumber(order.subtotal_ped || 0)}
                 </div>
                 {order.des_ped > 0 && (
                   <div className={styles.discountBadge}>
@@ -361,6 +369,9 @@ export const OrdersList = ({ URL = '', setIdOrder = null }) => {
           />
         </div>
       )}
-    </div>
+      {loading && (
+        <AdminLoadingScreen message='Cargando Información de pedidos' />
+      )}
+    </main>
   )
 }

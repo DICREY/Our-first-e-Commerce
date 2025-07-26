@@ -64,12 +64,6 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
         // setProduct({...product, status: newStatus})
     }
 
-    if (loading) {
-        return (
-            <AdminLoadingScreen message='Cargando detalles del cliente' />
-        )
-    }
-
     if (!product) {
         return (
             <div className={styles.notFoundContainer}>
@@ -452,6 +446,9 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                     </div>
                 </div>
             </section>
+            {loading && (
+                <AdminLoadingScreen message='Cargando detalles del Producto' />
+            )}
         </main>
     )
 }

@@ -5,10 +5,10 @@ import React from 'react'
 // Component 
 const AdminLoadingScreen = ({ message = "Procesando..." }) => {
   return (
-    <div className={'loadingState'}>
-        <div className={'spinner'}></div>
-        <p className={'loadingText'}>{message}</p>
-    </div>
+    <main className={'loadingState'}>
+      <div className={'spinner'}></div>
+      <p className={'loadingText'}>{message}</p>
+    </main>
   )
 }
 

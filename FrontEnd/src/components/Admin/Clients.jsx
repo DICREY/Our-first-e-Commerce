@@ -127,15 +127,8 @@ export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
         }
     }
 
-
-    if (loading) {
-        return (
-            <AdminLoadingScreen message='Cargando Información de clientes' />
-        )
-    }
-
     return (
-        <div className={styles.adminContainer}>
+        <main className={styles.adminContainer}>
             <header className={styles.header}>
                 <h1>Administración de Clientes</h1>
                 <div className={styles.controls}>
@@ -317,6 +310,9 @@ export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
                     data={filteredCustomers}
                 />
             </div>
-        </div>
+            {loading && (
+                <AdminLoadingScreen message='Cargando Información de clientes' />
+            )}
+        </main>
     )
 }

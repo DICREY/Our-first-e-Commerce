@@ -45,12 +45,6 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
         }
     }
 
-    if (isLoading) {
-        return (
-            <AdminLoadingScreen message='Cargando detalles del cliente' />
-        )
-    }
-
     if (!customer) {
         return (
             <div className={styles.notFound}>
@@ -324,6 +318,9 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                     )}
                 </div>
             </div>
+            {isLoading && (
+                <AdminLoadingScreen message='Cargando detalles del cliente' />
+            )}
         </main>
     )
 }

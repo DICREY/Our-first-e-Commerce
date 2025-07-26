@@ -87,6 +87,8 @@ body {
   background-color: var(--neutral-50);
   color: var(--neutral-800);
   line-height: 1.6;
+  height: 100vh;
+  width: 100vw;
 }
 
 .container {

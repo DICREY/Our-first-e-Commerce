@@ -19,6 +19,12 @@
   background-color: var(--white);
 }
 
+.headerTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .headerTitle h1 {
   font-size: 1.5rem;
   font-weight: 600;

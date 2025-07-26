@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.GetProductsCategories()
 BEGIN
     -- Verifica si hay categorias
@@ -15,7 +15,7 @@ BEGIN
 END //
 CREATE PROCEDURE e_commerce.GetProductsColors()
 BEGIN
-    -- Verifica si hay categorias
+    -- Verifica si hay colores
     IF NOT EXISTS (SELECT 1 FROM colores) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existen colores en el sistema';
     END IF;
@@ -28,7 +28,7 @@ BEGIN
 END //
 CREATE PROCEDURE e_commerce.GetProductsSizes()
 BEGIN
-    -- Verifica si hay categorias
+    -- Verifica si hay tallas
     IF NOT EXISTS (SELECT 1 FROM tallas) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existen tallas en el sistema';
     END IF;
@@ -324,7 +324,7 @@ BEGIN
         SET v_img = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_imgs, ',', i), ',', -1));
 
         -- Verifica si el color existe, si no lo crea
-        SELECT id_col INTO v_id_col FROM e_commerce.colores WHERE nom_col = v_color LIMIT 1;
+        SELECT id_col INTO v_id_col FROM e_commerce.colores WHERE nom_col = v_color OR hex_col = v_hex LIMIT 1;
         IF v_id_col IS NULL THEN
             INSERT INTO e_commerce.colores (nom_col, hex_col) VALUES (v_color, v_hex);
             SET v_id_col = LAST_INSERT_ID();
@@ -353,8 +353,7 @@ BEGIN
             SET v_id_tal = LAST_INSERT_ID();
         END IF;
         -- Inserta en productos_tallas
-        INSERT INTO e_commerce.productos_tallas (pro_tal_pro, tal_pro_tal)
-        VALUES (v_id_pro, v_id_tal);
+
 
         SET i = i + 1;
     END WHILE;
@@ -370,6 +369,7 @@ END //
 /* DROP PROCEDURE e_commerce.`GetProductsColors`; */
 /* DROP PROCEDURE e_commerce.`GetProductsSizes`; */
 /* DROP PROCEDURE e_commerce.GetProductsByCategory; */
+/* DROP PROCEDURE e_commerce.RegisterProduct; */
 
 /* CALL e_commerce.GetAllProducts(); */
 /* CALL e_commerce.GetProductsCategories(); */

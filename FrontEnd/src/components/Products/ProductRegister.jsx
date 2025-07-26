@@ -2,13 +2,12 @@
 import React, { useEffect, useState } from 'react'
 import {
     Package, Tag, List, Palette,
-    Ruler, DollarSign, Type, AlignLeft,
+    DollarSign, Type, AlignLeft,
     X, Save, Plus, Trash2,
-    ImageIcon
 } from 'lucide-react'
 
 // Imports 
-import { errorStatusHandler } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler } from '../../Utils/utils'
 import { GetData, PostData } from '../../Utils/Requests'
 import AdminLoadingScreen from '../Global/Loading'
 
@@ -17,9 +16,9 @@ import styles from '../../styles/Products/ProductRegister.module.css'
 
 // Component 
 export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
-    const [currentColor, setCurrentColor] = useState({ name: '', hex: '' })
+    const [currentColor, setCurrentColor] = useState({ name: '', hex: '#000000' })
     const [currentSize, setCurrentSize] = useState('')
-    const [currentImage, setCurrentImage] = useState('')
+    const [currentImageColor, setCurrentImageColor] = useState('')
     const [categories, setCategories] = useState(null)
     const [sizes, setSizes] = useState(null)
     const [showDropDown, setShowDropDown] = useState(null)
@@ -27,14 +26,13 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isLoading, setIsLoading] = useState()
     const [formData, setFormData] = useState({
-        name: '',
-        price: '',
-        description: '',
+        nom_pro: '',
+        pre_pro: '',
+        des_pro: '',
         onSale: false,
-        category: '',
-        colors: [],
-        sizes: [],
-        images: []
+        nom_cat: '',
+        colores: [],
+        tallas: [],
     })
 
 
@@ -50,34 +48,14 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         }
     }
 
-    const addColor = () => {
-        if (!currentColor.name || !currentColor.hex) return
-
-        setFormData(prev => ({
-            ...prev,
-            colors: [...prev.colors, currentColor]
-        }))
-        setCurrentColor({ name: '', hex: '' })
-    }
-
     const addSize = () => {
         if (!currentSize) return
 
         setFormData(prev => ({
             ...prev,
-            sizes: [...prev.sizes, currentSize]
+            tallas: [...prev.tallas, currentSize]
         }))
         setCurrentSize('')
-    }
-
-    const addImage = () => {
-        if (!currentImage) return
-
-        setFormData(prev => ({
-            ...prev,
-            images: [...prev.images, currentImage]
-        }))
-        setCurrentImage('')
     }
 
     const removeItem = (type, index) => {
@@ -90,12 +68,11 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
     const validateForm = () => {
         const newErrors = {}
 
-        if (!formData.name) newErrors.name = 'Nombre requerido'
-        if (!formData.price || isNaN(formData.price)) newErrors.price = 'Precio inválido'
-        if (!formData.category) newErrors.category = 'Categoría requerida'
-        if (formData.colors.length === 0) newErrors.colors = 'Al menos un color requerido'
-        if (formData.sizes.length === 0) newErrors.sizes = 'Al menos una talla requerida'
-        if (formData.images.length === 0) newErrors.images = 'Al menos una imagen requerida'
+        if (!formData.nom_pro) newErrors.nom_pro = 'Nombre requerido'
+        if (!formData.pre_pro || isNaN(formData.pre_pro) || formData.pre_pro.length > 10 ) newErrors.pre_pro = 'Precio inválido maximo 10 numeros'
+        if (!formData.nom_cat) newErrors.category = 'Categoría requerida'
+        if (formData.colores.length === 0) newErrors.colores = 'Al menos un color requerido'
+        if (formData.tallas.length === 0) newErrors.tallas = 'Al menos una talla requerida'
 
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
@@ -109,6 +86,11 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         setIsSubmitting(true)
         setIsLoading(true)
         try {
+            console.log(formData)
+            formData.hex_colores = String(formData.colores.map(i => i.hex))
+            formData.imgs = String(formData.colores.map(i => i.url))
+            formData.colores = String(formData.colores.map(i => i.name))
+            formData.tallas = String(formData.tallas)
             const response = await PostData(`${URL}/products/register`, formData)
             console.log(response)
             if (response.success) {
@@ -128,7 +110,6 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         try {
             const got = await GetData(`${URL}/products/categories`)
             setCategories(got)
-            console.log(got)
         } catch (err) {
             const message = errorStatusHandler(err)
             console.log(message)
@@ -140,7 +121,6 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
             const got = await GetData(`${URL}/products/sizes`)
             setSizes(got)
             setIsLoading(false)
-            console.log(got)
         } catch (err) {
             setIsLoading(false)
             const message = errorStatusHandler(err)
@@ -148,11 +128,20 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         }
     }
 
-    if (isLoading) {
-        return (
-            <AdminLoadingScreen message='Cargando...' />
-        )
-    }
+    const addColorAndImage = (colorIdx) => {
+        const newColors = [...formData.colores]
+        const replic = newColors?.some(i => i?.url?.includes(currentImageColor))
+
+        if (replic) return
+        newColors[colorIdx].url = currentImageColor
+        setFormData({ ...formData, colores: newColors })
+    }   
+
+    // if (isLoading) {
+    //     return (
+    //         <AdminLoadingScreen message='Cargando...' />
+    //     )
+    // }
 
     useEffect(() => {
         GetCat()
@@ -178,17 +167,17 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                 <div className={styles.formGrid}>
                     {/* Columna izquierda - Información básica */}
                     <div className={styles.formColumn}>
-                        <div className={`${styles.formGroup} ${errors.name ? styles.hasError : ''}`}>
+                        <div className={`${styles.formGroup} ${errors.nom_pro ? styles.hasError : ''}`}>
                             <label><Type size={16} /> Nombre del Producto*</label>
                             <input
                                 type="text"
-                                name="name"
-                                value={formData.name}
+                                name="nom_pro"
+                                value={formData.nom_pro}
                                 onChange={handleChange}
                                 placeholder="Ej: Camiseta básica"
                                 className={styles.input}
                             />
-                            {errors.name && <span className={styles.errorText}>{errors.name}</span>}
+                            {errors.nom_pro && <span className={styles.errorText}>{errors.nom_pro}</span>}
                         </div>
 
                         <div className={styles.formGroup}>
@@ -207,8 +196,8 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                         <div className={styles.formGroup}>
                             <label><AlignLeft size={16} /> Descripción</label>
                             <textarea
-                                name="description"
-                                value={formData.description}
+                                name="des_pro"
+                                value={formData.des_pro}
                                 onChange={handleChange}
                                 placeholder="Detalles del producto..."
                                 rows="4"
@@ -219,29 +208,30 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
 
                     {/* Columna derecha - Variantes y multimedia */}
                     <div className={styles.formColumn}>
-                        <div className={`${styles.formGroup} ${errors.price ? styles.hasError : ''}`}>
+                        <div className={`${styles.formGroup} ${errors.pre_pro ? styles.hasError : ''}`}>
                             <label><DollarSign size={16} /> Precio*</label>
                             <div className={styles.inputWithSymbol}>
                                 <span>$</span>
                                 <input
                                     type="number"
-                                    name="price"
-                                    value={formData.price}
+                                    name="pre_pro"
+                                    value={formData.pre_pro}
                                     onChange={handleChange}
                                     placeholder="0.00"
                                     step="0.01"
                                     min="0"
+                                    maxLength={10}
                                     className={styles.input}
                                 />
                             </div>
-                            {errors.price && <span className={styles.errorText}>{errors.price}</span>}
+                            {errors.pre_pro && <span className={styles.errorText}>{errors.pre_pro}</span>}
                         </div>
 
-                        <div className={`${styles.formGroup} ${errors.category ? styles.hasError : ''}`}>
+                        <div className={`${styles.formGroup} ${errors.nom_cat ? styles.hasError : ''}`}>
                             <label><List size={16} /> Categoría*</label>
                             <select
-                                name="category"
-                                value={formData.category}
+                                name="nom_cat"
+                                value={formData.nom_cat}
                                 onChange={handleChange}
                                 className={styles.select}
                             >
@@ -250,11 +240,11 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                     <option key={idx + 989} value={cat.nom_cat_pro}>{cat.nom_cat_pro}</option>
                                 ))}
                             </select>
-                            {errors.category && <span className={styles.errorText}>{errors.category}</span>}
+                            {errors.nom_cat && <span className={styles.errorText}>{errors.nom_cat}</span>}
                         </div>
 
                         {/* Sección de tallas */}
-                        <div className={`${styles.formGroup} ${errors.sizes ? styles.hasError : ''}`}>
+                        <div className={`${styles.formGroup} ${errors.tallas ? styles.hasError : ''}`}>
                             <label><Palette size={16} /> Tallas*</label>
                             <div className={styles.multiInputGroup}>
                                 <input
@@ -276,7 +266,7 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                                 onClick={() => {
                                                     setFormData(prev => ({
                                                         ...prev,
-                                                        sizes: [...prev.sizes, size.nom_tal_pro]
+                                                        tallas: [...prev.tallas, size.nom_tal_pro]
                                                     }))
                                                     setCurrentSize(size.nom_tal_pro)
                                                     setShowDropDown(false)
@@ -299,12 +289,12 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                             </div>
 
                             <div className={styles.tagsContainer}>
-                                {formData.sizes?.map((size, index) => (
+                                {formData?.tallas?.map((size, index) => (
                                     <div key={index} className={styles.sizeTag}>
                                         {size}
                                         <button
                                             type="button"
-                                            onClick={() => removeItem('sizes', index)}
+                                            onClick={() => removeItem('tallas', index)}
                                             className={styles.tagRemove}
                                         >
                                             <X size={14} />
@@ -312,92 +302,77 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                     </div>
                                 ))}
                             </div>
-                            {errors.sizes && <span className={styles.errorText}>{errors.sizes}</span>}
+                            {errors.tallas && <span className={styles.errorText}>{errors.tallas}</span>}
                         </div>
                     </div>
+                    
                     {/* Sección Integrada de Colores e Imágenes */}
                     <section className={styles.integratedSection}>
-                        <div className={`${styles.formGroup} ${errors.colors ? styles.hasError : ''}`}>
+                        <section className={`${styles.formGroup} ${errors.colors ? styles.hasError : ''}`}>
                             <label><Palette size={16} /> Colores e Imágenes*</label>
 
                             {/* Lista de colores con sus imágenes */}
-                            {formData.colors?.map((color, colorIndex) => (
-                                <div key={colorIndex} className={styles.colorImageGroup}>
-                                    <div className={styles.colorHeader}>
-                                        <span
-                                            className={styles.colorBadge}
-                                            style={{ backgroundColor: color.hex }}
-                                        />
-                                        <span className={styles.colorName}>{color.name}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem('colors', colorIndex)}
-                                            className={styles.tagRemove}
-                                        >
-                                            <X size={14} />
-                                        </button>
-                                    </div>
+                            {formData?.colores?.map((color, colorIndex) => (
+                                <section key={colorIndex} className={styles.colorImageGroup}>
+                                    <section>
+                                        <div className={styles.colorHeader}>
+                                            <span
+                                                className={styles.colorBadge}
+                                                style={{ backgroundColor: color.hex }}
+                                            />
+                                            <span className={styles.colorName}>{color.name}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeItem('colores', colorIndex)}
+                                                className={styles.tagRemove}
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </div>
 
-                                    {/* Input para agregar imágenes a este color específico */}
-                                    <div className={styles.imageInputGroup}>
-                                        <input
-                                            type="text"
-                                            value={color.images ? color.images[color.images.length - 1]?.url || '' : ''}
-                                            onChange={(e) => {
-                                                const newColors = [...formData.colors];
-                                                if (!newColors[colorIndex].images) newColors[colorIndex].images = [];
-                                                newColors[colorIndex].images.push({ url: e.target.value });
-                                                setFormData({ ...formData, colors: newColors });
-                                            }}
-                                            placeholder="URL de imagen para este color"
-                                            className={styles.input}
+                                        {/* Input para agregar imágenes a este color específico */}
+                                        <div className={styles.imageInputGroup}>
+                                            <input
+                                                type="text"
+                                                value={currentImageColor || ''}
+                                                onChange={(e) => setCurrentImageColor(e.target.value)}
+                                                placeholder="URL de imagen para este color"
+                                                className={styles.input}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => addColorAndImage(colorIndex)}
+                                                className={styles.addButton}
+                                            >
+                                                <Plus size={16} />
+                                            </button>
+                                        </div>
+                                    </section>
+
+                                    {/* Previsualización de imágenes para este color */}
+                                    
+                                    <section 
+                                        className={styles.imagePreviewItem}
+                                        style={{ borderColor: color.hex }}
+                                        >
+                                        <CheckImage
+                                            src={color.url}
+                                            alt={color.name}
+                                            imgDefault={imgDefault}
                                         />
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 const newColors = [...formData.colors];
-                                                if (newColors[colorIndex].images && newColors[colorIndex].images.length > 0) {
-                                                    const lastImage = newColors[colorIndex].images[newColors[colorIndex].images.length - 1].url;
-                                                    if (lastImage) {
-                                                        newColors[colorIndex].images.push({ url: '' });
-                                                    }
-                                                } else {
-                                                    newColors[colorIndex].images = [{ url: '' }];
-                                                }
+                                                newColors[colorIndex].splice(colorIndex, 1);
                                                 setFormData({ ...formData, colors: newColors });
                                             }}
-                                            className={styles.addButton}
+                                            className={styles.imageRemove}
                                         >
-                                            <Plus size={16} />
+                                            <Trash2 size={14} />
                                         </button>
-                                    </div>
-
-                                    {/* Previsualización de imágenes para este color */}
-                                    <div className={styles.colorImagesPreview}>
-                                        {color.images?.map((img, imgIndex) => (
-                                            img.url && (
-                                                <div key={imgIndex} className={styles.imagePreviewItem}>
-                                                    <img
-                                                        src={img.url}
-                                                        alt={`${color.name} ${imgIndex}`}
-                                                        onError={(e) => e.target.src = imgDefault || 'https://via.placeholder.com/80'}
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            const newColors = [...formData.colors];
-                                                            newColors[colorIndex].images.splice(imgIndex, 1);
-                                                            setFormData({ ...formData, colors: newColors });
-                                                        }}
-                                                        className={styles.imageRemove}
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                </div>
-                                            )
-                                        ))}
-                                    </div>
-                                </div>
+                                    </section>
+                                </section>
                             ))}
 
                             {/* Input para agregar nuevo color */}
@@ -424,7 +399,7 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                             if (currentColor.name && currentColor.hex) {
                                                 setFormData(prev => ({
                                                     ...prev,
-                                                    colors: [...prev.colors, {
+                                                    colores: [...prev.colores, {
                                                         ...currentColor,
                                                         images: []
                                                     }]
@@ -438,12 +413,12 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                     </button>
                                 </div>
                             </div>
-                            {errors.colors && <span className={styles.errorText}>{errors.colors}</span>}
-                        </div>
+                            {errors.colores && <span className={styles.errorText}>{errors.colores}</span>}
+                        </section>
                     </section>    
                 </div>
 
-                <div className={styles.formActions}>
+                <footer className={styles.formActions}>
                     <button
                         type="button"
                         className={styles.cancelButton}
@@ -463,8 +438,11 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                             </>
                         )}
                     </button>
-                </div>
+                </footer>
             </form>
+            {isLoading && (
+                <AdminLoadingScreen message='Cargando...' />
+            )}
         </main>
     )
 }
