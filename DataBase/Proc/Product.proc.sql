@@ -118,14 +118,7 @@ BEGIN
     END IF;
 
     SELECT 
-        p.id_pro,
-        p.nom_pro,
-        p.pre_pro,
-        p.des_pro,
-        p.sta_pro,
-        p.onSale,
-        p.created_at,
-        p.updated_at,
+        p.*,
         c.id_cat_pro,
         c.nom_cat_pro,
         (
@@ -170,7 +163,35 @@ BEGIN
             SELECT SUM(inv.cantidad)
             FROM inventario inv
             WHERE inv.id_pro_inv = p.id_pro
-        ) AS stock_total
+        ) AS stock_total,
+        (
+            SELECT GROUP_CONCAT(
+                CONCAT_WS(';',
+                    o.id_ofe,
+                    o.nom_ofe,
+                    o.des_ofe,
+                    o.dur_ofe,
+                    o.fec_ini_ofe,
+                    o.fec_fin_ofe,
+                    o.por_des_ofe,
+                    o.created_at,
+                    o.updated_at
+                ) 
+                SEPARATOR '---'
+            )
+            FROM
+                ofertas o 
+            JOIN 
+                oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+            JOIN 
+                oferta_productos op ON op.pro_ofe_pro = p.id_pro
+            WHERE
+                o.fec_fin_ofe > CURRENT_TIMESTAMP
+                AND (
+                    ocp.ofe_pro = o.id_ofe 
+                    OR op.ofe_pro = o.id_ofe
+                )
+        )AS offers
     FROM 
         e_commerce.productos p
     INNER JOIN 
@@ -375,17 +396,3 @@ END //
 /* CALL e_commerce.GetProductsCategories(); */
 /* CALL e_commerce.GetProductsByCategory('Lencería'); */
 /* CALL e_commerce.RegisterProduct('Lencería'); */
-
-/* INSERT INTO e_commerce.colores (nom_col,hex_col,key_col)
-VALUES ('test1','#test1',
-'[
-    {
-        "nombre": "paors1",
-        "hex_col": "#ffffff"
-    },
-    {
-        "nombre": "paors2",
-        "hex_col": "#ffffff"
-    },
-]'
-); */

@@ -1,4 +1,36 @@
 -- Active: 1746130779175@@127.0.0.1@3306@e_commerce
+CREATE PROCEDURE e_commerce.GetPaymentMethods()
+BEGIN
+    -- Verifica si hay categorias
+    IF NOT EXISTS (SELECT 1 FROM metodos_pagos) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existen métodos de pago en el sistema';
+    END IF;
+
+    SELECT
+        mp.id_met_pag,
+        mp.nom_met_pag,
+        mp.created_at,
+        mp.updated_at
+    FROM metodos_pagos mp
+    LIMIT 50;
+END //
+CREATE PROCEDURE e_commerce.GetShippingMethods()
+BEGIN
+    -- Verifica si hay categorias
+    IF NOT EXISTS (SELECT 1 FROM metodos_envios) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existen métodos de envío en el sistema';
+    END IF;
+
+    SELECT
+        me.id_met_env,
+        me.nom_met_env,
+        me.des_met_env,
+        me.pre_met_env,
+        me.created_at,
+        me.updated_at
+    FROM metodos_envios me
+    LIMIT 50;
+END //
 CREATE PROCEDURE e_commerce.GetAllOrders()
 BEGIN
     -- Si no hay pedidos, mostrar señal
@@ -79,7 +111,7 @@ BEGIN
             p.id_ped LIKE p_by
             OR per.doc_per LIKE p_by
     ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontro pedidos en el sistema';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontro el pedido en el sistema';
     ELSE
         SELECT 
             p.id_ped,
@@ -152,7 +184,7 @@ CREATE PROCEDURE e_commerce.RegisterOrder(
     IN p_direccion_envio VARCHAR(200),
     IN p_metodo_pago_nombre VARCHAR(100),
     IN p_metodo_envio_nombre VARCHAR(100),
-    IN p_productos_json JSON
+    IN p_productos_json TEXT -- TEXT para manejar strings
 )
 BEGIN
     DECLARE v_cliente_id INT;
@@ -177,7 +209,7 @@ BEGIN
     WHERE doc_per = p_documento_cliente AND estado = 'DISPONIBLE';
     
     IF v_cliente_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cliente no encontrado o no disponible';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cliente no encontradó o no disponible';
     END IF;
     
     -- 2. Validar y obtener ID del método de pago
@@ -185,7 +217,7 @@ BEGIN
     WHERE nom_met_pag = p_metodo_pago_nombre;
     
     IF v_metodo_pago_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Método de pago no encontrado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Método de pago no encontradó';
     END IF;
     
     -- 3. Validar y obtener ID del método de envío
@@ -193,7 +225,7 @@ BEGIN
     WHERE nom_met_env = p_metodo_envio_nombre;
     
     IF v_metodo_envio_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Método de envío no encontrado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Método de envío no encontradó';
     END IF;
     
     -- 4. Verificar si ya existe un pedido idéntico pendiente para este cliente
@@ -223,16 +255,21 @@ BEGIN
     
     SET v_pedido_id = LAST_INSERT_ID();
     
-    -- 6. Procesar cada producto del pedido
-    SET v_producto_count = JSON_LENGTH(p_productos_json);
+     -- 6. Procesar cada producto del pedido
+    SET @json_clean = REPLACE(REPLACE(p_productos_json, '\\"', '"'), '\\', '');
+    SET v_producto_count = JSON_LENGTH(@json_clean);
     
     WHILE v_i < v_producto_count DO
         -- Extraer datos del producto actual
+        SET @producto_path = CONCAT('$[', v_i, '].producto');
+        SET @color_path = CONCAT('$[', v_i, '].color');
+        SET @talla_path = CONCAT('$[', v_i, '].talla');
+        SET @cantidad_path = CONCAT('$[', v_i, '].cantidad');
         
-        SET v_producto_nombre = JSON_UNQUOTE(JSON_EXTRACT(p_productos_json, CONCAT('$[', v_i, '.producto')));
-        SET v_color_nombre = JSON_UNQUOTE(JSON_EXTRACT(p_productos_json, CONCAT('$[', v_i, '].color')));
-        SET v_talla_nombre = JSON_UNQUOTE(JSON_EXTRACT(p_productos_json, CONCAT('$[', v_i, '].talla')));
-        SET v_cantidad = JSON_EXTRACT(p_productos_json, CONCAT('$[', v_i, '].cantidad'));
+        SET v_producto_nombre = JSON_UNQUOTE(JSON_EXTRACT(@json_clean, @producto_path));
+        SET v_color_nombre = JSON_UNQUOTE(JSON_EXTRACT(@json_clean, @color_path));
+        SET v_talla_nombre = JSON_UNQUOTE(JSON_EXTRACT(@json_clean, @talla_path));
+        SET v_cantidad = CAST(JSON_UNQUOTE(JSON_EXTRACT(@json_clean, @cantidad_path)) AS UNSIGNED);
 
         
         -- Obtener IDs de producto, color y talla
@@ -249,7 +286,7 @@ BEGIN
         
         IF v_producto_id IS NULL THEN
             -- Primero asignas el mensaje a una variable
-            SET @mensaje_error = CONCAT('Producto no disponible o no encontrado: ', v_producto_nombre, ' - ', v_color_nombre, ' - ', v_talla_nombre);
+            SET @mensaje_error = CONCAT('Producto no disponible o no encontradó: ', v_producto_nombre, ' - ', v_color_nombre, ' - ', v_talla_nombre);
 
             -- Luego usas esa variable en SIGNAL
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @mensaje_error;   
@@ -298,9 +335,6 @@ BEGIN
         
         SET v_i = v_i + 1;
     END WHILE;
-    
-    -- Retornar el ID del pedido creado
-    SELECT v_pedido_id AS pedido_id, 'Pedido registrado exitosamente' AS mensaje;
 END //
 
 /* DROP PROCEDURE e_commerce.GetAllOrders; */

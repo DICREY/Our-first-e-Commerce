@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 
@@ -51,6 +51,7 @@ CREATE TABLE e_commerce.productos(
     id_pro INT AUTO_INCREMENT PRIMARY KEY,
     cat_pro INT NOT NULL,INDEX(cat_pro), FOREIGN KEY(cat_pro) REFERENCES cat_productos(id_cat_pro) ON DELETE CASCADE ON UPDATE CASCADE,
     nom_pro VARCHAR(100) NOT NULL,INDEX(nom_pro),
+    pre_ori_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro) COMMENT 'Precio original de compra del producto',
     pre_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro),
     des_pre_pro INT(3) DEFAULT 0 COMMENT 'Descuento del producto',
     des_pro TEXT NOT NULL,
@@ -121,6 +122,7 @@ CREATE TABLE e_commerce.pedidos (
     fec_ped DATE DEFAULT(CURRENT_DATE()),
     sta_ped ENUM('PENDIENTE', 'PROCESANDO', 'ENVIADO', 'ENTREGADO', 'CANCELADO') DEFAULT 'PENDIENTE',INDEX(sta_ped),
     dir_env_ped VARCHAR(200) NOT NULL,
+    fec_ent_ped DATE DEFAULT('0000-00-00'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
     met_pag_ped INT NOT NULL,INDEX(met_pag_ped),FOREIGN KEY (met_pag_ped) REFERENCES metodos_pagos(id_met_pag) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -145,6 +147,32 @@ CREATE TABLE e_commerce.preferencias(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
+
+CREATE TABLE e_commerce.ofertas(
+    id_ofe INT AUTO_INCREMENT PRIMARY KEY,
+    nom_ofe VARCHAR(255) NOT NULL,
+    des_ofe TEXT NOT NULL,
+    dur_ofe INT DEFAULT 0 NOT NULL COMMENT 'duración de oferta en horas',
+    fec_ini_ofe TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    fec_fin_ofe TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    por_des_ofe INT DEFAULT 0 NOT NULL COMMENT 'Porcentaje de oferta',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
+);
+CREATE TABLE e_commerce.oferta_productos(
+    ofe_pro INT NOT NULL,INDEX(ofe_pro),  FOREIGN KEY(ofe_pro) REFERENCES ofertas(id_ofe) ON DELETE CASCADE ON UPDATE CASCADE,
+    pro_ofe_pro INT NOT NULL COMMENT 'Producto',INDEX(pro_ofe_pro),FOREIGN KEY (pro_ofe_pro) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de aplicación',
+    PRIMARY KEY(ofe_pro,pro_ofe_pro)
+);
+
+CREATE TABLE e_commerce.oferta_categoria_productos(
+    ofe_pro INT NOT NULL,INDEX(ofe_pro),  FOREIGN KEY(ofe_pro) REFERENCES ofertas(id_ofe) ON DELETE CASCADE ON UPDATE CASCADE,
+    cat_ofe_pro INT NOT NULL,INDEX(cat_ofe_pro), FOREIGN KEY(cat_ofe_pro) REFERENCES cat_productos(id_cat_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de aplicación',
+    PRIMARY KEY(ofe_pro,cat_ofe_pro)
+);
+
 
 -- Tabla para sesiones/usuarios únicos
 CREATE TABLE e_commerce.sessions (

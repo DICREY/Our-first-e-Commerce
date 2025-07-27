@@ -136,7 +136,7 @@ export const OrdersList = ({ URL = '', setIdOrder = null }) => {
               to={'/admin/orders/register'}
             >
               <Plus size={16} />
-              Nuevo Producto
+              Nuevo Pedido
             </NavLink>
           </nav>
         </header>

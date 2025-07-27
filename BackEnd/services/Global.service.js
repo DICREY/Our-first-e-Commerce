@@ -41,6 +41,18 @@ class Global {
             return { ...data, [key]: arr };
         });
     }
+
+    safeJsonParse(data) {
+        if (typeof data === 'string') {
+            try {
+                return JSON.parse(data)
+            } catch (e) {
+                console.error('Error parsing JSON:', e)
+                return null
+            }
+        }
+        return data; // Ya es un objeto
+    }
 }
 
 // Export 

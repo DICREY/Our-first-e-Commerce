@@ -169,75 +169,71 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   return (
     <>
       <header className={styles.header}>
-        <div className={styles.container}>
-          <div className={styles.nav}>
-            {/* Logo */}
-            <Link to="/" className={styles.logo}>
-              <div className={styles.logoIcon}>
-                <span>F</span>
-              </div>
-              <span className={styles.logoText}>FashionHub</span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <nav className={styles.navigation}>
-              {navigation.map((item, index) => (
-                <NavLinkItem
-                  key={`nav-${index}-${item.href}`} // Clave más única
-                  item={item}
-                  setCatPro={setCatPro}
-                  isActive={isActive(item.href)}
-                />
-              ))}
-              {admin && (
-                <Link 
-                  to="/admin/home"
-                  className={`${styles.navLink} ${isActive('/admin/home') ? styles.activeLink : ''}`}
-                >
-                  Administración
-                </Link>
-              )}
-            </nav>
-
-            {/* Actions */}
-            <div className={styles.actions}>
-              <Button variant="ghost" size="icon" className={styles.hidden}>
-                <Search />
-              </Button>
-
-              <Button variant="ghost" size="icon" onClick={() => setIsFavoritesOpen(true)}>
-                <Heart />
-              </Button>
-
-              <ProfileMenu 
-                ref={profileMenuRef}
-                isOpen={isProfileMenuOpen}
-                setIsOpen={setIsProfileMenuOpen}
-                user={user}
-                imgDefault={imgDefault}
-                handleLogout={handleLogout}
-                styles={styles}
-              />
-
-              <div className={styles.cartButton}>
-                <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
-                  <ShoppingBag />
-                  {getTotalItems() > 0 && <span className={styles.cartBadge}>{getTotalItems()}</span>}
-                </Button>
-              </div>
-
-              <div className={styles.mobileMenu}>
-                <button 
-                  className={styles.mobileMenuButton} 
-                  onClick={() => setIsMenuOpen(true)}
-                  aria-label="Abrir menú móvil"
-                >
-                  ☰
-                </button>
-              </div>
-            </div>
+        {/* Logo */}
+        <Link to="/" className={styles.logo}>
+          <div className={styles.logoIcon}>
+            <span>F</span>
           </div>
-        </div>
+          <span className={styles.logoText}>FashionHub</span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav className={styles.navigation}>
+          {navigation.map((item, index) => (
+            <NavLinkItem
+              key={`nav-${index}-${item.href}`} // Clave más única
+              item={item}
+              setCatPro={setCatPro}
+              isActive={isActive(item.href)}
+            />
+          ))}
+          {admin && (
+            <Link 
+              to="/admin/home"
+              className={`${styles.navLink} ${isActive('/admin/home') ? styles.activeLink : ''}`}
+            >
+              Administración
+            </Link>
+          )}
+        </nav>
+
+        {/* Actions */}
+        <nav className={styles.actions}>
+          <Button variant="ghost" size="icon" className={styles.hidden}>
+            <Search />
+          </Button>
+
+          <Button variant="ghost" size="icon" onClick={() => setIsFavoritesOpen(true)}>
+            <Heart />
+          </Button>
+
+          <ProfileMenu 
+            ref={profileMenuRef}
+            isOpen={isProfileMenuOpen}
+            setIsOpen={setIsProfileMenuOpen}
+            user={user}
+            imgDefault={imgDefault}
+            handleLogout={handleLogout}
+            styles={styles}
+          />
+
+          <div className={styles.cartButton}>
+            <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
+              <ShoppingBag />
+              {getTotalItems() > 0 && <span className={styles.cartBadge}>{getTotalItems()}</span>}
+            </Button>
+          </div>
+
+          <div className={styles.mobileMenu}>
+            <button 
+              className={styles.mobileMenuButton} 
+              onClick={() => setIsMenuOpen(true)}
+              aria-label="Abrir menú móvil"
+            >
+              ☰
+            </button>
+          </div>
+        </nav>
       </header>
 
       <CartSheet 

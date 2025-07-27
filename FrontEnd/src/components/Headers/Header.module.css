@@ -1,25 +1,17 @@
 .header {
   position: sticky;
+  display: flex;
   top: 0;
-  z-index: 40;
+  padding: 0 1rem;
+  height: 4rem;
   width: 100%;
+  align-items: center;
+  justify-content: space-between;
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--neutral-200);
   will-change: transform; /* Optimiza las animaciones */
-}
-
-.container {
-  margin: 0 auto;
-  padding: 0 1rem;
-  max-width: 1400px;
-}
-
-.nav {
-  display: flex;
-  height: 4rem;
-  align-items: center;
-  justify-content: space-between;
+  z-index: 40;
 }
 
 .logo {
@@ -43,7 +35,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--white);
   font-weight: bold;
   font-size: 0.9rem;
 }

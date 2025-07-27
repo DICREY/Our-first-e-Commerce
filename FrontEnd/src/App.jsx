@@ -20,11 +20,11 @@ import { ProductDetailAdmin } from "./components/Details/ProductDetail"
 import { AdminProfile } from "./components/People/AdminProfile"
 import { CustomerRegister } from "./components/People/CustomerRegister";
 import { ProductRegister } from "./components/Products/ProductRegister";
+import { OrderRegister } from "./components/Admin/OrderRegister";
 import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
-import { OrderRegister } from "./components/Admin/OrderRegister";
 
 // Main Module 
 const App = () => {

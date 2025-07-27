@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 -- Roles
 INSERT INTO e_commerce.roles (nom_rol) VALUES
 ('Administrador'),
@@ -80,37 +80,37 @@ INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES
 ('Única');
 
 -- Productos
-INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, des_pro, sta_pro) VALUES
+INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, pre_ori_pro, des_pro, sta_pro) VALUES
 -- Ropa casual
-(1, 'Blusa de seda estampada', 45000.99, 'Blusa elegante de seda con estampado floral', DEFAULT),
-(1, 'Jeans skinny alto talle', 59000.99, 'Jeans ajustados con tiro alto y elastano', DEFAULT),
-(1, 'Vestido midi floral', 65000.99, 'Vestido hasta la rodilla con estampado de flores', DEFAULT),
+(1, 'Blusa de seda estampada', 45000.99, 40000.99, 'Blusa elegante de seda con estampado floral', DEFAULT),
+(1, 'Jeans skinny alto talle', 59000.99, 54000.99, 'Jeans ajustados con tiro alto y elastano', DEFAULT),
+(1, 'Vestido midi floral', 65000.99, 60000.99, 'Vestido hasta la rodilla con estampado de flores', DEFAULT),
 -- Abrigos y chaquetas
-(1, 'Chaqueta de denim', 89000.99, 'Chaqueta estilo oversize en mezclilla', DEFAULT),
-(1, 'Abrigo de lana invierno', 129000.99, 'Abrigo largo para clima frío con cinturón', DEFAULT),
+(1, 'Chaqueta de denim', 89000.99, 84000.99, 'Chaqueta estilo oversize en mezclilla', DEFAULT),
+(1, 'Abrigo de lana invierno', 129000.99, 120000.99, 'Abrigo largo para clima frío con cinturón', DEFAULT),
 -- Ropa deportiva
-(3, 'Leggings deportivos compresión', 49000.99, 'Leggings de alta compresión para entrenamiento', DEFAULT),
-(3, 'Top deportivo soporte alto', 39000.99, 'Top con soporte máximo para actividades intensas', DEFAULT),
+(3, 'Leggings deportivos compresión', 49000.99, 44000.99, 'Leggings de alta compresión para entrenamiento', DEFAULT),
+(3, 'Top deportivo soporte alto', 39000.99, 34000.99, 'Top con soporte máximo para actividades intensas', DEFAULT),
 -- Lencería
-(2, 'Conjunto de encaje negro', 55000.99, 'Sujetador y braga de encaje con detalles delicados', DEFAULT),
-(2, 'Pijama de satén corto', 42000.99, 'Conjunto de pijama en satén suave', DEFAULT),
+(2, 'Conjunto de encaje negro', 55000.99, 50000.99, 'Sujetador y braga de encaje con detalles delicados', DEFAULT),
+(2, 'Pijama de satén corto', 42000.99, 40000.99, 'Conjunto de pijama en satén suave', DEFAULT),
 -- Ropa de baño
-(1, 'Bikini estampado tropical', 49000.99, 'Conjunto de bikini con estampado floral', DEFAULT),
-(1, 'Bañador entero deportivo', 59000.99, 'Bañador de una pieza para natación', DEFAULT),
+(1, 'Bikini estampado tropical', 49000.99, 44000.99, 'Conjunto de bikini con estampado floral', DEFAULT),
+(1, 'Bañador entero deportivo', 59000.99, 54000.99, 'Bañador de una pieza para natación', DEFAULT),
 -- Ropa formal
-(1, 'Traje de chaqueta slim', 149000.99, 'Conjunto de chaqueta y pantalón para oficina', DEFAULT),
-(1, 'Vestido de cóctel elegante', 119000.99, 'Vestido corto para eventos especiales', DEFAULT),
+(1, 'Traje de chaqueta slim', 149000.99, 144000.99, 'Conjunto de chaqueta y pantalón para oficina', DEFAULT),
+(1, 'Vestido de cóctel elegante', 119000.99, 114000.99, 'Vestido corto para eventos especiales', DEFAULT),
 -- Ropa de maternidad
-(1, 'Vestido maternidad verano', 54000.99, 'Vestido holgado con tirantes ajustables', DEFAULT),
-(1, 'Jeans maternidad elásticos', 69000.99, 'Jeans con bandaja elástica para embarazo', DEFAULT),
+(1, 'Vestido maternidad verano', 54000.99, 50000.99, 'Vestido holgado con tirantes ajustables', DEFAULT),
+(1, 'Jeans maternidad elásticos', 69000.99, 60000.99, 'Jeans con bandaja elástica para embarazo', DEFAULT),
 -- Accesorios de moda
-(1, 'Chal de cachemira', 79000.99, 'Chal fino para todas las estaciones', DEFAULT),
-(1, 'Fular de seda estampado', 39000.99, 'Fular ligero con estampado artístico', DEFAULT),
+(1, 'Chal de cachemira', 79000.99, 74000.99, 'Chal fino para todas las estaciones', DEFAULT),
+(1, 'Fular de seda estampado', 39000.99, 34000.99, 'Fular ligero con estampado artístico', DEFAULT),
 -- Ropa plus size
-(1, 'Vestido plus size floral', 69000.99, 'Vestido holgado con estampado grande', DEFAULT),
-(1, 'Blusa plus size manga larga', 49000.99, 'Blusa elegante con detalles en cuello', DEFAULT),
+(1, 'Vestido plus size floral', 69000.99, 64000.99, 'Vestido holgado con estampado grande', DEFAULT),
+(1, 'Blusa plus size manga larga', 49000.99, 44000.99, 'Blusa elegante con detalles en cuello', DEFAULT),
 
-(1, 'Vestido plus size', 89000.99, 'Vestido holgado', 'NO-DISPONIBLE');
+(1, 'Vestido plus size', 89000.99, 84000.99, 'Vestido holgado', 'NO-DISPONIBLE');
 
 -- Relación producto-color-imagen
 INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col) VALUES 
@@ -137,19 +137,19 @@ INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col)
 -- Inventario: producto, color, talla, cantidad
 INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
 -- Blusa de seda estampada (id_pro=1), Negro (id_col=2), Tallas XS(1)-L(4)
-(1, 2, 1, 10), (1, 2, 2, 8), (1, 2, 3, 5), (1, 2, 4, 2),
+(1, 2, 1, 10), (1, 2, 2, 18), (1, 2, 3, 5), (1, 2, 4, 12),
 -- Blusa de seda estampada, Blanco (3), Tallas XS(1)-L(4)
-(1, 3, 1, 7), (1, 3, 2, 6), (1, 3, 3, 4), (1, 3, 4, 1),
+(1, 3, 1, 17), (1, 3, 2, 16), (1, 3, 3, 114), (1, 3, 4, 111),
 -- Blusa de seda estampada, Rosa (5), Tallas XS(1)-L(4)
-(1, 5, 1, 3), (1, 5, 2, 2), (1, 5, 3, 1), (1, 5, 4, 0),
+(1, 5, 1, 13), (1, 5, 2, 12), (1, 5, 3, 11), (1, 5, 4, 110),
 -- Jeans skinny alto talle (id_pro=2), Negro (2), Tallas 34(7)-42(11)
-(2, 2, 7, 5), (2, 2, 8, 4), (2, 2, 9, 3), (2, 2, 10, 2), (2, 2, 11, 1),
+(2, 2, 7, 15), (2, 2, 8, 14), (2, 2, 9, 13), (2, 2, 10, 12), (2, 2, 11, 11),
 -- Jeans skinny alto talle, Azul Marino (4), Tallas 34(7)-42(11)
-(2, 4, 7, 6), (2, 4, 8, 5), (2, 4, 9, 4), (2, 4, 10, 3), (2, 4, 11, 2),
+(2, 4, 7, 16), (2, 4, 8, 15), (2, 4, 9, 14), (2, 4, 10, 13), (2, 4, 11, 21),
 -- Leggings deportivos compresión (id_pro=6), Rojo (1), Tallas XS(1)-XL(5)
 (6, 1, 1, 10), (6, 1, 2, 10), (6, 1, 3, 10), (6, 1, 4, 10), (6, 1, 5, 10),
 -- Top deportivo soporte alto (id_pro=7), Negro (2), Tallas XS(1)-XL(5)
-(7, 2, 1, 8), (7, 2, 2, 8), (7, 2, 3, 8), (7, 2, 4, 8), (7, 2, 5, 8);
+(7, 2, 1, 18), (7, 2, 2, 18), (7, 2, 3, 18), (7, 2, 4, 81), (7, 2, 5, 18);
 
 -- Métodos de pago
 INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES 
@@ -197,6 +197,23 @@ INSERT INTO e_commerce.productos_pedidos (id_ped, pro_ped, col_pro_ped, img_pro_
 (7, 9, 2, 20, 2, 1),
 (7, 14, 2, 30, 4, 1);
 
+-- Oferta del 30% en toda la categoría de lencería
+INSERT INTO e_commerce.ofertas (nom_ofe, des_ofe, dur_ofe, fec_ini_ofe, fec_fin_ofe, por_des_ofe) 
+VALUES 
+('Verano Sensual', '30% de descuento en toda nuestra colección de lencería para el verano',
+0, '2025-08-01 00:00:00', '2025-08-31 23:59:59', 30),
+('Flash Sale: Conjuntos de Encaje', '40% de descuento en conjuntos de encaje seleccionados por 48 horas', 
+48,'2025-08-15 09:00:00', '2025-08-17 09:00:00', 40
+);
+
+-- Asociar la oferta a la categoría de lencería
+INSERT INTO e_commerce.oferta_categoria_productos (ofe_pro, cat_ofe_pro) 
+VALUES 
+(1, 2);
+
+INSERT INTO e_commerce.oferta_productos (ofe_pro, pro_ofe_pro) 
+VALUES (2, 8);
+
 /* Test */
 -- Insertar el pedido con fecha del año pasado (2023)
 INSERT INTO e_commerce.pedidos (cli_ped, dir_env_ped, met_pag_ped, met_env_ped, sta_ped, fec_ped) 
@@ -206,7 +223,7 @@ VALUES (
   4, -- Método de pago: Contraentrega (Efectivo)
   1, -- Método de envio: Didi
   'ENTREGADO', -- Estado del pedido
-  '2024-08-15' -- Fecha del pedido (15 de noviembre de 2023)
+  '2024-08-15' -- Fecha del pedido (15 de noviembre de 2025)
 );
 
 -- Obtener el ID del pedido recién insertado (supongamos que es el ID 8)

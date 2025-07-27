@@ -24,6 +24,32 @@ Route.get('/all', async (req,res) => {
     }
 })
 
+Route.get('/payment-methods', async (req,res) => {
+    try {
+        const search = await orderInst.findPaymentMethods()
+        if (!search.result) return res.status(404).json({ message: "Métodos de pago no encontrados"})
+
+        res.status(200).json(search)
+    } catch (err) {
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
+Route.get('/shipping-methods', async (req,res) => {
+    try {
+        const search = await orderInst.findShippingMethods()
+        if (!search.result) return res.status(404).json({ message: "Méodos de envío no encontrados"})
+
+        res.status(200).json(search)
+    } catch (err) {
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
 // Middleware 
 Route.use(Fullinfo('empty'))
 // Route.use(authenticateJWT)
@@ -53,9 +79,9 @@ Route.post('/register', async (req,res) => {
         const prod = new Order(body)
         const create = await prod.create()
 
-        if (create.success) return res.status(201).json(create)
+        if (!create.success) return res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
 
-        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
+        res.status(201).json({ result: create })
     } catch(err) {
         console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
