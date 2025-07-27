@@ -92,6 +92,32 @@ class Product {
     }
 
     // function to delete
+    async ChangeStatus() {
+        return new Promise((res,rej) => {
+            // Vars
+            const by = this.args[0]?.trim()
+            const proc = "CALL ChangeStatusProduct(?);"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure and call procedure
+            if (this.database) this.database.conection.query(proc, [by], (err) => {
+                if(err) {
+                    rej({ message: err })
+                } else setTimeout(() => res({
+                    message: "Product status changed",
+                    success: 1
+                }),1000)
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
+    // function to delete
     async delete() {
         return new Promise((res,rej) => {
             // Vars

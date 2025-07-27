@@ -383,6 +383,45 @@ BEGIN
 
     SET autocommit = 1;
 END //
+CREATE PROCEDURE e_commerce.ChangeStatusProduct(
+    IN p_by VARCHAR(100)
+)
+BEGIN
+    DECLARE p_sta_pro VARCHAR(100);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    SELECT sta_pro INTO p_sta_pro FROM productos WHERE id_pro = p_by;
+
+    IF (p_sta_pro) IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontró el producto en el sistema';
+    END IF;
+
+    IF (p_sta_pro LIKE 'NO-DISPONIBLE') THEN
+        UPDATE productos
+        SET 
+            sta_pro = 'DISPONIBLE'
+        WHERE 
+            id_pro LIKE p_by;
+    ELSE
+        UPDATE productos
+        SET 
+            sta_pro = 'NO-DISPONIBLE'
+        WHERE 
+            id_pro LIKE p_by;
+    END IF;
+
+    COMMIT;
+
+    SET autocommit = 1;
+END //
 
 /* DROP PROCEDURE e_commerce.GetAllProducts; */
 /* DROP PROCEDURE e_commerce.`GetProductBy`; */
@@ -391,8 +430,10 @@ END //
 /* DROP PROCEDURE e_commerce.`GetProductsSizes`; */
 /* DROP PROCEDURE e_commerce.GetProductsByCategory; */
 /* DROP PROCEDURE e_commerce.RegisterProduct; */
+/* DROP PROCEDURE e_commerce.`ChangeStatusProduct`; */
 
 /* CALL e_commerce.GetAllProducts(); */
 /* CALL e_commerce.GetProductsCategories(); */
 /* CALL e_commerce.GetProductsByCategory('Lencería'); */
 /* CALL e_commerce.RegisterProduct('Lencería'); */
+/* CALL e_commerce.ChangeStatusProduct('1123123123'); */

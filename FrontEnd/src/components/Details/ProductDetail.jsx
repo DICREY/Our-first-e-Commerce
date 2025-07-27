@@ -18,7 +18,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 
 // Imports 
-import { PostData } from '../../Utils/Requests'
+import { ModifyData, PostData } from '../../Utils/Requests'
 import { calculateDiscount, CheckImage, errorStatusHandler, formatDate, formatNumber } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
@@ -58,10 +58,18 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
         if (dataProduct) fetchProduct()
     }, [dataProduct, URL])
 
-    const handleStatusChange = (newStatus) => {
-        // Aquí iría la lógica para actualizar el estado del producto
-        console.log(`Cambiando estado a: ${newStatus}`)
-        // setProduct({...product, status: newStatus})
+    const handleStatusChange = async (id) => {
+        try {
+            setLoading(true)
+            const data = await ModifyData(`${URL}/products/change-status`,{ by: id })
+            if (data.success) {
+                setLoading(false)
+                fetchProduct()
+            }
+        } catch (err) {
+            const message = errorStatusHandler(err)
+            console.error('Error fetching product:', message)
+        }
     }
 
     if (!product && !loading) {
@@ -102,7 +110,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                                     <>
                                         <XCircle size={16} /> Agotado
                                     </>
-                                ) : product.onSale ? (
+                                ) : product.offers ? (
                                     <>
                                         <Tag size={16} /> En oferta
                                     </>
@@ -120,7 +128,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                             </button>
                             {product?.sta_pro === "NO-DISPONIBLE"? (
                                 <button
-                                    onClick={() => handleStatusChange(product.sta_pro)}
+                                    onClick={() => handleStatusChange(product.id_pro)}
                                     className={styles.activeButton}
                                 >
                                     <Check size={16} />
@@ -128,7 +136,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                                 </button>
                             ):(
                                 <button
-                                    onClick={() => handleStatusChange(product.sta_pro)}
+                                    onClick={() => handleStatusChange(product.id_pro)}
                                     className={styles.deleteButton}
                                 >
                                     <Trash2 size={16} />

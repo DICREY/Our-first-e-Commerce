@@ -87,6 +87,35 @@ class Order {
         })
     }
 
+    // function to modify
+    async complete() {
+        return new Promise((res,rej) => {
+            // data 
+            const params = [this.args[0]]
+            const proc= "CALL CompleteOrder(?);"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc, params,(err) => {
+                if(err) {
+                    rej({ message: err })
+                } else setTimeout(() => {
+                    res({
+                        message: "Modificación exitosa",
+                        success: true
+                    })
+                },1000)
+                
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
     // function to delete
     async delete() {
         return new Promise((res,rej) => {

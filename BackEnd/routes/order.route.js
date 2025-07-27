@@ -113,6 +113,25 @@ Route.put('/modify', ValidatorRol("administrador"),async (req,res) => {
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
+
+Route.put('/complete', ValidatorRol("administrador"),async (req,res) => {
+    try {
+        // Vars 
+        const by = String(req.body.by)
+        const ord = new Order(by)
+
+        const mod = await ord.complete()
+        if (mod.success) return res.status(200).json(mod)
+
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
+    } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
 Route.delete('/delete', ValidatorRol("administrador"),async (req,res) => {
     // Vars 
     const { body } = req

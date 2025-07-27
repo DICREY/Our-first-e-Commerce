@@ -203,6 +203,15 @@ BEGIN
     DECLARE v_imagen_id INT;
     DECLARE v_existe_pedido INT;
     DECLARE v_stock_disponible INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
     
     -- 1. Validar y obtener ID del cliente
     SELECT id_per INTO v_cliente_id FROM personas 
@@ -335,14 +344,50 @@ BEGIN
         
         SET v_i = v_i + 1;
     END WHILE;
+
+    COMMIT;
+
+    SET autocommit = 1;
+END //
+
+CREATE PROCEDURE e_commerce.CompleteOrder(
+    IN p_by VARCHAR(100)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    IF NOT EXISTS( SELECT 1 FROM pedidos WHERE id_ped LIKE p_by) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontró el pedido en el sistema';
+    END IF;
+
+    UPDATE 
+        pedidos
+    SET
+        sta_ped = 'ENTREGADO'
+    WHERE
+        id_ped LIKE p_by;
+
+    COMMIT;
+
+    SET autocommit = 1;
 END //
 
 /* DROP PROCEDURE e_commerce.GetAllOrders; */
 /* DROP PROCEDURE e_commerce.`GetOrderBy`; */
 /* DROP PROCEDURE e_commerce.RegisterOrder; */
+/* DROP PROCEDURE e_commerce.`CompleteOrder`; */
 
 /* CALL e_commerce.GetAllOrders(); */
 /* CALL e_commerce.GetOrderBy(123450989); */
+/* CALL e_commerce.CompleteOrder(''); */
 /* CALL e_commerce.RegisterOrder(
     '10293908',
     'Calle 123, Ciudad, País',

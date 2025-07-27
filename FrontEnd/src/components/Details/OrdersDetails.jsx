@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // Imports 
-import { PostData } from '../../Utils/Requests'
+import { ModifyData, PostData } from '../../Utils/Requests'
 import { errorStatusHandler, formatNumber } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Details/OrderDetail.module.css'
-import { Calendar, Check, ChevronLeft, Clock, Mail, Package, PinOff, Printer, RefreshCw, Truck } from 'lucide-react'
+import { Calendar, Check, ChevronLeft, Clock, Mail, Package, PackageCheck, PinOff, Printer, RefreshCw, Truck } from 'lucide-react'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Component 
@@ -29,6 +29,21 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
             setLoading(false)
             const message = errorStatusHandler(err)
         }
+    }
+    
+    const completeOrder = async (id) => {
+        try {
+            setLoading(true)
+            const mod = await ModifyData(`${URL}/orders/complete`, { by: id })
+            if (mod.success) {
+                setLoading(false)
+                GetOrderDetails()
+            }
+        } catch (err) {
+            setLoading(false)
+            const message = errorStatusHandler(err)
+        }
+
     }
 
     // Effects 
@@ -110,10 +125,21 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                             {formatDate(order?.fec_ped)}
                         </div>
                     </div>
-                    <Link to="/admin/orders" className={styles.backButton}>
-                        <ChevronLeft />
-                        Volver a pedidos
-                    </Link>
+                    <nav>
+                        {order?.sta_ped === 'PENDIENTE' && (
+                            <button
+                                className={styles.backButton}
+                                onClick={() => completeOrder(id_ped)}
+                            >
+                                <PackageCheck />
+                                Completar Pedido
+                            </button>
+                        )}
+                        <Link to="/admin/orders" className={styles.backButton}>
+                            <ChevronLeft />
+                            Volver a pedidos
+                        </Link>
+                    </nav>
                 </header>
 
                 <div className={styles.statusSection}>
