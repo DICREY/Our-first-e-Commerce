@@ -1,18 +1,15 @@
 // Librarys 
-import { useContext, useEffect, useState } from 'react'
-
-// Imports 
-import { AuthContext } from '../Contexts/Contexts'
+import { useEffect, useState } from 'react'
 
 // Hooks 
 export const useDarkMode = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'DARK' || 
-           (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  });
+    return localStorage.getItem('theme') === 'DARK' 
+    // || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  })
 
   useEffect(() => {
-    // Aplicar el modo oscuro al montar el componente
+    // Aplicar el modo montar el componente
     toggleDarkMode(isDarkMode)
   }, [])
 
@@ -114,7 +111,6 @@ export const useDarkMode = () => {
     }
     
     setIsDarkMode(enabled)
-    localStorage.setItem('darkMode', enabled)
   }
 
   return [isDarkMode, toggleDarkMode]

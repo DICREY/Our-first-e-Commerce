@@ -1,8 +1,8 @@
     -- Active: 1746130779175@@127.0.0.1@3306@e_commerce
-    CREATE PROCEDURE e_commerce.Login(
+CREATE PROCEDURE e_commerce.Login(
     IN p_firstData VARCHAR(100)
-    )
-    BEGIN
+)
+BEGIN
     IF NOT EXISTS (SELECT 1 FROM personas WHERE email_per = p_firstData) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email ingresado no existe en el sistema';
     END IF;
@@ -31,8 +31,8 @@
     ORDER BY 
         p.nom_per
     LIMIT 1000;
-    END //
-    CREATE PROCEDURE e_commerce.ChangePassword(
+END //
+CREATE PROCEDURE e_commerce.ChangePassword(
     IN p_email VARCHAR(100),
     IN p_passwd TEXT
     )
@@ -48,5 +48,60 @@
         p.email_per = p_email;
 END //
 
+CREATE PROCEDURE e_commerce.ChangeTheme(
+    IN p_doc VARCHAR(100),
+    IN p_theme VARCHAR(100)
+)
+BEGIN
+    DECLARE p_id_per INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    SELECT id_per INTO p_id_per FROM personas WHERE doc_per = p_doc;
+
+    IF (p_id_per) IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Documento ingresado no existe en el sistema';
+    END IF;
+
+    IF (p_theme) IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tema ingresado no es válido';
+    END IF;
+
+    IF (p_theme LIKE 'DARK') THEN
+        UPDATE
+            preferencias p
+        SET
+            p.theme = 'LIGHT'
+        WHERE
+            p.per_pre = p_id_per;
+    ELSE
+        UPDATE
+            preferencias p
+        SET
+            p.theme = 'DARK'
+        WHERE
+            p.per_pre = p_id_per;
+    END IF;
+
+    SELECT
+        p.theme
+    FROM
+        preferencias p
+    WHERE
+        p.per_pre = p_id_per;
+
+    COMMIT;
+
+    SET autocommit = 1;
+END //
+
 /* DROP PROCEDURE e_commerce.`Login`; */
+/* DROP PROCEDURE e_commerce.ChangeTheme; */
 /* CALL e_commerce.Login('admin@gmail.com'); */

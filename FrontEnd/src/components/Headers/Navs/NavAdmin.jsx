@@ -29,7 +29,7 @@ export const NavAdmin = () => {
     const [isDarkMode, toggleDarkMode] = useDarkMode()
 
     // Vars 
-    const { theme } = useContext(AuthContext)
+    const { theme, changeTheme } = useContext(AuthContext)
 
     // Functions 
     const toggleSidebar = () => {
@@ -145,7 +145,10 @@ export const NavAdmin = () => {
             <article className={styles.footerNav}>
                 <button
                     style={{ border: 'none' }}
-                    onClick={() => {toggleDarkMode(!isDarkMode)}}
+                    onClick={() => {
+                        changeTheme()
+                        toggleDarkMode(!isDarkMode)
+                    }}
                     className={styles.btnChangeTheme}
                 >
                     {theme === 'DARK'? <Sun />: <Moon />}

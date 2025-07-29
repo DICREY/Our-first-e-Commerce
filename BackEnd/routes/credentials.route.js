@@ -85,5 +85,26 @@ Route.post('/login', limiterLog, async (req,res) => {
     }
 })
 
+Route.post('/preffers/change-theme', limiterLog, async (req,res) => {
+    // Vars
+    const { doc, theme } = req.body
+    const global = new Credentl(doc, theme)
+
+    try {
+        // Search in database
+        let log = await global.ChangeTheme()
+        if (!log.success) return res.status(500).json({ message: 'Error al cambiar el tema' })
+
+        res.status(200).json({ result: log })
+
+    } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({ message: err.message })
+
+        res.status(500).json({ message: err })
+    }
+})
+
 // Export 
 module.exports = Route

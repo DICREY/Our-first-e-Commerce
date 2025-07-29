@@ -4,13 +4,13 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: var(--gray-bg);
+  background-color: var(--medium-gray);
   padding: 20px;
 }
 
 /* Formulario */
 .login-form {
-  background-color: white;
+  background-color: var(--white);
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -19,7 +19,7 @@
 }
 
 .login-title {
-  color: var(--gray-text);
+  color: var(--gray-600);
   text-align: center;
   margin-bottom: 25px;
   font-size: 24px;
@@ -33,16 +33,16 @@
 .input-label {
   display: block;
   margin-bottom: 8px;
-  color: var(--gray-text);
+  color: var(--gray-600);
   font-weight: 500;
 }
 
 .input-field {
   width: 100%;
   padding: 12px;
-  border: 1px solid var(--gray-border);
+  border: 1px solid var(--gray-400);
   border-radius: 4px;
-  background-color: var(--gray-light);
+  background-color: var(--light-gray);
   font-size: 16px;
 }
 
@@ -56,7 +56,7 @@
   width: 100%;
   padding: 12px;
   background-color: var(--blue-pastel);
-  color: white;
+  color: var(--white);
   border: none;
   border-radius: 4px;
   font-size: 16px;
@@ -88,5 +88,5 @@
 .footer-text {
   display: block;
   margin-top: 10px;
-  color: var(--gray-text);
+  color: var(--gray-600);
 }

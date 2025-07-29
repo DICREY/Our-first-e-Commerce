@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react'
 
 // Imports 
-import { decodeJWT } from '../Utils/utils'
-import { PostCookie } from '../Utils/Requests'
+import { decodeJWT, errorStatusHandler } from '../Utils/utils'
+import { PostCookie, PostData } from '../Utils/Requests'
 import { AuthContext } from './Contexts'
 import AdminLoadingScreen from '../components/Global/Loading'
 
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
                 return { data: userData, logged: 1}
             } else return response
         } catch (err) {
-            throw err 
+            throw err
         }
     }
     
@@ -61,8 +61,26 @@ export const AuthProvider = ({ children }) => {
                 window.location.href = '/login'
             }
         } catch (err) {
-            setUser(null)
+            throw err
         }
+    }
+
+    // Change Theme
+    const changeTheme = async () => {
+        try {
+            const got = await PostData(`http://localhost:3000/ecommerce/credential/preffers/change-theme`, {
+                doc: user.doc,
+                theme: theme
+            })
+            if (got.success && got.result) {
+                localStorage.setItem('theme',got?.result?.[0]?.theme)
+                setTheme(got?.result?.[0]?.theme || 'DARK')
+            }
+        } catch (err) {
+            const message = errorStatusHandler(err)
+            console.log(message)
+        }
+
     }
     
     // Verificar sesión al cargar
@@ -88,14 +106,13 @@ export const AuthProvider = ({ children }) => {
             } catch (err) {
                 setLoading(null)
                 setUser(null)
-                // if (err.status) logout('http://localhost:3000/ecommerce')
             }
         }
         checkAuth()
     }, [])
 
     return (
-        <AuthContext.Provider value={{ admin, theme, img, mainRol, user, roles, login, logout }}>
+        <AuthContext.Provider value={{ admin, theme, img, mainRol, user, roles, login, logout, changeTheme }}>
             {loading ? (
                 <AdminLoadingScreen fullScreen message='Cargando datos...' />
                 ): children
