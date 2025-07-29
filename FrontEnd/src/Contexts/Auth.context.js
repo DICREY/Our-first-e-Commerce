@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
                 setAdmin(userData.roles?.split(', ').includes('Administrador'))
 
                 localStorage.setItem('theme',userData.theme)
-                
+
                 return { data: userData, logged: 1}
             } else return response
         } catch (err) {
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
                     setMainRol(userData.roles?.split(', ')[0] || 'Usuario')
                     setAdmin(userData.roles?.split(', ').includes('Administrador')? 1: 0)
 
-                    localStorage.setItem('theme',userData.theme)
+                    // localStorage.setItem('theme',userData.theme)
                 }
             } catch (err) {
                 setLoading(null)

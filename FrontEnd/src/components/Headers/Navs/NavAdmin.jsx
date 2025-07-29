@@ -142,11 +142,11 @@ export const NavAdmin = () => {
                     ))}
                 </ul>
             </nav>
-            <article>
+            <article className={styles.footerNav}>
                 <button
                     style={{ border: 'none' }}
                     onClick={() => {toggleDarkMode(!isDarkMode)}}
-                    className={styles.navLink}
+                    className={styles.btnChangeTheme}
                 >
                     {theme === 'DARK'? <Sun />: <Moon />}
                     {sidebarOpen && 'Cambiar tema'}
@@ -156,7 +156,7 @@ export const NavAdmin = () => {
                     className={styles.navLink}
                 >
                     <Home size={20} />
-                    {sidebarOpen && 'Volver al sitio'}
+                    {sidebarOpen && 'Volver'}
                 </NavLink>
             </article>
         </aside>

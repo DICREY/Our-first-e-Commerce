@@ -59,17 +59,20 @@ export const TotalSales = ({ URL = '' }) => {
             {
                 label: 'Daily Sales ($)',
                 data: dailySales?.map(item => item.value),
-                borderColor: '#4f46e5',
+                borderColor: 'var(--accent-600)',
                 backgroundColor: 'rgba(131, 70, 229, 0.1)',
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#8346e5ff',
+                pointBackgroundColor: 'var(--accent-600)',
                 pointBorderColor: 'var(--white)',
                 pointHoverRadius: 5,
-                pointHoverBackgroundColor: '#4f46e5',
+                pointHoverBackgroundColor: 'var(--accent-600)',
                 pointHoverBorderColor: 'var(--white)',
                 pointHitRadius: 10,
                 pointBorderWidth: 2,
+                borderWidth: 2,
+                borderRadius: 6,
+                pointRadius: 0,
+                tension: 0.4,
+                fill: true,
             }
         ]
     }

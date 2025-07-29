@@ -105,7 +105,7 @@
 
 body {
   background-color: var(--neutral-50);
-  color: var(--neutral-800);
+  color: var(--gray-600);
   /* height: 100vh;
   width: 100vw; */
   line-height: 1.6;
@@ -197,11 +197,11 @@ html {
   top: 100%;
   left: 0;
   right: 0;
-  background: var(--white);
-  border: 2px solid #00bcd4;
+  border: 2px solid var(--accent-600);
   border-top: none;
   border-radius: 0 0 .7rem .7rem;
   box-shadow: var(--shadow-md);
+  background: var(--light-gray);
   z-index: 10;
   max-height: 12.5rem;
   overflow: hidden auto;
@@ -210,7 +210,7 @@ html {
 .dropdown-item {
   padding: 1rem;
   cursor: pointer;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--medium-gray);
   transition: all 0.2s ease;
   min-height: 3rem;
   display: flex;
@@ -218,7 +218,7 @@ html {
 }
 
 .dropdown-item:hover {
-  background: #e0f7fa;
+  background: var(--medium-gray);
   transform: translateX(4px);
 }
 
@@ -232,11 +232,11 @@ html {
 
 .dropdown-nombre {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--gray-800);
   font-size: 0.875rem;
 }
 
 .dropdown-dueno {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--gray-700);
 }

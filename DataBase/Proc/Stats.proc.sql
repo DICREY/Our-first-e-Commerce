@@ -35,6 +35,7 @@ BEGIN
             e_commerce.pedidos p
         WHERE 
             p.fec_ped BETWEEN '2025-01-01' AND '2025-12-31'
+            AND p.sta_ped = 'ENTREGADO'
         GROUP BY 
             anio, mes_num
     )
@@ -85,6 +86,7 @@ BEGIN
         WHERE 
             YEAR(p.fec_ped) = YEAR(CURRENT_DATE)
             AND WEEK(p.fec_ped, 1) = WEEK(CURRENT_DATE, 1)
+            AND p.sta_ped = 'ENTREGADO'
         GROUP BY 
             anio, semana, dia_num
     )
@@ -117,7 +119,7 @@ BEGIN
             WHERE pr.id_pro = pp.pro_ped
         ) AS value
     FROM e_commerce.pedidos p
-    WHERE p.sta_ped != 'CANCELADO'
+    WHERE p.sta_ped = 'ENTREGADO'
       AND p.fec_ped >= CURRENT_DATE - INTERVAL 12 DAY
     GROUP BY DATE(p.fec_ped)
     ORDER BY p.fec_ped ASC
@@ -137,7 +139,7 @@ BEGIN
     JOIN 
         e_commerce.productos pr ON pp.pro_ped = pr.id_pro
     WHERE 
-        p.sta_ped != 'CANCELADO'
+        p.sta_ped = 'ENTREGADO'
         AND DATE(p.fec_ped) = CURRENT_DATE
     GROUP BY 
         HOUR(p.fec_ped)
@@ -191,7 +193,7 @@ BEGIN
     JOIN
         cat_productos c ON p.cat_pro = c.id_cat_pro
     WHERE
-        pe.sta_ped != 'CANCELADO'
+        pe.sta_ped = 'ENTREGADO'
     GROUP BY
         p.id_pro
     ORDER BY
@@ -281,6 +283,7 @@ BEGIN
         pedidos
     WHERE
         YEAR(fec_ped) IN (2022, 2023)
+        AND sta_ped = 'ENTREGADO'
     GROUP BY
         MONTH(fec_ped)
     ORDER BY
@@ -320,7 +323,7 @@ BEGIN
     JOIN
         e_commerce.productos pr ON pp.pro_ped = pr.id_pro
     WHERE
-        p.sta_ped != 'CANCELADO';
+        p.sta_ped = 'ENTREGADO';
 END //
 
 /* CALL SellestProducts(); */

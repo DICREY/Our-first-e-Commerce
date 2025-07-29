@@ -66,10 +66,11 @@
 .input, .select, .textarea {
     position: relative;
   padding: 0.75rem;
-  border: 1px solid var(--neutral-300);
+  border: 1px solid var(--gray-400);
   border-radius: var(--rounded);
   font-size: 0.9rem;
   transition: var(--transition);
+  color: var(--gray-700);
   background-color: var(--neutral-50);
 }
 
@@ -250,7 +251,7 @@
 
 .submitButton {
   background: var(--primary-500);
-  color: var(--white);
+  color: white;
   border: none;
 }
 

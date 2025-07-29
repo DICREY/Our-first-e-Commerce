@@ -4,10 +4,10 @@ import React, { useState, useEffect, useContext } from 'react'
 // Imports 
 import { AuthContext } from '../../Contexts/Contexts'
 import { errorStatusHandler, formatNumber, Greeting } from '../../Utils/utils'
+import { GetData } from '../../Utils/Requests'
 
 // Import styles 
 import styles from '../../styles/Admin/DailySummary.module.css'
-import { GetData } from '../../Utils/Requests'
 
 // Component 
 export const DailySummary = ({ URL = '' }) => {
@@ -78,7 +78,7 @@ export const DailySummary = ({ URL = '' }) => {
 
                 <div className={styles.alerts}>
                 <div className={styles.alertItem} style={{ 
-                    backgroundColor: 'var(--warning-50)',
+                    backgroundColor: 'var(--primary-50)',
                     borderLeftColor: 'var(--warning-500)'
                 }}>
                     <span className={styles.alertBadge} style={{ backgroundColor: 'var(--warning-500)' }}>
@@ -89,7 +89,7 @@ export const DailySummary = ({ URL = '' }) => {
                 </div>
                 
                 <div className={styles.alertItem} style={{ 
-                    backgroundColor: 'var(--accent-50)',
+                    backgroundColor: 'var(--primary-50)',
                     borderLeftColor: 'var(--accent-500)'
                 }}>
                     <span className={styles.alertBadge} style={{ backgroundColor: 'var(--accent-500)' }}>
