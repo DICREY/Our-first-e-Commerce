@@ -25,6 +25,7 @@ import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
+import { useDarkMode } from "./Hooks/Theme";
 
 // Main Module 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
   const [customer, setCustomer] = useState()
   const [catPro, setCatPro] = useState()
   const [filterFetch, setFilterFetch] = useState(null)
+  const [isDarkMode] = useDarkMode()
 
   // Vars 
   const URL = 'http://localhost:3000/ecommerce'

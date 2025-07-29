@@ -254,10 +254,10 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                                         <div className={styles.stockStatus}>
                                             <div className={styles.stockIndicator}>
                                                 <span className={styles.stockLabel}>Stock disponible:</span>
-                                                <span className={`${styles.stockValue} ${product.stock <= 0 ? styles.outOfStock :
-                                                        product.stock < 10 ? styles.lowStock : ''
+                                                <span className={`${styles.stockValue} ${product.stock_total <= 0 ? styles.outOfStock :
+                                                        product.stock_total < 10 ? styles.lowStock : ''
                                                     }`}>
-                                                    {product.stock} unidades
+                                                    {product.stock_total || 0} unidades
                                                 </span>
                                             </div>
                                             <div className={styles.stockActions}>

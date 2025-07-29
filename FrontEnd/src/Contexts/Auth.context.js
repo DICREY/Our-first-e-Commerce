@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [ user, setUser ] = useState(null)
     const [ roles, setRoles ] = useState(null)
     const [ mainRol, setMainRol ] = useState(null)
+    const [ theme, setTheme ] = useState('DARK')
     const [ admin, setAdmin ] = useState(false)
     const [ img, setImg ] = useState(null)
     const [ loading, setLoading ] = useState(true)
@@ -31,10 +32,14 @@ export const AuthProvider = ({ children }) => {
             if (response) {
                 const userData = decodeJWT(response.__cred)
                 setUser(userData)
+                setTheme(userData.theme)
                 setImg(userData.img)
                 setRoles(userData.roles?.split(', ') || ['Usuario'])
                 setMainRol(userData.roles?.split(', ')[0] || ['Usuario'])
                 setAdmin(userData.roles?.split(', ').includes('Administrador'))
+
+                localStorage.setItem('theme',userData.theme)
+                
                 return { data: userData, logged: 1}
             } else return response
         } catch (err) {
@@ -52,6 +57,7 @@ export const AuthProvider = ({ children }) => {
                 setMainRol(null)
                 setRoles(null)
                 setAdmin(null)
+                setTheme(null)
                 window.location.href = '/login'
             }
         } catch (err) {
@@ -71,10 +77,13 @@ export const AuthProvider = ({ children }) => {
                 if (check) {
                     const userData = decodeJWT(check.data)
                     setUser(userData)
+                    setTheme(userData.theme)
                     setImg(userData.img)
                     setRoles(userData?.roles?.split(', ') || ['Usuario'])
                     setMainRol(userData.roles?.split(', ')[0] || 'Usuario')
                     setAdmin(userData.roles?.split(', ').includes('Administrador')? 1: 0)
+
+                    localStorage.setItem('theme',userData.theme)
                 }
             } catch (err) {
                 setLoading(null)
@@ -86,7 +95,7 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ admin, img, mainRol, user, roles, login, logout }}>
+        <AuthContext.Provider value={{ admin, theme, img, mainRol, user, roles, login, logout }}>
             {loading ? (
                 <AdminLoadingScreen fullScreen message='Cargando datos...' />
                 ): children

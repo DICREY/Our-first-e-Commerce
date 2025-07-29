@@ -1,5 +1,5 @@
 // Librarys 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { 
   Box, 
@@ -9,8 +9,14 @@ import {
   Settings,
   Home,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  Sun,
+  Moon
 } from 'lucide-react'
+
+// Imports 
+import { AuthContext } from '../../../Contexts/Contexts'
+import { useDarkMode } from '../../../Hooks/Theme'
 
 // Import styles 
 import styles from '../../../styles/Navs/NavAdmin.module.css'
@@ -20,6 +26,10 @@ export const NavAdmin = () => {
     // Dynamic vars 
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [activeSubmenu, setActiveSubmenu] = useState(null)
+    const [isDarkMode, toggleDarkMode] = useDarkMode()
+
+    // Vars 
+    const { theme } = useContext(AuthContext)
 
     // Functions 
     const toggleSidebar = () => {
@@ -66,11 +76,6 @@ export const NavAdmin = () => {
                 { path: "/admin/settings/Preferens", label: "Integraciones" }
             ]
         },
-        {
-            path: "/",
-            icon: <Home size={20} />,
-            label: "Volver al sitio"
-        }
     ]
 
     return (    
@@ -120,7 +125,7 @@ export const NavAdmin = () => {
 
                             {sidebarOpen && item.submenu && activeSubmenu === item.label && (
                                 <ul className={styles.submenu}>
-                                    {item.submenu.map((subItem, subIndex) => (
+                                    {item.submenu?.map((subItem, subIndex) => (
                                         <li key={subIndex}>
                                             <NavLink 
                                                 to={subItem.path}
@@ -137,6 +142,23 @@ export const NavAdmin = () => {
                     ))}
                 </ul>
             </nav>
+            <article>
+                <button
+                    style={{ border: 'none' }}
+                    onClick={() => {toggleDarkMode(!isDarkMode)}}
+                    className={styles.navLink}
+                >
+                    {theme === 'DARK'? <Sun />: <Moon />}
+                    {sidebarOpen && 'Cambiar tema'}
+                </button>
+                <NavLink
+                    to={'/'}
+                    className={styles.navLink}
+                >
+                    <Home size={20} />
+                    {sidebarOpen && 'Volver al sitio'}
+                </NavLink>
+            </article>
         </aside>
     )
 }

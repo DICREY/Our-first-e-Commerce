@@ -9,10 +9,10 @@ import { useCart } from "../../Contexts/CartContext"
 import CartSheet from "../CartSheet/CartSheet";
 import Button from "../Button/Button";
 import FavoritesSheet from "../FavoritesSheet/FavoritesSheet";
+import { GetData } from "../../Utils/Requests"
 
 // Import styles 
-import styles from "./Header.module.css";
-import { GetData } from "../../Utils/Requests";
+import styles from "./Header.module.css"
 
 // Cache para las categorías
 let categoriesCache = null;
@@ -200,11 +200,11 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
         {/* Actions */}
         <nav className={styles.actions}>
           <Button variant="ghost" size="icon" className={styles.hidden}>
-            <Search />
+            <Search style={{ color: 'var(--gray-700)' }} />
           </Button>
 
           <Button variant="ghost" size="icon" onClick={() => setIsFavoritesOpen(true)}>
-            <Heart />
+            <Heart style={{ color: 'var(--gray-700)' }} />
           </Button>
 
           <ProfileMenu 
@@ -219,7 +219,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
 
           <div className={styles.cartButton}>
             <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
-              <ShoppingBag />
+              <ShoppingBag style={{ color: 'var(--gray-700)' }} />
               {getTotalItems() > 0 && <span className={styles.cartBadge}>{getTotalItems()}</span>}
             </Button>
           </div>

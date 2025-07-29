@@ -10,13 +10,14 @@
 }
 
 .modal {
-  background-color: white;
+  position: relative;
+  padding: .1rem;
+  background-color: var(--white);
   border-radius: 0.5rem;
   box-shadow: var(--shadow-xl);
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
-  position: relative;
 }
 
 .header {

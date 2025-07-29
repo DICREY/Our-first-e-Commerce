@@ -1,6 +1,6 @@
 .catalogPage {
   padding: 1rem;
-  max-width: 1400px;
+  max-width: 87.5rem; /* 1400px */
   margin: 0 auto;
 }
 
@@ -12,12 +12,12 @@
 .title {
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 600;
-  color: #212121;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
-  color: #616161;
+  color: var(--text-secondary);
   font-size: clamp(0.875rem, 2vw, 1rem);
 }
 
@@ -29,7 +29,7 @@
 
 /* Filters sidebar styles */
 .filtersSidebar {
-  width: 250px;
+  width: var(--sidebar-width);
   flex-shrink: 0;
   position: sticky;
   top: 1rem;
@@ -45,17 +45,17 @@
 }
 
 .filterSection {
-  background: white;
-  border-radius: 12px;
+  background: var(--white);
+  border-radius: var(--rounded);
   padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .sectionTitle {
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #757575;
+  letter-spacing: 0.03125rem; /* 0.5px */
+  color: var(--gray-600);
   margin-bottom: 0.75rem;
   display: block;
 }
@@ -67,25 +67,25 @@
 }
 
 .categoryBtn {
-  background: #f5f5f5;
-  color: #424242;
+  background: var(--gray-100);
+  color: var(--gray-800);
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition);
   text-align: left;
 }
 
 .categoryBtn:hover {
-  background: #e0e0e0;
+  background: var(--gray-300);
 }
 
 .categoryBtn.active {
-  background: #212121;
-  color: white;
+  background: var(--gray-900);
+  color: var(--white);
 }
 
 /* Main content styles */
@@ -102,34 +102,34 @@
 
 .searchGroup {
   flex-grow: 1;
-  max-width: 400px;
+  max-width: 25rem; /* 400px */
 }
 
 .sortGroup {
-  min-width: 200px;
+  min-width: 12.5rem; /* 200px */
 }
 
 .searchInput {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.5rem;
   font-size: 0.875rem;
-  transition: border 0.2s ease;
+  transition: var(--transition);
 }
 
 .searchInput:focus {
   outline: none;
-  border-color: #212121;
+  border-color: var(--gray-900);
 }
 
 .select {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.5rem;
   font-size: 0.875rem;
-  background-color: white;
+  background-color: var(--white);
   cursor: pointer;
 }
 
@@ -141,25 +141,25 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: #616161;
+  color: var(--gray-700);
   margin-bottom: 0.5rem;
 }
 
 .rangeSlider {
   width: 100%;
-  height: 4px;
+  height: 0.25rem; /* 4px */
   appearance: none;
-  background: #e0e0e0;
-  border-radius: 2px;
+  background: var(--gray-300);
+  border-radius: 0.125rem; /* 2px */
   outline: none;
   margin: 0.5rem 0;
 }
 
 .rangeSlider::-webkit-slider-thumb {
   appearance: none;
-  width: 16px;
-  height: 16px;
-  background: #212121;
+  width: 1rem; /* 16px */
+  height: 1rem; /* 16px */
+  background: var(--gray-900);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -176,23 +176,23 @@
 
 .sizeLabel {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.25rem;
   font-size: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition);
 }
 
 .sizeOption:checked + .sizeLabel {
-  background: #212121;
-  color: white;
-  border-color: #212121;
+  background: var(--gray-900);
+  color: var(--white);
+  border-color: var(--gray-900);
 }
 
 .productsGrid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(9.375rem, 1fr)); /* 150px */
 }
 
 .emptyState {
@@ -203,12 +203,12 @@
 
 .emptyIcon {
   font-size: 2rem;
-  color: #e0e0e0;
+  color: var(--gray-300);
   margin-bottom: 1rem;
 }
 
 .emptyText {
-  color: #9e9e9e;
+  color: var(--gray-500);
   font-size: 1rem;
 }
 
@@ -219,11 +219,11 @@
 }
 
 .loadingSpinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
+  border: 0.25rem solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  border-top: 4px solid #212121;
-  width: 40px;
-  height: 40px;
+  border-top: 0.25rem solid var(--gray-900);
+  width: 2.5rem;
+  height: 2.5rem;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
 }

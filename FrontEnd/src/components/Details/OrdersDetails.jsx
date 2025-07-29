@@ -122,7 +122,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                         <h1>Detalles de pedido: #{order?.id_ped}</h1>
                         <div className={styles.orderDate}>
                             <Calendar />
-                            {formatDate(order?.fec_ped)}
+                            {formatDate(order?.fec_ped || '0000-00-00')}
                         </div>
                     </div>
                     <nav>
@@ -155,7 +155,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                     <h2>Dirección de facturación</h2>
                     <div className={styles.addressDetails}>
                         <strong>{order?.nom_per} {order?.ape_per}</strong><br />
-                        {order?.dir_env_ped?.split(',').map((line, i) => (
+                        {order?.dir_env_ped?.split(',')?.map((line, i) => (
                             <span key={i}>{line.trim()}<br /></span>
                         ))}
                         <br />
@@ -215,8 +215,8 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                                     <tbody>
                                         <tr>
                                             <td>{product.can_pro_ped}</td>
-                                            <td>${formatNumber(Number(product?.pre_pro))}</td>
-                                            <td>${formatNumber(product?.pre_pro * product?.can_pro_ped)}</td>
+                                            <td>${formatNumber(Number(product?.pre_pro) || 0)}</td>
+                                            <td>${formatNumber(product?.pre_pro * product?.can_pro_ped || 0)}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -232,7 +232,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                     <div className={styles.totalsSection}>
                         <div className={styles.totalRow}>
                             <span>Subtotal:</span>
-                            <span>${formatNumber(order?.subtotal_ped)}</span>
+                            <span>${formatNumber(order?.subtotal_ped || 0)}</span>
                         </div>
                         <div className={styles.totalRow}>
                             <span>Impuestos ({order?.impuestos ? Math.round((order.impuestos / order.subtotal_ped) * 100) : 0}%):</span>
@@ -240,7 +240,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
                         </div>
                         <div className={`${styles.totalRow} ${styles.grandTotal}`}>
                             <span>Total:</span>
-                            <span>${formatNumber(order?.subtotal_ped)}</span>
+                            <span>${formatNumber(order?.subtotal_ped || 0)}</span>
                         </div>
                     </div>
                 </section>

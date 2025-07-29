@@ -437,3 +437,7 @@ END //
 /* CALL e_commerce.GetProductsByCategory('Lencería'); */
 /* CALL e_commerce.RegisterProduct('Lencería'); */
 /* CALL e_commerce.ChangeStatusProduct('1123123123'); */
+
+SELECT SUM(inv.cantidad)
+FROM inventario inv
+WHERE inv.id_pro_inv = 6

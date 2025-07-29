@@ -137,7 +137,7 @@ INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col)
 -- Inventario: producto, color, talla, cantidad
 INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad) VALUES
 -- Blusa de seda estampada (id_pro=1), Negro (id_col=2), Tallas XS(1)-L(4)
-(1, 2, 1, 10), (1, 2, 2, 18), (1, 2, 3, 5), (1, 2, 4, 12),
+(1, 2, 1, 10), (1, 2, 2, 18), (1, 2, 3, 50), (1, 2, 4, 12),
 -- Blusa de seda estampada, Blanco (3), Tallas XS(1)-L(4)
 (1, 3, 1, 17), (1, 3, 2, 16), (1, 3, 3, 114), (1, 3, 4, 111),
 -- Blusa de seda estampada, Rosa (5), Tallas XS(1)-L(4)
@@ -213,6 +213,14 @@ VALUES
 
 INSERT INTO e_commerce.oferta_productos (ofe_pro, pro_ofe_pro) 
 VALUES (2, 8);
+
+INSERT INTO e_commerce.preferencias ( per_pre, theme ) VALUES
+(1, 'DARK'),
+(2, 'LIGHT'),
+(3, 'DARK'),
+(4, 'LIGHT'),
+(5, 'LIGHT'),
+(6, 'DARK');
 
 /* Test */
 -- Insertar el pedido con fecha del año pasado (2023)

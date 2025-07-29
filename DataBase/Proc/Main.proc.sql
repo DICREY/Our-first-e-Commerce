@@ -12,6 +12,7 @@
         p.doc_per,
         p.pas_per,
         p.fot_per,
+        pr.theme,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM
         personas p
@@ -19,6 +20,8 @@
         otorgar_roles otr ON otr.id_per = p.id_per
     JOIN
         roles r ON otr.id_rol = r.id_rol
+    JOIN
+        preferencias pr ON pr.per_pre = p.id_per
     WHERE
         p.estado = 1
         AND (
@@ -44,3 +47,6 @@
     WHERE
         p.email_per = p_email;
 END //
+
+/* DROP PROCEDURE e_commerce.`Login`; */
+/* CALL e_commerce.Login('admin@gmail.com'); */

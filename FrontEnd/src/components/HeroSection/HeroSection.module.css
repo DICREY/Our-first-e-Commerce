@@ -1,11 +1,12 @@
 .hero {
   position: relative;
+  padding: 0 3rem;
   background: linear-gradient(135deg, var(--neutral-50), var(--primary-50));
   overflow: hidden;
 }
 
 .container {
-  max-width: 1200px;
+  /* max-width: 75rem; 1200px */
   margin: 0 auto;
   padding: 4rem 1rem;
 }
@@ -32,7 +33,7 @@
 .title {
   font-size: 2.5rem;
   font-weight: bold;
-  color: var(--neutral-800);
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
@@ -45,7 +46,7 @@
 
 .description {
   font-size: 1.125rem;
-  color: var(--neutral-600);
+  color: var(--text-secondary);
   line-height: 1.6;
   max-width: 32rem;
 }
@@ -62,10 +63,10 @@
   border: none;
   padding: 1rem 2rem;
   font-size: 1.125rem;
-  border-radius: 0.375rem;
+  border-radius: var(--rounded);
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,10 +87,10 @@
   border: 1px solid var(--primary-200);
   padding: 1rem 2rem;
   font-size: 1.125rem;
-  border-radius: 0.375rem;
+  border-radius: var(--rounded);
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  transition: var(--transition);
 }
 
 .secondaryButton:hover {
@@ -97,7 +98,7 @@
 }
 
 .arrow {
-  transition: transform 0.2s ease;
+  transition: var(--transition);
 }
 
 .stats {
@@ -119,7 +120,7 @@
 
 .statLabel {
   font-size: 0.875rem;
-  color: var(--neutral-600);
+  color: var(--text-secondary);
 }
 
 .imageSection {
@@ -144,11 +145,11 @@
   position: absolute;
   top: 2rem;
   right: 2rem;
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.725rem); /* 10px */
   border-radius: 50%;
+  border: .1rem solid var(--gray-500);
   padding: 1rem;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   text-align: center;
 }
 
@@ -160,18 +161,18 @@
 
 .discountLabel {
   font-size: 0.75rem;
-  color: var(--neutral-600);
+  color: var(--text-secondary);
 }
 
 .floatingFeature {
   position: absolute;
   bottom: 2rem;
   left: 2rem;
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.925rem); /* 10px */
   border-radius: 0.5rem;
   padding: 1rem;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
+  border: .1rem solid var(--gray-500);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -190,12 +191,12 @@
 
 .featureTitle {
   font-weight: 500;
-  color: var(--neutral-800);
+  color: var(--text-primary);
 }
 
 .featureDescription {
   font-size: 0.875rem;
-  color: var(--neutral-600);
+  color: var(--text-secondary);
 }
 
 @media (min-width: 640px) {
