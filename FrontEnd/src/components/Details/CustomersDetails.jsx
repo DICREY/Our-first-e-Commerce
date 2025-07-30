@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Check, Mail, PenOff, Plus, SquarePen, User } from 'lucide-react'
 
 // Imports 
-import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert, showAlertLoading } from '../../Utils/utils'
 import { ModifyData } from '../../Utils/Requests'
 import AdminLoadingScreen from '../Global/Loading'
 
@@ -30,12 +30,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
 
     const handleSaveChanges = async () => {
         try {
-            setIsLoading(true)
+            showAlertLoading('Guardando cambios...', 'Por favor espera', 'info')
             customerData.fec_nac_per = formatDate(customerData.fec_nac_per)
             const response = await ModifyData(`${URL}/peoples/modify`, customerData)
             
             if (response?.success) {
                 setIsEditing(false)
+                showAlert('Éxito', 'Los cambios se han guardado correctamente', 'success')
             }
         } catch (error) {
             setIsLoading(false)
