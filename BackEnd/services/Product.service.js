@@ -13,7 +13,7 @@ class Product {
 
     // function to register
     async create() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const proc = "CALL RegisterProduct(?,?,?,?,?,?,?,?,?,?);"
             const params = [
@@ -34,16 +34,16 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc, params,(err) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, params, (err) => {
+                if (err) {
                     rej({ message: err })
                 } else setTimeout(() => {
                     res({
                         message: "Registro exitoso",
                         success: true
                     })
-                },1000)
-                
+                }, 1000)
+
             })
 
             // close conection 
@@ -53,7 +53,7 @@ class Product {
 
     // function to modify
     async modify() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // data 
             const params = [
                 this.args[0].nom_pro,
@@ -74,16 +74,16 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc, params,(err) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, params, (err) => {
+                if (err) {
                     rej({ message: err })
                 } else setTimeout(() => {
                     res({
                         message: "Modificación exitosa",
                         success: true
                     })
-                },1000)
-                
+                }, 1000)
+
             })
 
             // close conection 
@@ -93,7 +93,7 @@ class Product {
 
     // function to delete
     async ChangeStatus() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // Vars
             const by = this.args[0]?.trim()
             const proc = "CALL ChangeStatusProduct(?);"
@@ -104,12 +104,12 @@ class Product {
 
             // verify conection and call procedure and call procedure
             if (this.database) this.database.conection.query(proc, [by], (err) => {
-                if(err) {
+                if (err) {
                     rej({ message: err })
                 } else setTimeout(() => res({
                     message: "Product status changed",
                     success: 1
-                }),1000)
+                }), 1000)
             })
 
             // close conection 
@@ -119,7 +119,7 @@ class Product {
 
     // function to delete
     async delete() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // Vars
             const by = this.args[0]?.trim()
             const procedure = "CALL DeleteProduct(?);"
@@ -128,13 +128,13 @@ class Product {
             const conection = conect()
 
             // verify conection and call procedure and call procedure
-            if (conection) conection.query(procedure,[by],err => { 
-                if(err) {
+            if (conection) conection.query(procedure, [by], err => {
+                if (err) {
                     rej(err)
                 } else setTimeout(() => res({
                     message: "Product Deleted",
                     success: 1
-                }),1000)
+                }), 1000)
             })
 
             // close conection 
@@ -143,7 +143,7 @@ class Product {
     }
 
     async test() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const proc = "INSERT INTO e_commerce.colores (hex_col) VALUES (?);"
             const params = [
@@ -155,16 +155,16 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc, params,(err) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, params, (err) => {
+                if (err) {
                     rej({ message: err })
                 } else setTimeout(() => {
                     res({
                         message: "Registro exitoso",
                         success: true
                     })
-                },1000)
-                
+                }, 1000)
+
             })
 
             // close conection 
@@ -174,7 +174,7 @@ class Product {
 
     // function to find all
     async findAll() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const proc = "CALL GetAllProducts();"
 
@@ -183,18 +183,18 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, (err, result) => {
+                if (err) {
                     rej({ message: err })
                 } else if (result) {
-                    const resOne = this.global.format(result[0],'colors',['nom_col','hex_col','nom_img','url_img'])
-                    const lastRes = this.global.iterar(resOne,'sizes')
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
+                    const lastRes = this.global.iterar(resOne, 'sizes')
                     setTimeout(() => {
                         res({
                             message: "Info found",
                             result: lastRes
                         })
-                    },1000)
+                    }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
             })
 
@@ -202,10 +202,10 @@ class Product {
             this.database.conection.end()
         })
     }
-    
+
     // function to find all by
     async findAllBy() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const by = this.args[0]?.trim()
             const proc = "CALL GetProductsBy(?);"
@@ -215,32 +215,32 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,[by],(err,result) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, [by], (err, result) => {
+                if (err) {
                     rej({ message: err })
                 } else if (result) {
-                    const resOne = this.global.format(result[0],'colors',['nom_col','hex_col','nom_img','url_img'])
-                    const lastRes = this.global.iterar(resOne,'sizes')
-                    const lastLastRes = this.global.format(lastRes,'offers',[
-                        'id_ofe','nom_ofe','des_ofe','dur_ofe','fec_ini_ofe','fec_fin_ofe','por_des_ofe','created_at','updated_at'
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
+                    const lastRes = this.global.iterar(resOne, 'sizes')
+                    const lastLastRes = this.global.format(lastRes, 'offers', [
+                        'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
                     ])
                     setTimeout(() => {
                         res({
                             message: "Info found",
                             result: lastLastRes
                         })
-                    },1000)
+                    }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
             this.database.conection.end()
         })
-    
+
     }
     // function to find all product categories
     async findAllCategories() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const proc = "CALL GetProductsCategories();"
 
@@ -249,8 +249,8 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, (err, result) => {
+                if (err) {
                     rej({ message: err })
                 } else if (result) {
                     setTimeout(() => {
@@ -258,7 +258,7 @@ class Product {
                             message: "Products found",
                             result: result[0]
                         })
-                    },1000)
+                    }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
             })
 
@@ -269,7 +269,7 @@ class Product {
 
     // function to find all product colors
     async findAllColors() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const proc = "CALL GetProductsColors();"
 
@@ -278,8 +278,8 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, (err, result) => {
+                if (err) {
                     rej({ message: err })
                 } else if (result) {
                     setTimeout(() => {
@@ -287,7 +287,7 @@ class Product {
                             message: "Products found",
                             result: result[0]
                         })
-                    },1000)
+                    }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
             })
 
@@ -298,7 +298,7 @@ class Product {
 
     // function to find all product sizes
     async findAllSizes() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const proc = "CALL GetProductsSizes();"
 
@@ -307,8 +307,8 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, (err, result) => {
+                if (err) {
                     rej({ message: err })
                 } else if (result) {
                     setTimeout(() => {
@@ -316,7 +316,7 @@ class Product {
                             message: "Products found",
                             result: result[0]
                         })
-                    },1000)
+                    }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
             })
 
@@ -327,7 +327,7 @@ class Product {
 
     // function to find by
     async findBy() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const by = this.args[0]?.trim()
             const proc = "CALL GetProductBy(?);"
@@ -337,21 +337,21 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,[by],(err,result) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, [by], (err, result) => {
+                if (err) {
                     rej({ message: err })
                 } else if (result) {
-                    const resOne = this.global.format(result[0],'colors',['nom_col','hex_col','nom_img','url_img'])
-                    const lastRes = this.global.iterar(resOne,'sizes')
-                    const lastLastRes = this.global.format(lastRes,'offers',[
-                        'id_ofe','nom_ofe','des_ofe','dur_ofe','fec_ini_ofe','fec_fin_ofe','por_des_ofe','created_at','updated_at'
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
+                    const lastRes = this.global.iterar(resOne, 'sizes')
+                    const lastLastRes = this.global.format(lastRes, 'offers', [
+                        'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
                     ])
                     setTimeout(() => {
                         res({
                             message: "Info found",
                             result: lastLastRes
                         })
-                    },1000)
+                    }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
             })
 
@@ -362,7 +362,7 @@ class Product {
 
     // function to find by categorie
     async findByCategory() {
-        return new Promise((res,rej) => {
+        return new Promise((res, rej) => {
             // vars
             const by = this.args[0]?.trim()
             const proc = "CALL GetProductsByCategory(?);"
@@ -372,8 +372,8 @@ class Product {
             this.database.conect()
 
             // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,by,(err,result) => {
-                if(err) {
+            if (this.database) this.database.conection.query(proc, by, (err, result) => {
+                if (err) {
                     rej({ message: err })
                 } else if (result) {
                     setTimeout(() => {
@@ -381,13 +381,225 @@ class Product {
                             message: "Products found",
                             result: result[0]
                         })
-                    },1000)
+                    }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
             })
 
             // close conection 
             this.database.conection.end()
         })
+    }
+
+    // ============ CARRITO ============
+
+    async addToCart() {
+        return new Promise((res, rej) => {
+            const proc = "CALL AddToCart(?, ?, ?, ?, ?)";
+            const params = [
+                this.args[0].userId,
+                this.args[0].productId,
+                this.args[0].colorId,
+                this.args[0].sizeId,
+                this.args[0].quantity
+            ];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, params, (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Producto agregado al carrito",
+                            success: true,
+                            result: result[0]
+                        });
+                    }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
+    }
+
+    async updateCartItem() {
+        return new Promise((res, rej) => {
+            const proc = "CALL UpdateCartQuantity(?, ?, ?)";
+            const params = [
+                this.args[0].userId,
+                this.args[0].cartId,
+                this.args[0].newQuantity
+            ];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, params, (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Cantidad actualizada",
+                            success: true,
+                            result: result[0]
+                        });
+                    }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
+    }
+
+    async removeFromCart() {
+        return new Promise((res, rej) => {
+            const proc = "CALL RemoveFromCart(?, ?)";
+            const params = [
+                this.args[0].userId,
+                this.args[0].cartId
+            ];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, params, (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Producto eliminado del carrito",
+                            success: true,
+                            result: result[0]
+                        });
+                    }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
+    }
+
+    async getUserCart() {
+        return new Promise((res, rej) => {
+            const proc = "CALL GetUserCart(?)";
+            const userId = this.args[0];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, [userId], (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    const formattedResult = this.global.format(result[0], 'products', [
+                        'id_pro', 'nom_pro', 'pre_pro', 'des_pro', 'sta_pro', 'onSale',
+                        'nom_col', 'hex_col', 'nom_tal_pro', 'cantidad', 'subtotal',
+                        'imagen', 'stock_disponible'
+                    ]);
+
+                    setTimeout(() => {
+                        res({
+                            message: "Carrito obtenido",
+                            result: formattedResult
+                        });
+                    }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
+    }
+
+    // ============ FAVORITOS ============
+
+    async addToFavorites() {
+        return new Promise((res, rej) => {
+            const proc = "CALL AddToFavorites(?, ?)";
+            const params = [
+                this.args[0].userId,
+                this.args[0].productId
+            ];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, params, (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Producto agregado a favoritos",
+                            success: true,
+                            result: result[0]
+                        });
+                    }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
+    }
+
+    async removeFromFavorites() {
+        return new Promise((res, rej) => {
+            const proc = "CALL RemoveFromFavorites(?, ?)";
+            const params = [
+                this.args[0].userId,
+                this.args[0].productId
+            ];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, params, (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Producto eliminado de favoritos",
+                            success: true,
+                            result: result[0]
+                        });
+                    }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
+    }
+
+    async getUserFavorites() {
+        return new Promise((res, rej) => {
+            const proc = "CALL GetUserFavorites(?)";
+            const userId = this.args[0];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, [userId], (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img']);
+                    const lastRes = this.global.iterar(resOne, 'sizes');
+
+                    setTimeout(() => {
+                        res({
+                            message: "Favoritos obtenidos",
+                            result: lastRes
+                        });
+                    }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
     }
 }
 

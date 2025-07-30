@@ -1,4 +1,4 @@
--- Active: 1746130779175@@127.0.0.1@3306@e_commerce
+-- Active: 1747352860830@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 
@@ -207,6 +207,27 @@ CREATE TABLE e_commerce.custom_events (
     nom_eve VARCHAR(255),
     dat_eve JSON,
     tim_eve TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--Tabla para productos marcados en favorito
+CREATE TABLE e_commerce.favoritos (
+    id_fav INT AUTO_INCREMENT PRIMARY KEY,
+    id_per_fav INT NOT NULL,INDEX(id_per_fav),FOREIGN KEY (id_per_fav) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_pro_fav INT NOT NULL,INDEX(id_pro_fav),FOREIGN KEY (id_pro_fav) REFERENCES productos(id_pro) ON DELETE CASCADE ON UPDATE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
+    UNIQUE KEY unique_favorito (id_per_fav, id_pro_fav) 
+);
+
+--Tabla para carrito de compras
+CREATE TABLE e_commerce.carrito (
+    id_car INT AUTO_INCREMENT PRIMARY KEY,
+    id_per_car INT NOT NULL,INDEX(id_per_car),FOREIGN KEY (id_per_car) REFERENCES personas(id_per) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_inv_car INT NOT NULL,INDEX(id_inv_car),FOREIGN KEY (id_inv_car) REFERENCES inventario(id_inv) ON DELETE CASCADE ON UPDATE CASCADE,
+    cantidad INT NOT NULL DEFAULT 1 CHECK (cantidad > 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_carrito_item (id_per_car, id_inv_car)
 );
 
 /* 
