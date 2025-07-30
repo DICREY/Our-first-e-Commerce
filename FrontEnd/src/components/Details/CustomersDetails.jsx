@@ -39,7 +39,6 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                 showAlert('Éxito', 'Los cambios se han guardado correctamente', 'success')
             }
         } catch (error) {
-            setIsLoading(false)
             const message = errorStatusHandler(error)
             showAlert('Error', message, 'error')
         }

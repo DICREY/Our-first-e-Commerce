@@ -23,7 +23,7 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedState, setSelectedState] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(null)
 
   // Vars 
   const navigate = useNavigate()
@@ -58,7 +58,6 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
-    // if (!sidebarOpen) setActiveSubmenu(null)
   }
 
   useEffect(() => {

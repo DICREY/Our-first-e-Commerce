@@ -8,7 +8,7 @@ import {
 // Imports 
 import AdminLoadingScreen from '../Global/Loading'
 import { GetData, PostData } from '../../Utils/Requests'
-import { errorStatusHandler, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, searchFilter, showAlert, showAlertLoading } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Admin/OrderRegister.module.css'
@@ -194,8 +194,8 @@ export const OrderRegister = ({ URL = '' }) => {
         if (!validateForm()) return
 
         setIsSubmitting(true)
-        setIsLoading(true)
-        
+        showAlertLoading('Registrando Pedido', 'Por favor, espere...', 'info')
+
         try {
             const newOrder = {
                 documento_cliente: formData.customerDocument,
@@ -212,12 +212,11 @@ export const OrderRegister = ({ URL = '' }) => {
             const response = await PostData(`${URL}/orders/register`, newOrder)
 
             if (response.success) {
-                setIsLoading(false)
+                showAlert('Éxito', 'Pedido registrado correctamente', 'success')
             }
         } catch (err) {
-            setIsLoading(false)
             const message = errorStatusHandler(err)
-            setErrors({ general: message })
+            showAlert('Error', message, 'error')
         } finally {
             setIsSubmitting(false)
         }

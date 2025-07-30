@@ -24,7 +24,7 @@ import styles from '../../../styles/Navs/NavAdmin.module.css'
 // Component 
 export const NavAdmin = () => {
     // Dynamic vars 
-    const [sidebarOpen, setSidebarOpen] = useState(true)
+    const [sidebarOpen, setSidebarOpen] = useState(localStorage.getItem('sidebarOpen') === 'true' || false)
     const [activeSubmenu, setActiveSubmenu] = useState(null)
     const [isDarkMode, toggleDarkMode] = useDarkMode()
 
@@ -34,7 +34,9 @@ export const NavAdmin = () => {
     // Functions 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen)
+        localStorage.setItem('sidebarOpen', !sidebarOpen)
         if (!sidebarOpen) setActiveSubmenu(null)
+        
     }
 
     const toggleSubmenu = (menu) => {
@@ -142,6 +144,7 @@ export const NavAdmin = () => {
                     ))}
                 </ul>
             </nav>
+            
             <article className={styles.footerNav}>
                 <button
                     style={{ border: 'none' }}

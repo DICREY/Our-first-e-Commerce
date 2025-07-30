@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom'
 
 // Imports 
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatDate, formatNumber, showAlert } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, formatNumber, showAlert, showAlertLoading } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
@@ -61,16 +61,15 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
 
     const handleStatusChange = async (id) => {
         try {
-            setLoading(true)
+            showAlertLoading('Cambiando estado del producto', 'Por favor, espere...', 'info')
             const data = await ModifyData(`${URL}/products/change-status`,{ by: id })
             if (data.success) {
-                setLoading(false)
+                showAlert('Éxito', 'Estado del producto cambiado correctamente', 'success')
                 fetchProduct()
             }
         } catch (err) {
-            setLoading(false)
             const message = errorStatusHandler(err)
-            console.error('Error fetching product:', message)
+            showAlert('Error', message, 'error')
         }
     }
 

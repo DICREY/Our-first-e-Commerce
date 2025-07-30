@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 // Imports 
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { errorStatusHandler, formatNumber, showAlert } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, showAlert, showAlertLoading } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Details/OrderDetail.module.css'
@@ -34,14 +34,13 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
     
     const completeOrder = async (id) => {
         try {
-            setLoading(true)
+            showAlertLoading('Completando Pedido', 'Por favor, espere...', 'info')
             const mod = await ModifyData(`${URL}/orders/complete`, { by: id })
             if (mod.success) {
-                setLoading(false)
+                showAlert('Éxito', 'Pedido completado correctamente', 'success')
                 GetOrderDetails()
             }
         } catch (err) {
-            setLoading(false)
             const message = errorStatusHandler(err)
             showAlert('Error', message, 'error')
         }
