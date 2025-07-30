@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 
 // Imports
-import { CheckImage, errorStatusHandler } from "../../Utils/utils"
+import { CheckImage, errorStatusHandler, showAlert } from "../../Utils/utils"
 import Badge from "../Badge/Badge"
 
 // Import styles 
@@ -22,8 +22,10 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
     try {
       didFetch = true
       const data = await GetData(`${URL}`)
+
     } catch (err) {
       const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     }
   }
   
@@ -32,6 +34,7 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
       const data = await PostData(`${URL}`)
     } catch (err) {
       const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     }
   }
 

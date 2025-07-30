@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 
 // Imports 
-import { errorStatusHandler, formatNumber, PriceCompare } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, PriceCompare, showAlert } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 
 // Import styles 
@@ -26,6 +26,7 @@ export const TotalSales = ({ URL = '' }) => {
             }
         } catch (err) {
             const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
     
@@ -45,6 +46,7 @@ export const TotalSales = ({ URL = '' }) => {
         } catch (err) {
             setLoading(false)
             const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
 

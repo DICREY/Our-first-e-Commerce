@@ -1,5 +1,5 @@
-yarn add react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 @auth0/auth0-react
+yarn add react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 @auth0/auth0-react sweetalert2
 yarn add -D react-scripts
 
-npm i react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 @auth0/auth0-react
+npm i react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 @auth0/auth0-react sweetalert2
 npm i -D react-scripts  

@@ -7,6 +7,7 @@ import ProductCard from "./ProductCard";
 
 // Import styles 
 import styles from "../../styles/Products/RelatedProductsCarousel.module.css";
+import { showAlert } from "../../Utils/utils";
 
 // Component 
 const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
@@ -38,15 +39,15 @@ const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
         setAllProducts(shuffledProducts);
         setDisplayedProducts(shuffledProducts.slice(0, 10)); // Mostrar 10 inicialmente (2 filas de 5)
       } catch (err) {
-        console.error("Error fetching related products:", err);
-        setError("Error al cargar productos relacionados");
+        const message = errorStatusHandler(err)
+        showAlert('Error', message, 'error')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchRelatedProducts();
-  }, [URL, categoryId]);
+    fetchRelatedProducts()
+  }, [URL, categoryId])
 
   const loadMoreProducts = () => {
     const nextPage = page + 1;

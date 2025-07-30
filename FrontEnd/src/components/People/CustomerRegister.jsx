@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { CheckImage, errorStatusHandler } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
 import { PostData } from '../../Utils/Requests'
 import AdminLoadingScreen from '../Global/Loading'
 
@@ -106,18 +106,18 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
         if (!validateForm()) return
 
         setIsSubmitting(true)
-        setIsLoading(true)
+        showAlertLoading('Cargando...', 'Por favor espera', 'info')
         try {
             const response = await PostData(`${URL}/peoples/register`, formData)
             console.log(response)
             if (response.success) {
                 setIsSubmitting(false)
-                setIsLoading(false)
+                showAlert('Éxito', 'Cliente registrado correctamente', 'success')
             }
         } catch (err) {
             setIsLoading(false)
             const message = errorStatusHandler(err)
-            console.log(message)
+            showAlert('Error', message, 'error')
         } finally {
             setIsSubmitting(false)
         }

@@ -4,7 +4,7 @@ import { Eye, Edit, Search, Filter, Download, ChevronLeft, Plus } from 'lucide-r
 import { NavLink, useNavigate } from 'react-router-dom'
 
 // Imports 
-import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
+import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 import { Paginacion } from '../Global/Paginacion'
 import AdminLoadingScreen from '../Global/Loading'
@@ -37,7 +37,7 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
       }
     } catch (err) {
       const message = errorStatusHandler(err)
-      console.error(message)
+      showAlert('Error', message, 'error')
     }
   }
   
@@ -52,7 +52,7 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
     } catch (err) {
       setLoading(false)
       const message = errorStatusHandler(err)
-      console.error(message)
+      showAlert('Error', message, 'error')
     }
   }
 
@@ -222,12 +222,14 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
                       >
                         <td>
                           <div className={styles.productCell}>
-                            <CheckImage
-                              src={product.img_default}
-                              alt={product.nom_pro}
-                              className={styles.productThumbnail}
-                              imgDefault={imgDefault}
-                            />
+                            {product?.img_default && (
+                              <CheckImage
+                                src={product.img_default}
+                                alt={product.nom_pro}
+                                className={styles.productThumbnail}
+                                imgDefault={imgDefault}
+                              />
+                            )}
                             <div>
                               <div className={styles.productName}>{product.nom_pro}</div>
                               <div className={styles.productId}>ID: {product.id_pro}</div>

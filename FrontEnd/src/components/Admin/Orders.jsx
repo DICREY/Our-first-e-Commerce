@@ -10,7 +10,7 @@ import {
 // Imports 
 import { GetData } from '../../Utils/Requests'
 import { Paginacion } from '../Global/Paginacion'
-import { divideList, errorStatusHandler, formatDate, formatNumber, searchFilter } from '../../Utils/utils'
+import { divideList, errorStatusHandler, formatDate, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
@@ -44,7 +44,8 @@ export const OrdersList = ({ URL = '', setIdOrder = null }) => {
         setOrdersAlmc(sortedOrders)
       }
     } catch (err) {
-      console.error('Error fetching orders:', errorStatusHandler(err))
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     } finally {
       setLoading(false)
     }

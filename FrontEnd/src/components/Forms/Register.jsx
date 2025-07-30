@@ -3,7 +3,7 @@ import React, { useState } from "react"
 
 // Imports 
 import { PostData } from "../../Utils/Requests"
-import { errorStatusHandler } from "../../Utils/utils"
+import { errorStatusHandler, showAlert, showAlertLoading } from "../../Utils/utils"
 
 // Import styles 
 import styles from '../../styles/Forms/register.module.css'
@@ -32,12 +32,19 @@ export const RegisterForm = ({ URL = '' }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log("Datos enviados:", formData)
+    showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
         const req = await PostData(`${URL}/credential/login`, {})
         console.log(req)
+        if (req) {
+            showAlert('Éxito', 'Registro exitoso', 'success')
+            setTimeout(() => {
+              window.location.href = '/login'
+            }, 3000)
+        }
     } catch (err) {
         const message = errorStatusHandler(err)
-        console.log(message)
+        showAlert('Error', message, 'error')
     }
   }
 

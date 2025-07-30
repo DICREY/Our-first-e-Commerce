@@ -84,7 +84,7 @@ export const NavAdmin = () => {
                 className={styles.sidebarHeader}
                 onClick={toggleSidebar}
             >
-                {sidebarOpen && <h2>Panel Administrativo</h2>}
+                {sidebarOpen && <h2>Administración</h2>}
                 <button 
                     onClick={toggleSidebar} 
                     className={styles.toggleButton}

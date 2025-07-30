@@ -163,7 +163,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   // Función para verificar si la ruta está activa
   const isActive = (href) => {
     return location.pathname === href || 
-           (href !== '/' && location.pathname.startsWith(href));
+      (href !== '/' && location.pathname.startsWith(href));
   };
 
   return (

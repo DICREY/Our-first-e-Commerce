@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 // Imports 
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { errorStatusHandler, formatNumber } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, showAlert } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Details/OrderDetail.module.css'
@@ -28,6 +28,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
         } catch (err) {
             setLoading(false)
             const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
     
@@ -42,6 +43,7 @@ export const OrderDetail = ({ URL = '', id_ped = null }) => {
         } catch (err) {
             setLoading(false)
             const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
 
     }

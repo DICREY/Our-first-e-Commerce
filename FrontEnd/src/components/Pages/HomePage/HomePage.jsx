@@ -6,7 +6,7 @@ import HeroSection from "../../HeroSection/HeroSection"
 import ProductCard from "../../Products/ProductCard"
 import Badge from "../../Badge/Badge"
 import Button from "../../Button/Button"
-import { errorStatusHandler } from "../../../Utils/utils"
+import { errorStatusHandler, showAlert } from "../../../Utils/utils"
 import { GetData } from "../../../Utils/Requests"
 
 // Import styles 
@@ -32,7 +32,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
       }
     } catch (err) {
       const message = errorStatusHandler(err)
-      console.log(message)
+      showAlert('Error', message, 'error')
     }
   }
 

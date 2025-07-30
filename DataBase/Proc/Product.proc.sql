@@ -97,7 +97,44 @@ BEGIN
             SELECT SUM(inv.cantidad)
             FROM inventario inv
             WHERE inv.id_pro_inv = p.id_pro
-        ) AS stock_total
+        ) AS stock_total,
+        -- cantidad vendidad este mes
+        (
+            SELECT SUM(pp.can_pro_ped)
+            FROM productos_pedidos pp
+            JOIN pedidos pd ON pp.id_ped = pd.id_ped
+            WHERE pd.fec_ped >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
+            AND pp.pro_ped = p.id_pro
+            AND pd.sta_ped = 'ENTREGADO'
+        ) AS ventas_mes,
+        (
+            SELECT GROUP_CONCAT(
+                CONCAT_WS(';',
+                    o.id_ofe,
+                    o.nom_ofe,
+                    o.des_ofe,
+                    o.dur_ofe,
+                    o.fec_ini_ofe,
+                    o.fec_fin_ofe,
+                    o.por_des_ofe,
+                    o.created_at,
+                    o.updated_at
+                ) 
+                SEPARATOR '---'
+            )
+            FROM
+                ofertas o 
+            JOIN 
+                oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+            JOIN 
+                oferta_productos op ON op.pro_ofe_pro = p.id_pro
+            WHERE
+                o.fec_fin_ofe > CURRENT_TIMESTAMP
+                AND (
+                    ocp.ofe_pro = o.id_ofe 
+                    OR op.ofe_pro = o.id_ofe
+                )
+        )AS offers
     FROM 
         e_commerce.productos p
     INNER JOIN 
@@ -164,6 +201,15 @@ BEGIN
             FROM inventario inv
             WHERE inv.id_pro_inv = p.id_pro
         ) AS stock_total,
+        -- cantidad vendidad este mes
+        (
+            SELECT SUM(pp.can_pro_ped)
+            FROM productos_pedidos pp
+            JOIN pedidos pd ON pp.id_ped = pd.id_ped
+            WHERE pd.fec_ped >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
+            AND pp.pro_ped = p.id_pro
+            AND pd.sta_ped = 'ENTREGADO'
+        ) AS ventas_mes,
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
@@ -269,11 +315,49 @@ BEGIN
             JOIN tallas t ON inv.id_tal_inv = t.id_tal_pro
             WHERE inv.id_pro_inv = p.id_pro
         ) AS sizes,
+        -- Stock total del producto (sumando todas las combinaciones)
         (
             SELECT SUM(inv.cantidad)
             FROM inventario inv
             WHERE inv.id_pro_inv = p.id_pro
-        ) AS stock_total
+        ) AS stock_total,
+        -- cantidad vendidad este mes
+        (
+            SELECT SUM(pp.can_pro_ped)
+            FROM productos_pedidos pp
+            JOIN pedidos pd ON pp.id_ped = pd.id_ped
+            WHERE pd.fec_ped >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
+            AND pp.pro_ped = p.id_pro
+            AND pd.sta_ped = 'ENTREGADO'
+        ) AS ventas_mes,
+        (
+            SELECT GROUP_CONCAT(
+                CONCAT_WS(';',
+                    o.id_ofe,
+                    o.nom_ofe,
+                    o.des_ofe,
+                    o.dur_ofe,
+                    o.fec_ini_ofe,
+                    o.fec_fin_ofe,
+                    o.por_des_ofe,
+                    o.created_at,
+                    o.updated_at
+                ) 
+                SEPARATOR '---'
+            )
+            FROM
+                ofertas o 
+            JOIN 
+                oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+            JOIN 
+                oferta_productos op ON op.pro_ofe_pro = p.id_pro
+            WHERE
+                o.fec_fin_ofe > CURRENT_TIMESTAMP
+                AND (
+                    ocp.ofe_pro = o.id_ofe 
+                    OR op.ofe_pro = o.id_ofe
+                )
+        )AS offers
     FROM 
         e_commerce.productos p
     INNER JOIN 

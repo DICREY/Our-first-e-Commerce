@@ -5,7 +5,7 @@ import { Search, Plus, Eye, Edit, ChevronDown, ChevronUp } from 'lucide-react'
 
 // Imports 
 import { Paginacion } from '../Global/Paginacion'
-import { divideList, errorStatusHandler, formatDate, searchFilter } from '../../Utils/utils'
+import { divideList, errorStatusHandler, formatDate, searchFilter, showAlert } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 import AdminLoadingScreen from '../Global/Loading'
 
@@ -47,7 +47,7 @@ export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
                 setLoading(false)
             } catch (err) {
                 const message = errorStatusHandler(err)
-                console.error('Error fetching customers:', message)
+                showAlert('Error', message, 'error')
                 setLoading(false)
             }
         }
