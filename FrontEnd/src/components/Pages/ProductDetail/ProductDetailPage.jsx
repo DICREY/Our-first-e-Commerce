@@ -44,11 +44,21 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
 
         if (prod?.nom_pro) {
           setProduct(prod);
-          setSelectedColor(prod?.colors?.[0]?.nom_col || '');
-          setSelectedImage(prod?.colors?.[0]?.url_img || '');
-          setSelectedSize(prod?.sizes?.[0] || null);
 
-          // Elimina la sección de relatedProducts del estado ya que ahora usamos el componente separado
+          // Establecer la imagen principal o la primera imagen de color disponible
+          const initialImage = prod.url_img ||
+            (Array.isArray(prod.colors) && prod.colors[0]?.url_img) ||
+            img;
+
+          setSelectedImage(initialImage);
+
+          // Establecer el primer color disponible si existe
+          const initialColor = Array.isArray(prod.colors) && prod.colors[0]?.nom_col || '';
+          setSelectedColor(initialColor);
+
+          // Establecer la primera talla disponible si existe
+          const initialSize = Array.isArray(prod.sizes) && prod.sizes[0] || null;
+          setSelectedSize(initialSize);
         } else {
           setProduct({});
         }
@@ -64,7 +74,7 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
     if (productId) {
       fetchProductData();
     }
-  }, [URL, productId]);
+  }, [URL, productId, img]);
 
   const handleQuickAdd = () => {
     addToCart(product, selectedSize, selectedColor, quantity)
@@ -76,6 +86,15 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
       setQuantity(newQuantity);
     }
   }
+
+  useEffect(() => {
+    if (product.colors && product.colors.length > 0) {
+      const colorObj = product.colors.find(c => c.nom_col === selectedColor);
+      if (colorObj && colorObj.url_img) {
+        setSelectedImage(colorObj.url_img);
+      }
+    }
+  }, [selectedColor, product.colors]);
 
   if (loading) {
     return (
@@ -112,24 +131,44 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
         <section className={styles.productMain}>
           <div className={styles.imageGallery}>
             <div className={styles.thumbnailContainer}>
-              {product.colors?.map((color, index) => (
+              {/* Mostrar imagen principal como primera opción si existe */}
+              {product.url_img && (
                 <picture
-                  key={index}
                   onClick={() => {
-                    setSelectedImage(color.url_img)
-                    setSelectedColor(color.nom_col)
+                    setSelectedImage(product.url_img);
+                    setSelectedColor('');
                   }}
                 >
                   <CheckImage
                     imgDefault={img}
-                    src={color.url_img}
-                    alt={`Color ${color.nom_col}`}
-                    className={`${styles.thumbnail} ${selectedColor === color.nom_col ? styles.active : ""
-                      }`}
+                    src={product.url_img}
+                    alt="Vista principal del producto"
+                    className={`${styles.thumbnail} ${!selectedColor ? styles.active : ""}`}
                   />
                 </picture>
+              )}
+
+              {/* Mostrar imágenes de colores */}
+              {product.colors?.map((color, index) => (
+                color.url_img && (
+                  <picture
+                    key={index}
+                    onClick={() => {
+                      setSelectedImage(color.url_img);
+                      setSelectedColor(color.nom_col);
+                    }}
+                  >
+                    <CheckImage
+                      imgDefault={img}
+                      src={color.url_img}
+                      alt={`Color ${color.nom_col}`}
+                      className={`${styles.thumbnail} ${selectedColor === color.nom_col ? styles.active : ""}`}
+                    />
+                  </picture>
+                )
               ))}
             </div>
+
             <div className={styles.mainImageContainer}>
               <CheckImage
                 imgDefault={img}

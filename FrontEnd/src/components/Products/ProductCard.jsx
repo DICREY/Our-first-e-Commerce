@@ -35,40 +35,81 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
 
   // Normalizar los datos del producto
   const normalizeProductData = (productData) => {
-    if (!productData) return null
-    
+    if (!productData) return null;
+
+    // Manejar imágenes del producto
+    let productImage = '';
+    if (productData.url_img && productData.url_img.trim() !== '') {
+      productImage = productData.url_img;
+    }
+
+    // Procesar colores
+    let productColors = [];
+    if (productData.colors) {
+      if (typeof productData.colors === 'string') {
+        productColors = productData.colors.split('---').map(colorStr => {
+          const [nom_col, hex_col, nom_img, url_img] = colorStr.split(';');
+          return {
+            nom_col: nom_col || '',
+            hex_col: hex_col || '#ccc',
+            nom_img: nom_img || '',
+            url_img: url_img || ''
+          };
+        });
+      } else if (Array.isArray(productData.colors)) {
+        productColors = productData.colors.map(color => ({
+          nom_col: color.nom_col || '',
+          hex_col: color.hex_col || '#ccc',
+          nom_img: color.nom_img || '',
+          url_img: color.url_img || ''
+        }));
+      }
+    }
+
     return {
       id_pro: productData.id_pro || '',
       nom_pro: productData.nom_pro || '',
       pre_pro: productData.pre_pro || 0,
-      colors: Array.isArray(productData.colors) ? productData.colors : [],
+      url_img: productImage,
+      colors: productColors,
       sizes: Array.isArray(productData.sizes) ? productData.sizes : [],
       onSale: Boolean(productData.onSale),
       featured: Boolean(productData.featured),
       ...productData
-    }
-  }
+    };
+  };
 
-  // Inicializar el componente
   useEffect(() => {
-    const normalizedProduct = normalizeProductData(data)
+    const normalizedProduct = normalizeProductData(data);
     if (normalizedProduct) {
-      setProduct(normalizedProduct)
-      
-      // Establecer imagen por defecto
-      const firstColorImg =
-        Array.isArray(normalizedProduct.colors) && normalizedProduct.colors[0]
-          ? normalizedProduct.colors[0].url_img
-          : null
-      setShowImg(firstColorImg || imgDefault)
-      
-      // Verificar si el producto está en favoritos
+      setProduct(normalizedProduct);
+
+      // Buscar la primera imagen disponible (ya sea en el producto o en sus colores)
+      let imageToShow = imgDefault;
+
+      // Primero verificar si el producto tiene imagen directa
+      if (normalizedProduct.url_img) {
+        imageToShow = normalizedProduct.url_img;
+      }
+      // Si no, buscar en los colores
+      else if (Array.isArray(normalizedProduct.colors)) {
+        const colorWithImage = normalizedProduct.colors.find(
+          color => color.url_img && color.url_img.trim() !== ''
+        );
+        if (colorWithImage) {
+          imageToShow = colorWithImage.url_img;
+        }
+      }
+
+      setShowImg(imageToShow);
+
+      // Verificar favoritos
       if (normalizedProduct.id_pro) {
-        const liked = localStorage.getItem(`liked-product-${normalizedProduct.id_pro}`) === "true"
-        setIsLiked(liked)
+        const liked = localStorage.getItem(`liked-product-${normalizedProduct.id_pro}`) === "true";
+        setIsLiked(liked);
       }
     }
-  }, [data, imgDefault])
+  }, [data, imgDefault]);
 
   // Manejar agregar al carrito
   const handleQuickAdd = (e) => {
@@ -102,16 +143,17 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
   // Obtener colores para mostrar (asegurando que sea un array)
   const displayColors = Array.isArray(product.colors) ? product.colors : []
 
+
   return (
     <div className={styles.card} onClick={handleCardClick}>
       <div className={styles.imageContainer}>
         <CheckImage
-          src={showImg}  
+          src={showImg}
           alt={product.nom_pro || 'Product image'}
           imgDefault={imgDefault}
           className={styles.image}
         />
-        
+
         {/* Badges */}
         <div className={styles.badges}>
           {product.onSale && <Badge variant="sale">Oferta</Badge>}
@@ -164,9 +206,9 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
           {displayColors.length > 0 && (
             <div className={styles.colors}>
               {displayColors.slice(0, 3).map((color, index) => (
-                <div 
-                  key={`color-${index}`} 
-                  className={styles.colorDot} 
+                <div
+                  key={`color-${index}`}
+                  className={styles.colorDot}
                   style={{ backgroundColor: color.hex_col || '#ccc' }}
                   title={color.nom_col}
                 />
@@ -193,4 +235,5 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
 }
 
 export default ProductCard
+
 

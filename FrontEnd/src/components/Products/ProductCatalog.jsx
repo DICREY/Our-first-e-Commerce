@@ -25,42 +25,42 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
   const [isLoading, setIsLoading] = useState(true)
 
   // Función para procesar los productos del backend
+  // En ProductCatalog.js, modificar la función processProducts:
   const processProducts = (rawProducts) => {
     return rawProducts.map(product => {
-      // Procesar colores - manejar diferentes formatos
+      // Procesar imagen principal
+      const mainImage = product.url_img && product.url_img.trim() !== ''
+        ? product.url_img
+        : '';
+
+      // Procesar colores
       let productColors = [];
       if (product.colors) {
         if (typeof product.colors === 'string') {
-          // Formato string con separadores
           productColors = product.colors.split('---').map(colorStr => {
-            const [nom_col, hex_col, nom_img, url_img] = colorStr.split(';');
-            return { nom_col, hex_col, nom_img, url_img };
+            const parts = colorStr.split(';');
+            return {
+              nom_col: parts[0] || '',
+              hex_col: parts[1] || '#ccc',
+              nom_img: parts[2] || '',
+              url_img: parts[3] || ''
+            };
           });
         } else if (Array.isArray(product.colors)) {
-          // Si ya es un array, usarlo directamente
           productColors = product.colors.map(color => ({
             nom_col: color.nom_col || '',
-            hex_col: color.hex_col || '',
+            hex_col: color.hex_col || '#ccc',
             nom_img: color.nom_img || '',
             url_img: color.url_img || ''
           }));
         }
       }
 
-      // Procesar tallas - manejar diferentes formatos
-      let productSizes = [];
-      if (product.sizes) {
-        if (typeof product.sizes === 'string') {
-          productSizes = product.sizes.split('---');
-        } else if (Array.isArray(product.sizes)) {
-          productSizes = product.sizes;
-        }
-      }
-
       return {
         ...product,
+        url_img: mainImage,
         colors: productColors,
-        sizes: productSizes,
+        sizes: Array.isArray(product.sizes) ? product.sizes : [],
         stock_total: product.stock_total || 0
       };
     });
