@@ -16,7 +16,7 @@ import {
 } from 'chart.js'
 
 // Imports
-import { divideList, errorStatusHandler, formatNumber, PriceCompare } from '../../Utils/utils'
+import { divideList, errorStatusHandler, formatNumber, PriceCompare, showAlert } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 
 // Import styles 
@@ -319,6 +319,7 @@ export const TotalOrders = ({ URL = '' }) => {
             }
         } catch (err) {
             const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
 
@@ -335,6 +336,7 @@ export const TotalOrders = ({ URL = '' }) => {
             didFetch = true
         } catch (err) {
             const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
 

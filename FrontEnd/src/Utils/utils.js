@@ -1,5 +1,6 @@
 // Librarys 
 import { useEffect, useState } from "react"
+import Swal from 'sweetalert2'
 
 // Greeting
 export const Greeting = () => {
@@ -265,4 +266,32 @@ export const LegalAge = () => {
   currentDate.setFullYear(currentDate.getFullYear() - 18)
 
   return currentDate.toLocaleDateString('en-CA')
+}
+
+export const showAlert = (title, text, icon) => {
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    theme: localStorage.getItem('theme').toLowerCase() || 'light',
+    confirmButtonText: 'Aceptar',
+    customClass: {
+      confirmButton: 'btn btn-primary'
+    }
+  })
+}
+
+export const showAlertLoading = (title, text, icon) => {
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    theme: localStorage.getItem('theme').toLowerCase() || 'light',
+    didOpen: () => {
+      Swal.showLoading()
+    }
+  })
 }

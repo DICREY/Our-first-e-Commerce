@@ -2,7 +2,7 @@
 import { useState, useMemo, useEffect } from "react"
 
 // Imports 
-import { errorStatusHandler } from "../../Utils/utils"
+import { errorStatusHandler, showAlert } from "../../Utils/utils"
 import { GetData } from "../../Utils/Requests"
 import ProductCard from "./ProductCard"
 
@@ -88,7 +88,8 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
         if (sizesData) setSizes(sizesData)
         if (prodsData) setProducts(processProducts(prodsData))
       } catch (err) {
-        console.error(errorStatusHandler(err))
+        const message = errorStatusHandler(err)
+        showAlert('Error', message, 'error')
       } finally {
         setIsLoading(false)
       }

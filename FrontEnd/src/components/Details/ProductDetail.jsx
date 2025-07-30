@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom'
 
 // Imports 
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { calculateDiscount, CheckImage, errorStatusHandler, formatDate, formatNumber } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, formatNumber, showAlert } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
@@ -31,7 +31,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState('details')
-    const [currentImage, setCurrentImage] = useState(0)
+    const [currentImage, setCurrentImage] = useState(null)
     
     // Vars
     const navigate = useNavigate()
@@ -45,11 +45,12 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
             setLoading(false)
             if (data && data[0]) {
                 setProduct(data[0])
+                setCurrentImage(data[0]?.img_default)
             }
         } catch (err) {
             setLoading(false)
             const message = errorStatusHandler(err)
-            console.error('Error fetching product:', message)
+            showAlert('Error', message, 'error')
         }
     }
 
@@ -67,6 +68,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                 fetchProduct()
             }
         } catch (err) {
+            setLoading(false)
             const message = errorStatusHandler(err)
             console.error('Error fetching product:', message)
         }
@@ -151,11 +153,13 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                             {product?.colors? (
                                 <>
                                     <div className={styles.mainImage}>
-                                        <CheckImage
-                                            src={currentImage}
-                                            alt={product.nom_pro}
-                                            imgDefault={imgDefault}
-                                        />
+                                        {currentImage && (
+                                            <CheckImage
+                                                src={currentImage}
+                                                alt={product.nom_pro}
+                                                imgDefault={imgDefault}
+                                            />
+                                        )}
                                     </div>
                                     <div className={styles.thumbnailContainer}>
                                         {product?.colors?.map((color, index) => (
@@ -274,7 +278,11 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                                         <div className={styles.variantsGrid}>
                                             {product.colors? (
                                                 product?.colors?.map((color, index) => (
-                                                    <div key={index} className={styles.variantCard}>
+                                                    <div 
+                                                        key={index} 
+                                                        className={styles.variantCard}
+                                                        onClick={() => setCurrentImage(color.url_img)}
+                                                    >
                                                         <div className={styles.variantColor} style={{ backgroundColor: color.hex_col }}>
                                                             <CheckImage 
                                                                 src={color.url_img} 
@@ -419,7 +427,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                                                     <Package size={20} />
                                                     <span>Ventas</span>
                                                 </div>
-                                                <div className={styles.metricValue}>87</div>
+                                                <div className={styles.metricValue}>{product?.ventas_mes || 0}</div>
                                                 <div className={styles.metricTrend}>
                                                     <span className={styles.trendUp}>+5%</span> vs último mes
                                                 </div>

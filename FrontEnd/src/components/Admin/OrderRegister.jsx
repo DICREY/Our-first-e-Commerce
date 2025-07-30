@@ -8,7 +8,7 @@ import {
 // Imports 
 import AdminLoadingScreen from '../Global/Loading'
 import { GetData, PostData } from '../../Utils/Requests'
-import { errorStatusHandler, formatNumber, searchFilter } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Admin/OrderRegister.module.css'
@@ -52,7 +52,7 @@ export const OrderRegister = ({ URL = '' }) => {
             setCustomersAlmc(got)
         } catch (err) {
             const message = errorStatusHandler(err)
-            console.error('Error fetching customers:', message)
+            showAlert('Error', message, 'error')
         }
     }
     
@@ -63,7 +63,7 @@ export const OrderRegister = ({ URL = '' }) => {
         } catch (err) {
             setIsLoading(false)
             const message = errorStatusHandler(err)
-            console.error('Error fetching customers:', message)
+            showAlert('Error', message, 'error')
         }
     }
     
@@ -74,7 +74,7 @@ export const OrderRegister = ({ URL = '' }) => {
         } catch (err) {
             setIsLoading(false)
             const message = errorStatusHandler(err)
-            console.error('Error fetching customers:', message)
+            showAlert('Error', message, 'error')
         }
     }
     
@@ -87,7 +87,7 @@ export const OrderRegister = ({ URL = '' }) => {
         } catch (err) {
             setIsLoading(false)
             const message = errorStatusHandler(err)
-            console.error('Error fetching customers:', message)
+            showAlert('Error', message, 'error')
         }
     }
     

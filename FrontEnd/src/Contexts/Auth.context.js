@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 
 // Imports 
-import { decodeJWT, errorStatusHandler } from '../Utils/utils'
+import { decodeJWT, errorStatusHandler, showAlert } from '../Utils/utils'
 import { PostCookie, PostData } from '../Utils/Requests'
 import { AuthContext } from './Contexts'
 import AdminLoadingScreen from '../components/Global/Loading'
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (err) {
             const message = errorStatusHandler(err)
-            console.log(message)
+            showAlert('Error', message, 'error')
         }
 
     }
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }) => {
                 }
             } catch (err) {
                 setLoading(null)
-                setUser(null)
+                const message = errorStatusHandler(err)
             }
         }
         checkAuth()

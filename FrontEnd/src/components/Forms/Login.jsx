@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 // Imports
 import { PostData } from '../../Utils/Requests'
-import { errorStatusHandler } from '../../Utils/utils'
+import { errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
 import { AuthContext } from "../../Contexts/Contexts"
 
 // Import styles 
@@ -22,14 +22,18 @@ export const LoginForm = ({ URL = '' }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
         const log = await login(`${URL}/credential/login`, { firstData: email, secondData: password })
         if (log) {
-          navigate('/')
+          showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+          setTimeout(() => {
+            navigate('/')
+          }, 2000)
         }
     } catch (err) {
         const message = errorStatusHandler(err)
-        console.log(message)
+        showAlert('Error', message, 'error')
     }
   }
 

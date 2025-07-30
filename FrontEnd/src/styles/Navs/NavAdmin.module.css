@@ -238,4 +238,14 @@
   .sidebar.closed .chevron {
     display: none;
   }
+
+  .footerNav {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .btnChangeTheme {
+    flex: 1;
+    gap: .5rem;
+  }
 }

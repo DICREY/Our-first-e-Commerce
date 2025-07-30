@@ -1,9 +1,9 @@
 // Librarys 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Check, Mail, PenOff, Plus, SquarePen, User } from 'lucide-react'
 
 // Imports 
-import { CheckImage, errorStatusHandler, formatDate, getAge } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert } from '../../Utils/utils'
 import { ModifyData } from '../../Utils/Requests'
 import AdminLoadingScreen from '../Global/Loading'
 
@@ -38,10 +38,9 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                 setIsEditing(false)
             }
         } catch (error) {
-            const message = errorStatusHandler(error)
-            console.log('Error:', message)
-        } finally {
             setIsLoading(false)
+            const message = errorStatusHandler(error)
+            showAlert('Error', message, 'error')
         }
     }
 

@@ -88,12 +88,12 @@
 
 ::selection {
   outline: .15rem solid var(--primary-500);
-  border-radius: .2rem ;
+  /* border-radius: .2rem ; */
 }
 
 :focus {
   outline: .15rem solid var(--primary-500);
-  border-radius: .2rem ;
+  /* border-radius: .2rem ; */
 }
 
 * {

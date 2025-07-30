@@ -48,8 +48,8 @@ INSERT INTO e_commerce.imagenes (nom_img, url_img) VALUES
 ('img_6_9', 'url_6_9'), -- id_img = 15
 ('img_7_2', 'url_7_2'), -- id_img = 16
 ('img_7_4', 'url_7_4'), -- id_img = 17
-('img_8_2', 'url_8_2'), -- id_img = 18
-('img_8_4', 'url_8_4'), -- id_img = 19
+('img_8_2', 'https://i.pinimg.com/1200x/ce/0e/7d/ce0e7d7e154e5542b11d76ddcb1b0984.jpg'), -- id_img = 18
+('img_8_4', 'https://i.pinimg.com/736x/cb/0e/b8/cb0eb8cce725af5efc252ecb188bf842.jpg'), -- id_img = 19
 ('img_9_2', 'url_9_2'), -- id_img = 20
 ('img_9_4', 'url_9_4'), -- id_img = 21
 ('img_10_2', 'url_10_2'), -- id_img = 22

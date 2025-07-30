@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react'
 
 // Imports 
 import { AuthContext } from '../../Contexts/Contexts'
-import { errorStatusHandler, formatNumber, Greeting } from '../../Utils/utils'
+import { errorStatusHandler, formatNumber, Greeting, showAlert } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 
 // Import styles 
@@ -35,6 +35,7 @@ export const DailySummary = ({ URL = '' }) => {
             }
         } catch (err) {
             const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
 
@@ -111,6 +112,6 @@ export const DailySummary = ({ URL = '' }) => {
                 </div>
                 </div>
             </div>
-            </article>
+        </article>
     )
 }

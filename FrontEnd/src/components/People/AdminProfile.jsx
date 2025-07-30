@@ -7,7 +7,7 @@ import {
 // Imports 
 import { AuthContext } from '../../Contexts/Contexts'
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlertLoading } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
@@ -79,7 +79,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
   // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setIsLoading(true)
+    showAlertLoading('Cargando...', 'Por favor espera', 'info')
 
     try {
       formData.fec_nac_per = formatDate(formData.fec_nac_per)
@@ -90,13 +90,14 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
         setIsEditing(false)
         setInitialData(formData)
         setHasChanges(false)
+        showAlert('Éxito', 'Perfil actualizado correctamente', 'success')
         
       } else {
         throw new Error(response.message || 'Error al actualizar el perfil')
       }
     } catch (error) {
-      console.error('Error:', error)
-      alert(`Error al guardar: ${error.message}`)
+      const message = errorStatusHandler(error)
+      showAlert('Error', message, 'error')
     } finally {
       setIsLoading(false)
     }
@@ -123,7 +124,8 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
         setAvatarPreview(userData.fot_per || user?.img || '')
       }
     } catch (err) {
-      console.error('Error fetching user data:', errorStatusHandler(err))
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     } finally {
       setIsLoading(false)
     }

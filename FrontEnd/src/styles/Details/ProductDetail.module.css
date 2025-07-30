@@ -106,39 +106,41 @@
 }
 
 .productGallery {
-    width: 40%;
-    display: flex;
-    flex-direction: column;
+    width: 35%;
+    display: grid;
+    grid-template-rows: 4fr 1.35fr;
     gap: 1rem;
 }
 
 .mainImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 0 2rem;
     background-color: var(--white);
     border-radius: 8px;
     box-shadow: var(--shadow-sm);
     overflow: hidden;
     aspect-ratio: 1/1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .mainImage img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: center;
 }
 
 .thumbnailContainer {
     display: flex;
     gap: 0.75rem;
-    overflow-x: auto;
     padding: 0.5rem 0;
+    overflow-x: auto;
 }
 
 .thumbnail {
-    width: 80px;
-    height: 80px;
     border-radius: 4px;
     border: 1px solid var(--neutral-200);
     overflow: hidden;
@@ -151,6 +153,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .thumbnail.active {
@@ -184,7 +187,8 @@
 }
 
 .tabs {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
     border-bottom: 1px solid var(--neutral-200);
     margin-bottom: 1.5rem;
 }
@@ -193,7 +197,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem;
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
@@ -660,7 +664,8 @@
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .contentContainer {
-        flex-direction: column;
+        flex-wrap: wrap;
+        overflow: auto;
     }
 
     .productGallery {

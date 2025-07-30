@@ -7,12 +7,13 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { CheckImage, errorStatusHandler } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
 import { GetData, PostData } from '../../Utils/Requests'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
 import styles from '../../styles/Products/ProductRegister.module.css'
+import { useNavigate } from 'react-router-dom'
 
 // Component 
 export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
@@ -35,7 +36,10 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         tallas: [],
     })
 
+    // Vars
+    const navigate = useNavigate()
 
+    // Functions
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target
         setFormData(prev => ({
@@ -84,7 +88,8 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         if (!validateForm()) return
 
         setIsSubmitting(true)
-        setIsLoading(true)
+        showAlertLoading('Cargando...', 'Por favor espera', 'info')
+
         try {
             console.log(formData)
             formData.hex_colores = String(formData.colores.map(i => i.hex))
@@ -96,13 +101,16 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
             if (response.success) {
                 setIsSubmitting(false)
                 setIsLoading(false)
+                showAlert('Éxito', 'Producto registrado exitosamente', 'success')
+                setTimeout(() => {
+                    navigate('/admin/products')
+                }, 3000)
             }
         } catch (err) {
+            setIsSubmitting(false)
             setIsLoading(false)
             const message = errorStatusHandler(err)
-            console.log(message)
-        } finally {
-            setIsSubmitting(false)
+            showAlert('Error', message, 'error')
         }
     }
 
@@ -112,7 +120,7 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
             setCategories(got)
         } catch (err) {
             const message = errorStatusHandler(err)
-            console.log(message)
+            showAlert('Error', message, 'error')
         }
     }
 
@@ -124,7 +132,7 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         } catch (err) {
             setIsLoading(false)
             const message = errorStatusHandler(err)
-            console.log(message)
+            showAlert('Error', message, 'error')
         }
     }
 
