@@ -88,27 +88,54 @@ class Offer {
     }
 
     // function to delete
-    async delete() {
+    async ChangeState() {
         return new Promise((res,rej) => {
             // Vars
             const by = this.args[0]?.trim()
-            const procedure = "CALL DeleteProduct(?);"
+            const procedure = "CALL ChangeStateOffer(?);"
 
             // conect to database
-            const conection = conect()
+            this.database = new DataBase()
+            this.database.conect()
 
             // verify conection and call procedure and call procedure
-            if (conection) conection.query(procedure,[by],err => { 
+            if (this.database) this.database.conection.query(procedure,[by],err => { 
                 if(err) {
                     rej(err)
                 } else setTimeout(() => res({
-                    message: "Product Deleted",
+                    message: "Offer Deleted",
                     success: 1
                 }),1000)
             })
 
             // close conection 
-            conection.end()
+            this.database.conection.end()
+        })
+    }
+
+    // function to delete
+    async delete() {
+        return new Promise((res,rej) => {
+            // Vars
+            const by = this.args[0]?.trim()
+            const procedure = "CALL DeactivateOffer(?);"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure and call procedure
+            if (this.database) this.database.conection.query(procedure,[by],err => { 
+                if(err) {
+                    rej(err)
+                } else setTimeout(() => res({
+                    message: "Offer Deactivated",
+                    success: 1
+                }),1000)
+            })
+
+            // close conection 
+            this.database.conection.end()
         })
     }
 
@@ -198,62 +225,6 @@ class Offer {
                         res({
                             message: "Info found",
                             result: resOne
-                        })
-                    },1000)
-                } else rej({ message: 'Error interno', status: 500 })
-            })
-
-            // close conection 
-            this.database.conection.end()
-        })
-    }
-   
-    async findShippingMethods() {
-        return new Promise((res,rej) => {
-            // vars
-            const proc = "CALL GetShippingMethods();"
-
-            // conect to database
-            this.database = new DataBase()
-            this.database.conect()
-
-            // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) {
-                    rej({ message: err })
-                } else if (result) {
-                    setTimeout(() => {
-                        res({
-                            message: "Info found",
-                            result: result[0]
-                        })
-                    },1000)
-                } else rej({ message: 'Error interno', status: 500 })
-            })
-
-            // close conection 
-            this.database.conection.end()
-        })
-    }
-
-    async findPaymentMethods() {
-        return new Promise((res,rej) => {
-            // vars
-            const proc = "CALL GetPaymentMethods();"
-
-            // conect to database
-            this.database = new DataBase()
-            this.database.conect()
-
-            // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc,(err,result) => {
-                if(err) {
-                    rej({ message: err })
-                } else if (result) {
-                    setTimeout(() => {
-                        res({
-                            message: "Info found",
-                            result: result[0]
                         })
                     },1000)
                 } else rej({ message: 'Error interno', status: 500 })

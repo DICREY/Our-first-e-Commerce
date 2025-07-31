@@ -1,3 +1,4 @@
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.AddToCart(
     IN p_user_id INT,
     IN p_product_id INT,

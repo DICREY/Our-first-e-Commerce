@@ -6,8 +6,8 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { errorStatusHandler, formatNumber, showAlert, showAlertLoading } from '../../Utils/utils'
-import { DeleteData, GetData, PostData } from '../../Utils/Requests'
+import { errorStatusHandler, formatDate, formatNumber, showAlert, showAlertLoading } from '../../Utils/utils'
+import { GetData, ModifyData, PostData } from '../../Utils/Requests'
 
 // Import styles 
 import styles from '../../styles/Admin/Offers.module.css'
@@ -32,29 +32,29 @@ export const OfferManager = ({ URL }) => {
         selectedCategories: []
     })
 
-    // Fetch data
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [offersRes, productsRes, categoriesRes] = await Promise.all([
-                    GetData(`${URL}/offers/all`),
-                    GetData(`${URL}/products/all`),
-                    GetData(`${URL}/products/categories`)
-                ])
+    // Vars 
+    let didFetch = false
 
-                setOffers(await offersRes)
-                setProducts(await productsRes)
-                setCategories(await categoriesRes)
-                setIsLoading(false)
-            } catch (error) {
-                const message = errorStatusHandler(error)
-                showAlert('Error', message, 'error')
-                setIsLoading(false)
-            }
+    const fetchData = async () => {
+        try {
+            if (didFetch) return
+            const [offersRes, productsRes, categoriesRes] = await Promise.all([
+                GetData(`${URL}/offers/all`),
+                GetData(`${URL}/products/all`),
+                GetData(`${URL}/products/categories`)
+            ])
+
+            setOffers(await offersRes)
+            setProducts(await productsRes)
+            setCategories(await categoriesRes)
+            setIsLoading(false)
+            didFetch = true
+        } catch (error) {
+            const message = errorStatusHandler(error)
+            showAlert('Error', message, 'error')
+            setIsLoading(false)
         }
-
-        fetchData()
-    }, [URL])
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -128,10 +128,9 @@ export const OfferManager = ({ URL }) => {
             const method = isEditing ? await ModifyData(url, offerData):
             await PostData(url, offerData)
 
-
-            if (method.success) {
+            if (method?.success) {
                 if (isEditing) {
-                    setOffers(offers.map(o => o.id === currentOffer ? method : o))
+                    setOffers(offers.map(o => o.id_ofe === currentOffer ? method : o))
                 } else setOffers([...offers, method])
                 resetForm()
             }
@@ -144,9 +143,13 @@ export const OfferManager = ({ URL }) => {
     const handleDelete = async (id) => {
         if (window.confirm('¿Estás seguro de eliminar esta oferta?')) {
             try {
+                didFetch = false
                 showAlertLoading('Cargando','Eliminando oferta...', 'info')
-                await DeleteData(`${URL}/offers/delete`, { by: id })
-                setOffers(offers.filter(o => o.id !== id))
+                const result = await ModifyData(`${URL}/offers/delete`, { by: id })
+                if (result?.success) {
+                    showAlert('Éxito', 'Oferta eliminada correctamente', 'success')
+                    fetchData()
+                }
             } catch (error) {
                 const message = errorStatusHandler(error)
                 showAlert('Error', message, 'error')
@@ -179,6 +182,11 @@ export const OfferManager = ({ URL }) => {
         return 'Activa'
     }
 
+    // Fetch data
+    useEffect(() => {
+        fetchData()
+    }, [URL])
+
     if (isLoading) {
         return <div className={styles.loading}>Cargando...</div>
     }
@@ -192,7 +200,7 @@ export const OfferManager = ({ URL }) => {
                 <p className={styles.subtitle}>Crea y administra ofertas especiales</p>
             </header>
 
-            <div className={styles.content}>
+            <main className={styles.content}>
                 {/* Formulario de ofertas */}
                 <form onSubmit={handleSubmit} className={styles.offerForm}>
                     <h3 className={styles.sectionTitle}>
@@ -356,10 +364,10 @@ export const OfferManager = ({ URL }) => {
                         </div>
                     ) : (
                         <div className={styles.offersGrid}>
-                            {offers.map(offer => {
+                            {offers?.map((offer, idx) => {
                                 const status = getStatus(offer.fec_ini_ofe, offer.fec_fin_ofe)
                                 return (
-                                    <div key={offer.id_ofe} className={styles.offerCard}>
+                                    <div key={idx} className={styles.offerCard}>
                                         <div className={styles.offerHeader}>
                                             <h4 className={styles.offerTitle}>{offer.nom_ofe}</h4>
                                             <div className={`${styles.offerStatus} ${status === 'Activa' ? styles.active : status === 'Pendiente' ? styles.pending : styles.ended}`}>
@@ -369,10 +377,10 @@ export const OfferManager = ({ URL }) => {
 
                                         <div className={styles.offerMeta}>
                                             <div className={styles.offerDiscount}>
-                                                <Percent size={14} /> {offer.por_des_ofe}% de descuento
+                                                {offer.por_des_ofe}% de descuento
                                             </div>
                                             <div className={styles.offerDates}>
-                                                <Calendar size={14} /> {new Date(offer.fec_ini_ofe).toLocaleDateString()} - {new Date(offer.fec_fin_ofe).toLocaleDateString()}
+                                                <Calendar size={14} /> {formatDate(offer.fec_ini_ofe)} - {formatDate(offer.fec_fin_ofe)}
                                             </div>
                                         </div>
 
@@ -383,11 +391,11 @@ export const OfferManager = ({ URL }) => {
                                         <div className={styles.offerStats}>
                                             <div className={styles.statItem}>
                                                 <span className={styles.statLabel}>Productos:</span>
-                                                <span className={styles.statValue}>{offer.products?.length || 0}</span>
+                                                <span className={styles.statValue}>{offer.Products?.length || 0}</span>
                                             </div>
                                             <div className={styles.statItem}>
                                                 <span className={styles.statLabel}>Categorías:</span>
-                                                <span className={styles.statValue}>{offer.categories?.length || 0}</span>
+                                                <span className={styles.statValue}>{offer.Categories?.length || 0}</span>
                                             </div>
                                         </div>
 
@@ -411,7 +419,7 @@ export const OfferManager = ({ URL }) => {
                         </div>
                     )}
                 </div>
-            </div>
+            </main>
         </div>
     )
 }

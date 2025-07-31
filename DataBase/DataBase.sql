@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 
@@ -156,6 +156,8 @@ CREATE TABLE e_commerce.ofertas(
     fec_ini_ofe TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     fec_fin_ofe TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     por_des_ofe INT DEFAULT 0 NOT NULL COMMENT 'Porcentaje de oferta',
+    sta_ofe ENUM('PENDIENTE', 'ACTIVA', 'FINALIZADA') DEFAULT 'PENDIENTE',INDEX(sta_ofe),
+    available BOOLEAN DEFAULT 1 NOT NULL COMMENT 'Oferta disponible',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );

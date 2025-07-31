@@ -13,6 +13,8 @@ BEGIN
         of.fec_ini_ofe,
         of.fec_fin_ofe,
         of.por_des_ofe,
+        of.sta_ofe,
+        of.available,
         of.created_at,
         of.updated_at,
         (
@@ -55,8 +57,77 @@ BEGIN
         ) AS Products
     FROM 
         e_commerce.ofertas of
+    WHERE
+        of.available = 1
     LIMIT 1000;
 END //
 
-DROP PROCEDURE IF EXISTS e_commerce.GetAllOffers;
-CALL e_commerce.GetAllOffers();
+CREATE PROCEDURE e_commerce.ChangeStateOffer(
+    IN p_by VARCHAR(100)
+)
+BEGIN
+    DECLARE v_id_ofe INT;
+    DECLARE v_sta_ofe ENUM('PENDIENTE', 'ACTIVA', 'FINALIZADA');
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    SELECT id_ofe, sta_ofe INTO v_id_ofe, v_sta_ofe
+    FROM e_commerce.ofertas
+    WHERE id_ofe = p_by;
+
+    IF v_id_ofe IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Oferta no encontrada';
+    END IF;
+
+    IF v_sta_ofe = 'PENDIENTE' THEN
+        UPDATE e_commerce.ofertas SET sta_ofe = 'ACTIVA' WHERE id_ofe = v_id_ofe;
+    ELSEIF v_sta_ofe = 'ACTIVA' THEN
+        UPDATE e_commerce.ofertas SET sta_ofe = 'FINALIZADA' WHERE id_ofe = v_id_ofe;
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Estado de oferta no válido';
+    END IF;
+
+    COMMIT;
+
+    SET autocommit = 0;
+END //
+
+CREATE PROCEDURE e_commerce.DeactivateOffer(
+    IN p_by VARCHAR(100)
+)
+BEGIN
+    DECLARE v_id_ofe INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    SELECT id_ofe INTO v_id_ofe
+    FROM e_commerce.ofertas
+    WHERE id_ofe = p_by;
+
+    IF v_id_ofe IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Oferta no encontrada';
+    END IF;
+
+    UPDATE e_commerce.ofertas SET available = 0 WHERE id_ofe = v_id_ofe;
+
+    COMMIT;
+
+    SET autocommit = 1;
+END //
+
+/* DROP PROCEDURE IF EXISTS e_commerce.GetAllOffers; */
+/* CALL e_commerce.GetAllOffers(); */

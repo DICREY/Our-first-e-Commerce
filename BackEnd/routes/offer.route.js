@@ -90,13 +90,13 @@ Route.put('/modify', ValidatorRol("administrador"),async (req,res) => {
     }
 })
 
-Route.put('/complete', ValidatorRol("administrador"),async (req,res) => {
+Route.put('/finish', ValidatorRol("administrador"),async (req,res) => {
     try {
         // Vars 
         const by = String(req.body.by)
-        const ord = new Order(by)
+        const ord = new Offer(by)
 
-        const mod = await ord.complete()
+        const mod = await ord.ChangeState()
         if (mod.success) return res.status(200).json(mod)
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
@@ -108,22 +108,18 @@ Route.put('/complete', ValidatorRol("administrador"),async (req,res) => {
     }
 })
 
-Route.delete('/delete', ValidatorRol("administrador"),async (req,res) => {
-    // Vars 
-    const { body } = req
-    console.log(body)
-        
+Route.put('/delete', ValidatorRol("administrador"),async (req,res) => {
     try {
-        // Verifiy if exist
-        const find = await orderInst.findBy(toString(body.doc_per))
-        if (!find.result) res.status(404).json({ message: "Pedido no encontrado" })
+        // Vars 
+        const by = String(req.body.by)
+        const offer = new Offer(by)
 
-        const peopleDeleted = await orderInst.delete(body.doc_per)
-        if (peopleDeleted.deleted) return res.status(200).json(peopleDeleted)
+        const offerDeleted = await offer.delete(by)
+        if (offerDeleted.success) return res.status(200).json(offerDeleted)
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch (err) {
-
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
