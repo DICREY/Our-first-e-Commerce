@@ -26,6 +26,7 @@ import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
 import { useDarkMode } from "./Hooks/Theme";
+import { OfferManager } from "./components/Admin/Offers";
 
 // Main Module 
 const App = () => {
@@ -145,6 +146,10 @@ const App = () => {
               <Route 
                 path="/admin/home" 
                 element={<Dashboard URL={URL} imgDefault={imgUser} />} 
+              />
+              <Route 
+                path="/admin/offers"
+                element={<OfferManager URL={URL} imgDefault={imgUser} />} 
               />
               <Route 
                 path="/admin/products" 

@@ -11,7 +11,8 @@ import {
   ChevronRight,
   ChevronLeft,
   Sun,
-  Moon
+  Moon,
+  ClockPlus
 } from 'lucide-react'
 
 // Imports 
@@ -49,6 +50,11 @@ export const NavAdmin = () => {
             icon: <ChartNoAxesCombined size={20} />,
             label: "Dashboard",
             exact: true
+        },
+        {
+            path: "/admin/offers",
+            icon: <ClockPlus size={20} />,
+            label: "Ofertas",
         },
         {
             path: "/admin/products",
@@ -144,7 +150,7 @@ export const NavAdmin = () => {
                     ))}
                 </ul>
             </nav>
-            
+
             <article className={styles.footerNav}>
                 <button
                     style={{ border: 'none' }}
