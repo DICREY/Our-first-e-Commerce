@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { errorStatusHandler, formatDate, formatNumber, showAlert, showAlertLoading } from '../../Utils/utils'
+import { capitalize, errorStatusHandler, formatDate, formatNumber, searchFilter, showAlert, showAlertLoading } from '../../Utils/utils'
 import { GetData, ModifyData, PostData } from '../../Utils/Requests'
 
 // Import styles 
@@ -17,11 +17,13 @@ export const OfferManager = ({ URL }) => {
     // Dynamic vars
     const [ offers, setOffers ] = useState([])
     const [ products, setProducts ] = useState([])
+    const [ productsAlmc, setProductsAlmc ] = useState([])
     const [ categories, setCategories ] = useState([])
     const [ isLoading, setIsLoading ] = useState(true)
     const [ isEditing, setIsEditing ] = useState(false)
     const [ currentOffer, setCurrentOffer ] = useState(null)
     const [ formData, setFormData ] = useState({
+        id: '',
         name: '',
         description: '',
         duration: 24,
@@ -46,6 +48,7 @@ export const OfferManager = ({ URL }) => {
 
             setOffers(await offersRes)
             setProducts(await productsRes)
+            setProductsAlmc(await productsRes)
             setCategories(await categoriesRes)
             setIsLoading(false)
             didFetch = true
@@ -54,6 +57,11 @@ export const OfferManager = ({ URL }) => {
             showAlert('Error', message, 'error')
             setIsLoading(false)
         }
+    }
+
+    const filterProducts = (term) => {
+        const filterData = searchFilter(term, productsAlmc, ['nom_pro'])
+        if (filterData) setProducts(filterData)
     }
 
     const handleChange = (e) => {
@@ -96,6 +104,7 @@ export const OfferManager = ({ URL }) => {
     const handleEdit = (offer) => {
         setCurrentOffer(offer.id)
         setFormData({
+            id: offer.id_ofe,
             name: offer.nom_ofe,
             description: offer.des_ofe,
             duration: offer.dur_ofe,
@@ -112,6 +121,7 @@ export const OfferManager = ({ URL }) => {
         e.preventDefault()
 
         const offerData = {
+            id_ofe: formData.id,
             nom_ofe: formData.name,
             des_ofe: formData.description,
             dur_ofe: formData.duration,
@@ -123,16 +133,18 @@ export const OfferManager = ({ URL }) => {
         }
 
         try {
-            const url = isEditing? `${URL}/offers/modify`: `${URL}/offers/all`
+            didFetch = false
+            showAlertLoading('Cargando...','Validando datos enviados','info')
+
+            const url = isEditing? `${URL}/offers/modify`: `${URL}/offers/register`
 
             const method = isEditing ? await ModifyData(url, offerData):
             await PostData(url, offerData)
 
             if (method?.success) {
-                if (isEditing) {
-                    setOffers(offers.map(o => o.id_ofe === currentOffer ? method : o))
-                } else setOffers([...offers, method])
+                fetchData()
                 resetForm()
+                showAlert('Exito',`${isEditing? 'Oferta modificada correctamente':'Oferta registrada correctamente'}`,'success')
             }
         } catch (error) {
             const message = errorStatusHandler(error)
@@ -172,14 +184,20 @@ export const OfferManager = ({ URL }) => {
         setCurrentOffer(null)
     }
 
-    const getStatus = (startDate, endDate) => {
-        const now = new Date()
-        const start = new Date(startDate)
-        const end = new Date(endDate)
+    const changeState = async (id) => {
+        try {
+            didFetch = false
+            showAlertLoading('Cargando...','Cambiando estado')
+            const got = await ModifyData(`${URL}/offers/finish`, { by: id })
+            if (got?.success) {
+                showAlert('Éxito', 'Estado cambiado correctamente', 'success')
+                fetchData()
+            }
 
-        if (now < start) return 'Pendiente'
-        if (now > end) return 'Finalizada'
-        return 'Activa'
+        } catch (err) {
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
+        }
     }
 
     // Fetch data
@@ -215,6 +233,7 @@ export const OfferManager = ({ URL }) => {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
+                                placeholder='Nombre de la oferta'
                                 required
                                 className={styles.input}
                             />
@@ -226,6 +245,7 @@ export const OfferManager = ({ URL }) => {
                                 name="description"
                                 value={formData.description}
                                 onChange={handleChange}
+                                placeholder='Descripción de la oferta'
                                 required
                                 className={styles.textarea}
                                 rows="3"
@@ -251,7 +271,6 @@ export const OfferManager = ({ URL }) => {
                             <input
                                 type="number"
                                 name="duration"
-                                min="1"
                                 value={formData.duration}
                                 onChange={handleDateChange}
                                 className={styles.input}
@@ -285,7 +304,15 @@ export const OfferManager = ({ URL }) => {
 
                     {/* Selección de productos */}
                     <div className={styles.selectionSection}>
-                        <h4 className={styles.subsectionTitle}>Productos en Oferta</h4>
+                        <span className={styles.subHeader}>
+                            <h4 className={styles.subsectionTitle}>Productos en Oferta</h4>
+                            <input 
+                                type="text" 
+                                placeholder='Buscar producto por nombre'
+                                className={`${styles.input} expand`}
+                                onChange={(e) => filterProducts(e.target.value)}
+                            />
+                        </span>
                         <div className={styles.itemsGrid}>
                             {products?.map(product => (
                                 <div
@@ -311,7 +338,7 @@ export const OfferManager = ({ URL }) => {
                         <div className={styles.itemsGrid}>
                             {categories?.map((category, idx) => (
                                 <div
-                                    key={idx + 98}
+                                    key={category.id_cat_pro}
                                     className={`${styles.itemCard} ${formData.selectedCategories.includes(category.id_cat_pro) ? styles.selected : ''}`}
                                     onClick={() => toggleCategorySelection(category.id_cat_pro)}
                                 >
@@ -358,64 +385,64 @@ export const OfferManager = ({ URL }) => {
                 <div className={styles.offersList}>
                     <h3 className={styles.sectionTitle}>Ofertas Activas</h3>
 
-                    {offers.length === 0 ? (
+                    {offers?.length === 0 ? (
                         <div className={styles.emptyState}>
                             No hay ofertas registradas
                         </div>
                     ) : (
                         <div className={styles.offersGrid}>
-                            {offers?.map((offer, idx) => {
-                                const status = getStatus(offer.fec_ini_ofe, offer.fec_fin_ofe)
-                                return (
-                                    <div key={idx} className={styles.offerCard}>
-                                        <div className={styles.offerHeader}>
-                                            <h4 className={styles.offerTitle}>{offer.nom_ofe}</h4>
-                                            <div className={`${styles.offerStatus} ${status === 'Activa' ? styles.active : status === 'Pendiente' ? styles.pending : styles.ended}`}>
-                                                {status}
-                                            </div>
-                                        </div>
-
-                                        <div className={styles.offerMeta}>
-                                            <div className={styles.offerDiscount}>
-                                                {offer.por_des_ofe}% de descuento
-                                            </div>
-                                            <div className={styles.offerDates}>
-                                                <Calendar size={14} /> {formatDate(offer.fec_ini_ofe)} - {formatDate(offer.fec_fin_ofe)}
-                                            </div>
-                                        </div>
-
-                                        <div className={styles.offerDescription}>
-                                            {offer.des_ofe}
-                                        </div>
-
-                                        <div className={styles.offerStats}>
-                                            <div className={styles.statItem}>
-                                                <span className={styles.statLabel}>Productos:</span>
-                                                <span className={styles.statValue}>{offer.Products?.length || 0}</span>
-                                            </div>
-                                            <div className={styles.statItem}>
-                                                <span className={styles.statLabel}>Categorías:</span>
-                                                <span className={styles.statValue}>{offer.Categories?.length || 0}</span>
-                                            </div>
-                                        </div>
-
-                                        <div className={styles.offerActions}>
-                                            <button
-                                                onClick={() => handleEdit(offer)}
-                                                className={styles.editButton}
-                                            >
-                                                <Edit size={14} /> Editar
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(offer.id_ofe)}
-                                                className={styles.deleteButton}
-                                            >
-                                                <Trash2 size={14} /> Eliminar
-                                            </button>
+                            {offers?.map((offer, idx) => (
+                                <div key={idx} className={styles.offerCard}>
+                                    <div className={styles.offerHeader}>
+                                        <h4 className={styles.offerTitle}>{offer.nom_ofe}</h4>
+                                        <div 
+                                            className={`${styles.offerStatus} ${offer.sta_ofe === 'ACTIVA' ? styles.active : offer.sta_ofe === 'PENDIENTE' ? styles.pending : styles.ended}`}
+                                            onClick={() => changeState(offer.id_ofe)}
+                                        >
+                                            {capitalize(offer.sta_ofe)}
                                         </div>
                                     </div>
-                                )
-                            })}
+
+                                    <div className={styles.offerMeta}>
+                                        <div className={styles.offerDiscount}>
+                                            {offer.por_des_ofe}% de descuento
+                                        </div>
+                                        <div className={styles.offerDates}>
+                                            <Calendar size={14} /> {formatDate(offer.fec_ini_ofe)} - {formatDate(offer.fec_fin_ofe)}
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.offerDescription}>
+                                        {offer.des_ofe}
+                                    </div>
+
+                                    <div className={styles.offerStats}>
+                                        <div className={styles.statItem}>
+                                            <span className={styles.statLabel}>Productos:</span>
+                                            <span className={styles.statValue}>{offer.Products?.length || 0}</span>
+                                        </div>
+                                        <div className={styles.statItem}>
+                                            <span className={styles.statLabel}>Categorías:</span>
+                                            <span className={styles.statValue}>{offer.Categories?.length || 0}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.offerActions}>
+                                        <button
+                                            onClick={() => handleEdit(offer)}
+                                            className={styles.editButton}
+                                        >
+                                            <Edit size={14} /> Editar
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(offer.id_ofe)}
+                                            className={styles.deleteButton}
+                                        >
+                                            <Trash2 size={14} /> Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>

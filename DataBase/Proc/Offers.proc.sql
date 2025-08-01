@@ -129,5 +129,235 @@ BEGIN
     SET autocommit = 1;
 END //
 
+CREATE PROCEDURE e_commerce.RegisterOffer(
+    IN p_nombre_oferta VARCHAR(255),
+    IN p_descripcion TEXT,
+    IN p_duracion_horas INT,
+    IN p_fecha_inicio TIMESTAMP,
+    IN p_fecha_fin TIMESTAMP,
+    IN p_porcentaje_descuento INT,
+    IN p_productos_json JSON, -- JSON array de IDs de productos: [1, 2, 3]
+    IN p_categorias_json JSON -- JSON array de IDs de categorías: [1, 2]
+)
+BEGIN
+    DECLARE v_oferta_id INT;
+    DECLARE v_producto_count INT;
+    DECLARE v_categoria_count INT;
+    DECLARE v_i INT DEFAULT 0;
+    DECLARE v_producto_id INT;
+    DECLARE v_categoria_id INT;
+    DECLARE v_producto_valido BOOLEAN;
+    DECLARE v_categoria_valida BOOLEAN;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+    
+    -- Validar parámetros obligatorios
+    IF EXISTS (SELECT 1 FROM ofertas WHERE nom_ofe = p_nombre_oferta LIMIT 1) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre de oferta ya existe';
+    END IF;
+    
+    -- Validar que al menos haya productos o categorías
+    IF (p_productos_json IS NULL OR JSON_LENGTH(p_productos_json) = 0) AND 
+       (p_categorias_json IS NULL OR JSON_LENGTH(p_categorias_json) = 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Debe proporcionar al menos un producto o una categoría';
+    END IF;
+    
+    -- Insertar la nueva oferta
+    INSERT INTO e_commerce.ofertas (
+        nom_ofe, 
+        des_ofe, 
+        dur_ofe, 
+        fec_ini_ofe, 
+        fec_fin_ofe, 
+        por_des_ofe
+    ) VALUES (
+        p_nombre_oferta,
+        p_descripcion,
+        p_duracion_horas,
+        p_fecha_inicio,
+        p_fecha_fin,
+        p_porcentaje_descuento
+    );
+    
+    SET v_oferta_id = LAST_INSERT_ID();
+    
+    -- Procesar productos si se proporcionan
+    IF p_productos_json IS NOT NULL AND JSON_LENGTH(p_productos_json) > 0 THEN
+        SET v_producto_count = JSON_LENGTH(p_productos_json);
+        
+        WHILE v_i < v_producto_count DO
+            SET v_producto_id = JSON_EXTRACT(p_productos_json, CONCAT('$[', v_i, ']'));
+            
+            -- Verificar si el producto existe y está disponible
+            SELECT COUNT(*) INTO v_producto_valido FROM productos 
+            WHERE id_pro = v_producto_id AND sta_pro = 'DISPONIBLE';
+            
+            IF v_producto_valido THEN
+                -- Insertar relación oferta-producto
+                INSERT INTO e_commerce.oferta_productos (ofe_pro, pro_ofe_pro)
+                VALUES (v_oferta_id, v_producto_id);
+                
+                -- Actualizar descuento en el producto si la oferta está activa
+                /* IF p_estado = 'ACTIVA' THEN
+                    UPDATE productos 
+                    SET des_pre_pro = p_porcentaje_descuento,
+                        pre_pro = pre_ori_pro * (1 - p_porcentaje_descuento/100)
+                    WHERE id_pro = v_producto_id;
+                END IF; */
+            ELSE
+                SET @mensaje_error = CONCAT('El producto ', v_producto_id, ' no fue encontrado');
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @error_message;
+            END IF;
+            
+            SET v_i = v_i + 1;
+        END WHILE;
+    END IF;
+    
+    -- Procesar categorías si se proporcionan
+    IF p_categorias_json IS NOT NULL AND JSON_LENGTH(p_categorias_json) > 0 THEN
+        SET v_i = 0;
+        SET v_categoria_count = JSON_LENGTH(p_categorias_json);
+        
+        WHILE v_i < v_categoria_count DO
+            SET v_categoria_id = JSON_EXTRACT(p_categorias_json, CONCAT('$[', v_i, ']'));
+            
+            -- Verificar si la categoría existe y está activa
+            SELECT COUNT(*) INTO v_categoria_valida FROM cat_productos 
+            WHERE id_cat_pro = v_categoria_id AND sta_cat_pro = 1;
+            
+            IF v_categoria_valida THEN
+                -- Insertar relación oferta-categoría
+                INSERT INTO e_commerce.oferta_categoria_productos (ofe_pro, cat_ofe_pro)
+                VALUES (v_oferta_id, v_categoria_id);
+                
+            END IF;
+            
+            SET v_i = v_i + 1;
+        END WHILE;
+    END IF;
+
+    COMMIT;
+
+    SET autocommit = 1;
+END //
+
+CREATE PROCEDURE e_commerce.ModifyOffer(
+    IN p_id_oferta INT,
+    IN p_nombre_oferta VARCHAR(255),
+    IN p_descripcion TEXT,
+    IN p_duracion_horas INT,
+    IN p_fecha_inicio TIMESTAMP,
+    IN p_fecha_fin TIMESTAMP,
+    IN p_porcentaje_descuento INT,
+    IN p_productos_json JSON, -- JSON array de IDs de productos: [1, 2, 3]
+    IN p_categorias_json JSON -- JSON array de IDs de categorías: [1, 2]
+)
+BEGIN
+    DECLARE v_producto_count INT;
+    DECLARE v_categoria_count INT;
+    DECLARE v_i INT DEFAULT 0;
+    DECLARE v_producto_id INT;
+    DECLARE v_categoria_id INT;
+    DECLARE v_producto_valido BOOLEAN;
+    DECLARE v_categoria_valida BOOLEAN;
+    DECLARE v_oferta_existe INT;
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    -- Iniciar transacción
+    SET autocommit = 0;
+    START TRANSACTION;
+    
+    -- Verificar si la oferta existe
+    SELECT COUNT(*) INTO v_oferta_existe FROM ofertas WHERE id_ofe = p_id_oferta;
+    IF v_oferta_existe = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La oferta no existe';
+    END IF;
+    
+    -- Validar que al menos haya productos o categorías
+    IF (p_productos_json IS NULL OR JSON_LENGTH(p_productos_json) = 0) AND 
+       (p_categorias_json IS NULL OR JSON_LENGTH(p_categorias_json) = 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Debe proporcionar al menos un producto o una categoría';
+    END IF;
+    
+    -- Actualizar los datos principales de la oferta
+    UPDATE e_commerce.ofertas 
+    SET 
+        nom_ofe = p_nombre_oferta,
+        des_ofe = p_descripcion,
+        dur_ofe = p_duracion_horas,
+        fec_ini_ofe = p_fecha_inicio,
+        fec_fin_ofe = p_fecha_fin,
+        por_des_ofe = p_porcentaje_descuento
+    WHERE id_ofe = p_id_oferta;
+    
+    -- Eliminar relaciones existentes de productos y categorías
+    DELETE FROM e_commerce.oferta_productos WHERE ofe_pro = p_id_oferta;
+    DELETE FROM e_commerce.oferta_categoria_productos WHERE ofe_pro = p_id_oferta;
+    
+    -- Procesar productos si se proporcionan
+    IF p_productos_json IS NOT NULL AND JSON_LENGTH(p_productos_json) > 0 THEN
+        SET v_producto_count = JSON_LENGTH(p_productos_json);
+        
+        WHILE v_i < v_producto_count DO
+            SET v_producto_id = JSON_EXTRACT(p_productos_json, CONCAT('$[', v_i, ']'));
+            
+            -- Verificar si el producto existe y está disponible
+            SELECT COUNT(*) INTO v_producto_valido FROM productos 
+            WHERE id_pro = v_producto_id AND sta_pro = 'DISPONIBLE';
+            
+            IF v_producto_valido THEN
+                -- Insertar nueva relación oferta-producto
+                INSERT INTO e_commerce.oferta_productos (ofe_pro, pro_ofe_pro)
+                VALUES (p_id_oferta, v_producto_id);
+            END IF;
+            
+            SET v_i = v_i + 1;
+        END WHILE;
+    END IF;
+    
+    -- Procesar categorías si se proporcionan
+    IF p_categorias_json IS NOT NULL AND JSON_LENGTH(p_categorias_json) > 0 THEN
+        SET v_i = 0;
+        SET v_categoria_count = JSON_LENGTH(p_categorias_json);
+        
+        WHILE v_i < v_categoria_count DO
+            SET v_categoria_id = JSON_EXTRACT(p_categorias_json, CONCAT('$[', v_i, ']'));
+            
+            -- Verificar si la categoría existe y está activa
+            SELECT COUNT(*) INTO v_categoria_valida FROM cat_productos 
+            WHERE id_cat_pro = v_categoria_id AND sta_cat_pro = 1;
+            
+            IF v_categoria_valida THEN
+                -- Insertar nueva relación oferta-categoría
+                INSERT INTO e_commerce.oferta_categoria_productos (ofe_pro, cat_ofe_pro)
+                VALUES (p_id_oferta, v_categoria_id);
+            END IF;
+            
+            SET v_i = v_i + 1;
+        END WHILE;
+    END IF;
+    
+    COMMIT;
+
+    SET autocommit = 1;
+
+END //
+
+
 /* DROP PROCEDURE IF EXISTS e_commerce.GetAllOffers; */
+/* DROP PROCEDURE IF EXISTS e_commerce.`RegisterOffer`; */
+/* DROP PROCEDURE IF EXISTS e_commerce.`ModifyOffer`; */
+
 /* CALL e_commerce.GetAllOffers(); */

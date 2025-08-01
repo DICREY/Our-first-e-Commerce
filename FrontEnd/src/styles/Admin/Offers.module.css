@@ -84,10 +84,19 @@
   margin: 2rem 0;
 }
 
+.subHeader {
+  display: grid;
+  padding: 1rem;
+  align-items: center;
+  text-align: center;
+  grid-template-columns: 1fr 4fr;
+  gap: 2rem;
+  width: 100%;
+}
+
 .subsectionTitle {
   font-size: 1rem;
   color: var(--text-primary);
-  margin-bottom: 1rem;
 }
 
 .itemsGrid {
@@ -214,14 +223,16 @@
 }
 
 .offerCard {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--rounded);
+  border: .1rem solid var(--gray-400);
+  border-radius: .5rem;
   padding: 1.5rem;
+  box-shadow: var(--shadow-md);
   transition: var(--transition);
 }
 
 .offerCard:hover {
-  box-shadow: var(--shadow-md);
+  border-color: var(--primary-500);
+  background-color: var(--primary-50);
 }
 
 .offerHeader {
@@ -238,6 +249,7 @@
 }
 
 .offerStatus {
+  cursor: pointer;
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
   border-radius: 1rem;

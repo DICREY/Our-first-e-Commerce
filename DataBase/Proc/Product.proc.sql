@@ -7,7 +7,9 @@ BEGIN
     END IF;
 
     SELECT
+        c.id_cat_pro,
         c.nom_cat_pro,
+        c.des_cat_pro,
         c.slug,
         c.sta_cat_pro
     FROM cat_productos c

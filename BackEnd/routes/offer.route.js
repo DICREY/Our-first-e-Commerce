@@ -27,9 +27,8 @@ Route.get('/all', async ( req, res ) => {
 
 
 // Middleware 
-Route.use(Fullinfo('empty'))
-// Route.use(authenticateJWT)
-// , ValidatorRol("administrador")
+Route.use(Fullinfo(['products', 'categories', 'dur_ofe']))
+
 Route.post('/by', async (req,res) => {
     try {
         // Vars 
@@ -48,11 +47,14 @@ Route.post('/by', async (req,res) => {
     }
 })
 
+Route.use(authenticateJWT)
+Route.use(ValidatorRol("administrador"))
+
 Route.post('/register', async (req,res) => {
     try {
         // Vars 
         const body = req.body
-        const prod = new Order(body)
+        const prod = new Offer(body)
         const create = await prod.create()
 
         if (!create.success) return res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
@@ -66,26 +68,17 @@ Route.post('/register', async (req,res) => {
     }
 })
 Route.put('/modify', ValidatorRol("administrador"),async (req,res) => {
-    // Vars 
-    const { body } = req
-    const saltRounds = 15
-        
     try {
-        // Verifiy if exist
-        const find = await orderInst.findBy(body.doc_per)
-        if (!find.result) res.status(404).json({ message: "Pedido no encontrado" })
+        // Vars 
+        const { body } = req
+        const offer = new Offer(body)
 
-        const passwd = body.pas_per.length < 50? await hash(body.pas_per,saltRounds): String(body.pas_per)
-
-        const modified = await passwd?
-            await orderInst.modify({ hash_pass: passwd,...body })
-            :res.status(400).json({ message: "Petición no valida"})
-
-        if (modified.modified) return res.status(200).json(modified)
+        const modified = await offer.modify()
+        if (modified.success) return res.status(200).json(modified)
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({ message: err.message })
-
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })

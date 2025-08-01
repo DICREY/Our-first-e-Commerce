@@ -15,15 +15,17 @@ class Offer {
     async create() {
         return new Promise((res,rej) => {
             // vars
-            const proc = "CALL RegisterOrder(?,?,?,?,?);"
-            const list = JSON.stringify(this.args[0].productos_json)
             const params = [
-                this.args[0].documento_cliente,
-                this.args[0].direccion_envio,
-                this.args[0].metodo_pago_nombre,
-                this.args[0].metodo_envio_nombre,
-                list
+                this.args[0].nom_ofe,
+                this.args[0].des_ofe,
+                this.args[0].dur_ofe,
+                this.args[0].fec_ini_ofe,
+                this.args[0].fec_fin_ofe,
+                this.args[0].por_des_ofe,
+                JSON.stringify(this.args[0].products) || null,
+                JSON.stringify(this.args[0].categories) || null
             ]
+            const proc = "CALL RegisterOffer(?,?,?,?,?,?,?,?);"
 
             // conect to database
             this.database = new DataBase()
@@ -52,18 +54,17 @@ class Offer {
         return new Promise((res,rej) => {
             // data 
             const params = [
-                this.args[0].nom_pro,
-                this.args[0].pre_pro,
-                this.args[0].des_pro,
-                this.args[0].onSale,
-                this.args[0].nom_cat,
-                this.args[0].slug_cat,
-                this.args[0].colores,
-                this.args[0].hex_colores,
-                this.args[0].tallas,
-                this.args[0].imgs
+                this.args[0].id_ofe,
+                this.args[0].nom_ofe,
+                this.args[0].des_ofe,
+                this.args[0].dur_ofe,
+                this.args[0].fec_ini_ofe,
+                this.args[0].fec_fin_ofe,
+                this.args[0].por_des_ofe,
+                JSON.stringify(this.args[0].products) || null,
+                JSON.stringify(this.args[0].categories) || null
             ]
-            const procedure = "CALL ModifyProduct(?,?,?,?,?,?,?,?,?,?,?);"
+            const proc = "CALL ModifyOffer(?,?,?,?,?,?,?,?,?);"
 
             // conect to database
             this.database = new DataBase()

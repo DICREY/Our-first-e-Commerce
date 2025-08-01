@@ -240,3 +240,7 @@ html {
   font-size: 0.75rem;
   color: var(--gray-700);
 }
+
+.expand {
+  width: 100%;
+}
