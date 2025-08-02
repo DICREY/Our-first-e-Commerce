@@ -46,6 +46,7 @@ export const OfferManager = ({ URL }) => {
                 GetData(`${URL}/products/categories`)
             ])
 
+            console.log(productsRes)
             setOffers(await offersRes)
             setProducts(await productsRes)
             setProductsAlmc(await productsRes)
@@ -121,7 +122,7 @@ export const OfferManager = ({ URL }) => {
         e.preventDefault()
 
         const offerData = {
-            id_ofe: formData.id,
+            id_ofe: formData.id || 1,
             nom_ofe: formData.name,
             des_ofe: formData.description,
             dur_ofe: formData.duration,

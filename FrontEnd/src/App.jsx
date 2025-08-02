@@ -169,7 +169,7 @@ const App = () => {
               />
               <Route 
                 path="/admin/orders/details"
-                element={<OrderDetail URL={URL} id_ped={order} />} 
+                element={<OrderDetail URL={URL} id_ped={order} imgDefault={imgProduct} />} 
               />
               <Route 
                 path="/admin/orders/register"

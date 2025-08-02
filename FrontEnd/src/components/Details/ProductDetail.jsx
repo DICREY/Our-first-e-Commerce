@@ -32,6 +32,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState('details')
     const [currentImage, setCurrentImage] = useState(null)
+    const [imgExpand, setImgExpand] = useState(null)
     
     // Vars
     const navigate = useNavigate()
@@ -151,7 +152,10 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                         <div className={styles.productGallery}>
                             {product?.colors? (
                                 <>
-                                    <div className={styles.mainImage}>
+                                    <div 
+                                        className={styles.mainImage}
+                                            onClick={() => setImgExpand(currentImage)}
+                                    >
                                         {currentImage && (
                                             <CheckImage
                                                 src={currentImage}
@@ -465,6 +469,17 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                             </div>
                         </div>
                     </section>
+                    {imgExpand && (
+                        <picture 
+                            onClick={() => setImgExpand(null)}
+                            className='activeImg'
+                        >
+                            <CheckImage
+                                src={imgExpand}
+                                imgDefault={imgDefault}
+                            />
+                        </picture>
+                    )}
                 </main>
             )}
         </>

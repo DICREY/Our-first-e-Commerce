@@ -4,6 +4,7 @@
     width: 100%;
     padding: 2rem;
     background-color: var(--neutral-50);
+    overflow: auto;
 }
 
 .customerDetail {
