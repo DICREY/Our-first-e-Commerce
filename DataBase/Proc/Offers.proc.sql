@@ -62,6 +62,58 @@ BEGIN
     LIMIT 1000;
 END //
 
+CREATE PROCEDURE e_commerce.GetOfferProduct()
+BEGIN
+    IF NOT EXISTS (SELECT * FROM e_commerce.ofertas LIMIT 1) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No hay productos en ofertas';
+    END IF;
+
+    SELECT
+        of.id_ofe,
+        of.nom_ofe,
+        of.des_ofe,
+        of.dur_ofe,
+        of.fec_ini_ofe,
+        of.fec_fin_ofe,
+        of.por_des_ofe,
+        of.sta_ofe,
+        of.available,
+        of.created_at,
+        of.updated_at,
+        p.id_pro,
+        p.nom_pro,
+        p.des_pro,
+        p.pre_pro,
+        p.sta_pro,
+        p.created_at,
+        p.updated_at,
+        cp.nom_cat_pro,
+        cp.des_cat_pro,
+        cp.slug,
+        (
+            SELECT img.url_img
+            FROM 
+                productos_colores pco
+            JOIN
+                imagenes img ON pco.img_pro_col = img.id_img
+            WHERE
+                pco.pro_col_pro = p.id_pro
+            LIMIT 1
+        ) AS img_default
+    FROM 
+        e_commerce.ofertas of
+    JOIN
+        e_commerce.oferta_productos op ON op.ofe_pro = of.id_ofe
+    JOIN
+        e_commerce.productos p ON p.id_pro = op.pro_ofe_pro
+    JOIN
+        e_commerce.cat_productos cp ON cp.id_cat_pro = p.cat_pro
+    WHERE
+        of.available = 1
+        AND of.fec_fin_ofe > CURRENT_TIMESTAMP
+    LIMIT 1;
+END //
+
 CREATE PROCEDURE e_commerce.ChangeStateOffer(
     IN p_by VARCHAR(100)
 )
@@ -352,12 +404,13 @@ BEGIN
     COMMIT;
 
     SET autocommit = 1;
-
 END //
 
 
 /* DROP PROCEDURE IF EXISTS e_commerce.GetAllOffers; */
+/* DROP PROCEDURE IF EXISTS e_commerce.`GetOfferProduct`; */
 /* DROP PROCEDURE IF EXISTS e_commerce.`RegisterOffer`; */
 /* DROP PROCEDURE IF EXISTS e_commerce.`ModifyOffer`; */
 
 /* CALL e_commerce.GetAllOffers(); */
+/* CALL e_commerce.`GetOfferProduct`; */

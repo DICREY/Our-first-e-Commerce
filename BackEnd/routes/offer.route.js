@@ -25,6 +25,19 @@ Route.get('/all', async ( req, res ) => {
     }
 })
 
+Route.get('/product', async ( req, res ) => {
+    try {
+        const search = await offerInst.offerProduct()
+        if (!search.result) return res.status(404).json({ message: "Ofertas no encontradas" })
+
+        res.status(200).json(search)
+    } catch (err) {
+        console.log(err)
+        if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
 
 // Middleware 
 Route.use(Fullinfo(['products', 'categories', 'dur_ofe']))

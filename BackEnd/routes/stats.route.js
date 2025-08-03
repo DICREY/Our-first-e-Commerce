@@ -12,6 +12,21 @@ const Route = Router()
 // Route.use(authenticateJWT)
 
 // Routes
+Route.get('/general', async (req,res) => {
+    try {
+        const stat = new Stats()
+        const search = await stat.StatsGeneral()
+        if (!search.result) return res.status(404).json({ message: "Información no encontrada"})
+
+        res.status(200).json(search)
+    } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if(err.status) return res.status(err.status).json({message: err.message})
+        res.status(500).json({ message: err })
+    }
+})
+
 Route.get('/sellest', async (req,res) => {
     try {
         const stat = new Stats()

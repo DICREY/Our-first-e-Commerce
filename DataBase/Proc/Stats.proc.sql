@@ -1,6 +1,20 @@
 -- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 USE e_commerce;
 
+CREATE PROCEDURE e_commerce.StatsGeneral()
+BEGIN
+    SELECT 
+        COUNT(*) AS cant_usu_reg,
+        (
+            SELECT COUNT(*) 
+            FROM productos 
+            WHERE sta_pro = 'DISPONIBLE'
+        ) AS cant_pro_reg
+    FROM personas
+    WHERE 
+        estado = 'DISPONIBLE';
+END //
+
 CREATE PROCEDURE e_commerce.MonthlySales()
 BEGIN
     -- Tabla de meses (1=Enero, ..., 12=Diciembre)

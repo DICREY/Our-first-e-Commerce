@@ -5,8 +5,7 @@ import { useNavigate, useParams } from "react-router-dom"
 //Imports
 import { useCart } from "../../../Contexts/CartContext"
 import { CheckImage, formatNumber, errorStatusHandler, showAlert } from "../../../Utils/utils"
-import { GetData, PostData } from "../../../Utils/Requests"
-import ProductCard from "../../Products/ProductCard"
+import { PostData } from "../../../Utils/Requests"
 import RelatedProductsCarousel from "../../Products/RelatedProductsCarousel"
 
 //Styles
@@ -63,9 +62,8 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
           setProduct({});
         }
       } catch (err) {
-        console.error("Error loading product:", errorStatusHandler(err))
-        setProduct({})
-        showAlert('Error', errorStatusHandler(err), 'error')
+        const message = errorStatusHandler(err)
+        showAlert('Error', String(message), 'error')
       } finally {
         setLoading(false);
       }

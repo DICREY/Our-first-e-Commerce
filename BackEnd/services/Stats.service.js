@@ -43,6 +43,35 @@ class Stats {
     }
 
     // function to find sellest products
+    async StatsGeneral() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL StatsGeneral();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,(err,result) => {
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result?.[0]?.[0]
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
+    // function to find sellest products
     async SellestProducts() {
         return new Promise((res,rej) => {
             // vars

@@ -3,16 +3,17 @@ import { useEffect, useState } from "react"
 
 // Imports
 import { CheckImage, errorStatusHandler, showAlert } from "../../Utils/utils"
+import { GetData, PostData } from "../../Utils/Requests"
 import Badge from "../Badge/Badge"
 
 // Import styles 
 import styles from "./HeroSection.module.css"
-import { GetData, PostData } from "../../Utils/Requests"
 
 // Component 
 const HeroSection = ({ URL = '', imgDefault = '' }) => {
   // Dynamic Vars 
-  const [ currentProduct, setCurrentProduct ] = useState()
+  const [ currentProduct, setCurrentProduct ] = useState(null)
+  const [ stats, setStats ] = useState(null)
 
   // Vars 
   let didFetch = false
@@ -20,14 +21,31 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
   const GetCurrentProduct = async () => {
     if (didFetch) return
     try {
+      const data = await GetData(`${URL}/offers/product`)
       didFetch = true
-      const data = await GetData(`${URL}`)
+      console.log(data)
+      if (data){
+        setCurrentProduct(data)
+      }
+    } catch (err) {
+      didFetch = true
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
+    }
+  }
 
+  const GetStats = async () => {
+    try {
+      const got = await GetData(`${URL}/stats/general`)
+      if (got){
+        setStats(got)
+      }
     } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')
     }
   }
+  
   
   const changeCurrentProduct = async () => {
     try {
@@ -39,8 +57,9 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
   }
 
   useEffect(() => {
+    GetStats()
     GetCurrentProduct()
-  })
+  },[])
 
   return (
     <section className={styles.hero}>
@@ -74,11 +93,11 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
             {/* Stats */}
             <div className={styles.stats}>
               <div className={styles.stat}>
-                <div className={styles.statNumber}>10K+</div>
+                <div className={styles.statNumber}>{stats?.cant_usu_reg}+</div>
                 <div className={styles.statLabel}>Clientas Felices</div>
               </div>
               <div className={styles.stat}>
-                <div className={styles.statNumber}>500+</div>
+                <div className={styles.statNumber}>{stats?.cant_pro_reg}+</div>
                 <div className={styles.statLabel}>Productos</div>
               </div>
               <div className={styles.stat}>
@@ -92,7 +111,7 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
           <section className={styles.imageSection}>
             <div className={styles.imageContainer}>
               <CheckImage
-                src="/placeholder.svg?height=600&width=480"
+                src={currentProduct?.img_default}
                 alt="Modelo usando ropa de la nueva colección"
                 className={styles.heroImage}
                 imgDefault={imgDefault}
@@ -100,7 +119,7 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
 
               {/* Floating elements */}
               <div className={styles.floatingDiscount}>
-                <div className={styles.discountNumber}>-30%</div>
+                <div className={styles.discountNumber}>-{currentProduct?.por_des_ofe || 0}%</div>
                 <div className={styles.discountLabel}>Descuento</div>
               </div>
 
@@ -109,8 +128,8 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
                   <span style={{ color: "var(--success-600)" }}>✓</span>
                 </div>
                 <div>
-                  <div className={styles.featureTitle}>Envío Gratis</div>
-                  <div className={styles.featureDescription}>En compras +$75</div>
+                  <div className={styles.featureTitle}>{currentProduct?.nom_ofe}</div>
+                  <div className={styles.featureDescription}>{currentProduct?.des_ofe}</div>
                 </div>
               </div>
             </div>

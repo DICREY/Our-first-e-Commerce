@@ -160,8 +160,9 @@
 }
 
 .discountLabel {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-100);
 }
 
 .floatingFeature {
@@ -190,13 +191,14 @@
 }
 
 .featureTitle {
-  font-weight: 500;
-  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--gray-100);
 }
 
 .featureDescription {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--gray-400);
 }
 
 @media (min-width: 640px) {

@@ -49,6 +49,8 @@ BEGIN
             per.cel_per,
             mp.nom_met_pag,
             me.nom_met_env,
+            me.pre_met_env,
+            me.des_met_env,
             (
                 SELECT
                     SUM(pp.can_pro_ped * pr.pre_pro)
@@ -128,6 +130,8 @@ BEGIN
             per.fec_cre_per,
             mp.nom_met_pag,
             me.nom_met_env,
+            me.pre_met_env,
+            me.des_met_env,
            (
                 SELECT
                     SUM(pp.can_pro_ped * pr.pre_pro)

@@ -191,7 +191,7 @@ class Offer {
             this.database.conection.end()
         })
     }
-
+    
     // function to find by
     async findBy() {
         return new Promise((res,rej) => {
@@ -215,7 +215,7 @@ class Offer {
             // conect to database
             this.database = new DataBase()
             this.database.conect()
-
+            
             // verify conection and call procedure
             if (this.database) this.database.conection.query(proc,[params],(err,result) => {
                 if(err) {
@@ -226,6 +226,35 @@ class Offer {
                         res({
                             message: "Info found",
                             result: resOne
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+            
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
+    async offerProduct() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL GetOfferProduct();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,(err,result) => {
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            success: 1,
+                            result: result?.[0]?.[0]
                         })
                     },1000)
                 } else rej({ message: 'Error interno', status: 500 })

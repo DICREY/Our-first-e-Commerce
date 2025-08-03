@@ -118,7 +118,9 @@ export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
                                 {formatDate(order?.fec_ped || '0000-00-00')}
                             </div>
                         </div>
-                        <nav>
+                        <nav
+                            style={{ display: 'flex',gap: '1rem' }}
+                        >
                             {order?.sta_ped === 'PENDIENTE' && (
                                 <button
                                     className={styles.backButton}
@@ -195,7 +197,7 @@ export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
                                             {product.nom_pro} ({product.nom_col})
                                         </h3>
                                         {/* {console.log(product)} */}
-                                        <picture 
+                                        <button 
                                             onClick={() => setImgExpand(product.url_img)}
                                             className={styles.inactiveImg}
                                             style={{ borderColor: product.hex_col }}
@@ -205,7 +207,7 @@ export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
                                                 imgDefault={imgDefault}
                                                 alt={product.des_pro}
                                             />
-                                        </picture>
+                                        </button>
                                     </span>
                                     {product.des_pro?.split('\n').map((line, i) => (
                                         <p key={i} className={styles.productDescription}>{line}</p>
@@ -242,12 +244,16 @@ export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
                                 <span>${formatNumber(order?.subtotal_ped || 0)}</span>
                             </div>
                             <div className={styles.totalRow}>
+                                <span>Costo Envio:</span>
+                                <span>${formatNumber(order?.pre_met_env || 0)}</span>
+                            </div>
+                            <div className={styles.totalRow}>
                                 <span>Impuestos ({order?.impuestos ? Math.round((order.impuestos / order.subtotal_ped) * 100) : 0}%):</span>
                                 <span>${formatNumber(order?.impuestos || 0)}</span>
                             </div>
                             <div className={`${styles.totalRow} ${styles.grandTotal}`}>
                                 <span>Total:</span>
-                                <span>${formatNumber(order?.subtotal_ped || 0)}</span>
+                                <span>${formatNumber((order?.subtotal_ped + (order.pre_met_env || 0)) || 0)}</span>
                             </div>
                         </div>
                     </section>

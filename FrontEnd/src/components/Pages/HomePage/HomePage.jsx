@@ -32,7 +32,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
       }
     } catch (err) {
       const message = errorStatusHandler(err)
-      showAlert('Error', message, 'error')
+      showAlert('Error', String(message), 'error')
     }
   }
 
@@ -44,7 +44,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
   return (
     <div className={styles.page}>
       {/* Hero Section */}
-      <HeroSection imgDefault={imgProduct} />
+      <HeroSection URL={URL} imgDefault={imgProduct} />
 
       {/* Features */}
       <section className={styles.features}>
