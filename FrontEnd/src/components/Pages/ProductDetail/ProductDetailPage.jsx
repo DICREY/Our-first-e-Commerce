@@ -4,14 +4,14 @@ import { useNavigate, useParams } from "react-router-dom"
 
 //Imports
 import { useCart } from "../../../Contexts/CartContext"
-import { CheckImage, formatNumber, errorStatusHandler, showAlert } from "../../../Utils/utils"
+import { CheckImage, formatNumber, errorStatusHandler, showAlert, Discount } from "../../../Utils/utils"
 import { PostData } from "../../../Utils/Requests"
 import RelatedProductsCarousel from "../../Products/RelatedProductsCarousel"
 
 //Styles
 import styles from "./ProductDetailPage.module.css"
 
-const ProductDetailPage = ({ URL = '', img = '' }) => {
+const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
   // Dynamic vars 
   const [selectedImage, setSelectedImage] = useState(null)
   const [selectedColor, setSelectedColor] = useState("")
@@ -187,17 +187,22 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
             </div>
 
             <div className={styles.priceContainer}>
-              <p className={styles.price}>${formatNumber(product.pre_pro)}</p>
-              {product.originalPrice && (
+              {product.offers? (
                 <>
-                  <p className={styles.originalPrice}>
-                    ${formatNumber(product.originalPrice)}
+                  <p className={styles.price}>
+                    ${formatNumber(Discount(product.pre_pro, product.offers?.[0]?.por_des_ofe))}
                   </p>
-                  {discount > 0 && (
-                    <span className={styles.discountBadge}>{discount}% OFF</span>
+                  <p className={styles.originalPrice}>
+                    ${formatNumber(product.pre_pro)}
+                  </p>
+                  {product.offers?.[0]?.por_des_ofe > 0 && (
+                    <span className={styles.discountBadge}>{product.offers?.[0].por_des_ofe}% OFF</span>
                   )}
                 </>
-              )}
+                ):(
+                  <p className={styles.price}>${formatNumber(product.pre_pro)}</p>
+                )
+              }
             </div>
 
             <div className={styles.attributes}>
@@ -205,7 +210,7 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
                 <div className={styles.attributeGroup}>
                   <span className={styles.attributeTitle}>Color: {selectedColor}</span>
                   <div className={styles.colorOptions}>
-                    {product.colors.map((color, index) => (
+                    {product.colors?.map((color, index) => (
                       <div
                         key={index}
                         className={`${styles.colorOption} ${selectedColor === color.nom_col ? styles.active : ""
@@ -375,6 +380,7 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
           URL={URL}
           img={img}
           categoryId={product.nom_cat_pro}
+          setProduct={setPro}
         />
       )}
     </main>

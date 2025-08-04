@@ -109,34 +109,52 @@ BEGIN
             AND pp.pro_ped = p.id_pro
             AND pd.sta_ped = 'ENTREGADO'
         ) AS ventas_mes,
-        (
-            SELECT GROUP_CONCAT(
-                CONCAT_WS(';',
-                    o.id_ofe,
-                    o.nom_ofe,
-                    o.des_ofe,
-                    o.dur_ofe,
-                    o.fec_ini_ofe,
-                    o.fec_fin_ofe,
-                    o.por_des_ofe,
-                    o.created_at,
-                    o.updated_at
-                ) 
-                SEPARATOR '---'
-            )
-            FROM
-                ofertas o 
-            JOIN 
-                oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
-            JOIN 
-                oferta_productos op ON op.pro_ofe_pro = p.id_pro
-            WHERE
-                o.fec_fin_ofe > CURRENT_TIMESTAMP
-                AND (
-                    ocp.ofe_pro = o.id_ofe 
-                    OR op.ofe_pro = o.id_ofe
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM oferta_categoria_productos WHERE cat_ofe_pro = p.cat_pro) THEN
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
                 )
-        )AS offers
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+                WHERE 
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND ocp.ofe_pro = o.id_ofe)
+            ELSE
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
+                )
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_productos op ON op.pro_ofe_pro = p.id_pro
+                WHERE
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND op.ofe_pro = o.id_ofe)
+        END AS offers
     FROM 
         e_commerce.productos p
     INNER JOIN 
@@ -212,34 +230,52 @@ BEGIN
             AND pp.pro_ped = p.id_pro
             AND pd.sta_ped = 'ENTREGADO'
         ) AS ventas_mes,
-        (
-            SELECT GROUP_CONCAT(
-                CONCAT_WS(';',
-                    o.id_ofe,
-                    o.nom_ofe,
-                    o.des_ofe,
-                    o.dur_ofe,
-                    o.fec_ini_ofe,
-                    o.fec_fin_ofe,
-                    o.por_des_ofe,
-                    o.created_at,
-                    o.updated_at
-                ) 
-                SEPARATOR '---'
-            )
-            FROM
-                ofertas o 
-            JOIN 
-                oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
-            JOIN 
-                oferta_productos op ON op.pro_ofe_pro = p.id_pro
-            WHERE
-                o.fec_fin_ofe > CURRENT_TIMESTAMP
-                AND (
-                    ocp.ofe_pro = o.id_ofe 
-                    OR op.ofe_pro = o.id_ofe
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM oferta_categoria_productos WHERE cat_ofe_pro = p.cat_pro) THEN
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
                 )
-        )AS offers
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+                WHERE 
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND ocp.ofe_pro = o.id_ofe)
+            ELSE
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
+                )
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_productos op ON op.pro_ofe_pro = p.id_pro
+                WHERE
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND op.ofe_pro = o.id_ofe)
+        END AS offers
     FROM 
         e_commerce.productos p
     INNER JOIN 
@@ -332,41 +368,56 @@ BEGIN
             AND pp.pro_ped = p.id_pro
             AND pd.sta_ped = 'ENTREGADO'
         ) AS ventas_mes,
-        (
-            SELECT GROUP_CONCAT(
-                CONCAT_WS(';',
-                    o.id_ofe,
-                    o.nom_ofe,
-                    o.des_ofe,
-                    o.dur_ofe,
-                    o.fec_ini_ofe,
-                    o.fec_fin_ofe,
-                    o.por_des_ofe,
-                    o.created_at,
-                    o.updated_at
-                ) 
-                SEPARATOR '---'
-            )
-            FROM
-                ofertas o 
-            JOIN 
-                oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
-            JOIN 
-                oferta_productos op ON op.pro_ofe_pro = p.id_pro
-            WHERE
-                o.fec_fin_ofe > CURRENT_TIMESTAMP
-                AND (
-                    ocp.ofe_pro = o.id_ofe 
-                    OR op.ofe_pro = o.id_ofe
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM oferta_categoria_productos WHERE cat_ofe_pro = p.cat_pro) THEN
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
                 )
-        )AS offers
-    FROM 
-        e_commerce.productos p
-    INNER JOIN 
-        e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
-    WHERE 
-        c.nom_cat_pro LIKE p_nom_cat
-        AND c.sta_cat_pro = 1
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+                WHERE 
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND ocp.ofe_pro = o.id_ofe)
+            ELSE
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
+                )
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_productos op ON op.pro_ofe_pro = p.id_pro
+                WHERE
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND op.ofe_pro = o.id_ofe)
+        END AS offers
+    FROM e_commerce.productos p
+    INNER JOIN e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+    WHERE c.nom_cat_pro LIKE p_nom_cat
+    AND c.sta_cat_pro = 1
     LIMIT 1000;
 END //
 CREATE PROCEDURE e_commerce.RegisterProduct(

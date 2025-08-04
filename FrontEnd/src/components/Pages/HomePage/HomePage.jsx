@@ -1,5 +1,7 @@
 // Librarys 
 import { useEffect, useState } from "react"
+import { NavLink } from "react-router-dom"
+import { ChevronRight } from "lucide-react"
 
 // Imports
 import HeroSection from "../../HeroSection/HeroSection"
@@ -101,7 +103,10 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
 
           <div className={styles.sectionFooter}>
             <Button variant="outline" size="lg">
-              Ver Todos los Productos →
+              <NavLink to={"/products/all"} variant="outline" size="lg">
+                Ver Todos los Productos 
+              </NavLink>
+              <ChevronRight />
             </Button>
           </div>
         </div>

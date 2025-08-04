@@ -321,3 +321,7 @@ export const showAlertLoading = (title, text, icon) => {
     }
   })
 }
+
+export const Discount = (price = 0, discount = 0) => {
+  return Number(price - ((Number(discount) * price) / 100))
+}

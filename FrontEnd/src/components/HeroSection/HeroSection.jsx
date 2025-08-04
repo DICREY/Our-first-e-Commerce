@@ -1,5 +1,7 @@
 // Librarys 
 import { useEffect, useState } from "react"
+import { NavLink } from "react-router-dom"
+import { ChevronRight } from "lucide-react"
 
 // Imports
 import { CheckImage, errorStatusHandler, showAlert } from "../../Utils/utils"
@@ -23,7 +25,6 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
     try {
       const data = await GetData(`${URL}/offers/product`)
       didFetch = true
-      console.log(data)
       if (data){
         setCurrentProduct(data)
       }
@@ -82,10 +83,10 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.primaryButton}>
+              <NavLink to="/productos/all" className={styles.primaryButton}>
                 Explorar Colección
-                <span className={styles.arrow}>→</span>
-              </button>
+                <ChevronRight className={styles.arrow} />
+              </NavLink>
 
               <button className={styles.secondaryButton}>Ver Ofertas</button>
             </div>

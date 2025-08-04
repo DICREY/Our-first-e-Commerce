@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 
 // Imports
 import { useCart } from "../../Contexts/CartContext"
-import { CheckImage, formatNumber } from "../../Utils/utils"
+import { CheckImage, Discount, formatNumber } from "../../Utils/utils"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
 import ProductQuickView from "./ProductQuickView"
@@ -156,7 +156,7 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
 
         {/* Badges */}
         <div className={styles.badges}>
-          {product.onSale && <Badge variant="sale">Oferta</Badge>}
+          {product?.offers && <Badge variant="sale">-{product.offers?.[0].por_des_ofe}%</Badge>}
           {product.featured && <Badge variant="featured">Destacado</Badge>}
         </div>
 
@@ -197,9 +197,20 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
           <h3 className={styles.productName}>{product.nom_pro}</h3>
 
           <div className={styles.priceContainer}>
-            <span className={styles.price}>
-              ${formatNumber(product.pre_pro)}
-            </span>
+            {product?.offers? (
+              <>
+                <span className={styles.price}>
+                  ${formatNumber(Discount(product.pre_pro, product.offers?.[0]?.por_des_ofe))}
+                </span>
+                <span className={styles.originalPrice}>
+                  ${formatNumber(product.pre_pro)}
+                </span>
+              </>
+            ):(
+              <span className={styles.price}>
+                ${formatNumber(product.pre_pro)}
+              </span>
+            )}
           </div>
 
           {/* Mostrar colores solo si existen */}

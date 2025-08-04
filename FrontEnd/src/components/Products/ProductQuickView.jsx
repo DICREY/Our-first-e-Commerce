@@ -22,11 +22,11 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
       setProduct(data);
       if (data.colors) {
         const firstColor = Array.isArray(data.colors) ? data.colors[0] : 
-                         typeof data.colors === "string" ? 
-                         data.colors.split("---").map(colorStr => {
-                           const [nom_col, hex_col, nom_img, url_img] = colorStr.split(";");
-                           return { nom_col, hex_col, nom_img, url_img };
-                         })[0] : null;
+          typeof data.colors === "string" ? 
+          data.colors.split("---").map(colorStr => {
+            const [nom_col, hex_col, nom_img, url_img] = colorStr.split(";");
+            return { nom_col, hex_col, nom_img, url_img };
+          })[0] : null;
         setSelectedColor(firstColor?.nom_col);
         setShowImg(firstColor?.url_img);
       }

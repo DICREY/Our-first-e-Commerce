@@ -189,10 +189,13 @@ class Product {
                 } else if (result) {
                     const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
                     const lastRes = this.global.iterar(resOne, 'sizes')
+                    const lastLastRes = this.global.format(lastRes, 'offers', [
+                        'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
+                    ])
                     setTimeout(() => {
                         res({
                             message: "Info found",
-                            result: lastRes
+                            result: lastLastRes
                         })
                     }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })

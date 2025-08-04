@@ -4,7 +4,7 @@ import { Eye, Edit, Search, Filter, Download, ChevronLeft, Plus } from 'lucide-r
 import { NavLink, useNavigate } from 'react-router-dom'
 
 // Imports 
-import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
+import { CheckImage, Discount, divideList, errorStatusHandler, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 import { Paginacion } from '../Global/Paginacion'
 import AdminLoadingScreen from '../Global/Loading'
@@ -238,10 +238,13 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
                         <td>{product.nom_cat_pro}</td>
                         <td>
                           <div className={styles.priceCell}>
-                            ${formatNumber(product.pre_pro)}
-                            {product.onSale && (
+                            {product.offers? 
+                              `$${formatNumber(Discount(product.pre_pro,product?.offers?.[0]?.por_des_ofe))}`
+                              :`$${formatNumber(product.pre_pro)}`
+                            }
+                            {product.offers && (
                               <span className={styles.saleTag}>
-                                -{calculateDiscount(product.pre_pro, product.pre_pro)}%
+                                -{product?.offers?.[0]?.por_des_ofe || 0}%
                               </span>
                             )}
                           </div>
@@ -261,7 +264,7 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
                             styles.statusActive
                           }`}>
                             {product.stock <= 0 ? 'Agotado' : 
-                             product.onSale ? 'En oferta' : 'Activo'}
+                             product.offers ? 'En oferta' : 'Activo'}
                           </div>
                         </td>
                         <td>

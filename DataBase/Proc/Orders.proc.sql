@@ -375,7 +375,8 @@ BEGIN
     UPDATE 
         pedidos
     SET
-        sta_ped = 'ENTREGADO'
+        sta_ped = 'ENTREGADO',
+        fec_ent_ped = CURRENT_DATE
     WHERE
         id_ped LIKE p_by;
 

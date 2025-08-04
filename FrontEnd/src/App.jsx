@@ -83,6 +83,16 @@ const App = () => {
                 element={<HomePage URL={URL} imgProduct={imgProduct} setProduct={setProduct} />} 
               />
               <Route 
+                path="/productos/all"
+                element={
+                  <ProductCatalog
+                    URL={URL}
+                    imgDefault={imgProduct}
+                    setProduct={setProduct}
+                  />
+                } 
+              />
+              <Route 
                 path="/productos/ropa-deportiva-mujer" 
                 element={
                   <ProductCatalog 
@@ -122,6 +132,7 @@ const App = () => {
                     URL={URL} 
                     img={imgProduct} 
                     product={product}
+                    setPro={setProduct}
                   />
                 } 
               />

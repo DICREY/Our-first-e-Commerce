@@ -168,8 +168,10 @@ BEGIN
         p.id_pro,
         p.nom_pro,
         p.pre_pro,
+        p.pre_ori_pro,
         p.sta_pro,
         p.des_pro,
+        p.des_pre_pro,
         c.nom_cat_pro AS cat_pro,
         (
             SELECT GROUP_CONCAT(
@@ -197,7 +199,53 @@ BEGIN
             WHERE inv.id_pro_inv = p.id_pro
         ) AS sizes,
         SUM(pp.can_pro_ped) AS unidades_vendidas,
-        SUM(pp.can_pro_ped * p.pre_pro) AS ingresos_generados
+        SUM(pp.can_pro_ped * p.pre_pro) AS ingresos_generados,
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM oferta_categoria_productos WHERE cat_ofe_pro = p.cat_pro) THEN
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
+                )
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+                WHERE 
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND ocp.ofe_pro = o.id_ofe)
+            ELSE
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
+                )
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_productos op ON op.pro_ofe_pro = p.id_pro
+                WHERE
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND op.ofe_pro = o.id_ofe)
+        END AS offers
     FROM
         productos_pedidos pp
     JOIN 

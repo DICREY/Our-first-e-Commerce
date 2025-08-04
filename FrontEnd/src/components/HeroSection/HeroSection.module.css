@@ -6,7 +6,6 @@
 }
 
 .container {
-  /* max-width: 75rem; 1200px */
   margin: 0 auto;
   padding: 4rem 1rem;
 }
@@ -58,19 +57,20 @@
 }
 
 .primaryButton {
-  background-color: var(--primary-500);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  border-radius: var(--rounded);
   cursor: pointer;
-  font-weight: 500;
-  transition: var(--transition);
   display: flex;
+  gap: 0.5rem;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  padding: 1rem 2rem;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--rounded);
+  background-color: var(--primary-500);
+  transition: var(--transition);
 }
 
 .primaryButton:hover {
@@ -208,15 +208,7 @@
 }
 
 @media (min-width: 1024px) {
-  .container {
-    padding: 6rem 1rem;
-  }
-
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .title {
-    font-size: 3.75rem;
   }
 }

@@ -196,6 +196,7 @@ BEGIN
     DECLARE v_producto_count INT;
     DECLARE v_categoria_count INT;
     DECLARE v_i INT DEFAULT 0;
+    DECLARE v_sta_ofe VARCHAR(100) DEFAULT 'PENDIENTE';
     DECLARE v_producto_id INT;
     DECLARE v_categoria_id INT;
     DECLARE v_producto_valido BOOLEAN;
@@ -219,6 +220,10 @@ BEGIN
     IF (p_productos_json IS NULL OR JSON_LENGTH(p_productos_json) = 0) AND 
        (p_categorias_json IS NULL OR JSON_LENGTH(p_categorias_json) = 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Debe proporcionar al menos un producto o una categoría';
+    END IF;
+
+    IF (p_fecha_inicio >= CURRENT_DATE)
+        THEN SET v_sta_ofe = 'ACTIVA';
     END IF;
     
     -- Insertar la nueva oferta
@@ -257,12 +262,12 @@ BEGIN
                 VALUES (v_oferta_id, v_producto_id);
                 
                 -- Actualizar descuento en el producto si la oferta está activa
-                /* IF p_estado = 'ACTIVA' THEN
+                IF v_sta_ofe = 'ACTIVA' THEN
                     UPDATE productos 
                     SET des_pre_pro = p_porcentaje_descuento,
                         pre_pro = pre_ori_pro * (1 - p_porcentaje_descuento/100)
                     WHERE id_pro = v_producto_id;
-                END IF; */
+                END IF;
             ELSE
                 SET @mensaje_error = CONCAT('El producto ', v_producto_id, ' no fue encontrado');
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @error_message;
@@ -288,11 +293,17 @@ BEGIN
                 -- Insertar relación oferta-categoría
                 INSERT INTO e_commerce.oferta_categoria_productos (ofe_pro, cat_ofe_pro)
                 VALUES (v_oferta_id, v_categoria_id);
-                
+                -- Actualizar descuento en el producto si la oferta está activa
             END IF;
             
             SET v_i = v_i + 1;
         END WHILE;
+        IF v_sta_ofe = 'ACTIVA' THEN
+            UPDATE productos 
+            SET des_pre_pro = p_porcentaje_descuento,
+                pre_pro = pre_ori_pro * (1 - p_porcentaje_descuento/100)
+            WHERE cat_pro = v_categoria_id;
+        END IF;
     END IF;
 
     COMMIT;

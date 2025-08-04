@@ -3,21 +3,23 @@ import { useEffect, useState } from "react";
 
 // Imports 
 import { PostData } from "../../Utils/Requests";
+import { showAlert } from "../../Utils/utils";
 import ProductCard from "./ProductCard";
 
 // Import styles 
 import styles from "../../styles/Products/RelatedProductsCarousel.module.css";
-import { showAlert } from "../../Utils/utils";
 
 // Component 
-const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
+const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '', setProduct }) => {
   // Dynamic vars 
   const [allProducts, setAllProducts] = useState([]);
   const [displayedProducts, setDisplayedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const productsPerLoad = 10; // Cargar de 10 en 10 para mantener múltiplos de 5
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [page, setPage] = useState(1)
+
+  // Vars 
+  const productsPerLoad = 10
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
@@ -67,12 +69,12 @@ const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '' }) => {
       <h2 className={styles.title}>Más productos de esta categoría</h2>
       
       <div className={styles.productsGrid}>
-        {displayedProducts.map((product) => (
+        {displayedProducts?.map((product) => (
           <div key={product.id_pro} className={styles.productWrapper}>
             <ProductCard 
               data={product} 
               imgDefault={img} 
-              set={() => {}}
+              set={setProduct}
             />
           </div>
         ))}
