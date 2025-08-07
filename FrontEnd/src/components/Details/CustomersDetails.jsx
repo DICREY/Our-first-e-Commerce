@@ -1,29 +1,52 @@
 // Librarys 
-import React, { useEffect, useState } from 'react'
-import { Check, Mail, PenOff, Plus, SquarePen, User } from 'lucide-react'
+import React, { useContext, useEffect, useState } from 'react'
+import { Check, ChevronLeft, Mail, PenOff, SquarePen, Trash2, User } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 // Imports 
-import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert, showAlertLoading } from '../../Utils/utils'
-import { ModifyData } from '../../Utils/Requests'
+import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert, showAlertLoading, showAlertSelect } from '../../Utils/utils'
+import { ModifyData, PostData } from '../../Utils/Requests'
+import { AuthContext } from '../../Contexts/Contexts'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles
 import styles from '../../styles/Details/CustomerDetail.module.css'
 
 // Component 
-export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
+export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
     // Dynamic vars 
     const [note, setNote] = useState('')
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [imgExpand, setImgExpand] = useState(null)
-    const [customerData, setCustomerData] = useState({
-        ...customer,
-        email: customer?.email_per || '',
-        vat: customer?.vat_number || 'No VAT number',
-        des_per: customer?.des_per || 'No Description'
-    })
+    const [customerData, setCustomerData] = useState(null)
 
+    // Vars 
+    let didFetch = false
+    const ID = localStorage.getItem('id_peo') || 0
+
+    const GetCustomer = async () => {
+        try {
+            if(didFetch) return
+            const got = await PostData(`${URL}/peoples/by`, { by: ID })
+            if (got && got?.[0]) {
+                setCustomerData(got?.[0])
+                setIsLoading(false)
+                didFetch = true
+            }
+        } catch (err) {
+            setIsLoading(false)
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
+            didFetch = true
+        }
+    }
+
+    // Vars 
+    const navigate = useNavigate()
+    const { user } = useContext(AuthContext)
+
+    // Functions 
     const handleAddNote = () => {
         console.log('Nota agregada:', note)
         setNote('')
@@ -32,7 +55,7 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
     const handleSaveChanges = async () => {
         try {
             showAlertLoading('Guardando cambios...', 'Por favor espera', 'info')
-            customerData.fec_nac_per = formatDate(customerData.fec_nac_per)
+            customerData.fec_nac_per = formatDate(customerData?.fec_nac_per)
             const response = await ModifyData(`${URL}/peoples/modify`, customerData)
             
             if (response?.success) {
@@ -45,11 +68,31 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
         }
     }
 
-    useEffect(() => {
-        setIsLoading(false)
-    },[])
+    const Deactivate = async (id) => {
+        if (id === user?.doc) return showAlert('Error','No puedes eliminar a la persona con la sesión actual','error')
 
-    if (!customer) {
+        const option = showAlertSelect('Eliminar persona','¿Desea eliminar a la persona del sistema?','question')
+
+        if ((await option).isConfirmed) {
+            try {
+                showAlertLoading('Eliminando persona', 'Por favor, espere...', 'info')
+                const del = await ModifyData(`${URL}/peoples/delete`, { by: id })
+                if (del.success) {
+                    showAlert('Éxito', 'Persona eliminada correctamente', 'success')
+                    setTimeout(() => navigate("/admin/customers"),2000)
+                }   
+            } catch (err) {
+                const message = errorStatusHandler(err)
+                showAlert('Error', message, 'error')
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (ID) GetCustomer()
+    },[ID])
+
+    if (!ID) {
         return (
             <div className={styles.notFound}>
                 <h2>Cliente no encontrado</h2>
@@ -68,41 +111,50 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                         <span>
                             <picture
                                 style={{ cursor: 'zoom-in' }}
-                                onClick={() => setImgExpand(customer.fot_per || 'no-image')}
+                                onClick={() => setImgExpand(customerData?.fot_per || 'no-image')}
                             >
                                 <CheckImage 
                                     className={styles.customerAvatar}
-                                    src={customer.fot_per}
+                                    src={customerData?.fot_per}
                                     imgDefault={imgDefault}
                                     alt=''
                                 />
                             </picture>
                             <div className={styles.customerTitle}>
-                                <h1>{customer?.nom_per} {customer?.ape_per}</h1>
+                                <h1>{customerData?.nom_per} {customerData?.ape_per}</h1>
                                 <p className={styles.customerEmail}>
                                     <Mail />
-                                    {customer?.email_per}
+                                    {customerData?.email_per}
                                 </p>
                                 <p className={styles.customerEmail}>
                                     <User />
-                                    {customer?.roles}
+                                    {customerData?.roles}
                                 </p>
                             </div>
                         </span>
-                        <button 
-                            className={styles.addNoteButton}
-                            onClick={() => document.getElementById('noteInput').focus()}
-                        >
-                            <Plus />
-                            Agregar nota
-                        </button>
+                        <nav>
+                            <button
+                                className='deleteButton'
+                                onClick={() => Deactivate(customerData?.doc_per)}
+                            >
+                                <Trash2 />
+                                Eliminar
+                            </button>
+                            <button 
+                                className='backButton'
+                                onClick={() => navigate('/admin/customers')}
+                            >
+                                <ChevronLeft />
+                                Atrás
+                            </button>
+                        </nav>
                     </header>
 
                     <hr className={styles.divider} />
 
                     <div className={styles.metaInfo}>
                         <span>
-                            Cliente registrado el {formatDate(customer?.fec_cre_per)} a las {new Date(customer?.fec_cre_per).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            Cliente registrado el {formatDate(customerData?.fec_cre_per)} a las {new Date(customerData?.fec_cre_per).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                     </div>
 
@@ -116,7 +168,7 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                             
                             <div className={styles.detailItem}>
                                 <span className={styles.detailLabel}>Documento:</span>
-                                <span className={styles.detailValue}>{customer?.doc_per}</span>
+                                <span className={styles.detailValue}>{customerData?.doc_per}</span>
                             </div>
                             
                             <div className={styles.detailItem}>
@@ -124,13 +176,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData.nom_per}
+                                        value={customerData?.nom_per}
                                         onChange={(e) => setCustomerData({ ...customerData, nom_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el nombre"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.nom_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.nom_per}</span>
                                 )}
                             </div>
 
@@ -139,13 +191,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData.nom2_per}
+                                        value={customerData?.nom2_per}
                                         onChange={(e) => setCustomerData({ ...customerData, nom2_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el segundo nombre"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.nom2_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.nom2_per}</span>
                                 )}
                             </div>
 
@@ -154,13 +206,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData.ape_per}
+                                        value={customerData?.ape_per}
                                         onChange={(e) => setCustomerData({ ...customerData, ape_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el segundo apellido"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.ape_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.ape_per}</span>
                                 )}
                             </div>
 
@@ -169,13 +221,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData.ape2_per}
+                                        value={customerData?.ape2_per}
                                         onChange={(e) => setCustomerData({ ...customerData, ape2_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el apellido"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.ape2_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.ape2_per}</span>
                                 )}
                             </div>
 
@@ -184,13 +236,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="date"
-                                        value={formatDate(customerData.fec_nac_per || '00-00-0000')}
+                                        value={formatDate(customerData?.fec_nac_per || '00-00-0000')}
                                         onChange={(e) => setCustomerData({ ...customerData, fec_nac_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese la fecha de nacimiento"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{formatDate(customerData.fec_nac_per)} ({getAge(customerData.fec_nac_per)})</span>
+                                    <span className={styles.detailValue}>{formatDate(customerData?.fec_nac_per)} ({getAge(customerData?.fec_nac_per)})</span>
                                 )}
                             </div>
                             
@@ -198,13 +250,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 <span className={styles.detailLabel}>Descripción:</span>
                                 {isEditing ? (
                                     <textarea
-                                        value={customerData.des_per}
+                                        value={customerData?.des_per}
                                         onChange={(e) => setCustomerData({ ...customerData, des_per: e.target.value })}
                                         className={styles.editTextarea}
                                         placeholder="Agregue una descripción"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.des_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.des_per}</span>
                                 )}
                             </div>
                         </div>
@@ -217,13 +269,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="email"
-                                        value={customerData.email}
+                                        value={customerData?.email}
                                         onChange={(e) => setCustomerData({ ...customerData, email_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el email"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.email}</span>
+                                    <span className={styles.detailValue}>{customerData?.email}</span>
                                 )}
                             </div>
                             
@@ -231,7 +283,7 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 <span className={styles.detailLabel}>Dirección:</span>
                                 {isEditing ? (
                                     <textarea
-                                        value={customerData.dir_per}
+                                        value={customerData?.dir_per}
                                         onChange={(e) => setCustomerData({ ...customerData, dir_per: e.target.value })}
                                         className={styles.editTextarea}
                                         rows={3}
@@ -251,13 +303,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="tel"
-                                        value={customerData.cel_per}
+                                        value={customerData?.cel_per}
                                         onChange={(e) => setCustomerData({ ...customerData, cel_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Número de celular"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.cel_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.cel_per}</span>
                                 )}
                             </div>
 
@@ -266,13 +318,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="tel"
-                                        value={customerData.cel2_per || ''}
+                                        value={customerData?.cel2_per || ''}
                                         onChange={(e) => setCustomerData({ ...customerData, cel2_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Número de celular secundario"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.cel2_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.cel2_per}</span>
                                 )}
                             </div>
                             
@@ -281,13 +333,13 @@ export const CustomerDetail = ({ URL = '' , customer, imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData.vat}
+                                        value={customerData?.vat}
                                         onChange={(e) => setCustomerData({ ...customerData, vat: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el VAT"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData.vat}</span>
+                                    <span className={styles.detailValue}>{customerData?.vat}</span>
                                 )}
                             </div>
                         </div>

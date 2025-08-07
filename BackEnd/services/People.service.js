@@ -177,25 +177,28 @@ class People {
     }
 
     // function to delete
-    async delete(data) {
+    async delete() {
         return new Promise((res,rej) => {
-            // data 
-            const procedure = "CALL DeletePeople(?);"
+            // Vars
+            const by = this.args[0]?.trim()
+            const proc = "CALL DeletePeople(?);"
 
             // conect to database
-            const conection = conect()
+            this.database = new DataBase()
+            this.database.conect()
 
-            // verify conection and call procedure and call procedure
-            if (conection) conection.query(procedure,data,err => { 
-                if(err) rej(err) 
-                setTimeout(() => res({
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc, [by],(err) => {
+                if(err) {
+                    rej(err)
+                } else setTimeout(() => res({
                     message: "User Deleted",
-                    deleted: 1
+                    success: 1
                 }),1000)
             })
 
             // close conection 
-            conection.end()
+            this.database.conection.end()
         })
     }
 }

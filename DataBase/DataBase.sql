@@ -47,10 +47,18 @@ CREATE TABLE e_commerce.cat_productos(
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
 
+CREATE TABLE e_commerce.marcas_productos(
+    id_mar INT AUTO_INCREMENT PRIMARY KEY,
+    nom_mar VARCHAR(100) NOT NULL DEFAULT 'N/A' COMMENT "Nombre de la marca",INDEX(nom_mar),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
+);
+
 CREATE TABLE e_commerce.productos(
     id_pro INT AUTO_INCREMENT PRIMARY KEY,
     cat_pro INT NOT NULL,INDEX(cat_pro), FOREIGN KEY(cat_pro) REFERENCES cat_productos(id_cat_pro) ON DELETE CASCADE ON UPDATE CASCADE,
     nom_pro VARCHAR(100) NOT NULL,INDEX(nom_pro),
+    mar_pro INT NOT NULL COMMENT "Marca del producto",INDEX(mar_pro), FOREIGN KEY (mar_pro) REFERENCES marcas_productos(id_mar) ON DELETE CASCADE ON UPDATE CASCADE,
     pre_ori_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro) COMMENT 'Precio original de compra del producto',
     pre_pro DECIMAL(10,2) NOT NULL,INDEX(pre_pro),
     des_pre_pro INT(3) DEFAULT 0 COMMENT 'Descuento del producto',

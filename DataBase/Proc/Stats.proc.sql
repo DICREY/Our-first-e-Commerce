@@ -4,15 +4,48 @@ USE e_commerce;
 CREATE PROCEDURE e_commerce.StatsGeneral()
 BEGIN
     SELECT 
-        COUNT(*) AS cant_usu_reg,
+        -- Total productos registrados y disponibles
+        IFNULL(COUNT(*), 0) AS cant_pro_reg,
+
+        -- Total usuarios disponibles
         (
-            SELECT COUNT(*) 
-            FROM productos 
-            WHERE sta_pro = 'DISPONIBLE'
-        ) AS cant_pro_reg
-    FROM personas
-    WHERE 
-        estado = 'DISPONIBLE';
+            SELECT IFNULL(COUNT(*), 0)
+            FROM e_commerce.personas WHERE estado = 'DISPONIBLE'
+        ) AS cant_usu_reg,
+
+        -- Total productos con inventario en 0
+        (
+            SELECT IFNULL(COUNT(*), 0)
+            FROM e_commerce.inventario i
+            JOIN e_commerce.productos p ON i.id_pro_inv = p.id_pro
+            WHERE i.cantidad = 0
+        ) AS pro_solo_out,
+
+        -- Total productos en oferta (por categoría o por producto, sin duplicados)
+        (
+            SELECT 
+                IFNULL(COUNT(*), 0)
+            FROM e_commerce.productos p
+            JOIN e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+            JOIN e_commerce.oferta_categoria_productos ocp ON ocp.cat_ofe_pro = c.id_cat_pro
+            JOIN e_commerce.ofertas o ON ocp.ofe_pro = o.id_ofe
+            WHERE o.sta_ofe = 'ACTIVA'
+
+        ) AS cant_ofe_cat,
+        (
+            SELECT
+                IFNULL(COUNT(*), 0)
+            FROM 
+                e_commerce.ofertas o
+            JOIN 
+                e_commerce.oferta_productos op ON op.ofe_pro = o.id_ofe
+            JOIN 
+                e_commerce.productos p ON p.id_pro = op.pro_ofe_pro
+            WHERE 
+                o.sta_ofe = 'ACTIVA'
+        ) AS cant_ofe_pro
+    FROM e_commerce.productos
+    LIMIT 1000;
 END //
 
 CREATE PROCEDURE e_commerce.MonthlySales()
@@ -395,6 +428,7 @@ END //
 /* CALL e_commerce.SalesPerDay(); */
 /* CALL e_commerce.TodaySales(); */
 /* CALL e_commerce.SalesSummary(); */
+/* CALL e_commerce.StatsGeneral(); */
 
 /* DROP PROCEDURE e_commerce.`SellestProducts`; */
 /* DROP PROCEDURE e_commerce.`SalesSummary`; */
@@ -403,3 +437,4 @@ END //
 /* DROP PROCEDURE e_commerce.`StatsTotalSales`; */
 /* DROP PROCEDURE e_commerce.`SalesPerDay`; */
 /* DROP PROCEDURE e_commerce.`TodaySales`; */
+/* DROP PROCEDURE e_commerce.`StatsGeneral`; */

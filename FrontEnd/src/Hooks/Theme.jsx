@@ -54,12 +54,6 @@ export const useDarkMode = () => {
       root.style.setProperty('--text-primary', '#f3f4f6')
       root.style.setProperty('--text-secondary', '#d1d5db')
       
-      root.style.setProperty('--shadow', '0 1px 3px rgba(255, 255, 255, 0.1)')
-      root.style.setProperty('--shadow-sm', '0 .1rem .15rem 0 rgba(255, 255, 255, 0.151)')
-      root.style.setProperty('--shadow-md', '0 .2rem 6px -.1rem rgba(255, 255, 255, 0.1), 0 2px 4px -2px rgba(255, 255, 255, 0.1)')
-      root.style.setProperty('--shadow-lg', '0 .6rem .95rem -.2rem rgba(255, 255, 255, 0.1), 0 4px 6px -4px rgba(255, 255, 255, 0.1)')
-      root.style.setProperty('--shadow-xl', '0 1.3rem 1.8rem -.35rem rgba(255, 255, 255, 0.1), 0 8px 10px -6px rgba(255, 255, 255, 0.1)')
-      
       // Añadir clase dark al body para estilos específicos
       document.body.classList.add('dark')
     } else {

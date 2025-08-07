@@ -1,28 +1,45 @@
 // Librarys 
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Calendar, Check, ChevronLeft, Clock, Mail, Package, PackageCheck, PinOff, Printer, RefreshCw, Truck } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { 
+    Calendar,
+    Check,
+    ChevronLeft,
+    Clock,
+    Package,
+    PackageCheck,
+    PinOff,
+    RefreshCw,
+    Trash2,
+    Truck
+} from 'lucide-react'
 
 // Imports 
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatNumber, showAlert, showAlertLoading } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatNumber, showAlert, showAlertLoading, showAlertSelect } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
 import styles from '../../styles/Details/OrderDetail.module.css'
 
 // Component 
-export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
+export const OrderDetail = ({ URL = '', imgDefault = '' }) => {
     const [ order, setOrder ] = useState(null)
     const [ loading, setLoading ] = useState(true)
-    const [ error, setError ] = useState(null)
     const [ imgExpand, setImgExpand ] = useState(null)
+
+    // Vars 
+    const navigate = useNavigate()
+    const id_ped = localStorage.getItem('id_ord') || 0
+    let didFetch = false
 
     // Functions 
     const GetOrderDetails = async () => {
         try {
+            if(didFetch) return
             const got = await PostData(`${URL}/orders/by`, {by: id_ped})
             if (got && got[0]) {
+                didFetch = true
                 setOrder(got[0])
                 setTimeout(() => setLoading(false),200)
             }
@@ -30,6 +47,7 @@ export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
             setLoading(false)
             const message = errorStatusHandler(err)
             showAlert('Error', message, 'error')
+            didFetch = true
         }
     }
     
@@ -45,7 +63,24 @@ export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
             const message = errorStatusHandler(err)
             showAlert('Error', message, 'error')
         }
-
+        
+    }
+    
+    const Deactivate = async (id) => {
+        const option = showAlertSelect('Cancelar pedido','¿Desea cancelar el pedido?','question')
+        if ((await option).isConfirmed) {
+            try {
+                showAlertLoading('Cancelando Pedido', 'Por favor, espere...', 'info')
+                const mod = await ModifyData(`${URL}/orders/cancel`, { by: id })
+                if (mod.success) {
+                    showAlert('Éxito', 'Pedido cancelado correctamente', 'success')
+                    setTimeout(() => navigate("/admin/orders"),2000)
+                }   
+            } catch (err) {
+                const message = errorStatusHandler(err)
+                showAlert('Error', message, 'error')
+            }
+        }
     }
 
     // Effects 
@@ -123,16 +158,25 @@ export const OrderDetail = ({ URL = '', imgDefault = '', id_ped = null }) => {
                         >
                             {order?.sta_ped === 'PENDIENTE' && (
                                 <button
-                                    className={styles.backButton}
+                                    className='backButton'
                                     onClick={() => completeOrder(id_ped)}
                                 >
                                     <PackageCheck />
                                     Completar Pedido
                                 </button>
                             )}
-                            <Link to="/admin/orders" className={styles.backButton}>
+                            {order?.sta_ped !== 'ENTREGADO' && (
+                                <button
+                                    className='deleteButton'
+                                    onClick={() => Deactivate(id_ped)}
+                                >
+                                    <Trash2 />
+                                    Cancelar
+                                </button>
+                            )}
+                            <Link to="/admin/orders" className='backButton'>
                                 <ChevronLeft />
-                                Volver a pedidos
+                                Atrás
                             </Link>
                         </nav>
                     </header>

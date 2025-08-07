@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { capitalize, errorStatusHandler, formatDate, formatNumber, searchFilter, showAlert, showAlertLoading } from '../../Utils/utils'
+import { capitalize, errorStatusHandler, formatDate, formatNumber, searchFilter, showAlert, showAlertLoading, showAlertSelect } from '../../Utils/utils'
 import { GetData, ModifyData, PostData } from '../../Utils/Requests'
 
 // Import styles 
@@ -154,7 +154,8 @@ export const OfferManager = ({ URL }) => {
     }
 
     const handleDelete = async (id) => {
-        if (window.confirm('¿Estás seguro de eliminar esta oferta?')) {
+        const option = showAlertSelect('Desactivar oferta','¿Desea desactivar la oferta?','question')
+        if ((await option).isConfirmed) {
             try {
                 didFetch = false
                 showAlertLoading('Cargando','Eliminando oferta...', 'info')
@@ -186,18 +187,20 @@ export const OfferManager = ({ URL }) => {
     }
 
     const changeState = async (id) => {
-        try {
-            didFetch = false
-            showAlertLoading('Cargando...','Cambiando estado')
-            const got = await ModifyData(`${URL}/offers/finish`, { by: id })
-            if (got?.success) {
-                showAlert('Éxito', 'Estado cambiado correctamente', 'success')
-                fetchData()
+        const option = showAlertSelect('Cambiar estado','¿Desea cambiar el estado de la oferta?','question')
+        if ((await option).isConfirmed) {
+            try {
+                showAlertLoading('Cargando...','Cambiando estado')
+                const got = await ModifyData(`${URL}/offers/finish`, { by: id })
+                if (got?.success) {
+                    showAlert('Éxito', 'Estado cambiado correctamente', 'success')
+                    fetchData()
+                }
+    
+            } catch (err) {
+                const message = errorStatusHandler(err)
+                showAlert('Error', message, 'error')
             }
-
-        } catch (err) {
-            const message = errorStatusHandler(err)
-            showAlert('Error', message, 'error')
         }
     }
 
@@ -398,7 +401,12 @@ export const OfferManager = ({ URL }) => {
                                         <h4 className={styles.offerTitle}>{offer.nom_ofe}</h4>
                                         <div 
                                             className={`${styles.offerStatus} ${offer.sta_ofe === 'ACTIVA' ? styles.active : offer.sta_ofe === 'PENDIENTE' ? styles.pending : styles.ended}`}
-                                            onClick={() => changeState(offer.id_ofe)}
+                                            onClick={() => {
+                                                if (offer.sta_ofe === 'FINALIZADA'){
+                                                    return showAlert('Oferta finalizada', 'No se puede cambiar el estado de una oferta finalizada', 'error')
+                                                }
+                                                changeState(offer.id_ofe)
+                                            }}
                                         >
                                             {capitalize(offer.sta_ofe)}
                                         </div>
@@ -410,6 +418,8 @@ export const OfferManager = ({ URL }) => {
                                         </div>
                                         <div className={styles.offerDates}>
                                             <Calendar size={14} /> {formatDate(offer.fec_ini_ofe)} - {formatDate(offer.fec_fin_ofe)}
+                                        </div>
+                                        <div className={styles.offerDates}>
                                         </div>
                                     </div>
 

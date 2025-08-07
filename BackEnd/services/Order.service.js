@@ -117,27 +117,28 @@ class Order {
     }
 
     // function to delete
-    async delete() {
+    async Cancel() {
         return new Promise((res,rej) => {
             // Vars
             const by = this.args[0]?.trim()
-            const procedure = "CALL DeleteProduct(?);"
+            const proc = "CALL CancelOrder(?);"
 
             // conect to database
-            const conection = conect()
+            this.database = new DataBase()
+            this.database.conect()
 
             // verify conection and call procedure and call procedure
-            if (conection) conection.query(procedure,[by],err => { 
+            if (this.database) this.database.conection.query(proc, [by],(err) => {
                 if(err) {
                     rej(err)
                 } else setTimeout(() => res({
-                    message: "Product Deleted",
+                    message: "Product Caceled",
                     success: 1
                 }),1000)
             })
 
             // close conection 
-            conection.end()
+            this.database.conection.end()
         })
     }
 

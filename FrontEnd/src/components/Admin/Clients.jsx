@@ -13,7 +13,7 @@ import AdminLoadingScreen from '../Global/Loading'
 import styles from '../../styles/Admin/CustomersList.module.css'
 
 // Component 
-export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
+export const Customers = ({ URL = '', ImgDefault = '' }) => {
     // Dynamic vars
     const [ customers, setCustomers ] = useState([])
     const [ filteredCustomers, setFilteredCustomers ] = useState([])
@@ -122,7 +122,7 @@ export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
     const biClick = (data) => {
         setCount(count+1)
         if (count === 2) {
-            setCustomer(data)
+            localStorage.setItem('id_peo',data.doc_per)            
             navigate('/admin/customers/details')
         }
     }
@@ -268,7 +268,7 @@ export const Customers = ({ URL = '', ImgDefault = '', setCustomer }) => {
                                         <div className={styles.actionButtons}>
                                             <button
                                                 onClick={() => {
-                                                    setCustomer(customer)
+                                                    localStorage.setItem('id_peo',customer.doc_per)
                                                     navigate('/admin/customers/details')
                                                 }}
                                                 className={styles.viewButton}

@@ -7,7 +7,7 @@ import {
 // Imports 
 import { AuthContext } from '../../Contexts/Contexts'
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlertLoading } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertLoading } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
@@ -93,8 +93,6 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
         setHasChanges(false)
         showAlert('Éxito', 'Perfil actualizado correctamente', 'success')
         
-      } else {
-        throw new Error(response.message || 'Error al actualizar el perfil')
       }
     } catch (error) {
       const message = errorStatusHandler(error)
@@ -399,7 +397,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className={styles.cancelButton}
+                  className='deleteButton'
                   disabled={isLoading}
                 >
                   <X size={16} /> Cancelar

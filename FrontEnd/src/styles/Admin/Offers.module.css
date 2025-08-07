@@ -223,9 +223,9 @@
 }
 
 .offerCard {
-  border: .1rem solid var(--gray-400);
-  border-radius: .5rem;
   padding: 1.5rem;
+  border-radius: .5rem;
+  border: .1rem solid var(--gray-500);
   box-shadow: var(--shadow-md);
   transition: var(--transition);
 }

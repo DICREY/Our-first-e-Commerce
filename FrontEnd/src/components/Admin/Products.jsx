@@ -13,9 +13,10 @@ import AdminLoadingScreen from '../Global/Loading'
 import styles from '../../styles/Admin/ProductList.module.css'
 
 // Component 
-export const ProductList = ({ URL = '', imgDefault = '', set }) => {
+export const ProductList = ({ URL = '', imgDefault = '' }) => {
   // Dynamic vars 
   const [products, setProducts] = useState(null);
+  const [stats, setStats] = useState(null);
   const [productsAlmc, setProductsAlmc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +30,18 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
   const navigate = useNavigate()
 
   // Functions 
+  const getStats = async () => {
+    try {
+      const got = await GetData(`${URL}/stats/general`)
+      if (got) {
+        setStats(got)
+      }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
+    }
+  }
+
   const getProductCategories = async () => {
     try {
       const product = await GetData(`${URL}/products/categories`)
@@ -61,6 +74,7 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
   }
 
   useEffect(() => {
+    getStats()
     getProductCategories()
     getProducts()
   }, [])
@@ -88,10 +102,6 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
       setProducts(divideList(filteredData, 12))
     }
   }, [selectedCategory, searchQuery, productsAlmc, selectedState])
-
-  const calculateDiscount = (currentPrice, originalPrice) => {
-    return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
-  }
 
   return (
     <main className={styles.adminContainer}>
@@ -183,15 +193,15 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
           <div className={styles.statsBar}>
             <div className={styles.statCard}>
               <span>Productos totales</span>
-              <strong>{productsAlmc?.length || 0}</strong>
+              <strong>{stats?.cant_pro_reg || 0}</strong>
             </div>
             <div className={styles.statCard}>
               <span>En oferta</span>
-              <strong>{productsAlmc?.filter(p => p.onSale).length || 0}</strong>
+              <strong>{stats?.cant_ofe_cat + stats?.cant_ofe_pro || 0}</strong>
             </div>
             <div className={styles.statCard}>
               <span>Agotados</span>
-              <strong>{productsAlmc?.filter(p => p.stock <= 0).length || 0}</strong>
+              <strong>{stats?.pro_solo_out || 0}</strong>
             </div>
           </div>
 
@@ -215,7 +225,7 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
                         key={idx} 
                         className={styles.productRow}
                         onClick={() => {
-                          set(product.id_pro)
+                          localStorage.setItem('id_pro',product.id_pro)
                           navigate('/admin/products/details')
                         }}
                       >
@@ -251,19 +261,19 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
                         </td>
                         <td>
                           <div className={`${styles.stockCell} ${
-                            product.stock <= 0 ? styles.outOfStock : 
-                            product.stock < 10 ? styles.lowStock : ''
+                            product.stock_total <= 0 ? styles.outOfStock : 
+                            product.stock_total < 10 ? styles.lowStock : ''
                           }`}>
-                            {product.stock}
+                            {product.stock_total}
                           </div>
                         </td>
                         <td>
                           <div className={`${styles.statusBadge} ${
-                            product.stock <= 0 ? styles.statusInactive :
+                            product.stock_total <= 0 ? styles.statusInactive :
                             product.onSale ? styles.statusSale :
                             styles.statusActive
                           }`}>
-                            {product.stock <= 0 ? 'Agotado' : 
+                            {product.stock_total <= 0 ? 'Agotado' : 
                              product.offers ? 'En oferta' : 'Activo'}
                           </div>
                         </td>

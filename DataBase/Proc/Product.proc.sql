@@ -55,6 +55,7 @@ BEGIN
         p.onSale,
         p.created_at,
         p.updated_at,
+        mp.nom_mar,
         c.id_cat_pro,
         c.nom_cat_pro,
         (
@@ -96,13 +97,13 @@ BEGIN
         ) AS sizes,
         -- Stock total del producto (sumando todas las combinaciones)
         (
-            SELECT SUM(inv.cantidad)
+            SELECT IFNULL(SUM(inv.cantidad), 0)
             FROM inventario inv
             WHERE inv.id_pro_inv = p.id_pro
         ) AS stock_total,
         -- cantidad vendidad este mes
         (
-            SELECT SUM(pp.can_pro_ped)
+            SELECT IFNULL(SUM(pp.can_pro_ped), 0)
             FROM productos_pedidos pp
             JOIN pedidos pd ON pp.id_ped = pd.id_ped
             WHERE pd.fec_ped >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
@@ -159,6 +160,8 @@ BEGIN
         e_commerce.productos p
     INNER JOIN 
         e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+    JOIN
+        e_commerce.marcas_productos mp ON mp.id_mar = p.mar_pro
     ORDER BY p.id_pro DESC
     LIMIT 1000;
 END //
@@ -176,6 +179,7 @@ BEGIN
 
     SELECT 
         p.*,
+        mp.nom_mar,
         c.id_cat_pro,
         c.nom_cat_pro,
         (
@@ -217,13 +221,13 @@ BEGIN
         ) AS sizes,
         -- Stock total del producto (sumando todas las combinaciones)
         (
-            SELECT SUM(inv.cantidad)
+            SELECT IFNULL(SUM(inv.cantidad), 0)
             FROM inventario inv
             WHERE inv.id_pro_inv = p.id_pro
         ) AS stock_total,
         -- cantidad vendidad este mes
         (
-            SELECT SUM(pp.can_pro_ped)
+            SELECT IFNULL(SUM(pp.can_pro_ped), 0)
             FROM productos_pedidos pp
             JOIN pedidos pd ON pp.id_ped = pd.id_ped
             WHERE pd.fec_ped >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
@@ -280,6 +284,8 @@ BEGIN
         e_commerce.productos p
     INNER JOIN 
         e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+    JOIN
+        e_commerce.marcas_productos mp ON mp.id_mar = p.mar_pro
     WHERE 
         p.id_pro LIKE p_by
         OR p.nom_pro LIKE p_by
@@ -316,6 +322,7 @@ BEGIN
         p.onSale,
         p.created_at,
         p.updated_at,
+        mp.nom_mar,
         c.nom_cat_pro,
         c.sta_cat_pro,
         (
@@ -355,13 +362,13 @@ BEGIN
         ) AS sizes,
         -- Stock total del producto (sumando todas las combinaciones)
         (
-            SELECT SUM(inv.cantidad)
+            SELECT IFNULL(SUM(inv.cantidad), 0)
             FROM inventario inv
             WHERE inv.id_pro_inv = p.id_pro
         ) AS stock_total,
         -- cantidad vendidad este mes
         (
-            SELECT SUM(pp.can_pro_ped)
+            SELECT IFNULL(SUM(pp.can_pro_ped), 0)
             FROM productos_pedidos pp
             JOIN pedidos pd ON pp.id_ped = pd.id_ped
             WHERE pd.fec_ped >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
@@ -414,10 +421,15 @@ BEGIN
                     o.fec_fin_ofe > CURRENT_TIMESTAMP
                     AND op.ofe_pro = o.id_ofe)
         END AS offers
-    FROM e_commerce.productos p
-    INNER JOIN e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
-    WHERE c.nom_cat_pro LIKE p_nom_cat
-    AND c.sta_cat_pro = 1
+    FROM
+        e_commerce.productos p
+    INNER JOIN
+        e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+    JOIN
+        e_commerce.marcas_productos mp ON mp.id_mar = p.mar_pro
+    WHERE
+        c.nom_cat_pro LIKE p_nom_cat
+        AND c.sta_cat_pro = 1
     LIMIT 1000;
 END //
 CREATE PROCEDURE e_commerce.RegisterProduct(
