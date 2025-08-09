@@ -94,12 +94,6 @@ export const useDarkMode = () => {
       root.style.setProperty('--text-primary', '#1e293b')
       root.style.setProperty('--text-secondary', '#64748b')
       
-      root.style.setProperty('--shadow', '0 1px 3px rgba(0, 0, 0, 0.1)')
-      root.style.setProperty('--shadow-sm', '0 .1rem .15rem 0 rgba(0, 0, 0, 0.151)')
-      root.style.setProperty('--shadow-md', '0 .2rem 6px -.1rem rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)')
-      root.style.setProperty('--shadow-lg', '0 .6rem .95rem -.2rem rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)')
-      root.style.setProperty('--shadow-xl', '0 1.3rem 1.8rem -.35rem rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)')
-      
       // Remover clase dark del body
       document.body.classList.remove('dark')
     }

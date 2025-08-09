@@ -20,12 +20,13 @@ import { AdminProfile } from "./components/People/AdminProfile"
 import { CustomerRegister } from "./components/People/CustomerRegister";
 import { ProductRegister } from "./components/Products/ProductRegister";
 import { OrderRegister } from "./components/Admin/OrderRegister";
+import { useDarkMode } from "./Hooks/Theme";
+import { OfferManager } from "./components/Admin/Offers";
+import { ProductEdit } from "./components/Products/ProductEdit";
 import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
-import { useDarkMode } from "./Hooks/Theme";
-import { OfferManager } from "./components/Admin/Offers";
 
 // Main Module 
 const App = () => {
@@ -33,7 +34,6 @@ const App = () => {
   const [product, setProduct] = useState()
   const [catPro, setCatPro] = useState()
   const [filterFetch, setFilterFetch] = useState(null)
-  const [isDarkMode] = useDarkMode()
 
   // Vars 
   const URL = 'http://localhost:3000/ecommerce'
@@ -166,6 +166,10 @@ const App = () => {
               <Route 
                 path="/admin/products/details" 
                 element={<ProductDetailAdmin URL={URL} imgDefault={imgProduct} />} 
+              />
+              <Route 
+                path="/admin/products/edit"
+                element={<ProductEdit URL={URL} imgDefault={imgUser} />}
               />
               <Route 
                 path="/admin/products/register"

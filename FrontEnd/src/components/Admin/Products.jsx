@@ -224,10 +224,6 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
                       <tr 
                         key={idx} 
                         className={styles.productRow}
-                        onClick={() => {
-                          localStorage.setItem('id_pro',product.id_pro)
-                          navigate('/admin/products/details')
-                        }}
                       >
                         <td>
                           <div className={styles.productCell}>
@@ -279,10 +275,22 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
                         </td>
                         <td>
                           <div className={styles.actionButtons}>
-                            <button className={styles.viewButton}>
+                            <button 
+                              className={styles.viewButton}
+                              onClick={() => {
+                                localStorage.setItem('id_pro',product.id_pro)
+                                navigate('/admin/products/details')
+                              }}
+                            >
                               <Eye size={16} />
                             </button>
-                            <button className={styles.editButton}>
+                            <button 
+                              className={styles.editButton}
+                              onClick={() => {
+                                localStorage.setItem('id_pro',product.id_pro)
+                                navigate('/admin/products/edit')
+                              }}
+                            >
                               <Edit size={16} />
                             </button>
                           </div>

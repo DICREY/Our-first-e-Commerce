@@ -47,14 +47,7 @@ BEGIN
     END IF;
 
     SELECT 
-        p.id_pro,
-        p.nom_pro,
-        p.pre_pro,
-        p.des_pro,
-        p.sta_pro,
-        p.onSale,
-        p.created_at,
-        p.updated_at,
+        p.*,
         mp.nom_mar,
         c.id_cat_pro,
         c.nom_cat_pro,
@@ -314,14 +307,7 @@ BEGIN
     END IF;
 
     SELECT 
-        p.id_pro,
-        p.nom_pro,
-        p.pre_pro,
-        p.des_pro,
-        p.sta_pro,
-        p.onSale,
-        p.created_at,
-        p.updated_at,
+        p.*,
         mp.nom_mar,
         c.nom_cat_pro,
         c.sta_cat_pro,
