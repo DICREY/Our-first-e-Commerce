@@ -38,13 +38,14 @@ BEGIN
     FROM tallas t
     LIMIT 1000;
 END //
+
 CREATE PROCEDURE e_commerce.GetAllProducts()
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM e_commerce.productos) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existen productos registrados';
     END IF;
 
-    SELECT 
+    SELECT
         p.id_pro,
         p.nom_pro,
         p.pre_pro,
@@ -505,6 +506,28 @@ BEGIN
     COMMIT;
 
     SET autocommit = 1;
+END //
+CREATE PROCEDURE e_commerce.GetProductInventory(
+    IN p_product_id INT
+)
+BEGIN
+    SELECT 
+        inv.id_inv,
+        inv.id_pro_inv,
+        inv.id_col_inv,
+        col.nom_col,
+        col.hex_col,
+        inv.id_tal_inv,
+        tal.nom_tal_pro,
+        inv.cantidad AS stock
+    FROM 
+        inventario inv
+    JOIN 
+        colores col ON inv.id_col_inv = col.id_col
+    JOIN 
+        tallas tal ON inv.id_tal_inv = tal.id_tal_pro
+    WHERE 
+        inv.id_pro_inv = p_product_id;
 END //
 
 /* DROP PROCEDURE e_commerce.GetAllProducts; */

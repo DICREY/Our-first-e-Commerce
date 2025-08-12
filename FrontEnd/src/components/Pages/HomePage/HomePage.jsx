@@ -39,7 +39,7 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
   // Effects
   useEffect(() => {
     GetSellest()
-  },[])
+  }, [])
 
   return (
     <div className={styles.page}>
@@ -90,10 +90,10 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
 
           <div className={styles.productsGrid}>
             {sellest?.map((product, index) => (
-              <ProductCard 
-                key={index + 129} 
-                data={product} 
-                imgDefault={imgProduct} 
+              <ProductCard
+                key={index + 129}
+                data={product}
+                imgDefault={imgProduct}
                 set={setProduct}
               />
             ))}
@@ -121,10 +121,10 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
 
             <div className={styles.productsGrid}>
               {saleProducts?.map((product, index) => (
-                <ProductCard 
-                  key={index + 98} 
-                  data={product} 
-                  imgDefault={imgProduct} 
+                <ProductCard
+                  key={index + 98}
+                  data={product}
+                  imgDefault={imgProduct}
                   set={setProduct}
                 />
               ))}
@@ -161,9 +161,9 @@ const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
                 {(selectedCategory === "Todos" ? sellest : sellest?.filter((p) => p.cat_pro === selectedCategory))
                   ?.slice(0, 8)
                   ?.map((product, index) => (
-                    <ProductCard 
-                      key={index + 789} 
-                      data={product} 
+                    <ProductCard
+                      key={index + 789}
+                      data={product}
                       imgDefault={imgProduct}
                       set={setProduct}
                     />

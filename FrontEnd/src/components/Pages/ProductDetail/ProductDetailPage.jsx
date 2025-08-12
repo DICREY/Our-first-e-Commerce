@@ -34,13 +34,10 @@ const ProductDetailPage = ({ URL = '', img = '' }) => {
     const fetchProductData = async () => {
       try {
         setLoading(true);
-        console.log("Fetching product data for ID:", productId);
 
         const productData = await PostData(`${URL}/products/by`, { by: productId });
-        console.log("Product data fetched:", productData);
 
         const prod = productData?.[0] || productData?.result?.[0] || productData?.product || productData;
-        console.log("Product extracted:", prod);
 
         if (prod?.nom_pro) {
           setProduct(prod);

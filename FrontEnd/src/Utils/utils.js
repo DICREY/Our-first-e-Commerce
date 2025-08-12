@@ -29,7 +29,6 @@ export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = ''
     };
 
     img.onerror = () => {
-      console.warn(`Error loading image: ${src}`);
       setImgSrc(imgDefault);
     };
 
@@ -45,7 +44,6 @@ export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = ''
       src={imgSrc}
       alt={alt || 'Imagen no disponible'}
       onError={() => {
-        console.warn(`Fallback triggered for image: ${src}`);
         setImgSrc(imgDefault);
       }}
     />

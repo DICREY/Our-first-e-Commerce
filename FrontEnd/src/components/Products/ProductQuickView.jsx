@@ -1,34 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
-import { CheckImage } from "../../Utils/utils";
+import { CheckImage, showAlert } from "../../Utils/utils";
+import { PostData } from "../../Utils/Requests";
+import { AuthContext } from "../../Contexts/Contexts";
+import { useNavigate } from "react-router-dom"
 import styles from "../../styles/Products/ProductQuickView.module.css";
 
-const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
+const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
   const [showImg, setShowImg] = useState(null);
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [inventory, setInventory] = useState([]);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const navigate = useNavigate();
 
-  if (!data) return null;
+  const { user } = useContext(AuthContext);
+  const token = useContext(AuthContext)?.token || localStorage.getItem('token');
 
-  // Calcular descuento si hay precio original
-  const discount = product?.originalPrice
-    ? Math.round(((product?.originalPrice - product?.pre_pro) / product?.originalPrice) * 100)
-    : 0;
+  // Cargar inventario al abrir el modal o cambiar el producto
+  useEffect(() => {
+    const fetchInventory = async () => {
+      if (isOpen && product?.id_pro) {
+        try {
+          const response = await PostData(`${URL}/products/inventory`, {
+            productId: product.id_pro
+          });
+
+          if (response && Array.isArray(response)) {
+            setInventory(response);
+          } else {
+            setInventory([]);
+            console.error("Formato de respuesta inesperado:", response);
+          }
+        } catch (error) {
+          console.error("Error fetching inventory:", error);
+          setInventory([]);
+        }
+      }
+    };
+
+    fetchInventory();
+  }, [isOpen, product?.id_pro, URL]);
 
   useEffect(() => {
     if (data) {
       setProduct(data);
       if (data.colors) {
-        const firstColor = Array.isArray(data.colors) ? data.colors[0] : 
-                         typeof data.colors === "string" ? 
-                         data.colors.split("---").map(colorStr => {
-                           const [nom_col, hex_col, nom_img, url_img] = colorStr.split(";");
-                           return { nom_col, hex_col, nom_img, url_img };
-                         })[0] : null;
-        setSelectedColor(firstColor?.nom_col);
+        const firstColor = Array.isArray(data.colors) ? data.colors[0] :
+          typeof data.colors === "string" ?
+            data.colors.split("---").map(colorStr => {
+              const [nom_col, hex_col, nom_img, url_img] = colorStr.split(";");
+              return { nom_col, hex_col, nom_img, url_img };
+            })[0] : null;
+        setSelectedColor(firstColor);
         setShowImg(firstColor?.url_img);
+      }
+      if (Array.isArray(data.sizes) && data.sizes.length > 0) {
+        setSelectedSize({ nom_tal_pro: data.sizes[0], id_tal_pro: data.sizes[0].id_tal_pro || data.sizes[0] });
       }
     }
   }, [data]);
@@ -37,21 +69,115 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
     ? product.colors
     : typeof product?.colors === "string"
       ? product.colors.split("---").map(colorStr => {
-          const [nom_col, hex_col, nom_img, url_img] = colorStr.split(";");
-          return { nom_col, hex_col, nom_img, url_img };
-        })
+        const [nom_col, hex_col, nom_img, url_img] = colorStr.split(";");
+        return { nom_col, hex_col, nom_img, url_img };
+      })
       : [];
 
-  const safeSizes = Array.isArray(product?.sizes) 
-    ? product.sizes 
+  const safeSizes = Array.isArray(product?.sizes)
+    ? product.sizes
     : typeof product?.sizes === "string"
       ? product.sizes.split("---")
       : [];
 
   const handleColorSelect = (color) => {
     setImageLoaded(false);
-    setSelectedColor(color.nom_col);
+    setSelectedColor(color);
     setShowImg(color.url_img);
+    // Resetear la talla seleccionada al cambiar de color
+    setSelectedSize(null);
+  };
+
+  const handleSizeSelect = (size) => {
+    setSelectedSize({ nom_tal_pro: size.nom_tal_pro || size, id_tal_pro: size.id_tal_pro || size });
+  };
+
+  // Buscar el id_inv según la selección
+  const getSelectedInventoryId = () => {
+    if (!selectedColor || !selectedSize) return null;
+
+    const found = inventory.find(
+      inv =>
+        inv.nom_col === selectedColor.nom_col &&
+        (inv.id_tal_inv === selectedSize.id_tal_pro ||
+          inv.nom_tal_pro === selectedSize.nom_tal_pro)
+    );
+
+    if (!found) {
+      console.warn("No se encontró inventario para:", {
+        color: selectedColor.nom_col,
+        size: selectedSize.nom_tal_pro
+      });
+      return null;
+    }
+
+    if (found.cantidad < quantity) {
+      showAlert("Error", `Solo quedan ${found.cantidad} unidades disponibles`, "error");
+      return null;
+    }
+
+    return found.id_inv;
+  };
+
+  const getAvailableSizesForColor = (color) => {
+    if (!color || !inventory.length) return safeSizes;
+
+    const availableSizes = inventory
+      .filter(item => item.nom_col === color.nom_col && item.cantidad > 0)
+      .map(item => ({
+        nom_tal_pro: item.nom_tal_pro || `Talla ${item.id_tal_inv}`,
+        id_tal_pro: item.id_tal_inv
+      }));
+
+    return availableSizes.length > 0 ? availableSizes : safeSizes.map(size => ({
+      nom_tal_pro: size.nom_tal_pro || size,
+      id_tal_pro: size.id_tal_pro || size
+    }));
+  };
+
+  const handleAddToCart = async () => {
+    // 1. Validar usuario
+    if (!user) {
+      if (window.confirm("Debes iniciar sesión para agregar al carrito. ¿Deseas ir al login?")) {
+        navigate('/login');
+      }
+      return;
+    }
+
+    // 2. Validar selección
+    if (!selectedSize || !selectedColor) {
+      alert("Debes seleccionar talla y color");
+      return;
+    }
+
+    // 3. Validar inventario
+    const id_inv = getSelectedInventoryId();
+    if (!id_inv) {
+      alert("No hay inventario disponible");
+      return;
+    }
+
+    setIsAddingToCart(true);
+
+    try {
+      // 4. Llamada API
+      await PostData(`${URL}/products/cart/add`, {
+        doc_per: user.doc,
+        id_inv,
+        quantity: quantity
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      // 5. Éxito
+      alert("Producto agregado al carrito");
+      onClose();
+    } catch (error) {
+      console.error("Error:", error);
+      alert(error.message || "Error al agregar al carrito");
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   if (!product) return null;
@@ -69,13 +195,13 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
               onLoad={() => setImageLoaded(true)}
             />
           </div>
-          
+
           {safeColors.length > 0 && (
             <div className={styles.colorThumbnails}>
               {safeColors.map((color, index) => (
                 <button
                   key={`color-${index}`}
-                  className={`${styles.colorThumbnail} ${selectedColor === color.nom_col ? styles.active : ''}`}
+                  className={`${styles.colorThumbnail} ${selectedColor?.nom_col === color.nom_col ? styles.active : ''}`}
                   onClick={() => handleColorSelect(color)}
                   style={{ backgroundColor: color.hex_col }}
                   title={color.nom_col}
@@ -96,9 +222,9 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
                   <span className={styles.originalPrice}>
                     ${product.originalPrice.toLocaleString()}
                   </span>
-                  {discount > 0 && (
-                    <span className={styles.discountBadge}>{discount}% OFF</span>
-                  )}
+                  <span className={styles.discountBadge}>
+                    {Math.round(((product.originalPrice - product.pre_pro) / product.originalPrice) * 100)}% OFF
+                  </span>
                 </>
               )}
             </div>
@@ -111,45 +237,61 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '' }) => {
             </p>
           </div>
 
-          {safeSizes.length > 0 && (
+          {selectedColor && getAvailableSizesForColor(selectedColor).length > 0 && (
             <div className={styles.sizesSection}>
               <h4 className={styles.sectionTitle}>Tallas disponibles</h4>
               <div className={styles.sizeOptions}>
-                {safeSizes.map((size, index) => (
-                  <span key={`size-${index}`} className={styles.sizeOption}>
-                    {size}
-                  </span>
-                ))}
+                {getAvailableSizesForColor(selectedColor).map((size, index) => {
+                  const inventoryItem = inventory.find(
+                    inv =>
+                      inv.nom_col === selectedColor?.nom_col &&
+                      (inv.id_tal_inv === size.id_tal_pro || inv.nom_tal_pro === size.nom_tal_pro)
+                  );
+
+                  const isOutOfStock = inventoryItem?.cantidad === 0;
+                  const isLowStock = inventoryItem?.cantidad < 5 && inventoryItem?.cantidad > 0;
+
+                  return (
+                    <button
+                      key={`size-${index}`}
+                      className={`${styles.sizeOption} ${selectedSize?.id_tal_pro === size.id_tal_pro ? styles.active : ''
+                        } ${isOutOfStock ? styles.outOfStock : ''}`}
+                      onClick={() => !isOutOfStock && handleSizeSelect(size)}
+                      disabled={isOutOfStock}
+                      title={isOutOfStock ? "Agotado" : isLowStock ? `Últimas ${inventoryItem.cantidad} unidades` : ""}
+                    >
+                      {size.nom_tal_pro}
+                      {isOutOfStock && <span className={styles.stockBadge}>Agotado</span>}
+                      {isLowStock && !isOutOfStock && (
+                        <span className={styles.lowStockBadge}>{inventoryItem.cantidad}</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {safeColors.length > 0 && (
-            <div className={styles.colorsSection}>
-              <h4 className={styles.sectionTitle}>Colores disponibles</h4>
-              <div className={styles.colorOptions}>
-                {safeColors.map((color, index) => (
-                  <button
-                    key={`color-option-${index}`}
-                    className={`${styles.colorOption} ${selectedColor === color.nom_col ? styles.active : ''}`}
-                    onClick={() => handleColorSelect(color)}
-                    title={color.nom_col}
-                    aria-label={`Seleccionar color ${color.nom_col}`}
-                  >
-                    <span 
-                      className={styles.colorSwatch} 
-                      style={{ backgroundColor: color.hex_col }}
-                    />
-                    <span className={styles.colorName}>{color.nom_col}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <div className={styles.quantitySelector}>
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              disabled={quantity <= 1}
+            >
+              -
+            </button>
+            <span>{quantity}</span>
+            <button onClick={() => setQuantity(quantity + 1)}>+</button>
+          </div>
 
           <div className={styles.actions}>
-            <Button variant="primary" fullWidth>
-              Añadir al carrito
+            <Button
+              variant="primary"
+              onClick={handleAddToCart}
+              fullWidth
+              loading={isAddingToCart}
+              disabled={!selectedSize || !selectedColor || isAddingToCart}
+            >
+              {isAddingToCart ? 'Añadiendo...' : 'Añadir al carrito'}
             </Button>
             <Button variant="outline" onClick={onClose} fullWidth>
               Continuar comprando
