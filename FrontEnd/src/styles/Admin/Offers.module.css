@@ -1,0 +1,370 @@
+.container {
+    flex: 1;
+    width: 100%;
+    padding: 2rem 1rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.content {
+  display: grid;
+  gap: 3rem;
+}
+
+.offerForm {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--rounded);
+  box-shadow: var(--shadow-sm);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0 0 1.5rem 0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.input, .textarea {
+  padding: 0.75rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--rounded);
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  background-color: var(--neutral-50);
+  transition: var(--transition);
+}
+
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.selectionSection {
+  margin: 2rem 0;
+}
+
+.subHeader {
+  display: grid;
+  padding: 1rem;
+  align-items: center;
+  text-align: center;
+  grid-template-columns: 1fr 4fr;
+  gap: 2rem;
+  width: 100%;
+}
+
+.subsectionTitle {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.itemsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  max-height: 18rem;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.itemCard {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.5rem;
+    border: 1px solid var(--gray-500);
+    border-radius: var(--rounded);
+    box-shadow: var(--shadow-md);
+    background: var(--neutral-50);
+    transition: var(--transition);
+}
+
+.itemCard:hover {
+  border-color: var(--primary-500);
+  background-color: var(--primary-50);
+}
+
+.itemCard.selected {
+  border-color: var(--primary-500);
+  background-color: var(--primary-50);
+}
+
+.itemCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--gray-500);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.checkmark {
+  color: var(--primary-500);
+  font-weight: bold;
+}
+
+.itemName {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.itemPrice {
+  font-size: 0.875rem;
+  color: var(--success-600);
+}
+
+.itemDiscount {
+  font-size: 0.75rem;
+  color: var(--accent-500);
+  font-weight: 500;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancelButton, .submitButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--rounded);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancelButton {
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  border: 1px solid var(--gray-300);
+}
+
+.cancelButton:hover {
+  background: var(--gray-200);
+}
+
+.submitButton {
+  background: var(--primary-500);
+  color: var(--white);
+  border: none;
+}
+
+.submitButton:hover {
+  background: var(--primary-600);
+}
+
+.offersList {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--rounded);
+  box-shadow: var(--shadow-sm);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: var(--gray-500);
+  background: var(--gray-50);
+  border-radius: var(--rounded);
+}
+
+.offersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.offerCard {
+  padding: 1.5rem;
+  border-radius: .5rem;
+  border: .1rem solid var(--gray-500);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.offerCard:hover {
+  border-color: var(--primary-500);
+  background-color: var(--primary-50);
+}
+
+.offerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.offerTitle {
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.offerStatus {
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-weight: 500;
+}
+
+.offerStatus.active {
+  background: var(--success-100);
+  color: var(--success-600);
+}
+
+.offerStatus.pending {
+  background: var(--warning-100);
+  color: var(--warning-500);
+}
+
+.offerStatus.ended {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.offerMeta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.offerDiscount, .offerDates {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.offerDescription {
+  color: var(--gray-700);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.offerStats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}
+
+.statValue {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.offerActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.editButton, .deleteButton {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--rounded);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.editButton {
+  background: var(--primary-50);
+  color: var(--primary-600);
+  border: 1px solid var(--primary-100);
+}
+
+.editButton:hover {
+  background: var(--primary-100);
+}
+
+.deleteButton {
+  background: var(--error-100);
+  color: var(--accent-800);
+  border: 1px solid var(--error-200);
+}
+
+.deleteButton:hover {
+  background: var(--error-200);
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--gray-600);
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .itemsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .offersGrid {
+    grid-template-columns: 1fr;
+  }
+}

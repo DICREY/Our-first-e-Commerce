@@ -7,7 +7,7 @@
     background-color: var(--white);
     border-radius: var(--rounded);
     box-shadow: var(--shadow-sm);
-    overflow: hidden;
+    overflow: auto;
 }
 
 .header {
@@ -129,7 +129,8 @@
 
 .tableContainer {
     flex: 1;
-    overflow-x: auto;
+    min-height: 70vh;
+    overflow-y: scroll;
 }
 
 .dataTable {

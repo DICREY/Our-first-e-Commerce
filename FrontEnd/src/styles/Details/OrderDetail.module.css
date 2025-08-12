@@ -4,6 +4,7 @@
     width: 100%;
     padding: 2rem;
     background-color: var(--neutral-50);
+    overflow: auto;
 }
 
 .content {
@@ -188,6 +189,28 @@
     border-radius: 12px;
     border: 1px solid var(--neutral-200);
     transition: all 0.2s ease;
+}
+
+.productHeader {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+}
+
+.inactiveImg {
+    cursor: zoom-in;
+    height: 3.5rem;
+    width: 3.5rem;
+    border-radius: 50%;
+    border: .1rem solid;
+    box-shadow: var(--shadow-md);
+}
+.inactiveImg > img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
 }
 
 .productItem:hover {

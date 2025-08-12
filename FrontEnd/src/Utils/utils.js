@@ -297,7 +297,7 @@ export const showAlert = (title, text, icon) => {
     title: title,
     text: text,
     icon: icon,
-    theme: localStorage.getItem('theme').toLowerCase() || 'light',
+    theme: localStorage.getItem('theme')?.toLowerCase() || 'light',
     confirmButtonText: 'Aceptar',
     customClass: {
       confirmButton: 'btn btn-primary'
@@ -318,4 +318,21 @@ export const showAlertLoading = (title, text, icon) => {
       Swal.showLoading()
     }
   })
+}
+
+export const showAlertSelect = (title, text, icon) => {
+  return Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    showDenyButton: true,
+    showConfirmButton: true,
+    denyButtonText: 'Cancelar',
+    confirmButtonText: 'Confirmar',
+    theme: localStorage.getItem('theme').toLowerCase() || 'light',
+  })
+}
+
+export const Discount = (price = 0, discount = 0) => {
+  return Number(price - ((Number(discount) * price) / 100))
 }

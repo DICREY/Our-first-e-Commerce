@@ -4,6 +4,7 @@
     width: 100%;
     padding: 2rem;
     background-color: var(--neutral-50);
+    overflow: auto;
 }
 
 .customerDetail {
@@ -149,6 +150,7 @@
     flex: 1;
     padding: 0.75rem;
     border: 1px solid var(--neutral-200);
+    color: var(--gray-600);
     border-radius: 8px;
     font-family: inherit;
     font-size: inherit;
@@ -163,6 +165,7 @@
 }
 
 .editTextarea {
+    background: var(--neutral-50);
     min-height: 100px;
     resize: vertical;
 }
@@ -176,11 +179,13 @@
     width: 100%;
     min-height: 120px;
     padding: 1.25rem;
+    color: var(--gray-600);
     border: 1px solid var(--neutral-200);
     border-radius: 12px;
     font-family: inherit;
     margin-bottom: 1.5rem;
     resize: vertical;
+    background: var(--neutral-50);
     transition: all 0.2s ease;
 }
 
@@ -191,7 +196,7 @@
 
 .saveNoteButton {
     background-color: var(--primary-600);
-    color: var(--white);
+    color: white;
     border: none;
     border-radius: 8px;
     padding: 0.75rem 1.75rem;
@@ -231,7 +236,7 @@
 
 .editButton {
     background-color: var(--primary-600);
-    color: var(--white);
+    color: white;
     border: none;
 }
 

@@ -17,7 +17,7 @@ import AdminLoadingScreen from '../Global/Loading'
 import styles from '../../styles/Admin/OrdersList.module.css'
 
 // Component 
-export const OrdersList = ({ URL = '', setIdOrder = null }) => {
+export const OrdersList = ({ URL = '' }) => {
   // State management
   const [orders, setOrders] = useState(null)
   const [ordersAlmc, setOrdersAlmc] = useState(null)
@@ -270,12 +270,12 @@ export const OrdersList = ({ URL = '', setIdOrder = null }) => {
         </div>
 
         {orders && orders[currentPage - 1]?.length > 0 ? (
-          orders[currentPage - 1].map(order => (
+          orders[currentPage - 1]?.map(order => (
             <div 
               key={order.id_ped} 
               className={styles.orderRow}
               onClick={() => {
-                setIdOrder(order.id_ped)
+                localStorage.setItem('id_ord',order.id_ped)
                 navigate('/admin/orders/details')
               }}
             >
@@ -329,7 +329,7 @@ export const OrdersList = ({ URL = '', setIdOrder = null }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    setIdOrder(order.id_ped)
+                    localStorage.setItem('id_ord',order.id_ped)
                     navigate('/admin/orders/details')
                   }}
                   className={styles.detailsButton}

@@ -1,5 +1,52 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 USE e_commerce;
+
+CREATE PROCEDURE e_commerce.StatsGeneral()
+BEGIN
+    SELECT 
+        -- Total productos registrados y disponibles
+        IFNULL(COUNT(*), 0) AS cant_pro_reg,
+
+        -- Total usuarios disponibles
+        (
+            SELECT IFNULL(COUNT(*), 0)
+            FROM e_commerce.personas WHERE estado = 'DISPONIBLE'
+        ) AS cant_usu_reg,
+
+        -- Total productos con inventario en 0
+        (
+            SELECT IFNULL(COUNT(*), 0)
+            FROM e_commerce.inventario i
+            JOIN e_commerce.productos p ON i.id_pro_inv = p.id_pro
+            WHERE i.cantidad = 0
+        ) AS pro_solo_out,
+
+        -- Total productos en oferta (por categoría o por producto, sin duplicados)
+        (
+            SELECT 
+                IFNULL(COUNT(*), 0)
+            FROM e_commerce.productos p
+            JOIN e_commerce.cat_productos c ON p.cat_pro = c.id_cat_pro
+            JOIN e_commerce.oferta_categoria_productos ocp ON ocp.cat_ofe_pro = c.id_cat_pro
+            JOIN e_commerce.ofertas o ON ocp.ofe_pro = o.id_ofe
+            WHERE o.sta_ofe = 'ACTIVA'
+
+        ) AS cant_ofe_cat,
+        (
+            SELECT
+                IFNULL(COUNT(*), 0)
+            FROM 
+                e_commerce.ofertas o
+            JOIN 
+                e_commerce.oferta_productos op ON op.ofe_pro = o.id_ofe
+            JOIN 
+                e_commerce.productos p ON p.id_pro = op.pro_ofe_pro
+            WHERE 
+                o.sta_ofe = 'ACTIVA'
+        ) AS cant_ofe_pro
+    FROM e_commerce.productos
+    LIMIT 1000;
+END //
 
 CREATE PROCEDURE e_commerce.MonthlySales()
 BEGIN
@@ -154,8 +201,10 @@ BEGIN
         p.id_pro,
         p.nom_pro,
         p.pre_pro,
+        p.pre_ori_pro,
         p.sta_pro,
         p.des_pro,
+        p.des_pre_pro,
         c.nom_cat_pro AS cat_pro,
         (
             SELECT GROUP_CONCAT(
@@ -183,7 +232,53 @@ BEGIN
             WHERE inv.id_pro_inv = p.id_pro
         ) AS sizes,
         SUM(pp.can_pro_ped) AS unidades_vendidas,
-        SUM(pp.can_pro_ped * p.pre_pro) AS ingresos_generados
+        SUM(pp.can_pro_ped * p.pre_pro) AS ingresos_generados,
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM oferta_categoria_productos WHERE cat_ofe_pro = p.cat_pro) THEN
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
+                )
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_categoria_productos ocp ON ocp.cat_ofe_pro = p.cat_pro
+                WHERE 
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND ocp.ofe_pro = o.id_ofe)
+            ELSE
+                (SELECT GROUP_CONCAT(
+                    CONCAT_WS(';',
+                        o.id_ofe,
+                        o.nom_ofe,
+                        o.des_ofe,
+                        o.dur_ofe,
+                        o.fec_ini_ofe,
+                        o.fec_fin_ofe,
+                        o.por_des_ofe,
+                        o.created_at,
+                        o.updated_at
+                    ) 
+                    SEPARATOR '---'
+                )
+                FROM 
+                    ofertas o 
+                JOIN 
+                    oferta_productos op ON op.pro_ofe_pro = p.id_pro
+                WHERE
+                    o.fec_fin_ofe > CURRENT_TIMESTAMP
+                    AND op.ofe_pro = o.id_ofe)
+        END AS offers
     FROM
         productos_pedidos pp
     JOIN 
@@ -333,6 +428,7 @@ END //
 /* CALL e_commerce.SalesPerDay(); */
 /* CALL e_commerce.TodaySales(); */
 /* CALL e_commerce.SalesSummary(); */
+/* CALL e_commerce.StatsGeneral(); */
 
 /* DROP PROCEDURE e_commerce.`SellestProducts`; */
 /* DROP PROCEDURE e_commerce.`SalesSummary`; */
@@ -341,3 +437,4 @@ END //
 /* DROP PROCEDURE e_commerce.`StatsTotalSales`; */
 /* DROP PROCEDURE e_commerce.`SalesPerDay`; */
 /* DROP PROCEDURE e_commerce.`TodaySales`; */
+/* DROP PROCEDURE e_commerce.`StatsGeneral`; */

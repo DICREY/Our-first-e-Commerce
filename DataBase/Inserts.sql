@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 -- Roles
 INSERT INTO e_commerce.roles (nom_rol) VALUES
 ('Administrador'),
@@ -79,38 +79,42 @@ INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES
 ('34'), ('36'), ('38'), ('40'), ('42'), ('44'),
 ('Única');
 
--- Productos
-INSERT INTO e_commerce.productos (cat_pro, nom_pro, pre_pro, pre_ori_pro, des_pro, sta_pro) VALUES
--- Ropa casual
-(1, 'Blusa de seda estampada', 45000.99, 40000.99, 'Blusa elegante de seda con estampado floral', DEFAULT),
-(1, 'Jeans skinny alto talle', 59000.99, 54000.99, 'Jeans ajustados con tiro alto y elastano', DEFAULT),
-(1, 'Vestido midi floral', 65000.99, 60000.99, 'Vestido hasta la rodilla con estampado de flores', DEFAULT),
--- Abrigos y chaquetas
-(1, 'Chaqueta de denim', 89000.99, 84000.99, 'Chaqueta estilo oversize en mezclilla', DEFAULT),
-(1, 'Abrigo de lana invierno', 129000.99, 120000.99, 'Abrigo largo para clima frío con cinturón', DEFAULT),
--- Ropa deportiva
-(3, 'Leggings deportivos compresión', 49000.99, 44000.99, 'Leggings de alta compresión para entrenamiento', DEFAULT),
-(3, 'Top deportivo soporte alto', 39000.99, 34000.99, 'Top con soporte máximo para actividades intensas', DEFAULT),
--- Lencería
-(2, 'Conjunto de encaje negro', 55000.99, 50000.99, 'Sujetador y braga de encaje con detalles delicados', DEFAULT),
-(2, 'Pijama de satén corto', 42000.99, 40000.99, 'Conjunto de pijama en satén suave', DEFAULT),
--- Ropa de baño
-(1, 'Bikini estampado tropical', 49000.99, 44000.99, 'Conjunto de bikini con estampado floral', DEFAULT),
-(1, 'Bañador entero deportivo', 59000.99, 54000.99, 'Bañador de una pieza para natación', DEFAULT),
--- Ropa formal
-(1, 'Traje de chaqueta slim', 149000.99, 144000.99, 'Conjunto de chaqueta y pantalón para oficina', DEFAULT),
-(1, 'Vestido de cóctel elegante', 119000.99, 114000.99, 'Vestido corto para eventos especiales', DEFAULT),
--- Ropa de maternidad
-(1, 'Vestido maternidad verano', 54000.99, 50000.99, 'Vestido holgado con tirantes ajustables', DEFAULT),
-(1, 'Jeans maternidad elásticos', 69000.99, 60000.99, 'Jeans con bandaja elástica para embarazo', DEFAULT),
--- Accesorios de moda
-(1, 'Chal de cachemira', 79000.99, 74000.99, 'Chal fino para todas las estaciones', DEFAULT),
-(1, 'Fular de seda estampado', 39000.99, 34000.99, 'Fular ligero con estampado artístico', DEFAULT),
--- Ropa plus size
-(1, 'Vestido plus size floral', 69000.99, 64000.99, 'Vestido holgado con estampado grande', DEFAULT),
-(1, 'Blusa plus size manga larga', 49000.99, 44000.99, 'Blusa elegante con detalles en cuello', DEFAULT),
+-- Marcas
+INSERT INTO e_commerce.marcas_productos ( nom_mar ) VALUES
+('N/A');
 
-(1, 'Vestido plus size', 89000.99, 84000.99, 'Vestido holgado', 'NO-DISPONIBLE');
+-- Productos
+INSERT INTO e_commerce.productos (cat_pro, nom_pro, mar_pro, pre_pro, pre_ori_pro, des_pro, sta_pro) VALUES
+-- Ropa casual
+(1, 'Blusa de seda estampada', 1, 45000.99, 40000.99, 'Blusa elegante de seda con estampado floral', DEFAULT),
+(1, 'Jeans skinny alto talle', 1, 59000.99, 54000.99, 'Jeans ajustados con tiro alto y elastano', DEFAULT),
+(1, 'Vestido midi floral', 1, 65000.99, 60000.99, 'Vestido hasta la rodilla con estampado de flores', DEFAULT),
+-- Abrigos y chaquetas
+(1, 'Chaqueta de denim', 1, 89000.99, 84000.99, 'Chaqueta estilo oversize en mezclilla', DEFAULT),
+(1, 'Abrigo de lana invierno', 1, 129000.99, 120000.99, 'Abrigo largo para clima frío con cinturón', DEFAULT),
+-- Ropa deportiva
+(3, 'Leggings deportivos compresión', 1, 49000.99, 44000.99, 'Leggings de alta compresión para entrenamiento', DEFAULT),
+(3, 'Top deportivo soporte alto', 1, 39000.99, 34000.99, 'Top con soporte máximo para actividades intensas', DEFAULT),
+-- Lencería
+(2, 'Conjunto de encaje negro', 1, 55000.99, 50000.99, 'Sujetador y braga de encaje con detalles delicados', DEFAULT),
+(2, 'Pijama de satén corto', 1, 42000.99, 40000.99, 'Conjunto de pijama en satén suave', DEFAULT),
+-- Ropa de baño
+(1, 'Bikini estampado tropical', 1, 49000.99, 44000.99, 'Conjunto de bikini con estampado floral', DEFAULT),
+(1, 'Bañador entero deportivo', 1, 59000.99, 54000.99, 'Bañador de una pieza para natación', DEFAULT),
+-- Ropa formal
+(1, 'Traje de chaqueta slim', 1, 149000.99, 144000.99, 'Conjunto de chaqueta y pantalón para oficina', DEFAULT),
+(1, 'Vestido de cóctel elegante', 1, 119000.99, 114000.99, 'Vestido corto para eventos especiales', DEFAULT),
+-- Ropa de maternidad
+(1, 'Vestido maternidad verano', 1, 54000.99, 50000.99, 'Vestido holgado con tirantes ajustables', DEFAULT),
+(1, 'Jeans maternidad elásticos', 1, 69000.99, 60000.99, 'Jeans con bandaja elástica para embarazo', DEFAULT),
+-- Accesorios de moda
+(1, 'Chal de cachemira', 1, 79000.99, 74000.99, 'Chal fino para todas las estaciones', DEFAULT),
+(1, 'Fular de seda estampado', 1, 39000.99, 34000.99, 'Fular ligero con estampado artístico', DEFAULT),
+-- Ropa plus size
+(1, 'Vestido plus size floral', 1, 69000.99, 64000.99, 'Vestido holgado con estampado grande', DEFAULT),
+(1, 'Blusa plus size manga larga', 1, 49000.99, 44000.99, 'Blusa elegante con detalles en cuello', DEFAULT),
+
+(1, 'Vestido plus size', 1, 89000.99, 84000.99, 'Vestido holgado', 'NO-DISPONIBLE');
 
 -- Relación producto-color-imagen
 INSERT INTO e_commerce.productos_colores (img_pro_col, pro_col_pro, col_pro_col) VALUES 
@@ -149,7 +153,41 @@ INSERT INTO e_commerce.inventario (id_pro_inv, id_col_inv, id_tal_inv, cantidad)
 -- Leggings deportivos compresión (id_pro=6), Rojo (1), Tallas XS(1)-XL(5)
 (6, 1, 1, 10), (6, 1, 2, 10), (6, 1, 3, 10), (6, 1, 4, 10), (6, 1, 5, 10),
 -- Top deportivo soporte alto (id_pro=7), Negro (2), Tallas XS(1)-XL(5)
-(7, 2, 1, 18), (7, 2, 2, 18), (7, 2, 3, 18), (7, 2, 4, 81), (7, 2, 5, 18);
+(7, 2, 1, 18), (7, 2, 2, 18), (7, 2, 3, 18), (7, 2, 4, 81), (7, 2, 5, 18),
+-- Vestido midi floral (id_pro=3), Negro (2), Talla M (3)
+(3, 2, 3, 5),
+-- Vestido midi floral, Azul Marino (4), Talla L (4)
+(3, 4, 4, 3),
+-- Chaqueta de denim (id_pro=4), Azul Marino (4), Talla M (3)
+(4, 4, 3, 2),
+-- Abrigo de lana invierno (id_pro=5), Negro (2), Talla L (4)
+(5, 2, 4, 1),
+-- Conjunto de encaje negro (id_pro=8), Negro (2), Talla S (2)
+(8, 2, 2, 0),
+-- Pijama de satén corto (id_pro=9), Rosa (5), Talla M (3)
+(9, 5, 3, 0),
+-- Bikini estampado tropical (id_pro=10), Rosa (5), Talla S (2)
+(10, 5, 2, 0),
+-- Bañador entero deportivo (id_pro=11), Negro (2), Talla M (3)
+(11, 2, 3, 0),
+-- Traje de chaqueta slim (id_pro=12), Negro (2), Talla L (4)
+(12, 2, 4, 0),
+-- Vestido de cóctel elegante (id_pro=13), Rosa (5), Talla M (3)
+(13, 5, 3, 0),
+-- Vestido maternidad verano (id_pro=14), Beige (6), Talla Única (12)
+(14, 6, 12, 0),
+-- Jeans maternidad elásticos (id_pro=15), Azul Marino (4), Talla 38 (9)
+(15, 4, 9, 0),
+-- Chal de cachemira (id_pro=16), Beige (6), Talla Única (12)
+(16, 6, 12, 0),
+-- Fular de seda estampado (id_pro=17), Rosa (5), Talla Única (12)
+(17, 5, 12, 0),
+-- Vestido plus size floral (id_pro=18), Morado (8), Talla XL (5)
+(18, 8, 5, 0),
+-- Blusa plus size manga larga (id_pro=19), Blanco (3), Talla XL (5)
+(19, 3, 5, 0),
+-- Vestido plus size (id_pro=20), Negro (2), Talla XXL (6)
+(20, 2, 6, 0);
 
 -- Métodos de pago
 INSERT INTO e_commerce.metodos_pagos (nom_met_pag) VALUES 

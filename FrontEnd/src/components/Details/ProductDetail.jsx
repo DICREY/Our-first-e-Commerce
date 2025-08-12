@@ -19,28 +19,30 @@ import { useNavigate } from 'react-router-dom'
 
 // Imports 
 import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatDate, formatNumber, showAlert } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, formatNumber, showAlert, showAlertLoading, showAlertSelect } from '../../Utils/utils'
 import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
 import styles from '../../styles/Details/ProductDetail.module.css'
 
 // Component 
-export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) => {
+export const ProductDetailAdmin = ({ URL = '', imgDefault = '' }) => {
     // Dynamic vars 
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState('details')
     const [currentImage, setCurrentImage] = useState(null)
+    const [imgExpand, setImgExpand] = useState(null)
     
     // Vars
     const navigate = useNavigate()
+    const ID = localStorage.getItem('id_pro') || 0
     let didFetch = false
 
     const fetchProduct = async () => {
         if (didFetch) return
         try {
-            const data = await PostData(`${URL}/products/by`,{ by: dataProduct })
+            const data = await PostData(`${URL}/products/by`,{ by: ID })
             didFetch = true
             setLoading(false)
             if (data && data[0]) {
@@ -56,25 +58,28 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
 
     // Effects
     useEffect(() => {
-        if (dataProduct) fetchProduct()
-    }, [dataProduct, URL])
+        if (ID) fetchProduct()
+    }, [ID, URL])
 
     const handleStatusChange = async (id) => {
-        try {
-            setLoading(true)
-            const data = await ModifyData(`${URL}/products/change-status`,{ by: id })
-            if (data.success) {
-                setLoading(false)
-                fetchProduct()
+        const option = showAlertSelect('Cambiar estado','¿Desea cambiar el estado del producto?','question')
+        const handle = async () => {
+            try {
+                showAlertLoading('Cambiando estado del producto', 'Por favor, espere...', 'info')
+                const data = await ModifyData(`${URL}/products/change-status`,{ by: id })
+                if (data.success) {
+                    showAlert('Éxito', 'Estado del producto cambiado correctamente', 'success')
+                    fetchProduct()
+                }
+            } catch (err) {
+                const message = errorStatusHandler(err)
+                showAlert('Error', message, 'error')
             }
-        } catch (err) {
-            setLoading(false)
-            const message = errorStatusHandler(err)
-            console.error('Error fetching product:', message)
         }
+        if ((await option).isConfirmed) await handle()
     }
 
-    if (!product && !loading) {
+    if (!ID && !loading) {
         return (
             <div className={styles.notFoundContainer}>
                 <h2>Producto no encontrado</h2>
@@ -104,11 +109,11 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                         </button>
                         <h1>{product.nom_pro}</h1>
                         <div className={styles.headerActions}>
-                            <span className={`${styles.statusBadge} ${product.stock <= 0 ? styles.statusInactive :
+                            <span className={`${styles.statusBadge} ${product.stock_total <= 0 ? styles.statusInactive :
                                     product.onSale ? styles.statusSale :
                                         styles.statusActive
                                 }`}>
-                                {product.stock <= 0 ? (
+                                {product.stock_total <= 0 ? (
                                     <>
                                         <XCircle size={16} /> Agotado
                                     </>
@@ -123,7 +128,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                                 )}
                             </span>
                             <button
-                                onClick={() => navigate(`/admin/products/edit/${id}`)}
+                                onClick={() => navigate(`/admin/products/edit/${ID}`)}
                                 className={styles.editButton}
                             >
                                 <Edit size={16} /> Editar
@@ -152,7 +157,10 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                         <div className={styles.productGallery}>
                             {product?.colors? (
                                 <>
-                                    <div className={styles.mainImage}>
+                                    <div 
+                                        className={styles.mainImage}
+                                            onClick={() => setImgExpand(currentImage)}
+                                    >
                                         {currentImage && (
                                             <CheckImage
                                                 src={currentImage}
@@ -261,7 +269,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                                                 <span className={`${styles.stockValue} ${product.stock_total <= 0 ? styles.outOfStock :
                                                         product.stock_total < 10 ? styles.lowStock : ''
                                                     }`}>
-                                                    {product.stock_total || 0} unidades
+                                                    {product.stock_total} unidades
                                                 </span>
                                             </div>
                                             <div className={styles.stockActions}>
@@ -466,6 +474,17 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '', dataProduct }) =
                             </div>
                         </div>
                     </section>
+                    {imgExpand && (
+                        <picture 
+                            onClick={() => setImgExpand(null)}
+                            className='activeImg'
+                        >
+                            <CheckImage
+                                src={imgExpand}
+                                imgDefault={imgDefault}
+                            />
+                        </picture>
+                    )}
                 </main>
             )}
         </>

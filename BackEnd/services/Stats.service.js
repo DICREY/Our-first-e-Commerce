@@ -43,6 +43,35 @@ class Stats {
     }
 
     // function to find sellest products
+    async StatsGeneral() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL StatsGeneral();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,(err,result) => {
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Info found",
+                            result: result?.[0]?.[0]
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
+    // function to find sellest products
     async SellestProducts() {
         return new Promise((res,rej) => {
             // vars
@@ -59,10 +88,13 @@ class Stats {
                 } else if (result) {
                     const resOne = this.format(result[0],'colors',['nom_col','hex_col','nom_img','url_img'])
                     const lastRes = this.iterar(resOne,'sizes')
+                    const lastLastRes = this.format(lastRes, 'offers', [
+                        'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
+                    ])
                     setTimeout(() => {
                         res({
                             message: "Info found",
-                            result: lastRes
+                            result: lastLastRes
                         })
                     },1000)
                 } else rej({ message: 'Error interno', status: 500 })

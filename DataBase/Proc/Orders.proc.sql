@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.GetPaymentMethods()
 BEGIN
     -- Verifica si hay categorias
@@ -49,6 +49,8 @@ BEGIN
             per.cel_per,
             mp.nom_met_pag,
             me.nom_met_env,
+            me.pre_met_env,
+            me.des_met_env,
             (
                 SELECT
                     SUM(pp.can_pro_ped * pr.pre_pro)
@@ -128,6 +130,8 @@ BEGIN
             per.fec_cre_per,
             mp.nom_met_pag,
             me.nom_met_env,
+            me.pre_met_env,
+            me.des_met_env,
            (
                 SELECT
                     SUM(pp.can_pro_ped * pr.pre_pro)
@@ -371,7 +375,8 @@ BEGIN
     UPDATE 
         pedidos
     SET
-        sta_ped = 'ENTREGADO'
+        sta_ped = 'ENTREGADO',
+        fec_ent_ped = CURRENT_DATE
     WHERE
         id_ped LIKE p_by;
 

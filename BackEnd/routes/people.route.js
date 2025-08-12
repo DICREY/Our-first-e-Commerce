@@ -103,21 +103,18 @@ Route.put('/modify', async (req,res) => {
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
-Route.delete('/delete', async (req,res) => {
-    // Vars 
-    const { body } = req
-    console.log(body)
-        
+Route.put('/delete', async (req,res) => {
     try {
-        // Verifiy if exist
-        const find = await people.findBy(toString(body.doc_per))
-        if (!find.result) res.status(404).json({ message: "Usuario no encontrado" })
+        // Vars 
+        const by = String(req.body.by)
+        const pep = new People(by)
 
-        const peopleDeleted = await people.delete(body.doc_per)
-        if (peopleDeleted.deleted) return res.status(200).json(peopleDeleted)
+        const del = await pep.delete()
+        if (del.success) return res.status(200).json(del)
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })

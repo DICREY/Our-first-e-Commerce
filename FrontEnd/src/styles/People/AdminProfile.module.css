@@ -77,8 +77,9 @@
 }
 
 .avatarPreview {
-  width: 7.5rem;
-  height: 7.5rem;
+  cursor: zoom-in;
+  width: 12.5rem;
+  height: 12.5rem;
   border-radius: 50%;
   background-color: var(--gray-50);
   background-size: cover;

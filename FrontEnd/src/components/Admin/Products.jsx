@@ -4,7 +4,7 @@ import { Eye, Edit, Search, Filter, Download, ChevronLeft, Plus } from 'lucide-r
 import { NavLink, useNavigate } from 'react-router-dom'
 
 // Imports 
-import { CheckImage, divideList, errorStatusHandler, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
+import { CheckImage, Discount, divideList, errorStatusHandler, formatNumber, searchFilter, showAlert } from '../../Utils/utils'
 import { GetData } from '../../Utils/Requests'
 import { Paginacion } from '../Global/Paginacion'
 import AdminLoadingScreen from '../Global/Loading'
@@ -13,9 +13,10 @@ import AdminLoadingScreen from '../Global/Loading'
 import styles from '../../styles/Admin/ProductList.module.css'
 
 // Component 
-export const ProductList = ({ URL = '', imgDefault = '', set }) => {
+export const ProductList = ({ URL = '', imgDefault = '' }) => {
   // Dynamic vars 
   const [products, setProducts] = useState(null);
+  const [stats, setStats] = useState(null);
   const [productsAlmc, setProductsAlmc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,12 +24,24 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedState, setSelectedState] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(null)
 
   // Vars 
   const navigate = useNavigate()
 
   // Functions 
+  const getStats = async () => {
+    try {
+      const got = await GetData(`${URL}/stats/general`)
+      if (got) {
+        setStats(got)
+      }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
+    }
+  }
+
   const getProductCategories = async () => {
     try {
       const product = await GetData(`${URL}/products/categories`)
@@ -58,10 +71,10 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
-    // if (!sidebarOpen) setActiveSubmenu(null)
   }
 
   useEffect(() => {
+    getStats()
     getProductCategories()
     getProducts()
   }, [])
@@ -89,10 +102,6 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
       setProducts(divideList(filteredData, 12))
     }
   }, [selectedCategory, searchQuery, productsAlmc, selectedState])
-
-  const calculateDiscount = (currentPrice, originalPrice) => {
-    return Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
-  }
 
   return (
     <main className={styles.adminContainer}>
@@ -184,15 +193,15 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
           <div className={styles.statsBar}>
             <div className={styles.statCard}>
               <span>Productos totales</span>
-              <strong>{productsAlmc?.length || 0}</strong>
+              <strong>{stats?.cant_pro_reg || 0}</strong>
             </div>
             <div className={styles.statCard}>
               <span>En oferta</span>
-              <strong>{productsAlmc?.filter(p => p.onSale).length || 0}</strong>
+              <strong>{stats?.cant_ofe_cat + stats?.cant_ofe_pro || 0}</strong>
             </div>
             <div className={styles.statCard}>
               <span>Agotados</span>
-              <strong>{productsAlmc?.filter(p => p.stock <= 0).length || 0}</strong>
+              <strong>{stats?.pro_solo_out || 0}</strong>
             </div>
           </div>
 
@@ -215,10 +224,6 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
                       <tr 
                         key={idx} 
                         className={styles.productRow}
-                        onClick={() => {
-                          set(product.id_pro)
-                          navigate('/admin/products/details')
-                        }}
                       >
                         <td>
                           <div className={styles.productCell}>
@@ -239,38 +244,53 @@ export const ProductList = ({ URL = '', imgDefault = '', set }) => {
                         <td>{product.nom_cat_pro}</td>
                         <td>
                           <div className={styles.priceCell}>
-                            ${formatNumber(product.pre_pro)}
-                            {product.onSale && (
+                            {product.offers? 
+                              `$${formatNumber(Discount(product.pre_pro,product?.offers?.[0]?.por_des_ofe))}`
+                              :`$${formatNumber(product.pre_pro)}`
+                            }
+                            {product.offers && (
                               <span className={styles.saleTag}>
-                                -{calculateDiscount(product.pre_pro, product.pre_pro)}%
+                                -{product?.offers?.[0]?.por_des_ofe || 0}%
                               </span>
                             )}
                           </div>
                         </td>
                         <td>
                           <div className={`${styles.stockCell} ${
-                            product.stock <= 0 ? styles.outOfStock : 
-                            product.stock < 10 ? styles.lowStock : ''
+                            product.stock_total <= 0 ? styles.outOfStock : 
+                            product.stock_total < 10 ? styles.lowStock : ''
                           }`}>
-                            {product.stock}
+                            {product.stock_total}
                           </div>
                         </td>
                         <td>
                           <div className={`${styles.statusBadge} ${
-                            product.stock <= 0 ? styles.statusInactive :
+                            product.stock_total <= 0 ? styles.statusInactive :
                             product.onSale ? styles.statusSale :
                             styles.statusActive
                           }`}>
-                            {product.stock <= 0 ? 'Agotado' : 
-                             product.onSale ? 'En oferta' : 'Activo'}
+                            {product.stock_total <= 0 ? 'Agotado' : 
+                             product.offers ? 'En oferta' : 'Activo'}
                           </div>
                         </td>
                         <td>
                           <div className={styles.actionButtons}>
-                            <button className={styles.viewButton}>
+                            <button 
+                              className={styles.viewButton}
+                              onClick={() => {
+                                localStorage.setItem('id_pro',product.id_pro)
+                                navigate('/admin/products/details')
+                              }}
+                            >
                               <Eye size={16} />
                             </button>
-                            <button className={styles.editButton}>
+                            <button 
+                              className={styles.editButton}
+                              onClick={() => {
+                                localStorage.setItem('id_pro',product.id_pro)
+                                navigate('/admin/products/edit')
+                              }}
+                            >
                               <Edit size={16} />
                             </button>
                           </div>

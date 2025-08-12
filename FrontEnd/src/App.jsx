@@ -1,7 +1,6 @@
 // Librarys 
 import { useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { Auth0Provider } from "@auth0/auth0-react";
 
 // Imports 
 import { CartProvider } from "./Contexts/CartContext"
@@ -21,21 +20,20 @@ import { AdminProfile } from "./components/People/AdminProfile"
 import { CustomerRegister } from "./components/People/CustomerRegister";
 import { ProductRegister } from "./components/Products/ProductRegister";
 import { OrderRegister } from "./components/Admin/OrderRegister";
+import { useDarkMode } from "./Hooks/Theme";
+import { OfferManager } from "./components/Admin/Offers";
+import { ProductEdit } from "./components/Products/ProductEdit";
 import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
-import { useDarkMode } from "./Hooks/Theme";
 
 // Main Module 
 const App = () => {
   // Dynamic vars
   const [product, setProduct] = useState()
-  const [order, setOrder] = useState()
-  const [customer, setCustomer] = useState()
   const [catPro, setCatPro] = useState()
   const [filterFetch, setFilterFetch] = useState(null)
-  const [isDarkMode] = useDarkMode()
 
   // Vars 
   const URL = 'http://localhost:3000/ecommerce'
@@ -82,6 +80,16 @@ const App = () => {
                 element={<HomePage URL={URL} imgProduct={imgProduct} setProduct={setProduct} />} 
               />
               <Route 
+                path="/productos/all"
+                element={
+                  <ProductCatalog
+                    URL={URL}
+                    imgDefault={imgProduct}
+                    setProduct={setProduct}
+                  />
+                } 
+              />
+              <Route 
                 path="/productos/ropa-deportiva-mujer" 
                 element={
                   <ProductCatalog 
@@ -121,6 +129,7 @@ const App = () => {
                     URL={URL} 
                     img={imgProduct} 
                     product={product}
+                    setPro={setProduct}
                   />
                 } 
               />
@@ -147,12 +156,20 @@ const App = () => {
                 element={<Dashboard URL={URL} imgDefault={imgUser} />} 
               />
               <Route 
+                path="/admin/offers"
+                element={<OfferManager URL={URL} imgDefault={imgUser} />} 
+              />
+              <Route 
                 path="/admin/products" 
-                element={<ProductList URL={URL} imgDefault={imgProduct} filterFetch={filterFetch} set={setProduct} />} 
+                element={<ProductList URL={URL} imgDefault={imgProduct} filterFetch={filterFetch} />} 
               />
               <Route 
                 path="/admin/products/details" 
-                element={<ProductDetailAdmin URL={URL} imgDefault={imgProduct} dataProduct={product} />} 
+                element={<ProductDetailAdmin URL={URL} imgDefault={imgProduct} />} 
+              />
+              <Route 
+                path="/admin/products/edit"
+                element={<ProductEdit URL={URL} imgDefault={imgUser} />}
               />
               <Route 
                 path="/admin/products/register"
@@ -160,11 +177,11 @@ const App = () => {
               />
               <Route 
                 path="/admin/orders" 
-                element={<OrdersList URL={URL} imgDefault={imgProduct} setIdOrder={setOrder} />} 
+                element={<OrdersList URL={URL} imgDefault={imgProduct} />} 
               />
               <Route 
                 path="/admin/orders/details"
-                element={<OrderDetail URL={URL} id_ped={order} />} 
+                element={<OrderDetail URL={URL} imgDefault={imgProduct} />} 
               />
               <Route 
                 path="/admin/orders/register"
@@ -172,11 +189,11 @@ const App = () => {
               />
               <Route 
                 path="/admin/customers" 
-                element={<Customers URL={URL} imgDefault={imgUser} setCustomer={setCustomer} />}
+                element={<Customers URL={URL} imgDefault={imgUser} />}
               />
               <Route 
                 path="/admin/customers/details" 
-                element={<CustomerDetail URL={URL} imgDefault={imgUser} customer={customer} />}
+                element={<CustomerDetail URL={URL} imgDefault={imgUser} />}
               />
               <Route 
                 path="/admin/customers/register"

@@ -229,7 +229,7 @@ const checkIfProductIsLiked = useCallback(async () => {
 
         {/* Badges */}
         <div className={styles.badges}>
-          {product.onSale && <Badge variant="sale">Oferta</Badge>}
+          {product?.offers && <Badge variant="sale">-{product.offers?.[0].por_des_ofe}%</Badge>}
           {product.featured && <Badge variant="featured">Destacado</Badge>}
         </div>
 
@@ -278,9 +278,20 @@ const checkIfProductIsLiked = useCallback(async () => {
           <h3 className={styles.productName}>{product.nom_pro}</h3>
 
           <div className={styles.priceContainer}>
-            <span className={styles.price}>
-              ${formatNumber(product.pre_pro)}
-            </span>
+            {product?.offers? (
+              <>
+                <span className={styles.price}>
+                  ${formatNumber(Discount(product.pre_pro, product.offers?.[0]?.por_des_ofe))}
+                </span>
+                <span className={styles.originalPrice}>
+                  ${formatNumber(product.pre_pro)}
+                </span>
+              </>
+            ):(
+              <span className={styles.price}>
+                ${formatNumber(product.pre_pro)}
+              </span>
+            )}
           </div>
 
           {displayColors.length > 0 && (

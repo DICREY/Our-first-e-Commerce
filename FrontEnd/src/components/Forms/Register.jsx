@@ -44,7 +44,7 @@ export const RegisterForm = ({ URL = '' }) => {
         }
     } catch (err) {
         const message = errorStatusHandler(err)
-        showAlert('Error', message, 'error')
+        showAlert('Error', String(message), 'error')
     }
   }
 
