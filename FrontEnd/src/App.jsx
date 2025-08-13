@@ -169,7 +169,7 @@ const App = () => {
               />
               <Route 
                 path="/admin/products/edit"
-                element={<ProductEdit URL={URL} imgDefault={imgUser} />}
+                element={<ProductEdit URL={URL} imgDefault={imgProduct} />}
               />
               <Route 
                 path="/admin/products/register"

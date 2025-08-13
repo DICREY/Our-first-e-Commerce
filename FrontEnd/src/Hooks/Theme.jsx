@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react'
 // Hooks 
 export const useDarkMode = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'DARK' 
-    // || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    return localStorage.getItem('theme') === 'DARK'
   })
 
   useEffect(() => {

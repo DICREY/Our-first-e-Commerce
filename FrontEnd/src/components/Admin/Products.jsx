@@ -14,20 +14,21 @@ import styles from '../../styles/Admin/ProductList.module.css'
 
 // Component 
 export const ProductList = ({ URL = '', imgDefault = '' }) => {
-  // Dynamic vars 
-  const [products, setProducts] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [productsAlmc, setProductsAlmc] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedState, setSelectedState] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(null)
-
   // Vars 
   const navigate = useNavigate()
+  let didFetch = false
+
+  // Dynamic vars 
+  const [products, setProducts] = useState(null)
+  const [stats, setStats] = useState(null)
+  const [productsAlmc, setProductsAlmc] = useState(null)
+  const [loading, setLoading] = useState(() => didFetch?0:1)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [categories, setCategories] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedState, setSelectedState] = useState(null)
+  const [sidebarOpen, setSidebarOpen] = useState(null)
 
   // Functions 
   const getStats = async () => {
@@ -45,9 +46,7 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
   const getProductCategories = async () => {
     try {
       const product = await GetData(`${URL}/products/categories`)
-      if (product) {
-        setCategories(product)
-      }
+      if (product) setCategories(product)
     } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')
@@ -56,13 +55,16 @@ export const ProductList = ({ URL = '', imgDefault = '' }) => {
   
   const getProducts = async () => {
     try {
+      if (didFetch) return
       const prods = await GetData(`${URL}/products/all`)
       if (prods) {
+        didFetch = true
         setProducts(divideList(prods, 12))
         setProductsAlmc(prods)
         setLoading(false)
       }
     } catch (err) {
+      didFetch = true
       setLoading(false)
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')

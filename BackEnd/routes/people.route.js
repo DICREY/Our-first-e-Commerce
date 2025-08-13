@@ -37,7 +37,6 @@ Route.get('/all:by', async (req,res) => {
             
         // Verifiy if exists
         const search = await people.findAllBy(by)
-        if (!search.result) res.status(404).json({ message: "Usuarios no encontrados"})
 
         res.status(200).json(search)
     } catch (err) {
@@ -55,8 +54,6 @@ Route.post('/by', async (req,res) => {
         // Vars 
         const by = req.body.by
         const inst = new People(by)
-    
-        // Verifiy if exist
         const search = await inst.findBy(by)
 
         res.status(200).json(search)

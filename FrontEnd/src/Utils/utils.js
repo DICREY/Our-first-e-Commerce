@@ -125,13 +125,14 @@ export const PriceCompare = (precioOriginal = 0, precioNuevo = 0) => {
   // Cálculo de la diferencia
   const diferencia = precioNuevo - precioOriginal;
   let porcentaje = precioOriginal === 0 ? 100 : (diferencia / precioOriginal) * 100
-  const porcentajeRedondeado = (porcentaje * 100) / 100;
+  let porcentajeRedondeado = (porcentaje * 100) / 100;
 
   // Determinar dirección del cambio
   let direccion;
   if (porcentaje > 0) {
     direccion = '+';
   } else if (porcentaje < 0) {
+    porcentajeRedondeado = Number(String(porcentajeRedondeado)?.replace('-',''))
     direccion = '-';
   } else {
     direccion = '=';

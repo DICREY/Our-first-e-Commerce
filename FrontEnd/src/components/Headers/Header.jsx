@@ -33,7 +33,10 @@ const NavLinkItem = memo(({ item, setCatPro, isActive }) => {
 });
 
 // Componente ProfileMenu optimizado
-const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, user, imgDefault, handleLogout, styles }, ref) => {
+const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, imgDefault, handleLogout, styles }, ref) => {
+  // Vars 
+  const { user } = useContext(AuthContext)
+
   return (
     <aside className={styles.profileWrapper} ref={ref}>
       <Button
@@ -103,7 +106,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   const navigate = useNavigate();
   
   const { getTotalItems } = useCart();
-  const { user, logout, admin } = useContext(AuthContext);
+  const { logout, admin } = useContext(AuthContext);
   const [hasFetched, setHasFetched] = useState(false);
 
   const getProductCategories = async () => {
@@ -211,7 +214,6 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
             ref={profileMenuRef}
             isOpen={isProfileMenuOpen}
             setIsOpen={setIsProfileMenuOpen}
-            user={user}
             imgDefault={imgDefault}
             handleLogout={handleLogout}
             styles={styles}

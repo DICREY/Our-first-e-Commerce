@@ -32,13 +32,15 @@
 }
 
 .userAvatar {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background-color: var(--secondary-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 3.7rem;
+  height: 3.7rem;
+  border-radius: 50%;
+  border: .14rem solid var(--primary-700);
+  background-color: var(--secondary-color);
+  box-shadow: var(--shadow-md);
 }
 
 /* Stats Grid */

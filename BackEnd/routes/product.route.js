@@ -79,6 +79,23 @@ Route.get('/sizes', async (req, res) => {
     }
 })
 
+Route.get('/brands', async (req, res) => {
+    try {
+        // Vars 
+        const productInstans = new Product()
+
+        // Verifiy if exists
+        const search = await productInstans.findAllBrands()
+
+        res.status(200).json(search)
+    } catch (err) {
+        console.log(err)
+        if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({ message: err.message })
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
+    }
+})
+
 const cartFavoriteMiddleware = [authenticateJWT, ValidatorRol("usuario")];
 
 // ============ CARRITO ============
@@ -218,10 +235,8 @@ Route.get('/favorites/:userId', cartFavoriteMiddleware, async (req, res) => {
     }
 });
 
-
-
 // Call Middleware for verify the request data
-Route.use(Fullinfo(['empty']))
+Route.use(Fullinfo(['img_default', 'colors', 'sizes']))
 
 Route.post('/all/by', async (req, res) => {
     // Vars 
@@ -286,9 +301,9 @@ Route.post('/by/categorie', async (req, res) => {
 })
 
 // Middleware 
-// Route.use(authenticateJWT)
-// Route.use(ValidatorRol("usuario"))
-// , ValidatorRol("administrador")
+Route.use(authenticateJWT)
+Route.use(ValidatorRol("administrador"))
+
 Route.post('/register', async (req, res) => {
     try {
         // Vars 
@@ -306,28 +321,21 @@ Route.post('/register', async (req, res) => {
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
+
 Route.put('/modify', ValidatorRol("administrador"), async (req, res) => {
-    // Vars 
-    const { body } = req
-    const saltRounds = 15
-
     try {
-        // Verifiy if exist
-        const find = await prodInst.findBy(body.doc_per)
-        if (!find.result) res.status(404).json({ message: "Producto no encontrado" })
+        // Vars 
+        const { body } = req
+        const proMod = new Product(body)
 
-        const passwd = body.pas_per.length < 50 ? await hash(body.pas_per, saltRounds) : String(body.pas_per)
-
-        const modified = await passwd ?
-            await prodInst.modify({ hash_pass: passwd, ...body })
-            : res.status(400).json({ message: "Petición no valida" })
-
-        if (modified.modified) return res.status(200).json(modified)
+        const mod = await proMod.modify()
+        if (mod.success) return res.status(200).json(mod)
+        
+        res.status(500).json({ message: "Error en la petición" })
     } catch (err) {
         console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
-
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
     }
 })
@@ -350,15 +358,11 @@ Route.put('/change-status', ValidatorRol("administrador"), async (req, res) => {
     }
 })
 
-Route.delete('/delete', ValidatorRol("administrador"), async (req, res) => {
-    // Vars 
-    const { body } = req
-    console.log(body)
-
+Route.delete('/delete', ValidatorRol("administrador"), async (req, res) => {    
     try {
-        // Verifiy if exist
-        const find = await prodInst.findBy(toString(body.doc_per))
-        if (!find.result) res.status(404).json({ message: "Producto no encontrado" })
+        // Vars 
+        const { body } = req
+        console.log(body)
 
         const peopleDeleted = await prodInst.delete(body.doc_per)
         if (peopleDeleted.deleted) return res.status(200).json(peopleDeleted)

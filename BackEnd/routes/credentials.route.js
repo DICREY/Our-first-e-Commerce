@@ -50,7 +50,6 @@ Route.post('/login', limiterLog, async (req,res) => {
         let log = await global.login()
         let user = await log.result[0]
 
-        if(!user) return res.status(404).json({ message: 'Usuario no encontrado' })
         // Verify
         const coincide = await compare(secondData, user.pas_per)
 

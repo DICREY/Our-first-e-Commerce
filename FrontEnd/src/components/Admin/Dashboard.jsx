@@ -1,8 +1,9 @@
 // Librarys 
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // Imports
-import { MarketShare, SellestProducts, TotalOrders, WeeklySales } from './Stats'
+import { SellestProducts, TotalOrders, WeeklySales } from './Stats'
 import { CheckImage } from '../../Utils/utils'
 import { AuthContext } from '../../Contexts/Contexts'
 import { DailySummary } from './DailySummary'
@@ -15,27 +16,35 @@ import styles from '../../styles/Admin/Dashboard.module.css'
 export const Dashboard = ({ URL = '', imgDefault = '' }) => {  
   // Vars 
   const { user, img } = useContext(AuthContext)
+  const navigate = useNavigate()
   
   return (
     <main className={styles.mainContent}>
       <header className={styles.topBar}>
         <h1>Dashboard</h1>
         <div className={styles.userInfo}>
-          <span>Administrador</span>
-          <CheckImage
-            alt={`${user.names} ${user.lastNames}`}
-            className={styles.userAvatar}
-            imgDefault={imgDefault}
-            src={img}
-          />
+          <span>
+            <h3>{user.names} {user.lastNames}</h3>
+            (Administrador)
+          </span>
+          <picture 
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate('/admin/perfil')}
+          >
+            <CheckImage
+              alt={`${user.names} ${user.lastNames}`}
+              className={styles.userAvatar}
+              imgDefault={imgDefault}
+              src={img}
+            />
+          </picture>
         </div>
       </header>
 
       <DailySummary URL={URL} />
 
       <div className={styles.statsGrid}>
-        <WeeklySales URL={URL} />
-        {/* <MarketShare URL={URL} /> */}
+        <WeeklySales URL={URL} />  
         <SellestProducts URL={URL} />
         <TotalOrders URL={URL} />
       </div>

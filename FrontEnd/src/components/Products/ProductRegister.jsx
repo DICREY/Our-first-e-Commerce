@@ -17,16 +17,17 @@ import { useNavigate } from 'react-router-dom'
 
 // Component 
 export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
-    const [currentColor, setCurrentColor] = useState({ name: '', hex: '#000000' })
-    const [currentSize, setCurrentSize] = useState('')
-    const [currentImageColor, setCurrentImageColor] = useState('')
-    const [categories, setCategories] = useState(null)
-    const [sizes, setSizes] = useState(null)
-    const [showDropDown, setShowDropDown] = useState(null)
-    const [errors, setErrors] = useState({})
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [isLoading, setIsLoading] = useState()
-    const [formData, setFormData] = useState({
+    const [ currentColor, setCurrentColor ] = useState({ name: '', hex: '#000000' })
+    const [ currentSize, setCurrentSize ] = useState('')
+    const [ currentImageColor, setCurrentImageColor ] = useState('')
+    const [ categories, setCategories ] = useState(null)
+    const [ brands, setBrands ] = useState(null)
+    const [ sizes, setSizes ] = useState(null)
+    const [ showDropDown, setShowDropDown ] = useState(null)
+    const [ errors, setErrors ] = useState({})
+    const [ isSubmitting, setIsSubmitting ] = useState(false)
+    const [ isLoading, setIsLoading ] = useState()
+    const [ formData, setFormData ] = useState({
         nom_pro: '',
         pre_pro: '',
         des_pro: '',
@@ -124,6 +125,16 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         }
     }
 
+    const GetBrands = async () => {
+        try {
+            const got = await GetData(`${URL}/products/brands`)
+            setBrands(got)
+        } catch (err) {
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
+        }
+    }
+
     const GetSizes = async () => {
         try {
             const got = await GetData(`${URL}/products/sizes`)
@@ -143,17 +154,12 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         if (replic) return
         newColors[colorIdx].url = currentImageColor
         setFormData({ ...formData, colores: newColors })
-    }   
-
-    // if (isLoading) {
-    //     return (
-    //         <AdminLoadingScreen message='Cargando...' />
-    //     )
-    // }
-
+    }
+    
     useEffect(() => {
         GetCat()
         GetSizes()
+        GetBrands()
     }, [])
 
     return (

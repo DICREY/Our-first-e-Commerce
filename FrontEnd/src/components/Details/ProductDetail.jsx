@@ -39,6 +39,7 @@ export const ProductDetailAdmin = ({ URL = '', imgDefault = '' }) => {
     const ID = localStorage.getItem('id_pro') || 0
     let didFetch = false
 
+    // Requests
     const fetchProduct = async () => {
         if (didFetch) return
         try {

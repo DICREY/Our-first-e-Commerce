@@ -272,7 +272,7 @@ html {
   display: inline-flex;
   align-items: center;
   padding: .5rem 0.75rem;
-  gap: 0.5rem;
+  gap: .2rem;
   color: var(--primary-600);
   font-weight: 500;
   font-size: .9rem;
@@ -294,19 +294,30 @@ html {
   display: inline-flex;
   padding: .5rem 0.75rem;
   align-items: center;
-  gap: 0.5rem;
-  color: white;
+  gap: 0.2rem;
+  color: var(--accent-800);
   font-weight:600;
   font-size: .9rem;
   text-decoration: none;
   border-radius: .5rem;
   border: .1rem solid var(--accent-800);
-  background-color: var(--accent-800);
+  background-color: transparent;
   box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
 }
 
 .deleteButton:hover {
-    background-color: var(--accent-850);
-    transform: translateY(-.1rem);
+  background-color: #ff000038;
+  transform: translateY(-.1rem);
+}
+
+.expand {
+  width: 100%;
+}
+
+.separator {
+  background-color: var(--gray-200);
+  filter: opacity(.7);
+  color: red;
+  margin: 1rem 0;
 }

@@ -43,7 +43,8 @@ export const AuthProvider = ({ children }) => {
                 return { data: userData, logged: 1}
             } else return response
         } catch (err) {
-            throw err
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
     
@@ -61,7 +62,8 @@ export const AuthProvider = ({ children }) => {
                 window.location.href = '/login'
             }
         } catch (err) {
-            throw err
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
 
@@ -73,6 +75,7 @@ export const AuthProvider = ({ children }) => {
                 theme: theme
             })
             if (got.success && got.result) {
+                console.log(got)
                 localStorage.setItem('theme',got?.result?.[0]?.theme)
                 setTheme(got?.result?.[0]?.theme || 'DARK')
             }

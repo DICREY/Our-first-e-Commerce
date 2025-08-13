@@ -15,18 +15,19 @@ class Product {
     async create() {
         return new Promise((res, rej) => {
             // vars
-            const proc = "CALL RegisterProduct(?,?,?,?,?,?,?,?,?,?);"
+            const proc = "CALL RegisterProduct(?,?,?,?,?,?,?,?,?,?,?,?);"
             const params = [
                 this.args[0].nom_pro,
+                this.args[0].pre_ori_pro,
                 this.args[0].pre_pro,
+                this.args[0].des_pre_pro,
                 this.args[0].des_pro,
                 this.args[0].onSale,
                 this.args[0].nom_cat,
                 this.args[0].slug_cat,
-                this.args[0].colores,
-                this.args[0].hex_colores,
-                this.args[0].tallas,
-                this.args[0].imgs
+                this.args[0].nom_mar,
+                JSON.stringify(this.args[0].colores),
+                JSON.stringify(this.args[0].inv),
             ]
 
             // conect to database
@@ -56,18 +57,21 @@ class Product {
         return new Promise((res, rej) => {
             // data 
             const params = [
+                this.args[0].id_pro,
                 this.args[0].nom_pro,
+                this.args[0].pre_ori_pro,
                 this.args[0].pre_pro,
+                this.args[0].des_pre_pro,
                 this.args[0].des_pro,
                 this.args[0].onSale,
-                this.args[0].nom_cat,
-                this.args[0].slug_cat,
-                this.args[0].colores,
-                this.args[0].hex_colores,
-                this.args[0].tallas,
-                this.args[0].imgs
+                this.args[0].sta_pro,
+                this.args[0].nom_cat_pro,
+                this.args[0].slug,
+                this.args[0].nom_mar,
+                JSON.stringify(this.args[0].colors),
+                JSON.stringify(this.args[0].inv)
             ]
-            const procedure = "CALL ModifyProduct(?,?,?,?,?,?,?,?,?,?,?);"
+            const proc = "CALL ModifyProduct(?,?,?,?,?,?,?,?,?,?,?,?,?);"
 
             // conect to database
             this.database = new DataBase()
@@ -187,8 +191,9 @@ class Product {
                 if (err) {
                     rej({ message: err })
                 } else if (result) {
-                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
-                    const lastRes = this.global.iterar(resOne, 'sizes')
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img', 'stock'])
+                    const resTwo = this.global.format(resOne, 'inv', ['nom_col', 'hex_col', 'stock', 'size'])
+                    const lastRes = this.global.iterar(resTwo, 'sizes')
                     const lastLastRes = this.global.format(lastRes, 'offers', [
                         'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
                     ])
@@ -223,7 +228,8 @@ class Product {
                     rej({ message: err })
                 } else if (result) {
                     const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
-                    const lastRes = this.global.iterar(resOne, 'sizes')
+                    const resTwo = this.global.format(resOne, 'inv', ['nom_col', 'hex_col', 'stock', 'size'])
+                    const lastRes = this.global.iterar(resTwo, 'sizes')
                     const lastLastRes = this.global.format(lastRes, 'offers', [
                         'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
                     ])
@@ -328,6 +334,35 @@ class Product {
         })
     }
 
+    // function to find all product brands
+    async findAllBrands() {
+        return new Promise((res, rej) => {
+            // vars
+            const proc = "CALL GetProductsBrands();"
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc, (err, result) => {
+                if (err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Products found",
+                            result: result[0]
+                        })
+                    }, 1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
     // function to find by
     async findBy() {
         return new Promise((res, rej) => {
@@ -344,8 +379,9 @@ class Product {
                 if (err) {
                     rej({ message: err })
                 } else if (result) {
-                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
-                    const lastRes = this.global.iterar(resOne, 'sizes')
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img', 'stock'])
+                    const resTwo = this.global.format(resOne, 'inv', ['nom_col', 'hex_col', 'stock', 'size'])
+                    const lastRes = this.global.iterar(resTwo, 'sizes')
                     const lastLastRes = this.global.format(lastRes, 'offers', [
                         'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
                     ])
