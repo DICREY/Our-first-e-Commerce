@@ -27,13 +27,17 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
   // Función para procesar los productos del backend
   // En ProductCatalog.js, modificar la función processProducts:
   const processProducts = (rawProducts) => {
-    return rawProducts.map(product => {
-      // Procesar imagen principal
+    // Filtra solo productos disponibles primero
+    const availableProducts = rawProducts.filter(product =>
+      product.sta_pro === 'DISPONIBLE'
+    );
+
+    // Luego procesa los productos disponibles
+    return availableProducts.map(product => {
       const mainImage = product.url_img && product.url_img.trim() !== ''
         ? product.url_img
         : '';
 
-      // Procesar colores
       let productColors = [];
       if (product.colors) {
         if (typeof product.colors === 'string') {
@@ -60,17 +64,15 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
         ...product,
         url_img: mainImage,
         colors: productColors,
-        sizes: Array.isArray(product.sizes) ? product.sizes : [],
-        stock_total: product.stock_total || 0
+        sizes: Array.isArray(product.sizes) ? product.sizes : []
       };
     });
   };
-
   // Cargar datos iniciales
   useEffect(() => {
     const loadData = async () => {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
         const [
           catData,
           colorsData,
@@ -83,20 +85,20 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
           GetData(`${URL}/products/all`)
         ]);
 
-        if (catData) setCategories(catData)
-        if (colorsData) setColors(colorsData)
-        if (sizesData) setSizes(sizesData)
-        if (prodsData) setProducts(processProducts(prodsData))
+        if (catData) setCategories(catData);
+        if (colorsData) setColors(colorsData);
+        if (sizesData) setSizes(sizesData);
+        if (prodsData) setProducts(processProducts(prodsData));
       } catch (err) {
-        const message = errorStatusHandler(err)
-        showAlert('Error', message, 'error')
+        const message = errorStatusHandler(err);
+        showAlert('Error', message, 'error');
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    loadData()
-  }, [URL])
+    loadData();
+  }, [URL]);
 
   // Calcular rango de precios
   const minPrice = useMemo(() => {
@@ -109,59 +111,55 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
 
   // Filtros y ordenamiento
   const filteredProducts = useMemo(() => {
-    if (isLoading) return []
+    if (isLoading) return [];
 
-    let filtered = [...products]
+    // Los productos ya están filtrados por disponibilidad en processProducts
+    // Solo aplicamos los demás filtros
+    let filtered = [...products];
 
-    // Filtro por categoría
     if (selectedCategory !== "Todos") {
       filtered = filtered.filter(p =>
         p.nom_cat_pro?.toLowerCase() === selectedCategory.toLowerCase()
-      )
+      );
     }
 
-    // Filtro por búsqueda
     if (search.trim()) {
-      const searchTerm = search.trim().toLowerCase()
+      const searchTerm = search.trim().toLowerCase();
       filtered = filtered.filter(p =>
         p.nom_pro.toLowerCase().includes(searchTerm)
-      )
+      );
     }
 
-    // Filtro por color
     if (selectedColor) {
       filtered = filtered.filter(p =>
         p.colors?.some(c => c.nom_col.toLowerCase() === selectedColor.toLowerCase())
-      )
+      );
     }
 
-    // Filtro por tallas
     if (selectedSizes.length > 0) {
       filtered = filtered.filter(p =>
         selectedSizes.some(size => p.sizes?.includes(size))
-      )
+      );
     }
 
-    // Filtro por rango de precio
     filtered = filtered.filter(p =>
       p.pre_pro >= priceRange[0] && p.pre_pro <= priceRange[1]
-    )
+    );
 
-    // Ordenamiento
+    // Ordenamiento (mantén tu lógica actual)
     switch (sort) {
       case "price-asc":
-        return [...filtered].sort((a, b) => a.pre_pro - b.pre_pro)
+        return [...filtered].sort((a, b) => a.pre_pro - b.pre_pro);
       case "price-desc":
-        return [...filtered].sort((a, b) => b.pre_pro - a.pre_pro)
+        return [...filtered].sort((a, b) => b.pre_pro - a.pre_pro);
       case "name-asc":
-        return [...filtered].sort((a, b) => a.nom_pro.localeCompare(b.nom_pro))
+        return [...filtered].sort((a, b) => a.nom_pro.localeCompare(b.nom_pro));
       case "name-desc":
-        return [...filtered].sort((a, b) => b.nom_pro.localeCompare(a.nom_pro))
+        return [...filtered].sort((a, b) => b.nom_pro.localeCompare(a.nom_pro));
       default:
-        return filtered
+        return filtered;
     }
-  }, [products, selectedCategory, search, selectedColor, selectedSizes, sort, priceRange, isLoading])
-
+  }, [products, selectedCategory, search, selectedColor, selectedSizes, sort, priceRange, isLoading]);
   const handleSizeChange = (size) => {
     setSelectedSizes(prev =>
       prev.includes(size)
@@ -324,6 +322,7 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
             <div className={styles.productsGrid}>
               {filteredProducts.map((product) => (
                 <ProductCard
+                  URL={URL}
                   key={product.id_pro}
                   data={product}
                   imgDefault={imgDefault}

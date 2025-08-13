@@ -1,16 +1,13 @@
--- Active: 1746130779175@@127.0.0.1@3306@e_commerce
+-- Active: 1747352860830@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.AddToCart(
-    IN p_user_id INT,
-    IN p_product_id INT,
-    IN p_color_id INT,
-    IN p_size_id INT,
+    IN p_user_doc VARCHAR(20),
+    IN p_id_inv INT,
     IN p_quantity INT
 )
 BEGIN
-    DECLARE v_product_status VARCHAR(20);
-    DECLARE v_current_quantity INT;
+    DECLARE v_user_id INT;
     DECLARE v_available_stock INT;
-    DECLARE v_inventory_id INT;
+    DECLARE v_current_quantity INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -20,26 +17,17 @@ BEGIN
     SET autocommit = 0;
     START TRANSACTION;
 
-    -- Verificar si el producto está disponible
-    SELECT sta_pro INTO v_product_status 
-    FROM productos 
-    WHERE id_pro = p_product_id;
-    
-    IF v_product_status != 'DISPONIBLE' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El producto no está disponible';
+    -- Verificar usuario
+    SELECT id_per INTO v_user_id FROM personas WHERE doc_per = p_user_doc;
+    IF v_user_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
     END IF;
 
-    -- Verificar stock en inventario
-    SELECT i.id_inv, i.cantidad INTO v_inventory_id, v_available_stock
-    FROM inventario i
-    WHERE i.id_pro_inv = p_product_id 
-      AND i.id_col_inv = p_color_id 
-      AND i.id_tal_inv = p_size_id;
-    
-    IF v_inventory_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Combinación producto-color-talla no disponible';
+    -- Verificar inventario y stock
+    SELECT cantidad INTO v_available_stock FROM inventario WHERE id_inv = p_id_inv;
+    IF v_available_stock IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Inventario no encontrado';
     END IF;
-    
     IF v_available_stock < p_quantity THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuficiente para la cantidad solicitada';
     END IF;
@@ -47,24 +35,23 @@ BEGIN
     -- Verificar si ya existe en el carrito
     SELECT cantidad INTO v_current_quantity 
     FROM carrito 
-    WHERE id_per_car = p_user_id 
-      AND id_inv_car = v_inventory_id;
-    
+    WHERE id_per_car = v_user_id 
+      AND id_inv_car = p_id_inv;
+
     IF v_current_quantity IS NULL THEN
         -- Nuevo item en carrito
         INSERT INTO carrito (id_per_car, id_inv_car, cantidad)
-        VALUES (p_user_id, v_inventory_id, p_quantity);
+        VALUES (v_user_id, p_id_inv, p_quantity);
     ELSE
         -- Actualizar cantidad existente
         IF (v_current_quantity + p_quantity) > v_available_stock THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La cantidad total excede el stock disponible';
         END IF;
-        
         UPDATE carrito 
         SET cantidad = cantidad + p_quantity, 
             updated_at = CURRENT_TIMESTAMP
-        WHERE id_per_car = p_user_id 
-          AND id_inv_car = v_inventory_id;
+        WHERE id_per_car = v_user_id 
+          AND id_inv_car = p_id_inv;
     END IF;
 
     COMMIT;
@@ -72,11 +59,12 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.UpdateCartQuantity(
-    IN p_user_id INT,
+    IN p_user_doc VARCHAR(20),
     IN p_cart_id INT,
     IN p_new_quantity INT
 )
 BEGIN
+    DECLARE v_user_id INT;
     DECLARE v_inventory_id INT;
     DECLARE v_available_stock INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -87,6 +75,15 @@ BEGIN
 
     SET autocommit = 0;
     START TRANSACTION;
+
+    -- Obtener el ID del usuario basado en el documento
+    SELECT id_per INTO v_user_id 
+    FROM personas 
+    WHERE doc_per = p_user_doc;
+    
+    IF v_user_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
+    END IF;
 
     -- Validar cantidad positiva
     IF p_new_quantity <= 0 THEN
@@ -97,7 +94,7 @@ BEGIN
     SELECT id_inv_car INTO v_inventory_id 
     FROM carrito 
     WHERE id_car = p_cart_id 
-      AND id_per_car = p_user_id;
+      AND id_per_car = v_user_id;
     
     IF v_inventory_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ítem no encontrado en el carrito';
@@ -117,17 +114,18 @@ BEGIN
     SET cantidad = p_new_quantity,
         updated_at = CURRENT_TIMESTAMP
     WHERE id_car = p_cart_id
-      AND id_per_car = p_user_id;
+      AND id_per_car = v_user_id;
 
     COMMIT;
     SET autocommit = 1;
 END //
 
 CREATE PROCEDURE e_commerce.RemoveFromCart(
-    IN p_user_id INT,
+    IN p_user_doc VARCHAR(20),
     IN p_cart_id INT
 )
 BEGIN
+    DECLARE v_user_id INT;
     DECLARE v_rows_affected INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -138,10 +136,19 @@ BEGIN
     SET autocommit = 0;
     START TRANSACTION;
 
+    -- Obtener el ID del usuario basado en el documento
+    SELECT id_per INTO v_user_id 
+    FROM personas 
+    WHERE doc_per = p_user_doc;
+    
+    IF v_user_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
+    END IF;
+
     -- Eliminar ítem del carrito
     DELETE FROM carrito 
     WHERE id_car = p_cart_id 
-      AND id_per_car = p_user_id;
+      AND id_per_car = v_user_id;
     
     SET v_rows_affected = ROW_COUNT();
     
@@ -154,10 +161,11 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.AddToFavorites(
-    IN p_user_id INT,
+    IN p_user_doc VARCHAR(20),
     IN p_product_id INT
 )
 BEGIN
+    DECLARE v_user_id INT;
     DECLARE v_product_status VARCHAR(20);
     DECLARE v_already_favorite INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -168,6 +176,15 @@ BEGIN
 
     SET autocommit = 0;
     START TRANSACTION;
+
+    -- Obtener el ID del usuario basado en el documento
+    SELECT id_per INTO v_user_id 
+    FROM personas 
+    WHERE doc_per = p_user_doc;
+    
+    IF v_user_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
+    END IF;
 
     -- Verificar si el producto está disponible
     SELECT sta_pro INTO v_product_status 
@@ -181,7 +198,7 @@ BEGIN
     -- Verificar si ya es favorito
     SELECT COUNT(*) INTO v_already_favorite
     FROM favoritos
-    WHERE id_per_fav = p_user_id 
+    WHERE id_per_fav = v_user_id 
       AND id_pro_fav = p_product_id;
     
     IF v_already_favorite > 0 THEN
@@ -190,17 +207,18 @@ BEGIN
 
     -- Agregar a favoritos
     INSERT INTO favoritos (id_per_fav, id_pro_fav)
-    VALUES (p_user_id, p_product_id);
+    VALUES (v_user_id, p_product_id);
 
     COMMIT;
     SET autocommit = 1;
 END //
 
 CREATE PROCEDURE e_commerce.RemoveFromFavorites(
-    IN p_user_id INT,
+    IN p_user_doc VARCHAR(20),
     IN p_product_id INT
 )
 BEGIN
+    DECLARE v_user_id INT;
     DECLARE v_rows_affected INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -211,9 +229,18 @@ BEGIN
     SET autocommit = 0;
     START TRANSACTION;
 
+    -- Obtener el ID del usuario basado en el documento
+    SELECT id_per INTO v_user_id 
+    FROM personas 
+    WHERE doc_per = p_user_doc;
+    
+    IF v_user_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
+    END IF;
+
     -- Eliminar de favoritos
     DELETE FROM favoritos 
-    WHERE id_per_fav = p_user_id 
+    WHERE id_per_fav = v_user_id 
       AND id_pro_fav = p_product_id;
     
     SET v_rows_affected = ROW_COUNT();
@@ -227,11 +254,16 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.GetUserCart(
-    IN p_user_id INT
-)
+    IN p_user_doc VARCHAR(20))
 BEGIN
-    -- Verificar si el usuario existe
-    IF NOT EXISTS (SELECT 1 FROM personas WHERE id_per = p_user_id) THEN
+    DECLARE v_user_id INT;
+    
+    -- Obtener el ID del usuario basado en el documento
+    SELECT id_per INTO v_user_id 
+    FROM personas 
+    WHERE doc_per = p_user_doc;
+    
+    IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
     END IF;
 
@@ -263,17 +295,23 @@ BEGIN
     LEFT JOIN
         imagenes i ON pc.img_pro_col = i.id_img
     WHERE 
-        c.id_per_car = p_user_id
+        c.id_per_car = v_user_id
     ORDER BY 
         c.created_at DESC;
 END //
 
 CREATE PROCEDURE e_commerce.GetUserFavorites(
-    IN p_user_id INT
+    IN p_user_doc VARCHAR(20)
 )
 BEGIN
-    -- Verificar si el usuario existe
-    IF NOT EXISTS (SELECT 1 FROM personas WHERE id_per = p_user_id) THEN
+    DECLARE v_user_id INT;
+    
+    -- Obtener el ID del usuario basado en el documento
+    SELECT id_per INTO v_user_id 
+    FROM personas 
+    WHERE doc_per = p_user_doc;
+    
+    IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
     END IF;
 
@@ -310,9 +348,7 @@ BEGIN
     JOIN 
         productos p ON f.id_pro_fav = p.id_pro
     WHERE 
-        f.id_per_fav = p_user_id
+        f.id_per_fav = v_user_id
     ORDER BY 
         f.created_at DESC;
 END //
-
-    

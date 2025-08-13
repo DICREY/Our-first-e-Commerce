@@ -1,53 +1,53 @@
 // Librarys 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo, useCallback, useContext } from "react"
 import { Heart, PackagePlus, Eye } from 'lucide-react'
 import { useNavigate } from "react-router-dom"
 
 // Imports
 import { useCart } from "../../Contexts/CartContext"
-import { CheckImage, Discount, formatNumber } from "../../Utils/utils"
+import { CheckImage, formatNumber, showAlert, Discount} from "../../Utils/utils"
+import { GetData, PostData, DeleteData } from "../../Utils/Requests"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
 import ProductQuickView from "./ProductQuickView"
+import { AuthContext } from "../../Contexts/Contexts"
 
 // Import styles 
 import styles from "../../styles/Products/ProductCard.module.css"
 
 // Component 
-const ProductCard = ({ data = {}, imgDefault = '', set }) => {
-  // Dynamic vars 
-  const [isLiked, setIsLiked] = useState(false)
+const ProductCard = ({ URL = '', data = {}, imgDefault = '', set }) => {
+  // Contexts and hooks
+  const { addToCart: addToCartContext } = useCart()
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // Obtén el token desde el contexto o localStorage
+  const token = useContext(AuthContext)?.token || localStorage.getItem('token');
+
+  // State
   const [showQuickView, setShowQuickView] = useState(false)
   const [showImg, setShowImg] = useState(imgDefault)
-  const [product, setProduct] = useState({
-    id_pro: '',
-    nom_pro: '',
-    pre_pro: 0,
-    colors: [],
-    sizes: [],
-    onSale: false,
-    featured: false,
-    ...data
-  })
+  const [imgError, setImgError] = useState(false)
+  const [isLiked, setIsLiked] = useState(false)
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
 
-  const { addToCart } = useCart()
-  const navigate = useNavigate()
+  // Normalize product data
+  const product = useMemo(() => {
+    if (!data) return null;
 
-  // Normalizar los datos del producto
-  const normalizeProductData = (productData) => {
-    if (!productData) return null;
-
-    // Manejar imágenes del producto
+    // Handle product images
     let productImage = '';
-    if (productData.url_img && productData.url_img.trim() !== '') {
-      productImage = productData.url_img;
+    if (data.url_img?.trim()) {
+      productImage = data.url_img;
     }
 
-    // Procesar colores
+    // Process colors
     let productColors = [];
-    if (productData.colors) {
-      if (typeof productData.colors === 'string') {
-        productColors = productData.colors.split('---').map(colorStr => {
+    if (data.colors) {
+      if (typeof data.colors === 'string') {
+        productColors = data.colors.split('---').map(colorStr => {
           const [nom_col, hex_col, nom_img, url_img] = colorStr.split(';');
           return {
             nom_col: nom_col || '',
@@ -56,8 +56,8 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
             url_img: url_img || ''
           };
         });
-      } else if (Array.isArray(productData.colors)) {
-        productColors = productData.colors.map(color => ({
+      } else if (Array.isArray(data.colors)) {
+        productColors = data.colors.map(color => ({
           nom_col: color.nom_col || '',
           hex_col: color.hex_col || '#ccc',
           nom_img: color.nom_img || '',
@@ -67,91 +67,164 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
     }
 
     return {
-      id_pro: productData.id_pro || '',
-      nom_pro: productData.nom_pro || '',
-      pre_pro: productData.pre_pro || 0,
+      id_pro: data.id_pro || '',
+      nom_pro: data.nom_pro || '',
+      pre_pro: data.pre_pro || 0,
       url_img: productImage,
       colors: productColors,
-      sizes: Array.isArray(productData.sizes) ? productData.sizes : [],
-      onSale: Boolean(productData.onSale),
-      featured: Boolean(productData.featured),
-      ...productData
+      sizes: Array.isArray(data.sizes) ? data.sizes : [],
+      onSale: Boolean(data.onSale),
+      featured: Boolean(data.featured),
+      ...data
     };
+  }, [data]);
+
+  // Set initial image and check if product is liked
+  useEffect(() => {
+    if (!product) return;
+
+    let imageToShow = imgDefault;
+
+    // First check product main image
+    if (product.url_img) {
+      imageToShow = product.url_img;
+    }
+    // Then check colors for images
+    else if (Array.isArray(product.colors)) {
+      const colorWithImage = product.colors.find(
+        color => color.url_img?.trim()
+      );
+      if (colorWithImage) {
+        imageToShow = colorWithImage.url_img;
+      }
+    }
+
+    setShowImg(imageToShow);
+    setImgError(false);
+
+    // Check if product is in favorites
+    if (user?.doc && product?.id_pro) {
+      // checkIfProductIsLiked();
+    }
+  }, [product, imgDefault, user])
+
+const checkIfProductIsLiked = useCallback(async () => {
+    try {
+        // Verificar si hay usuario y documento
+        if (!user?.doc) {
+            setIsLiked(false);
+            return;
+        }
+
+        // Usar POST en lugar de GET
+        const response = await PostData(
+            `${URL}/products/favorites/by`,
+            { doc_per: user.doc },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        // Verificar estructura de respuesta
+        if (response?.success && Array.isArray(response.data)) {
+            const isFavorite = response.data.some(fav => fav.id_pro === product.id_pro);
+            setIsLiked(isFavorite);
+        } else {
+            console.error("Respuesta inesperada:", response);
+            setIsLiked(false);
+        }
+    } catch (error) {
+        console.error("Error checking favorites:", error);
+        
+        // No mostrar alerta para errores de autenticación
+        if (error.response?.status !== 401 && error.response?.status !== 403) {
+            showAlert("Error", "Error al verificar favoritos", "error");
+        }
+        setIsLiked(false);
+    }
+}, [user, product.id_pro, URL, token]);
+
+  // Handle add to favorites (backend integration)
+  const handleLike = useCallback(async (e) => {
+    e?.stopPropagation();
+
+    // Solo verifica si hay usuario
+    if (!user) {
+      navigate('/login');
+      showAlert("Atención", "Debes iniciar sesión para guardar favoritos", "info");
+      return;
+    }
+
+    setIsTogglingFavorite(true);
+
+    try {
+      if (isLiked) {
+        // Remove from favorites
+        await DeleteData(`${URL}/products/favorites/remove`, {
+          doc_per: user.doc,
+          productId: product.id_pro
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        showAlert("Éxito", "Producto eliminado de favoritos", "success");
+      } else {
+        // Add to favorites
+        await PostData(`${URL}/products/favorites/add`, {
+          doc_per: user.doc,
+          productId: product.id_pro
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        showAlert("Éxito", "Producto agregado a favoritos", "success");
+      }
+
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("Error updating favorites:", error);
+      showAlert("Error", "Error al actualizar favoritos", "error");
+    } finally {
+      setIsTogglingFavorite(false);
+    }
+  }, [isLiked, user, product, navigate, URL, token])
+
+  const handleQuickAddClick = (e) => {
+    e.stopPropagation();
+    setShowQuickView(true);
   };
 
-  useEffect(() => {
-    const normalizedProduct = normalizeProductData(data);
-    if (normalizedProduct) {
-      setProduct(normalizedProduct);
 
-      // Buscar la primera imagen disponible (ya sea en el producto o en sus colores)
-      let imageToShow = imgDefault;
-
-      // Primero verificar si el producto tiene imagen directa
-      if (normalizedProduct.url_img) {
-        imageToShow = normalizedProduct.url_img;
-      }
-      // Si no, buscar en los colores
-      else if (Array.isArray(normalizedProduct.colors)) {
-        const colorWithImage = normalizedProduct.colors.find(
-          color => color.url_img && color.url_img.trim() !== ''
-        );
-        if (colorWithImage) {
-          imageToShow = colorWithImage.url_img;
-        }
-      }
-
-      setShowImg(imageToShow);
-
-      // Verificar favoritos
-      if (normalizedProduct.id_pro) {
-        const liked = localStorage.getItem(`liked-product-${normalizedProduct.id_pro}`) === "true";
-        setIsLiked(liked);
-      }
-    }
-  }, [data, imgDefault]);
-
-  // Manejar agregar al carrito
-  const handleQuickAdd = (e) => {
-    e?.stopPropagation()
-    const defaultSize = product?.sizes?.[0] || ''
-    const defaultColor = product?.colors?.[0]?.nom_col || ''
-    addToCart(product, defaultSize, defaultColor)
-  }
-
-  // Manejar favoritos
-  const handleLike = (e) => {
-    e?.stopPropagation()
-    const newLiked = !isLiked
-    setIsLiked(newLiked)
-    if (product?.id_pro) {
-      localStorage.setItem(`liked-product-${product.id_pro}`, newLiked)
-    }
-  }
-
-  // Manejar clic en la tarjeta
-  const handleCardClick = () => {
+  const handleCardClick = useCallback(() => {
     if (set && product?.id_pro) {
-      set(product)
-      navigate(`/product/${product.id_pro}`)
+      set(product);
+      navigate(`/product/${product.id_pro}`);
     }
-  }
+  }, [product, set, navigate])
 
-  // No renderizar si no hay datos válidos
-  if (!product?.id_pro) return null
+  const handleImageError = useCallback(() => {
+    setImgError(true);
+    setShowImg(imgDefault);
+  }, [imgDefault])
 
-  // Obtener colores para mostrar (asegurando que sea un array)
-  const displayColors = Array.isArray(product.colors) ? product.colors : []
+  if (!product?.id_pro) return null;
 
-
+  const displayColors = Array.isArray(product.colors) ? product.colors : [];
   return (
     <div className={styles.card} onClick={handleCardClick}>
       <div className={styles.imageContainer}>
         <CheckImage
-          src={showImg}
+          src={imgError ? imgDefault : showImg}
           alt={product.nom_pro || 'Product image'}
           imgDefault={imgDefault}
           className={styles.image}
+          onError={handleImageError}
+          loading="lazy"
         />
 
         {/* Badges */}
@@ -167,18 +240,20 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
               size="sm"
               variant="secondary"
               onClick={(e) => {
-                e.stopPropagation()
-                setShowQuickView(true)
+                e.stopPropagation();
+                setShowQuickView(true);
               }}
+              disabled={isAddingToCart || isTogglingFavorite}
             >
               <Eye /> Vista Rápida
             </Button>
             <Button
               size="sm"
               variant="primary"
-              onClick={handleQuickAdd}
+              onClick={handleQuickAddClick}
+              disabled={isAddingToCart || isTogglingFavorite}
             >
-              <PackagePlus /> Agregar
+              <PackagePlus /> Añadir
             </Button>
           </div>
         </div>
@@ -187,8 +262,14 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
         <button
           className={styles.wishlistButton}
           onClick={handleLike}
+          disabled={isAddingToCart || isTogglingFavorite}
+          aria-label={isLiked ? "Quitar de favoritos" : "Agregar a favoritos"}
         >
-          <Heart fill={isLiked ? "#ef4444" : "none"} color={isLiked ? "#ef4444" : "#6b7280"} />
+          <Heart
+            fill={isLiked ? "#ef4444" : "none"}
+            color={isLiked ? "#ef4444" : "#6b7280"}
+            className={isTogglingFavorite ? styles.pulseAnimation : ''}
+          />
         </button>
       </div>
 
@@ -213,12 +294,11 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
             )}
           </div>
 
-          {/* Mostrar colores solo si existen */}
           {displayColors.length > 0 && (
             <div className={styles.colors}>
               {displayColors.slice(0, 3).map((color, index) => (
                 <div
-                  key={`color-${index}`}
+                  key={`color-${product.id_pro}-${index}`}
                   className={styles.colorDot}
                   style={{ backgroundColor: color.hex_col || '#ccc' }}
                   title={color.nom_col}
@@ -234,17 +314,15 @@ const ProductCard = ({ data = {}, imgDefault = '', set }) => {
         </div>
       </div>
 
-      {/* Vista rápida modal */}
       <ProductQuickView
+        URL={URL}
         data={product}
         isOpen={showQuickView}
         onClose={() => setShowQuickView(false)}
         img={imgDefault}
       />
     </div>
-  )
-}
+  );
+};
 
-export default ProductCard
-
-
+export default ProductCard;

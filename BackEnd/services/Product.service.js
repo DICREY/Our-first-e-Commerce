@@ -433,12 +433,10 @@ class Product {
 
     async addToCart() {
         return new Promise((res, rej) => {
-            const proc = "CALL AddToCart(?, ?, ?, ?, ?)";
+            const proc = "CALL AddToCart(?, ?, ?)";
             const params = [
-                this.args[0].userId,
-                this.args[0].productId,
-                this.args[0].colorId,
-                this.args[0].sizeId,
+                this.args[0].userDoc,
+                this.args[0].id_inv,
                 this.args[0].quantity
             ];
 
@@ -467,7 +465,7 @@ class Product {
         return new Promise((res, rej) => {
             const proc = "CALL UpdateCartQuantity(?, ?, ?)";
             const params = [
-                this.args[0].userId,
+                this.args[0].userDoc,  // Cambiado de userId a userDoc
                 this.args[0].cartId,
                 this.args[0].newQuantity
             ];
@@ -497,7 +495,7 @@ class Product {
         return new Promise((res, rej) => {
             const proc = "CALL RemoveFromCart(?, ?)";
             const params = [
-                this.args[0].userId,
+                this.args[0].userDoc,  // Cambiado de userId a userDoc
                 this.args[0].cartId
             ];
 
@@ -525,17 +523,17 @@ class Product {
     async getUserCart() {
         return new Promise((res, rej) => {
             const proc = "CALL GetUserCart(?)";
-            const userId = this.args[0];
+            const userDoc = this.args[0];  // Ahora espera el documento en lugar del ID
 
             this.database.conect();
 
-            if (this.database) this.database.conection.query(proc, [userId], (err, result) => {
+            if (this.database) this.database.conection.query(proc, [userDoc], (err, result) => {
                 this.database.conection.end();
                 if (err) {
                     rej({ message: err });
                 } else if (result) {
                     const formattedResult = this.global.format(result[0], 'products', [
-                        'id_pro', 'nom_pro', 'pre_pro', 'des_pro', 'sta_pro', 'onSale',
+                        'id_car', 'id_pro', 'nom_pro', 'pre_pro', 'des_pro',
                         'nom_col', 'hex_col', 'nom_tal_pro', 'cantidad', 'subtotal',
                         'imagen', 'stock_disponible'
                     ]);
@@ -559,7 +557,7 @@ class Product {
         return new Promise((res, rej) => {
             const proc = "CALL AddToFavorites(?, ?)";
             const params = [
-                this.args[0].userId,
+                this.args[0].userDoc,  
                 this.args[0].productId
             ];
 
@@ -588,7 +586,7 @@ class Product {
         return new Promise((res, rej) => {
             const proc = "CALL RemoveFromFavorites(?, ?)";
             const params = [
-                this.args[0].userId,
+                this.args[0].userDoc,  // Cambiado de userId a userDoc
                 this.args[0].productId
             ];
 
@@ -616,11 +614,11 @@ class Product {
     async getUserFavorites() {
         return new Promise((res, rej) => {
             const proc = "CALL GetUserFavorites(?)";
-            const userId = this.args[0];
+            const userDoc = this.args[0];  // Ahora espera el documento en lugar del ID
 
             this.database.conect();
 
-            if (this.database) this.database.conection.query(proc, [userId], (err, result) => {
+            if (this.database) this.database.conection.query(proc, [userDoc], (err, result) => {
                 this.database.conection.end();
                 if (err) {
                     rej({ message: err });
@@ -634,6 +632,31 @@ class Product {
                             result: lastRes
                         });
                     }, 1000);
+                } else {
+                    rej({ message: 'Error interno', status: 500 });
+                }
+            });
+        });
+    }
+
+    async getProductInventory() {
+        return new Promise((res, rej) => {
+            const proc = "CALL GetProductInventory(?)";
+            const productId = this.args[0];
+
+            this.database.conect();
+
+            if (this.database) this.database.conection.query(proc, [productId], (err, result) => {
+                this.database.conection.end();
+                if (err) {
+                    rej({ message: err });
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Inventario encontrado",
+                            result: result[0]
+                        });
+                    }, 500);
                 } else {
                     rej({ message: 'Error interno', status: 500 });
                 }

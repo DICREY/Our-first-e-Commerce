@@ -1,47 +1,72 @@
-// Librarys 
-import { useEffect, useState } from "react"
-import { Heart } from 'lucide-react'
+import { useEffect, useState, useContext } from "react";
+import { Heart } from 'lucide-react';
+import { AuthContext } from "../../Contexts/Contexts";
+import Modal from "../Modal/Modal";
+import ProductCard from "../Products/ProductCard";
+import { GetData, PostData, DeleteData } from "../../Utils/Requests";
+import styles from "./FavoritesSheet.module.css";
 
-// Imports 
-import Modal from "../Modal/Modal"
-import ProductCard from "../Products/ProductCard"
+const FavoritesSheet = ({ URL = '', isOpen, onClose, img = '' }) => {
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
-// Import styles 
-import styles from "./FavoritesSheet.module.css"
+  const fetchFavorites = async () => {
+    try {
+      setLoading(true);
+      const data = await PostData(`${URL}/products/favorites/by`, {
+        doc_per: user?.doc
+      });
+      setFavorites(data);
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-// Component
-const getLikedProductIds = () => {
-  return Object.keys(localStorage)
-    .filter( key =>
-      key.startsWith("liked-product-") && localStorage.getItem(key) === "true"
-    )
-    .map((key) => key.replace("liked-product-", ""))
-}
-
-const FavoritesSheet = ({ products, isOpen, onClose, img = '' }) => {
-  const [likedIds, setLikedIds] = useState([])
+  // Agregar/eliminar favorito
+  const toggleFavorite = async (productId, isCurrentlyFavorite) => {
+    try {
+      if (isCurrentlyFavorite) {
+        await PostData(`${URL}/products/favorites/remove`, {
+          doc_per: user?.doc,
+          productId
+        });
+      } else {
+        await PostData(`${URL}/products/favorites/add`, {
+          doc_per: user?.doc,
+          productId
+        });
+      }
+      fetchFavorites(); // Refrescar lista
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
-      setLikedIds(getLikedProductIds())
+      fetchFavorites();
     }
-  }, [isOpen])
-
-  const likedProducts = products?.filter((p) => likedIds.includes(String(p.id_pro)))
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Tus Favoritos">
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Tus productos favoritos</h2>
-          {likedProducts?.length > 0 && (
+          {favorites?.length > 0 && (
             <span className={styles.countBadge}>
-              {likedProducts?.length} {likedProducts?.length === 1 ? "producto" : "productos"}
+              {favorites?.length} {favorites?.length === 1 ? "producto" : "productos"}
             </span>
           )}
         </div>
 
-        {likedProducts?.length === 0 ? (
+        {loading ? (
+          <div className={styles.emptyState}>
+            <p>Cargando favoritos...</p>
+          </div>
+        ) : favorites?.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}><Heart /></div>
             <h3 className={styles.emptyTitle}>Tu lista de favoritos está vacía</h3>
@@ -51,14 +76,20 @@ const FavoritesSheet = ({ products, isOpen, onClose, img = '' }) => {
           </div>
         ) : (
           <div className={styles.productsGrid}>
-            {likedProducts?.map((product, index) => (
-              <ProductCard key={index + 129} data={product} imgDefault={img} />
+            {favorites?.map((product, index) => (
+              <ProductCard
+                key={index + 129}
+                data={product}
+                imgDefault={img}
+                onToggleFavorite={() => toggleFavorite(product.id_pro, true)}
+                isFavorite={true}
+              />
             ))}
           </div>
         )}
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default FavoritesSheet
+export default FavoritesSheet;

@@ -57,15 +57,15 @@ const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, imgDefault, handleLogo
         <div className={styles.profileMenu}>
           {user == null ? (
             <>
-              <Link 
-                to="/login" 
+              <Link
+                to="/login"
                 className={styles.menuOption}
                 onClick={() => setIsOpen(false)}
               >
                 Iniciar sesión
               </Link>
-              <Link 
-                to="/signup" 
+              <Link
+                to="/signup"
                 className={styles.menuOption}
                 onClick={() => setIsOpen(false)}
               >
@@ -74,8 +74,8 @@ const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, imgDefault, handleLogo
             </>
           ) : (
             <>
-              <Link 
-                to="/profile" 
+              <Link
+                to="/profile"
                 className={styles.menuOption}
                 onClick={() => setIsOpen(false)}
               >
@@ -104,7 +104,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   const [navigation, setNavigation] = useState([{ name: "Inicio", href: "/" }]);
   const profileMenuRef = useRef();
   const navigate = useNavigate();
-  
+
   const { getTotalItems } = useCart();
   const { logout, admin } = useContext(AuthContext);
   const [hasFetched, setHasFetched] = useState(false);
@@ -117,28 +117,28 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
       return;
     }
 
-      try {
-        const product = await GetData(`${URL}/products/categories`);
-        if (product) {
-          const catPro = [{ name: "Inicio", href: "/" }];
-          product?.forEach(cat => {
-            catPro.push({ 
-              name: cat.nom_cat_pro, 
-              href: `/productos/${cat.slug?.toLowerCase()}` 
-            });
+    try {
+      const product = await GetData(`${URL}/products/categories`);
+      if (product) {
+        const catPro = [{ name: "Inicio", href: "/" }];
+        product?.forEach(cat => {
+          catPro.push({
+            name: cat.nom_cat_pro,
+            href: `/productos/${cat.slug?.toLowerCase()}`
           });
-          
-          // Actualizar caché
-          categoriesCache = catPro;
-          lastFetchTime = now;
-          
-          setNavigation(catPro);
-          setHasFetched(true);
-        }
-      } catch (err) {
-        const message = errorStatusHandler(err);
-        console.log(message);
+        });
+
+        // Actualizar caché
+        categoriesCache = catPro;
+        lastFetchTime = now;
+
+        setNavigation(catPro);
+        setHasFetched(true);
       }
+    } catch (err) {
+      const message = errorStatusHandler(err);
+      console.log(message);
+    }
   };
 
   useEffect(() => {
@@ -165,7 +165,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
 
   // Función para verificar si la ruta está activa
   const isActive = (href) => {
-    return location.pathname === href || 
+    return location.pathname === href ||
       (href !== '/' && location.pathname.startsWith(href));
   };
 
@@ -191,7 +191,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
             />
           ))}
           {admin && (
-            <Link 
+            <Link
               to="/admin/home"
               className={`${styles.navLink} ${isActive('/admin/home') ? styles.activeLink : ''}`}
             >
@@ -210,7 +210,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
             <Heart style={{ color: 'var(--gray-700)' }} />
           </Button>
 
-          <ProfileMenu 
+          <ProfileMenu
             ref={profileMenuRef}
             isOpen={isProfileMenuOpen}
             setIsOpen={setIsProfileMenuOpen}
@@ -227,8 +227,8 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
           </div>
 
           <div className={styles.mobileMenu}>
-            <button 
-              className={styles.mobileMenuButton} 
+            <button
+              className={styles.mobileMenuButton}
               onClick={() => setIsMenuOpen(true)}
               aria-label="Abrir menú móvil"
             >
@@ -238,15 +238,17 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
         </nav>
       </header>
 
-      <CartSheet 
-        imgProductDefault={imgProductDefault} 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
+      <CartSheet
+        URL={URL}
+        imgProductDefault={imgProductDefault}
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
       />
-      <FavoritesSheet 
-        img={imgProductDefault} 
-        isOpen={isFavoritesOpen} 
-        onClose={() => setIsFavoritesOpen(false)} 
+      <FavoritesSheet
+        URL={URL}
+        img={imgProductDefault}
+        isOpen={isFavoritesOpen}
+        onClose={() => setIsFavoritesOpen(false)}
       />
     </>
   );

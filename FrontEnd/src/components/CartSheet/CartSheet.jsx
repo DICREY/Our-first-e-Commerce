@@ -1,33 +1,84 @@
-// Librarys 
-import { useEffect } from "react"
-import { ShoppingBag } from 'lucide-react'
+import { useContext, useEffect, useState } from "react";
+import { ShoppingBag } from 'lucide-react';
+import { useCart } from "../../Contexts/CartContext";
+import { AuthContext } from "../../Contexts/Contexts";
+import { CheckImage } from "../../Utils/utils";
+import { GetData, PostData, ModifyData, DeleteData } from "../../Utils/Requests";
+import Badge from "../Badge/Badge";
+import styles from "./CartSheet.module.css";
 
-// Imports 
-import { useCart } from "../../Contexts/CartContext"
-import { CheckImage } from "../../Utils/utils"
-import Badge from "../Badge/Badge"
+const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
-// Import styles 
-import styles from "./CartSheet.module.css"
+  // Obtener carrito del backend
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      // Cambia GetData por PostData y envía el documento en el body
+      const data = await PostData(`${URL}/products/cart/by`, {
+        doc_per: user?.doc
+      });
+      setCartItems(data);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-// Component 
-const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
-  // Vars 
-  const { items, removeFromCart, updateQuantity, getTotalPrice, getTotalItems } = useCart()
+  // Actualizar cantidad
+  const updateQuantity = async (cartId, newQuantity) => {
+    try {
+      await ModifyData(`${URL}/products/cart/update`, {
+        doc_per: user?.doc,
+        cartId,
+        newQuantity
+      });
+      fetchCart();
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
+  };
+
+  // Eliminar del carrito
+  const removeFromCart = async (cartId) => {
+    try {
+      await PostData(`${URL}/products/cart/remove`, {
+        doc_per: user?.doc,
+        cartId
+      });
+      fetchCart();
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+    }
+  };
+
+  // Calcular total
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + (item.pre_pro * item.cantidad), 0);
+  };
+
+  // Calcular total de items
+  const getTotalItems = () => {
+    return cartItems.reduce((total, item) => total + item.cantidad, 0);
+  };
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden"
+      fetchCart();
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = "unset"
-    }
-  }, [isOpen])
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <>
@@ -46,7 +97,11 @@ const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
         </header>
 
         <section className={styles.content}>
-          {items?.length === 0 ? (
+          {loading ? (
+            <div className={styles.emptyState}>
+              <p>Cargando carrito...</p>
+            </div>
+          ) : cartItems?.length === 0 ? (
             <div className={styles.emptyState}>
               <div>
                 <div className={styles.emptyIcon}><ShoppingBag /></div>
@@ -58,11 +113,11 @@ const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
             <>
               <div className={styles.itemsList}>
                 <div className={styles.items}>
-                  {items?.map((item, index) => (
+                  {cartItems?.map((item, index) => (
                     <div key={index + 908} className={styles.item}>
                       <div className={styles.itemImage}>
                         <CheckImage
-                          src={item.img_pro}
+                          src={item.imagen || imgProductDefault}
                           alt={item.nom_pro}
                           imgDefault={imgProductDefault}
                         />
@@ -71,26 +126,31 @@ const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
                       <div className={styles.itemDetails}>
                         <h4 className={styles.itemName}>{item.nom_pro}</h4>
                         <div className={styles.itemMeta}>
-                          <span className={styles.itemMetaText}>Talla: {item.selectedSize}</span>
-                          {/* <span className={styles.itemMetaText}>Color: {item.selectedColor}</span> */}
+                          <span className={styles.itemMetaText}>Talla: {item.nom_tal_pro}</span>
+                          <span className={styles.itemMetaText}>Color: {item.nom_col}</span>
                         </div>
                         <div className={styles.itemFooter}>
-                          <span className={styles.itemPrice}>${item.pre_pro}</span>
+                          <span className={styles.itemPrice}>${item.pre_pro.toFixed(2)}</span>
                           <div className={styles.itemControls}>
                             <button
                               className={styles.quantityButton}
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              onClick={() => updateQuantity(item.id_car, item.cantidad - 1)}
+                              disabled={item.cantidad <= 1}
                             >
                               −
                             </button>
-                            <span className={styles.quantity}>{item.quantity}</span>
+                            <span className={styles.quantity}>{item.cantidad}</span>
                             <button
                               className={styles.quantityButton}
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              onClick={() => updateQuantity(item.id_car, item.cantidad + 1)}
+                              disabled={item.cantidad >= item.stock_disponible}
                             >
                               +
                             </button>
-                            <button className={styles.removeButton} onClick={() => removeFromCart(item.id)}>
+                            <button
+                              className={styles.removeButton}
+                              onClick={() => removeFromCart(item.id_car)}
+                            >
                               🗑️
                             </button>
                           </div>
@@ -104,7 +164,7 @@ const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
               <div className={styles.footer}>
                 <div className={styles.total}>
                   <span className={styles.totalLabel}>Total:</span>
-                  <span className={styles.totalAmount}>${getTotalPrice()}</span>
+                  <span className={styles.totalAmount}>${getTotalPrice().toFixed(2)}</span>
                 </div>
 
                 <div className={styles.actions}>
@@ -119,7 +179,7 @@ const CartSheet = ({ isOpen, onClose, imgProductDefault = '' }) => {
         </section>
       </main>
     </>
-  )
-}
+  );
+};
 
-export default CartSheet
+export default CartSheet;
