@@ -179,10 +179,6 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
 
   return (
     <main className={styles.catalogPage}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Nuestro Catálogo</h1>
-        <p className={styles.subtitle}>Encuentra lo que buscas entre nuestra selección</p>
-      </header>
 
       <div className={styles.contentWrapper}>
         {/* Filters sidebar - moved to left side */}

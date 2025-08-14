@@ -4,22 +4,6 @@
   margin: 0 auto;
 }
 
-.header {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.title {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-
-.subtitle {
-  color: var(--text-secondary);
-  font-size: clamp(0.875rem, 2vw, 1rem);
-}
 
 .contentWrapper {
   display: flex;
@@ -34,7 +18,6 @@
   position: sticky;
   top: 1rem;
   align-self: flex-start;
-  height: calc(100vh - 2rem);
   overflow-y: auto;
 }
 
