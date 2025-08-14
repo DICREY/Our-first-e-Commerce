@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     // Vars 
     let didFetch = false;
 
-    // Cargar favoritos desde localStorage o API
+    // Función para cargar favoritos
     const loadFavorites = async (userDoc) => {
         try {
             // 1. Primero verificar si hay datos en localStorage
@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
     // Iniciar sesion 
     const login = async (url = '', data = {}) => {
         if (didFetch) return;
@@ -48,6 +49,7 @@ export const AuthProvider = ({ children }) => {
             if (response) {
                 const userData = decodeJWT(response.__cred);
                 setUser(userData);
+                await loadFavorites(userData.doc);
                 setToken(response.__cred); // Guardar el token
                 setTheme(userData.theme);
                 setImg(userData.img);
@@ -134,7 +136,7 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, []);
 
-    // Función para manejar favoritos
+       // Función para alternar favoritos
     const toggleFavorite = async (productId) => {
         if (!user) {
             // Manejar redirección a login
@@ -143,11 +145,12 @@ export const AuthProvider = ({ children }) => {
 
         try {
             let updatedFavorites;
+            const isCurrentlyFavorite = favorites.some(fav => fav.id_pro === productId);
             
-            if (favorites.some(fav => fav.id_pro === productId)) {
+            if (isCurrentlyFavorite) {
                 // Eliminar de favoritos
                 await DeleteData(`${URL}/products/favorites/remove`, {
-                    doc_per: user.doc_per,
+                    doc_per: user.doc,
                     productId
                 }, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -157,7 +160,7 @@ export const AuthProvider = ({ children }) => {
             } else {
                 // Agregar a favoritos
                 const response = await PostData(`${URL}/products/favorites/add`, {
-                    doc_per: user.doc_per,
+                    doc_per: user.doc,
                     productId
                 }, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -168,7 +171,7 @@ export const AuthProvider = ({ children }) => {
 
             // Actualizar estado y localStorage
             setFavorites(updatedFavorites);
-            localStorage.setItem(`favorites_${user.doc_per}`, JSON.stringify(updatedFavorites));
+            localStorage.setItem(`favorites_${user.doc}`, JSON.stringify(updatedFavorites));
             
             return true;
         } catch (error) {
