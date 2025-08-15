@@ -2690,13 +2690,13 @@ axe-core@^4.10.0:
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.10.3.tgz"
   integrity sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==
 
-axios@^1.10.0:
-  version "1.10.0"
-  resolved "https://registry.npmjs.org/axios/-/axios-1.10.0.tgz"
-  integrity sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==
+axios@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.11.0.tgz#c2ec219e35e414c025b2095e8b8280278478fdb6"
+  integrity sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==
   dependencies:
     follow-redirects "^1.15.6"
-    form-data "^4.0.0"
+    form-data "^4.0.4"
     proxy-from-env "^1.1.0"
 
 axobject-query@^4.1.0:
@@ -4658,10 +4658,10 @@ form-data@^3.0.0:
     es-set-tostringtag "^2.1.0"
     mime-types "^2.1.35"
 
-form-data@^4.0.0:
-  version "4.0.3"
-  resolved "https://registry.npmjs.org/form-data/-/form-data-4.0.3.tgz"
-  integrity sha512-qsITQPfmvMOSAdeyZ+12I1c+CKSstAFAwu+97zrnWAbIr5u8wfsExUzCesVLC8NgHuRUqNN4Zy6UPWUTRGslcA==
+form-data@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.4.tgz#784cdcce0669a9d68e94d11ac4eea98088edd2c4"
+  integrity sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==
   dependencies:
     asynckit "^0.4.0"
     combined-stream "^1.0.8"
@@ -6366,10 +6366,10 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
-lucide-react@^0.516.0:
-  version "0.516.0"
-  resolved "https://registry.npmjs.org/lucide-react/-/lucide-react-0.516.0.tgz"
-  integrity sha512-aybBJzLHcw1CIn3rUcRkztB37dsJATtpffLNX+0/w+ws2p21nYIlOwX/B5fqxq8F/BjqVemnJX8chKwRidvROg==
+lucide-react@^0.539.0:
+  version "0.539.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.539.0.tgz#0d0fcd53ed7042c603d201035d9315171ed7654c"
+  integrity sha512-VVISr+VF2krO91FeuCrm1rSOLACQUYVy7NQkzrOty52Y8TlTPcXcMdQFj9bYzBgXbWCiywlwSZ3Z8u6a+6bMlg==
 
 magic-string@^0.25.0, magic-string@^0.25.7:
   version "0.25.9"
@@ -7756,10 +7756,10 @@ react-dev-utils@^12.0.1:
     strip-ansi "^6.0.1"
     text-table "^0.2.0"
 
-react-dom@^19.1.0:
-  version "19.1.0"
-  resolved "https://registry.npmjs.org/react-dom/-/react-dom-19.1.0.tgz"
-  integrity sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==
+react-dom@^19.1.1:
+  version "19.1.1"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.1.1.tgz#2daa9ff7f3ae384aeb30e76d5ee38c046dc89893"
+  integrity sha512-Dlq/5LAZgF0Gaz6yiqZCf6VCcZs1ghAJyrsu84Q/GT0gV+mCxbfmKNoGRKBYMJ8IEdGPqu49YWXD02GCknEDkw==
   dependencies:
     scheduler "^0.26.0"
 
@@ -7788,24 +7788,24 @@ react-refresh@^0.11.0:
   resolved "https://registry.npmjs.org/react-refresh/-/react-refresh-0.11.0.tgz"
   integrity sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==
 
-react-router-dom@^7.6.2:
-  version "7.6.2"
-  resolved "https://registry.npmjs.org/react-router-dom/-/react-router-dom-7.6.2.tgz"
-  integrity sha512-Q8zb6VlTbdYKK5JJBLQEN06oTUa/RAbG/oQS1auK1I0TbJOXktqm+QENEVJU6QvWynlXPRBXI3fiOQcSEA78rA==
+react-router-dom@^7.8.0:
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.8.0.tgz#8c5e6f86e6c1f82037586124130df5926fdab10c"
+  integrity sha512-ntInsnDVnVRdtSu6ODmTQ41cbluak/ENeTif7GBce0L6eztFg6/e1hXAysFQI8X25C8ipKmT9cClbJwxx3Kaqw==
   dependencies:
-    react-router "7.6.2"
+    react-router "7.8.0"
 
-react-router@7.6.2:
-  version "7.6.2"
-  resolved "https://registry.npmjs.org/react-router/-/react-router-7.6.2.tgz"
-  integrity sha512-U7Nv3y+bMimgWjhlT5CRdzHPu2/KVmqPwKUCChW8en5P3znxUqwlYFlbmyj8Rgp1SF6zs5X4+77kBVknkg6a0w==
+react-router@7.8.0:
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.8.0.tgz#2bc07e0a9ff74d88ee38c2f27897e968b8f59170"
+  integrity sha512-r15M3+LHKgM4SOapNmsH3smAizWds1vJ0Z9C4mWaKnT9/wD7+d/0jYcj6LmOvonkrO4Rgdyp4KQ/29gWN2i1eg==
   dependencies:
     cookie "^1.0.1"
     set-cookie-parser "^2.6.0"
 
 react-scripts@^5.0.1:
   version "5.0.1"
-  resolved "https://registry.npmjs.org/react-scripts/-/react-scripts-5.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-5.0.1.tgz#6285dbd65a8ba6e49ca8d651ce30645a6d980003"
   integrity sha512-8VAmEm/ZAwQzJ+GOMLbBsTdDKOpuZh7RPs0UymvBR2vRk4iZWCskjbFnxqjrzoIvlNNRZ3QJFx6/qDSi6zSnaQ==
   dependencies:
     "@babel/core" "^7.16.0"
@@ -7858,10 +7858,10 @@ react-scripts@^5.0.1:
   optionalDependencies:
     fsevents "^2.3.2"
 
-react@^19.1.0:
-  version "19.1.0"
-  resolved "https://registry.npmjs.org/react/-/react-19.1.0.tgz"
-  integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
+react@^19.1.1:
+  version "19.1.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-19.1.1.tgz#06d9149ec5e083a67f9a1e39ce97b06a03b644af"
+  integrity sha512-w8nqGImo45dmMIfljjMwOGtbmC/mk4CMYhWIicdSflH91J9TyCyczcPFXJzrZ/ZXcgGRFeP6BU0BEJTw6tZdfQ==
 
 read-cache@^1.0.0:
   version "1.0.0"
@@ -8853,10 +8853,10 @@ svgo@^2.7.0:
     picocolors "^1.0.0"
     stable "^0.1.8"
 
-sweetalert2@^11.22.2:
-  version "11.22.2"
-  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.22.2.tgz#d4d82a2edd4e97024306fe37f1bc64fa576e9bc9"
-  integrity sha512-GFQGzw8ZXF23PO79WMAYXLl4zYmLiaKqYJwcp5eBF07wiI5BYPbZtKi2pcvVmfUQK+FqL1risJAMxugcPbGIyg==
+sweetalert2@^11.22.3:
+  version "11.22.3"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.22.3.tgz#0bb19be374b4bf7d8726dfcaf1f6abdf3b8114b6"
+  integrity sha512-//WtZEvs9XRmyQVs77tz02ERu2JUTATQvrec+MjJYtKtnYSYDDgAmDdWzRWMkcxClj828EQgfHrpM+tI6qcMOg==
 
 symbol-tree@^3.2.4:
   version "3.2.4"

@@ -5,6 +5,7 @@ import {
     DollarSign, Type, AlignLeft,
     X, Save, Plus, Trash2,
 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 // Imports 
 import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
@@ -13,26 +14,27 @@ import AdminLoadingScreen from '../Global/Loading'
 
 // Import styles 
 import styles from '../../styles/Products/ProductRegister.module.css'
-import { useNavigate } from 'react-router-dom'
 
 // Component 
 export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
-    const [ currentColor, setCurrentColor ] = useState({ name: '', hex: '#000000' })
+    const [ currentColor, setCurrentColor ] = useState({ nom_col: '', hex_col: '#000000' })
     const [ currentSize, setCurrentSize ] = useState('')
-    const [ currentImageColor, setCurrentImageColor ] = useState('')
     const [ categories, setCategories ] = useState(null)
     const [ brands, setBrands ] = useState(null)
     const [ sizes, setSizes ] = useState(null)
     const [ showDropDown, setShowDropDown ] = useState(null)
+    const [ imgExpand, setImgExpand ] = useState(null)
     const [ errors, setErrors ] = useState({})
     const [ isSubmitting, setIsSubmitting ] = useState(false)
     const [ isLoading, setIsLoading ] = useState()
     const [ formData, setFormData ] = useState({
         nom_pro: '',
+        pre_ori_pro: '',
         pre_pro: '',
         des_pro: '',
         onSale: false,
         nom_cat: '',
+        nom_mar: '',
         colores: [],
         tallas: [],
     })
@@ -92,21 +94,15 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
         showAlertLoading('Cargando...', 'Por favor espera', 'info')
 
         try {
-            console.log(formData)
-            formData.hex_colores = String(formData.colores.map(i => i.hex))
-            formData.imgs = String(formData.colores.map(i => i.url))
-            formData.colores = String(formData.colores.map(i => i.name))
-            formData.tallas = String(formData.tallas)
             const response = await PostData(`${URL}/products/register`, formData)
-            console.log(response)
-            if (response.success) {
+            if (response?.success) {
                 setIsSubmitting(false)
                 setIsLoading(false)
                 showAlert('Éxito', 'Producto registrado exitosamente', 'success')
                 setTimeout(() => {
                     navigate('/admin/products')
                 }, 3000)
-            }
+            } else showAlert('Error', 'No se ha recibido respuesta del servidor', 'error')
         } catch (err) {
             setIsSubmitting(false)
             setIsLoading(false)
@@ -126,12 +122,12 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
     }
 
     const GetBrands = async () => {
-        try {
-            const got = await GetData(`${URL}/products/brands`)
-            setBrands(got)
-        } catch (err) {
-            const message = errorStatusHandler(err)
-            showAlert('Error', message, 'error')
+        try {      
+          const gotBrands = await GetData(`${URL}/products/brands`)
+          if (gotBrands) setBrands(gotBrands)
+        } catch (err) {      
+          const message = errorStatusHandler(err)
+          showAlert('Error', message, 'error')
         }
     }
 
@@ -145,15 +141,6 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
             const message = errorStatusHandler(err)
             showAlert('Error', message, 'error')
         }
-    }
-
-    const addColorAndImage = (colorIdx) => {
-        const newColors = [...formData.colores]
-        const replic = newColors?.some(i => i?.url?.includes(currentImageColor))
-
-        if (replic) return
-        newColors[colorIdx].url = currentImageColor
-        setFormData({ ...formData, colores: newColors })
     }
     
     useEffect(() => {
@@ -207,6 +194,22 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                             </label>
                         </div>
 
+                        <div className={`${styles.formGroup} ${errors.nom_mar ? styles.hasError : ''}`}>
+                            <label><List size={16} /> Marca*</label>
+                            <select
+                                name="nom_mar"
+                                value={formData.nom_mar}
+                                onChange={handleChange}
+                                className={styles.select}
+                            >
+                                <option value="">Seleccionar marca</option>
+                                {brands?.map((cat, idx) => (
+                                    <option key={idx + 989} value={cat.nom_mar}>{cat.nom_mar}</option>
+                                ))}
+                            </select>
+                            {errors.nom_mar && <span className={styles.errorText}>{errors.nom_mar}</span>}
+                        </div>
+
                         <div className={styles.formGroup}>
                             <label><AlignLeft size={16} /> Descripción</label>
                             <textarea
@@ -222,6 +225,25 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
 
                     {/* Columna derecha - Variantes y multimedia */}
                     <div className={styles.formColumn}>
+                        <div className={`${styles.formGroup} ${errors.pre_pro ? styles.hasError : ''}`}>
+                            <label><DollarSign size={16} /> Precio Original*</label>
+                            <div className={styles.inputWithSymbol}>
+                                <span>$</span>
+                                <input
+                                    type="number"
+                                    name="pre_ori_pro"
+                                    value={formData.pre_ori_pro}
+                                    onChange={handleChange}
+                                    placeholder="0.00"
+                                    step="0.01"
+                                    min="0"
+                                    maxLength={10}
+                                    className={styles.input}
+                                />
+                            </div>
+                            {errors.pre_ori_pro && <span className={styles.errorText}>{errors.pre_ori_pro}</span>}
+                        </div>
+
                         <div className={`${styles.formGroup} ${errors.pre_pro ? styles.hasError : ''}`}>
                             <label><DollarSign size={16} /> Precio*</label>
                             <div className={styles.inputWithSymbol}>
@@ -240,6 +262,7 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                             </div>
                             {errors.pre_pro && <span className={styles.errorText}>{errors.pre_pro}</span>}
                         </div>
+
 
                         <div className={`${styles.formGroup} ${errors.nom_cat ? styles.hasError : ''}`}>
                             <label><List size={16} /> Categoría*</label>
@@ -332,12 +355,12 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                         <div className={styles.colorHeader}>
                                             <span
                                                 className={styles.colorBadge}
-                                                style={{ backgroundColor: color.hex }}
+                                                style={{ backgroundColor: color.hex_col }}
                                             />
-                                            <span className={styles.colorName}>{color.name}</span>
+                                            <span className={styles.colorName}>{color.nom_col }</span>
                                             <button
                                                 type="button"
-                                                onClick={() => removeItem('colores', colorIndex)}
+                                                
                                                 className={styles.tagRemove}
                                             >
                                                 <X size={14} />
@@ -348,18 +371,10 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                         <div className={styles.imageInputGroup}>
                                             <input
                                                 type="text"
-                                                value={currentImageColor || ''}
-                                                onChange={(e) => setCurrentImageColor(e.target.value)}
+                                                value={color.url_img || ''}                                                
                                                 placeholder="URL de imagen para este color"
                                                 className={styles.input}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => addColorAndImage(colorIndex)}
-                                                className={styles.addButton}
-                                            >
-                                                <Plus size={16} />
-                                            </button>
+                                            />    
                                         </div>
                                     </section>
 
@@ -368,57 +383,90 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                     <section 
                                         className={styles.imagePreviewItem}
                                         style={{ borderColor: color.hex }}
+                                    >
+                                        <picture
+                                            onClick={() => setImgExpand(color?.url_img || '')}
                                         >
-                                        <CheckImage
-                                            src={color.url}
-                                            alt={color.name}
-                                            imgDefault={imgDefault}
-                                        />
+                                            <CheckImage
+                                                src={color.url_img}
+                                                alt={color.nom_img}
+                                                imgDefault={imgDefault}
+                                            />
+                                        </picture>
                                         <button
                                             type="button"
-                                            onClick={() => {
-                                                const newColors = [...formData.colors];
-                                                newColors[colorIndex].splice(colorIndex, 1);
-                                                setFormData({ ...formData, colors: newColors });
-                                            }}
+                                            onClick={() => removeItem('colores', colorIndex)}
                                             className={styles.imageRemove}
                                         >
-                                            <Trash2 size={14} />
+                                            <Trash2 />
                                         </button>
                                     </section>
                                 </section>
                             ))}
 
                             {/* Input para agregar nuevo color */}
-                            <div className={styles.newColorGroup}>
-                                <div className={styles.multiInputGroup}>
-                                    <input
-                                        type="text"
-                                        value={currentColor.name}
-                                        onChange={(e) => setCurrentColor({ ...currentColor, name: e.target.value })}
-                                        placeholder="Nombre del color"
-                                        className={styles.input}
-                                    />
-                                    <div className={styles.colorPickerWrapper}>
+                            <div className={styles.formGrid}>
+                                <div className={styles.formColumn}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="">Nombre del color*</label>
                                         <input
-                                            type="color"
-                                            value={currentColor.hex}
-                                            onChange={(e) => setCurrentColor({ ...currentColor, hex: e.target.value })}
+                                            type="text"
+                                            value={currentColor.nom_col}
+                                            onChange={(e) => setCurrentColor({ ...currentColor, nom_col: e.target.value })}
+                                            placeholder="Nombre del color"
+                                            className={styles.input}
                                         />
-                                        <span>{currentColor.hex}</span>
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="">Url de Imagen*</label>
+                                        <input
+                                            type="text"
+                                            value={currentColor.url_img}
+                                            onChange={(e) => setCurrentColor({ 
+                                                ...currentColor,
+                                                url_img: e.target.value,
+                                                nom_img: `${formData.nom_pro.split(' ')?.[0] || ''}${currentColor?.nom_col || ''}`
+                                            })}
+                                            placeholder="URL de imagen para este color"
+                                            className={styles.input}
+                                        />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="">Codigo hex del color*</label>
+                                        <div className={styles.colorPickerWrapper}>
+                                            <input
+                                                type="color"
+                                                value={currentColor.hex_col}
+                                                onChange={(e) => setCurrentColor({ ...currentColor, hex_col: e.target.value })}
+                                            />
+                                            <span>{currentColor.hex_col}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={styles.formColumn}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="">Preview de Imagen*</label>
+                                        <section 
+                                            className={styles.imagePreviewItem}
+                                            style={{ borderColor: currentColor.hex_col, cursor: 'zoom-in' }}
+                                            onClick={() => setImgExpand(currentColor?.url_img)}
+                                        >
+                                            <CheckImage
+                                                src={currentColor.url_img}
+                                                alt={currentColor.nom_col}
+                                                imgDefault={imgDefault}
+                                            />
+                                        </section>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            if (currentColor.name && currentColor.hex) {
+                                            if (currentColor.nom_col && currentColor.hex_col && currentColor.url_img) {
                                                 setFormData(prev => ({
                                                     ...prev,
-                                                    colores: [...prev.colores, {
-                                                        ...currentColor,
-                                                        images: []
-                                                    }]
-                                                }));
-                                                setCurrentColor({ name: '', hex: '#ffffff' });
+                                                    colores: [...prev.colores, currentColor ]
+                                                }))
+                                                setCurrentColor({ nom_col: '', hex_col: '#ffffff', url_img: '', nom_img: '' });
                                             }
                                         }}
                                         className={styles.addButton}
@@ -456,6 +504,17 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
             </form>
             {isLoading && (
                 <AdminLoadingScreen message='Cargando...' />
+            )}
+            {imgExpand && (
+                <picture 
+                    onClick={() => setImgExpand(null)}
+                    className='activeImg'
+                >
+                    <CheckImage
+                        src={imgExpand}
+                        imgDefault={imgDefault}
+                    />
+                </picture>
             )}
         </main>
     )

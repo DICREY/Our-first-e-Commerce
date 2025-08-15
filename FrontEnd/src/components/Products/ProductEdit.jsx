@@ -5,7 +5,7 @@ import { Check, ChevronLeft, Plus, X } from 'lucide-react'
 
 // Imports 
 import { GetData, ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, searchFilter, showAlert } from '../../Utils/utils'
+import { CheckImage, errorStatusHandler, searchFilter, showAlert, showAlertLoading } from '../../Utils/utils'
 
 // Import styles
 import styles from '../../styles/Products/ProductEdit.module.css'
@@ -134,11 +134,12 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
     e.preventDefault()
     try {
       const dataMod = { ...formData }
+      showAlertLoading('Cargando...', 'Por favor espera', 'info')
       const mod = await ModifyData(`${URL}/products/modify`,dataMod)
       if (mod.success){
         showAlert('Producto Modificado','El producto ha sido modificado satisfactoriamente','success')
         fetchProduct()
-      } 
+      } else showAlert('Error', 'No se ha recibido respuesta del servidor', 'error')
     } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')

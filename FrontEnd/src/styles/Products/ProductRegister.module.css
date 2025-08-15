@@ -104,7 +104,8 @@
 
 .newColorGroup {
     margin-top: 1.5rem;
-    padding-top: 1rem;
+    padding: 1rem 0;
+    gap: 0.5rem;
     border-top: 1px dashed var(--neutral-300);
 }
 
@@ -185,10 +186,7 @@
     position: relative;
     display: flex;
     gap: 0.5rem;
-}
-
-.multiInputGroup input {
-    flex: 1;
+    margin: 1rem 0;
 }
 
 .addButton {
@@ -212,14 +210,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 4rem;
-    height: 3rem;
+    width: 7rem;
+    height: 4rem;
 }
 
 .colorPickerWrapper input[type="color"] {
     cursor: pointer;
-    width: 2rem;
-    height: 4rem;
+    width: 7rem;
+    height: 5rem;
     padding: 0;
     border: none;
     border-radius: .2rem;
@@ -227,7 +225,7 @@
 }
 
 .colorPickerWrapper span {
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: var(--text-secondary);
 }
 
@@ -277,8 +275,8 @@
     display: flex;
     place-items: center;
     place-content: center;
-    height: 8rem;
-    width: 8rem;
+    height: 12rem;
+    width: 12rem;
     border-radius: var(--rounded);
     border: .14rem solid var(--neutral-200);
     overflow: hidden;
@@ -293,17 +291,17 @@
 
 .imageRemove {
     position: absolute;
+    cursor: pointer;
     top: 0;
     right: 0;
-    background: rgba(0,0,0,0.5);
-    color: var(--white);
-    border: none;
-    width: 24px;
-    height: 24px;
+    color: var(--accent-600);
+    width: 1.5rem;
+    height: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    border: none;
+    background: transparent;
     transition: var(--transition);
 }
 

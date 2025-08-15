@@ -263,7 +263,7 @@ Route.post('/inventory', async (req, res) => {
 });
 
 // Call Middleware for verify the request data
-Route.use(Fullinfo(['img_default', 'colors', 'sizes']))
+Route.use(Fullinfo(['img_default', 'colors', 'sizes', 'inv']))
 
 Route.post('/all/by', async (req, res) => {
     // Vars 
@@ -338,7 +338,7 @@ Route.post('/register', async (req, res) => {
         const prod = new Product(body)
         const create = await prod.create()
 
-        if (create.success) return res.status(201).json(create)
+        if (create.success) return res.status(201).json({ result: create })
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch (err) {

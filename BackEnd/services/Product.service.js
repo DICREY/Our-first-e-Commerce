@@ -15,12 +15,12 @@ class Product {
     async create() {
         return new Promise((res, rej) => {
             // vars
-            const proc = "CALL RegisterProduct(?,?,?,?,?,?,?,?,?,?,?,?);"
+            const proc = "CALL RegisterProduct(?,?,?,?,?,?,?,?,?,?,?);"
             const params = [
                 this.args[0].nom_pro,
                 this.args[0].pre_ori_pro,
                 this.args[0].pre_pro,
-                this.args[0].des_pre_pro,
+                this.args[0].des_pre_pro || 0,
                 this.args[0].des_pro,
                 this.args[0].onSale,
                 this.args[0].nom_cat,
