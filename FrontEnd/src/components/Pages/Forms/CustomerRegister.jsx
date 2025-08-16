@@ -7,12 +7,12 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
-import { PostData } from '../../Utils/Requests'
-import AdminLoadingScreen from '../Global/Loading'
+import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
+import { PostData } from '../../../Utils/Requests'
+import AdminLoadingScreen from '../../Global/Loading'
 
 // Import styles
-import styles from '../../styles/People/CustomerRegister.module.css'
+import styles from '../../../styles/People/CustomerRegister.module.css'
 
 // Component 
 export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {

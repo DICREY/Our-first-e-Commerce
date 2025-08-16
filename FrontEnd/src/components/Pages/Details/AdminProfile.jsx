@@ -5,13 +5,13 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { AuthContext } from '../../Contexts/Contexts'
-import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertLoading } from '../../Utils/utils'
-import AdminLoadingScreen from '../Global/Loading'
+import { AuthContext } from '../../../Contexts/Contexts'
+import { ModifyData, PostData } from '../../../Utils/Requests'
+import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertLoading } from '../../../Utils/utils'
+import AdminLoadingScreen from '../../Global/Loading'
 
 // Import styles 
-import styles from '../../styles/People/AdminProfile.module.css'
+import styles from '../../../styles/People/AdminProfile.module.css'
 
 // Component 
 export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
@@ -114,7 +114,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
   const fetchData = async () => {
     if (didFetch) return
     try {
-      const response = await PostData(`${URL}/peoples/by`, { by: user.doc })
+      const response = await PostData(`${URL}/peoples/by`, { by: user.email })
       didFetch = true
       if (response && response[0]) {
         const userData = response[0]

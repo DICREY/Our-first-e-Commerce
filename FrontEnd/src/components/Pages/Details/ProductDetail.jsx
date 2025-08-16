@@ -18,12 +18,12 @@ import {
 import { useNavigate } from 'react-router-dom'
 
 // Imports 
-import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatDate, formatNumber, showAlert, showAlertLoading, showAlertSelect } from '../../Utils/utils'
-import AdminLoadingScreen from '../Global/Loading'
+import { ModifyData, PostData } from '../../../Utils/Requests'
+import { CheckImage, errorStatusHandler, formatDate, formatNumber, showAlert, showAlertLoading, showAlertSelect } from '../../../Utils/utils'
+import AdminLoadingScreen from '../../Global/Loading'
 
 // Import styles 
-import styles from '../../styles/Details/ProductDetail.module.css'
+import styles from '../../../styles/Details/ProductDetail.module.css'
 
 // Component 
 export const ProductDetailAdmin = ({ URL = '', imgDefault = '' }) => {

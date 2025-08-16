@@ -122,7 +122,7 @@ export const Customers = ({ URL = '', ImgDefault = '' }) => {
     const biClick = (data) => {
         setCount(count+1)
         if (count === 2) {
-            localStorage.setItem('id_peo',data.doc_per)            
+            localStorage.setItem('id_peo',data.email_per)            
             navigate('/admin/customers/details')
         }
     }
@@ -268,7 +268,7 @@ export const Customers = ({ URL = '', ImgDefault = '' }) => {
                                         <div className={styles.actionButtons}>
                                             <button
                                                 onClick={() => {
-                                                    localStorage.setItem('id_peo',customer.doc_per)
+                                                    localStorage.setItem('id_peo',customer.email_per)
                                                     navigate('/admin/customers/details')
                                                 }}
                                                 className={styles.viewButton}

@@ -4,29 +4,29 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-
 
 // Imports 
 import { CartProvider } from "./Contexts/CartContext"
-import { LoginForm } from "./components/Forms/Login"
-import { RegisterForm } from "./components/Forms/Register"
 import { AuthProvider } from "./Contexts/Auth.context"
 import { AuthContext } from "./Contexts/Contexts"
 import { Dashboard } from './components/Admin/Dashboard'
 import { ProductList } from "./components/Admin/Products"
 import { OrdersList } from "./components/Admin/Orders"
 import { Customers } from "./components/Admin/Clients"
-import { NavAdmin } from "./components/Headers/Navs/NavAdmin"
-import { OrderDetail } from "./components/Details/OrdersDetails"
-import { CustomerDetail } from "./components/Details/CustomersDetails"
-import { ProductDetailAdmin } from "./components/Details/ProductDetail"
-import { AdminProfile } from "./components/People/AdminProfile"
-import { CustomerRegister } from "./components/People/CustomerRegister";
-import { ProductRegister } from "./components/Products/ProductRegister";
-import { OrderRegister } from "./components/Admin/OrderRegister";
-import { useDarkMode } from "./Hooks/Theme";
 import { OfferManager } from "./components/Admin/Offers";
+import { NavAdmin } from "./components/Headers/Navs/NavAdmin"
+import { useDarkMode } from "./Hooks/Theme";
 import { ProductEdit } from "./components/Products/ProductEdit";
 import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
+import { LoginForm } from "./components/Pages/MainForms/Login";
+import { RegisterForm } from "./components/Pages/MainForms/Register";
+import { ProductDetailAdmin } from "./components/Pages/Details/ProductDetail";
+import { ProductRegister } from "./components/Pages/Forms/ProductRegister";
+import { OrderDetail } from "./components/Pages/Details/OrdersDetails";
+import { CustomerDetail } from "./components/Pages/Details/CustomersDetails";
+import { CustomerRegister } from "./components/Pages/Forms/CustomerRegister";
+import { AdminProfile } from "./components/Pages/Details/AdminProfile";
+import { OrderRegister } from "./components/Pages/Forms/OrderRegister";
 
 // Main Module 
 const App = () => {
@@ -78,6 +78,16 @@ const App = () => {
               <Route 
                 path="/" 
                 element={<HomePage URL={URL} imgProduct={imgProduct} setProduct={setProduct} />} 
+              />
+              <Route 
+                path="/profile"
+                element={
+                  <ProductCatalog
+                    URL={URL}
+                    imgDefault={imgProduct}
+                    setProduct={setProduct}
+                  />
+                } 
               />
               <Route 
                 path="/productos/all"
@@ -143,8 +153,8 @@ const App = () => {
             <Route element={<PrivateRoute />}>
               <Route element={<MainLayout />}>
                 <Route 
-                  path="/user/perfil" 
-                  element={<div>Perfil de Usuario (en construcción)</div>} 
+                  path="/user/profile"
+                  element={<AdminProfile URL={URL} imgDefault={imgUser} />} 
                 />
               </Route>
             </Route>

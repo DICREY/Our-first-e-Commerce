@@ -8,12 +8,12 @@ import {
 import { useNavigate } from 'react-router-dom'
 
 // Imports 
-import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
-import { GetData, PostData } from '../../Utils/Requests'
-import AdminLoadingScreen from '../Global/Loading'
+import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
+import { GetData, PostData } from '../../../Utils/Requests'
+import AdminLoadingScreen from '../../Global/Loading'
 
 // Import styles 
-import styles from '../../styles/Products/ProductRegister.module.css'
+import styles from '../../../styles/Products/ProductRegister.module.css'
 
 // Component 
 export const ProductRegister = ({ URL = '', imgDefault = '' }) => {

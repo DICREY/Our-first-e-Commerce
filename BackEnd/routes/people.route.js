@@ -47,7 +47,7 @@ Route.get('/all:by', async (req,res) => {
 })
 
 // Call Middleware for verify the request data
-Route.use(Fullinfo(['nom2_per', 'cel2_per', 'fot_per']))
+Route.use(Fullinfo(['nom2_per', 'cel2_per', 'fot_per', 'cel_per', 'dir_per']))
 
 Route.post('/by', async (req,res) => {
     try {

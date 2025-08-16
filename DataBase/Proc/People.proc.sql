@@ -30,12 +30,12 @@ BEGIN
     START TRANSACTION;
 
     IF (SELECT id_per FROM personas WHERE doc_per = p_doc_per) THEN 
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Este numero de documento ya esta registrado en el sistema';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Este numero de documento ya está registrado en el sistema';
     END IF;
 
     
     IF (SELECT id_per FROM personas WHERE email_per = p_email_per) THEN 
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Este correo electrónico ya esta registrado en el sistema';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Este correo electrónico ya está registrado en el sistema';
     END IF;
 
     INSERT INTO personas (
@@ -83,8 +83,8 @@ BEGIN
 
     START TRANSACTION;
 
-    IF (SELECT id_per FROM personas WHERE doc_per = p_doc_per) IS NULL THEN 
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esta persona no esta registrada en el sistema';
+    IF (SELECT id_per FROM personas WHERE email_per = p_email_per) IS NULL THEN 
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esta persona no está registrada en el sistema';
     END IF;
 
     UPDATE 
@@ -98,11 +98,11 @@ BEGIN
         p.dir_per = p_dir_per,
         p.cel_per = p_cel_per,
         p.cel2_per = p_cel2_per,
-        p.email_per = p_email_per,
+        p.doc_per = p_doc_per,
         p.gen_per = p_gen_per,
         p.fot_per = p_img_per
     WHERE
-        p.doc_per = p_doc_per;
+        p.email_per = p_email_per;
 
     COMMIT;
     SET autocommit = 1;
@@ -110,7 +110,7 @@ END //
 CREATE PROCEDURE e_commerce.SearchPeoples()
 BEGIN
     IF NOT EXISTS(SELECT id_per FROM personas LIMIT 1) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No ahi personas registradas en el sistema';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No ahí personas registradas en el sistema';
     END IF;
 
     SELECT
@@ -151,7 +151,7 @@ BEGIN
         SELECT id_per FROM personas p WHERE p.doc_per = p_by
             OR p.email_per LIKE p_by LIMIT 1
         ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontro esta registrada en el sistema';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontro esta persona registrada en el sistema';
     END IF;
 
     SELECT
@@ -223,8 +223,8 @@ BEGIN
             r.nom_rol = p_by
             OR p.nom_per LIKE CONCAT('%',p_by,'%')
             OR p.ape_per LIKE CONCAT('%',p_by,'%')
-            OR p.doc_per LIKE CONCAT('%',p_by,'%')
-            OR p.email_per LIKE CONCAT('%',p_by,'%')
+            OR p.doc_per LIKE p_by
+            OR p.email_per LIKE p_by
             OR p.gen_per LIKE CONCAT('%',p_by,'%')
             OR p.cel_per LIKE CONCAT('%',p_by,'%')
             OR p.tip_doc_per LIKE CONCAT('%',p_by,'%')
@@ -247,7 +247,7 @@ BEGIN
 
     START TRANSACTION;
 
-    IF (SELECT id_per FROM personas WHERE doc_per = p_by) IS NULL THEN 
+    IF (SELECT id_per FROM personas WHERE doc_per = p_by OR email_per LIKE p_by) IS NULL THEN 
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esta persona no esta registrada en el sistema';
     END IF;
 
@@ -272,5 +272,6 @@ END //
 /* DROP PROCEDURE e_commerce.SearchPeoples; */
 /* DROP PROCEDURE e_commerce.`SearchPeoplesBy`; */
 /* DROP PROCEDURE e_commerce.`SearchPeopleBy`; */
+/* DROP PROCEDURE e_commerce.`DeletePeople`; */
 
 /* CALL `SearchPeoples`(); */

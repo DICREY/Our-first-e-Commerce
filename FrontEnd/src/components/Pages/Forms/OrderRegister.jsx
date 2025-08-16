@@ -6,12 +6,12 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import AdminLoadingScreen from '../Global/Loading'
-import { GetData, PostData } from '../../Utils/Requests'
-import { errorStatusHandler, formatNumber, searchFilter, showAlert, showAlertLoading } from '../../Utils/utils'
+import AdminLoadingScreen from '../../Global/Loading'
+import { GetData, PostData } from '../../../Utils/Requests'
+import { errorStatusHandler, formatNumber, searchFilter, showAlert, showAlertLoading } from '../../../Utils/utils'
 
 // Import styles 
-import styles from '../../styles/Admin/OrderRegister.module.css'
+import styles from '../../../styles/Admin/OrderRegister.module.css'
 
 // Component 
 export const OrderRegister = ({ URL = '' }) => {

@@ -4,13 +4,13 @@ import { Check, ChevronLeft, Mail, PenOff, SquarePen, Trash2, User } from 'lucid
 import { useNavigate } from 'react-router-dom'
 
 // Imports 
-import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert, showAlertLoading, showAlertSelect } from '../../Utils/utils'
-import { ModifyData, PostData } from '../../Utils/Requests'
-import { AuthContext } from '../../Contexts/Contexts'
-import AdminLoadingScreen from '../Global/Loading'
+import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert, showAlertLoading, showAlertSelect } from '../../../Utils/utils'
+import { ModifyData, PostData } from '../../../Utils/Requests'
+import { AuthContext } from '../../../Contexts/Contexts'
+import AdminLoadingScreen from '../../Global/Loading'
 
 // Import styles
-import styles from '../../styles/Details/CustomerDetail.module.css'
+import styles from '../../../styles/Details/CustomerDetail.module.css'
 
 // Component 
 export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
@@ -168,7 +168,17 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                             
                             <div className={styles.detailItem}>
                                 <span className={styles.detailLabel}>Documento:</span>
-                                <span className={styles.detailValue}>{customerData?.doc_per}</span>
+                                {isEditing ? (
+                                    <input
+                                        type="number"
+                                        value={customerData?.doc_per || 'N/A'}
+                                        onChange={(e) => setCustomerData({ ...customerData, doc_per: e.target.value })}
+                                        className={styles.editInput}
+                                        placeholder="Ingrese el documento"
+                                    />
+                                ) : (
+                                    <span className={styles.detailValue}>{customerData?.doc_per}</span>
+                                )}
                             </div>
                             
                             <div className={styles.detailItem}>
@@ -191,13 +201,13 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData?.nom2_per}
+                                        value={customerData?.nom2_per || ''}
                                         onChange={(e) => setCustomerData({ ...customerData, nom2_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el segundo nombre"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData?.nom2_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.nom2_per || 'N/A'}</span>
                                 )}
                             </div>
 
@@ -212,7 +222,7 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                         placeholder="Ingrese el segundo apellido"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData?.ape_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.ape_per || 'N/A'}</span>
                                 )}
                             </div>
 
@@ -221,13 +231,13 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData?.ape2_per}
+                                        value={customerData?.ape2_per || ''}
                                         onChange={(e) => setCustomerData({ ...customerData, ape2_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el apellido"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData?.ape2_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.ape2_per || 'N/A'}</span>
                                 )}
                             </div>
 
@@ -250,13 +260,13 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                 <span className={styles.detailLabel}>Descripción:</span>
                                 {isEditing ? (
                                     <textarea
-                                        value={customerData?.des_per}
+                                        value={customerData?.des_per || ''}
                                         onChange={(e) => setCustomerData({ ...customerData, des_per: e.target.value })}
                                         className={styles.editTextarea}
                                         placeholder="Agregue una descripción"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData?.des_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.des_per || 'N/A'}</span>
                                 )}
                             </div>
                         </div>
@@ -266,24 +276,14 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
 
                             <div className={styles.detailItem}>
                                 <span className={styles.detailLabel}>Email:</span>
-                                {isEditing ? (
-                                    <input
-                                        type="email"
-                                        value={customerData?.email}
-                                        onChange={(e) => setCustomerData({ ...customerData, email_per: e.target.value })}
-                                        className={styles.editInput}
-                                        placeholder="Ingrese el email"
-                                    />
-                                ) : (
-                                    <span className={styles.detailValue}>{customerData?.email}</span>
-                                )}
+                                <span className={styles.detailValue}>{customerData?.email_per}</span>
                             </div>
                             
                             <div className={styles.detailItem}>
                                 <span className={styles.detailLabel}>Dirección:</span>
                                 {isEditing ? (
                                     <textarea
-                                        value={customerData?.dir_per}
+                                        value={customerData?.dir_per || 'N/A'}
                                         onChange={(e) => setCustomerData({ ...customerData, dir_per: e.target.value })}
                                         className={styles.editTextarea}
                                         rows={3}
@@ -303,13 +303,13 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="tel"
-                                        value={customerData?.cel_per}
+                                        value={customerData?.cel_per || ''}
                                         onChange={(e) => setCustomerData({ ...customerData, cel_per: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Número de celular"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData?.cel_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.cel_per || 'N/A'}</span>
                                 )}
                             </div>
 
@@ -324,7 +324,7 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                         placeholder="Número de celular secundario"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData?.cel2_per}</span>
+                                    <span className={styles.detailValue}>{customerData?.cel2_per || 'N/A'}</span>
                                 )}
                             </div>
                             
@@ -333,13 +333,13 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        value={customerData?.vat}
+                                        value={customerData?.vat || ''}
                                         onChange={(e) => setCustomerData({ ...customerData, vat: e.target.value })}
                                         className={styles.editInput}
                                         placeholder="Ingrese el VAT"
                                     />
                                 ) : (
-                                    <span className={styles.detailValue}>{customerData?.vat}</span>
+                                    <span className={styles.detailValue}>{customerData?.vat || 'N/A'}</span>
                                 )}
                             </div>
                         </div>
@@ -350,7 +350,7 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                         <textarea
                             id="noteInput"
                             placeholder="Agregue una nota sobre este cliente..."
-                            value={note}
+                            value={note || ''}
                             onChange={(e) => setNote(e.target.value)}
                             className={styles.noteInput}
                         />

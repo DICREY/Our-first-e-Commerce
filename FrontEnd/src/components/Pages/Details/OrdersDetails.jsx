@@ -15,12 +15,12 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatNumber, showAlert, showAlertLoading, showAlertSelect } from '../../Utils/utils'
-import AdminLoadingScreen from '../Global/Loading'
+import { ModifyData, PostData } from '../../../Utils/Requests'
+import { CheckImage, errorStatusHandler, formatNumber, showAlert, showAlertLoading, showAlertSelect } from '../../../Utils/utils'
+import AdminLoadingScreen from '../../Global/Loading'
 
 // Import styles 
-import styles from '../../styles/Details/OrderDetail.module.css'
+import styles from '../../../styles/Details/OrderDetail.module.css'
 
 // Component 
 export const OrderDetail = ({ URL = '', imgDefault = '' }) => {

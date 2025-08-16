@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
 
     // Vars 
     let didFetch = false;
+    const URL = 'http://localhost:3000/ecommerce'
 
     // Función para cargar favoritos
     const loadFavorites = async (userDoc) => {
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }) => {
     // Change Theme
     const changeTheme = async () => {
         try {
-            const got = await PostData(`http://localhost:3000/ecommerce/credential/preffers/change-theme`, {
+            const got = await PostData(`${URL}/credential/preffers/change-theme`, {
                 doc: user.doc,
                 theme: theme
             });
@@ -112,7 +113,7 @@ export const AuthProvider = ({ children }) => {
             if (didFetch) return;
             setLoading(true);
             try {
-                const check = await PostCookie('http://localhost:3000/ecommerce/cookies/check', { name: '__cred' });
+                const check = await PostCookie(`${URL}/cookies/check`, { name: '__cred' });
                 didFetch = true;
                 setLoading(null);
                 if (check) {

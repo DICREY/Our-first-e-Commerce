@@ -1,5 +1,5 @@
 import { memo, useContext, useEffect, useRef, useState, forwardRef } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, NavLink } from "react-router-dom";
 import { Heart, Search, ShoppingBag } from 'lucide-react';
 
 // Imports 
@@ -74,13 +74,13 @@ const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, imgDefault, handleLogo
             </>
           ) : (
             <>
-              <Link
-                to="/profile"
+              <NavLink
+                to="/user/profile"
                 className={styles.menuOption}
                 onClick={() => setIsOpen(false)}
               >
                 Perfil
-              </Link>
+              </NavLink>
               <button
                 onClick={handleLogout}
                 className={styles.menuOption}

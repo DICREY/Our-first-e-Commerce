@@ -2,15 +2,15 @@
 import React, { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { Mail } from 'lucide-react';
 
 // Imports
-import { PostData } from '../../Utils/Requests'
-import { decodeJWT, errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
-import { AuthContext } from "../../Contexts/Contexts"
-import { auth } from "../../Hooks/AuthFirebase"
+import { errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
+import { AuthContext } from "../../../Contexts/Contexts"
+import { auth } from "../../../Hooks/AuthFirebase"
 
 // Import styles 
-import styles from '../../styles/Forms/login.module.css'
+import styles from '../../../styles/Forms/login.module.css'
 
 // Component 
 export const LoginForm = ({ URL = '' }) => {
@@ -121,6 +121,7 @@ export const LoginForm = ({ URL = '' }) => {
               onClick={signInWithGoogle}
             >
               Iniciar Sesion con Google
+              <Mail />
             </button>
           </span>
         </div>

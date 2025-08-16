@@ -2,11 +2,11 @@
 import React, { useState } from "react"
 
 // Imports 
-import { PostData } from "../../Utils/Requests"
-import { errorStatusHandler, showAlert, showAlertLoading } from "../../Utils/utils"
+import { PostData } from "../../../Utils/Requests"
+import { errorStatusHandler, showAlert, showAlertLoading } from "../../../Utils/utils"
 
 // Import styles 
-import styles from '../../styles/Forms/register.module.css'
+import styles from '../../../styles/Forms/register.module.css'
 
 // Component 
 export const RegisterForm = ({ URL = '' }) => {
