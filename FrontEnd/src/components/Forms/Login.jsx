@@ -5,7 +5,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 
 // Imports
 import { PostData } from '../../Utils/Requests'
-import { errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
+import { decodeJWT, errorStatusHandler, showAlert, showAlertLoading } from '../../Utils/utils'
 import { AuthContext } from "../../Contexts/Contexts"
 import { auth } from "../../Hooks/AuthFirebase"
 
@@ -27,15 +27,33 @@ export const LoginForm = ({ URL = '' }) => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      // Esto te da un Google Access Token. Puedes usarlo para acceder a la API de Google.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // La información del usuario autenticado
-      const user = result.user;
-      console.log(user);
-      // Aquí puedes redirigir al usuario o actualizar el estado de tu app
-    } catch (error) {
-      console.error(error);
+      // Esto te da un Google Access Token.
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const token = credential.accessToken
+      const user = result.user
+      const pass = `Password_${user?.displayName?.split(' ')?.[0].toLowerCase()}*`
+      const userData = { 
+        email: user?.email || '',
+        nom_per: user?.displayName?.split(' ')?.[0] || 'test',
+        ape_per: user?.displayName?.split(' ')?.[1] || 'test',
+        cel_per: user?.phoneNumber,
+        passwd: pass || 'Password123*',
+        url_img: user?.photoURL || '',
+      }
+      console.log(userData)
+
+      showAlertLoading('Cargando...', 'Por favor espera', 'info')
+      const log = await login(`${URL}/credential/login-google`, userData)
+      if (log) {
+        showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+        console.log(pass)
+        setTimeout(() => {
+          navigate('/')
+        }, 2000)
+      }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     }
   };
 

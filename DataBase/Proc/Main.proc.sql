@@ -10,6 +10,7 @@ BEGIN
         p.nom_per,
         p.ape_per,
         p.doc_per,
+        p.email_per,
         p.pas_per,
         p.fot_per,
         pr.theme,
@@ -31,6 +32,71 @@ BEGIN
     ORDER BY 
         p.nom_per
     LIMIT 1000;
+END //
+CREATE PROCEDURE e_commerce.GoogleLogin(
+    IN p_email VARCHAR(100),
+    IN p_nom VARCHAR(100),
+    IN p_ape VARCHAR(100),
+    IN p_cel VARCHAR(100),
+    IN p_passwd TEXT,
+    IN p_url_img TEXT
+)
+BEGIN
+    DECLARE p_id_persona INT;
+    DECLARE p_id_rol INT;
+    DECLARE v_exists INT DEFAULT 0;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+     BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    IF NOT EXISTS (SELECT 1 FROM personas WHERE email_per = p_email) THEN
+        INSERT INTO personas (email_per,nom_per,ape_per,cel_per,pas_per,fot_per)VALUES
+        (p_email,p_nom,p_ape,p_cel,p_passwd,p_url_img);
+
+        SET p_id_persona = LAST_INSERT_ID();
+
+        SELECT id_rol INTO p_id_rol FROM roles WHERE nom_rol = 'Usuario';
+
+        INSERT INTO otorgar_roles(id_per,id_rol,fec_oto)
+        VALUES (p_id_persona,p_id_rol,CURRENT_DATE());
+
+        INSERT INTO preferencias (per_pre,theme) 
+        VALUES (p_id_persona, 'LIGHT');
+    END IF;
+
+    SELECT
+        p.nom_per,
+        p.ape_per,
+        p.doc_per,
+        p.email_per,
+        p.pas_per,
+        p.fot_per,
+        pr.theme,
+        GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
+    FROM
+        personas p
+    JOIN
+        otorgar_roles otr ON otr.id_per = p.id_per
+    JOIN
+        roles r ON otr.id_rol = r.id_rol
+    JOIN
+        preferencias pr ON pr.per_pre = p.id_per
+    WHERE
+        p.estado = 1
+        AND p.email_per = p_email
+    ORDER BY 
+        p.nom_per
+    LIMIT 1000;
+    
+
+    COMMIT;
+    SET autocommit = 1;
 END //
 CREATE PROCEDURE e_commerce.ChangePassword(
     IN p_email VARCHAR(100),
@@ -103,5 +169,8 @@ BEGIN
 END //
 
 /* DROP PROCEDURE e_commerce.`Login`; */
+/* DROP PROCEDURE e_commerce.`GoogleLogin`; */
 /* DROP PROCEDURE e_commerce.ChangeTheme; */
+
 /* CALL e_commerce.Login('admin@gmail.com'); */
+/* CALL e_commerce.GoogleLogin('test@gmail.com','testName','testLastName','31312312','test123','test.jpg'); */

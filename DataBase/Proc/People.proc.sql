@@ -52,6 +52,9 @@ BEGIN
     INSERT INTO otorgar_roles(id_per,id_rol,fec_oto)
     VALUES (p_id_persona,p_id_rol,CURRENT_DATE());
 
+    INSERT INTO preferencias (per_pre,theme) 
+    VALUES (p_id_persona, 'LIGHT');
+
     COMMIT;
     SET autocommit = 1;
 END //

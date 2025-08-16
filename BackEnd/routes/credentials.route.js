@@ -17,7 +17,7 @@ const secret = process.env.JWT_SECRET
 const Route = Router()
 
 // Middleware 
-Route.use(Fullinfo(['empty']))
+Route.use(Fullinfo(['cel_per','url_img']))
 
 // Routes
 Route.post('/register', async (req,res) => {
@@ -26,11 +26,7 @@ Route.post('/register', async (req,res) => {
     const saltRounds = 15
     const body = req.body
     
-    try {
-        // Verifiy if exist
-        const find = await user.findBy(toString(body.doc_per))
-        if (find.result[0][0].nom_per) res.status(302).json({ message: "Usuario ya existe" })
-            
+    try {   
         const create = await user.create({hash_pass: await hash(body.pas_per,saltRounds), ...body})
         res.status(201).json(create)
     } catch(err) {
@@ -43,7 +39,7 @@ Route.post('/register', async (req,res) => {
 Route.post('/login', limiterLog, async (req,res) => {
     // Vars
     const { firstData, secondData } = req.body
-    const global = new Credentl(firstData)
+    const global = new Credentl(String(firstData))
     
     try {
         // Search in database
@@ -60,6 +56,49 @@ Route.post('/login', limiterLog, async (req,res) => {
                 lastNames: user.ape_per,
                 roles: user.roles,
                 doc: user.doc_per,
+                email: user.email_per,
+                img: user.fot_per,
+                theme: user.theme
+            },
+            secret,
+            { expiresIn: '8h' }
+        )
+
+        res.cookie('__cred', token, cookiesOptionsLog)
+        res.cookie('__nit', secret, cookiesOptionsLog)
+
+        if (user.roles) res.cookie('__user', user.roles, cookiesOptionsLog)
+        if (user.nom_per && user.ape_per) res.cookie('__userName', `${user.nom_per} ${user.ape_per}`, cookiesOptionsLog)
+
+        res.status(200).json({ __cred: token })
+
+    } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({ message: err.message })
+
+        res.status(500).json({ message: err })
+    }
+})
+
+Route.post('/login-google', limiterLog, async (req,res) => {
+    try {
+        // Vars
+        const data = req.body
+        const saltRounds = 15
+        const global = new Credentl({ hash_pass: await hash(data.passwd,saltRounds), ...data})
+
+        // Search in database
+        let log = await global.googleLogin()
+        let user = await log.result[0]
+
+        const token = jwt.sign(
+            {   
+                names: user.nom_per,
+                lastNames: user.ape_per,
+                roles: user.roles,
+                doc: user.doc_per,
+                email: user.email_per,
                 img: user.fot_per,
                 theme: user.theme
             },

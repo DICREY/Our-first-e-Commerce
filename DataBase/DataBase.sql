@@ -12,20 +12,20 @@ CREATE TABLE e_commerce.roles(
 CREATE TABLE e_commerce.personas(
     id_per INT AUTO_INCREMENT PRIMARY KEY,
     nom_per VARCHAR(100) NOT NULL,
-    nom2_per VARCHAR(100) DEFAULT 'No-registrado' NOT NULL,
+    nom2_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
     ape_per VARCHAR(100) NOT NULL,
-    ape2_per VARCHAR(100) DEFAULT 'No-registrado' NOT NULL,
-    fec_nac_per DATE NOT NULL,
-    tip_doc_per VARCHAR(10) NOT NULL,
-    doc_per VARCHAR(20) UNIQUE NOT NULL,INDEX(doc_per),
-    dir_per VARCHAR(100) NOT NULL,
-    cel_per VARCHAR(20) NOT NULL,
-    cel2_per VARCHAR(20),
+    ape2_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
+    fec_nac_per DATE DEFAULT CURRENT_TIME NOT NULL,
+    tip_doc_per VARCHAR(10) DEFAULT 'CC' NOT NULL,
+    doc_per VARCHAR(20) UNIQUE,INDEX(doc_per),
+    dir_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
+    cel_per VARCHAR(20) DEFAULT 'N/A' NOT NULL,
+    cel2_per VARCHAR(20) DEFAULT 'N/A' NOT NULL,
     email_per VARCHAR(100) UNIQUE NOT NULL,INDEX(email_per),
     pas_per VARCHAR(255) NOT NULL,
-    gen_per VARCHAR(100) NOT NULL,
+    gen_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
     estado ENUM('DISPONIBLE','NO-DISPONIBLE') DEFAULT 'DISPONIBLE' NOT NULL, # Estado de la persona
-    fot_per TEXT DEFAULT("No-registrado") NOT NULL,
+    fot_per TEXT DEFAULT("N/A") NOT NULL,
     fec_cre_per TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );
@@ -76,8 +76,8 @@ CREATE TABLE e_commerce.colores(
 );
 CREATE TABLE e_commerce.imagenes(
     id_img INT AUTO_INCREMENT PRIMARY KEY,
-    nom_img VARCHAR(100) DEFAULT('No-Registrado') NOT NULL,INDEX(nom_img),
-    url_img TEXT DEFAULT('No-Registrado') NOT NULL
+    nom_img VARCHAR(100) DEFAULT('N/A') NOT NULL,INDEX(nom_img),
+    url_img TEXT DEFAULT('N/A') NOT NULL
 );
 
 CREATE TABLE e_commerce.productos_colores(
@@ -118,7 +118,7 @@ CREATE TABLE e_commerce.metodos_pagos(
 CREATE TABLE e_commerce.metodos_envios(
     id_met_env INT AUTO_INCREMENT PRIMARY KEY,
     nom_met_env VARCHAR(100) NOT NULL,INDEX(nom_met_env),
-    des_met_env TEXT DEFAULT 'No-registrado',
+    des_met_env TEXT DEFAULT 'N/A',
     pre_met_env DECIMAL(10,2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
