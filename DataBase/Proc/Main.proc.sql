@@ -101,8 +101,17 @@ END //
 CREATE PROCEDURE e_commerce.ChangePassword(
     IN p_email VARCHAR(100),
     IN p_passwd TEXT
-    )
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
     IF NOT EXISTS (SELECT 1 FROM personas WHERE email_per = p_email) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email ingresado no existe en el sistema';
     END IF;

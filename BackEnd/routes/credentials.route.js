@@ -7,7 +7,7 @@ const { hash } = require('bcrypt')
 // Imports
 const Credentl = require('../services/Credentl.service')
 const People = require('../services/People.service')
-const { Fullinfo } = require('../middleware/validator.handler')
+const { Fullinfo, ValidatorRol } = require('../middleware/validator.handler')
 const { limiterLog, cookiesOptionsLog } = require('../middleware/varios.handler')
 
 // Env vars
@@ -49,7 +49,7 @@ Route.post('/login', limiterLog, async (req,res) => {
         // Verify
         const coincide = await compare(secondData, user.pas_per)
 
-        if (!coincide) return res.status(401).json({ message: 'Credenciales inválidas' })
+        if (!coincide) return res.status(401).json({ message: 'Contraseña invalida' })
         const token = jwt.sign(
             {   
                 names: user.nom_per,

@@ -97,6 +97,40 @@ class People {
             this.database.conection.end()
         })
     }
+
+    // Function to change rols
+    async ChangeRoles() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL ChangeRoles(?,?,?);"
+            const params = [
+                this.args[0].isAdd,
+                this.args[0].nom_rol,
+                this.args[0].email_per
+            ]
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,params,(err,result) => {
+                if(err) {
+                    rej({ message: err })
+                } else if (result) {
+                    setTimeout(() => {
+                        res({
+                            message: "Authorized",
+                            success: 1
+                        })
+                    },1000)
+                } else rej({ message: 'Error interno', status: 500 })
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
     
     // function to register
     async create(data) {

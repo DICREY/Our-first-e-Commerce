@@ -107,6 +107,48 @@ BEGIN
     COMMIT;
     SET autocommit = 1;
 END //
+CREATE PROCEDURE e_commerce.ChangeRoles(
+    IN p_add BOOLEAN,
+    IN p_rol VARCHAR(100),
+    IN p_email VARCHAR(100)
+)
+BEGIN
+    DECLARE v_id_per INT;
+    DECLARE v_id_rol INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    SELECT id_per INTO v_id_per FROM personas WHERE email_per = p_email;
+    IF (v_id_per) IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email ingresado no existe en el sistema';
+    END IF;
+
+    SELECT id_rol INTO v_id_rol FROM roles WHERE nom_rol LIKE p_rol;
+    IF (v_id_rol) IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Rol ingresado no existe en el sistema';
+    END IF;
+
+    IF (p_add) THEN
+        INSERT INTO e_commerce.otorgar_roles (id_rol, id_per)
+        VALUES (v_id_rol, v_id_per);
+    ELSE
+        DELETE
+        FROM e_commerce.otorgar_roles
+        WHERE 
+            id_per = v_id_per
+            AND id_rol = v_id_rol;
+    END IF;
+
+    COMMIT;
+    SET autocommit = 1;
+END //
 CREATE PROCEDURE e_commerce.SearchPeoples()
 BEGIN
     IF NOT EXISTS(SELECT id_per FROM personas LIMIT 1) THEN
@@ -273,5 +315,6 @@ END //
 /* DROP PROCEDURE e_commerce.`SearchPeoplesBy`; */
 /* DROP PROCEDURE e_commerce.`SearchPeopleBy`; */
 /* DROP PROCEDURE e_commerce.`DeletePeople`; */
+DROP PROCEDURE e_commerce.`ChangeRoles`;
 
 /* CALL `SearchPeoples`(); */

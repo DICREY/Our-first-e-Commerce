@@ -293,6 +293,10 @@ export const LegalAge = () => {
   return currentDate.toLocaleDateString('en-CA')
 }
 
+export const Discount = (price = 0, discount = 0) => {
+  return Number(price - ((Number(discount) * price) / 100))
+}
+
 export const showAlert = (title, text, icon) => {
   Swal.fire({
     title: title,
@@ -321,19 +325,32 @@ export const showAlertLoading = (title, text, icon) => {
   })
 }
 
-export const showAlertSelect = (title, text, icon) => {
+export const showAlertSelect = (title, text, icon, textBtnDeny = 'Cancelar', textBtnConfirm = 'Confirmar') => {
   return Swal.fire({
     title: title,
     text: text,
     icon: icon,
     showDenyButton: true,
     showConfirmButton: true,
-    denyButtonText: 'Cancelar',
-    confirmButtonText: 'Confirmar',
+    denyButtonText: textBtnDeny,
+    confirmButtonText: textBtnConfirm,
     theme: localStorage.getItem('theme').toLowerCase() || 'light',
   })
 }
 
-export const Discount = (price = 0, discount = 0) => {
-  return Number(price - ((Number(discount) * price) / 100))
+export const showAlertInput = async (title = '', type = '', label = '') => {
+  const { value } = await Swal.fire({
+    title: title,
+    input: type,
+    inputLabel: label,
+    showCancelButton: true,
+    theme: localStorage.getItem('theme').toLowerCase() || 'light',
+    inputValidator: (value) => {
+      if (!value) {
+        return "Necesitas escribir algo!!";
+      }
+    }
+  })
+
+  return value
 }

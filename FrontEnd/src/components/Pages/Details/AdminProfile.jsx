@@ -60,23 +60,6 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
     setHasChanges(changed)
   }
 
-  // Manejo de cambio de avatar
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result)
-        setFormData(prev => {
-          const newData = { ...prev, fot_per: reader.result }
-          checkForChanges(newData)
-          return newData
-        })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
   // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -164,25 +147,27 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                   <>
                     <label htmlFor="avatar-upload" className={styles.uploadButton}>
                       <Camera size={16} /> Cambiar Foto
+                      <div className={styles.formGroup}>
+
                       <input
-                        id="avatar-upload"
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarChange}
-                        className={styles.hiddenInput}
+                        name='fot_per'
+                        type="text"
+                        value={formData.fot_per || ''}
+                        onChange={handleChange}
+                        placeholder='Url de imagen'
                       />
+                      </div>
                     </label>
                     {formData.fot_per && (
                       <button
                         type="button"
                         className={styles.removeAvatarButton}
-                        onClick={() => alert('No sirve papi te me calmas!!')}
-                        // onClick={() => {
-                        //   setAvatarPreview('')
-                        //   setFormData(prev => ({ ...prev, fot_per: '' }))
-                        //   setHasChanges(true)
-                        // }}
+                        // onClick={() => alert('No sirve papi te me calmas!!')}
+                        onClick={() => {
+                          setAvatarPreview('')
+                          setFormData(prev => ({ ...prev, fot_per: '' }))
+                          setHasChanges(true)
+                        }}
                       >
                         Eliminar foto
                       </button>
@@ -256,7 +241,18 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
 
                 <div className={styles.formGroup}>
                   <label><CreditCard size={16} /> Documento</label>
-                  <div className={styles.readOnlyField}>{formData.doc_per || 'No especificado'}</div>
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      name="doc_per"
+                      value={formData.doc_per || ''}
+                      onChange={handleChange}
+                      placeholder="Numero de documento"
+                      required
+                    />
+                  ) : (
+                    <div className={styles.readOnlyField}>{formData.doc_per || 'N/A'}</div>
+                  )}
                 </div>
               </div>
 
@@ -294,19 +290,8 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                   )}
                 </div>
                 <div className={styles.formGroup}>
-                  <label><Mail size={16} /> Email</label>
-                  {isEditing ? (
-                    <input
-                      type="email"
-                      name="email_per"
-                      value={formData.email_per || ''}
-                      onChange={handleChange}
-                      placeholder="Correo electrónico"
-                      required
-                    />
-                  ) : (
-                    <div className={styles.readOnlyField}>{formData.email_per || 'No especificado'}</div>
-                  )}
+                  <label><Mail size={16} /> Email</label>  
+                  <div className={styles.readOnlyField}>{formData.email_per || 'No especificado'}</div>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -318,7 +303,6 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                       value={formData.cel_per || ''}
                       onChange={handleChange}
                       placeholder="Teléfono principal"
-                      required
                     />
                   ) : (
                     <div className={styles.readOnlyField}>{formData.cel_per || 'No especificado'}</div>
@@ -365,13 +349,6 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                       formData.gen_per === 'OTRO' ? 'Otro' : 'No especificado'}
                     </div>
                   )}
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Roles</label>
-                  <div className={styles.rolesDisplay}>
-                    {roles?.join(', ') || 'Sin roles asignados'}
-                  </div>
                 </div>
 
                 <div className={styles.formGroup}>

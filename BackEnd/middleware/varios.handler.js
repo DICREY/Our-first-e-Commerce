@@ -2,7 +2,7 @@
 const rateLimit = require('express-rate-limit')
 
 const corsOptions = {
-    origin:['192.168.20.57:5173','http://localhost:5173'],
+    origin:['192.168.20.57:5173','http://localhost:5173','https://ecommerce-thefour.netlify.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'x-api-key', 'User'],
     credentials: true

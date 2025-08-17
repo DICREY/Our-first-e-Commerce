@@ -1,16 +1,17 @@
 // Librarys 
 import React, { useContext, useEffect, useState } from 'react'
-import { Check, ChevronLeft, Mail, PenOff, SquarePen, Trash2, User } from 'lucide-react'
+import { Check, ChevronLeft, Mail, NotebookPen, PenOff, SquarePen, Trash2, User, UserRoundPen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 // Imports 
-import { CheckImage, errorStatusHandler, formatDate, getAge, showAlert, showAlertLoading, showAlertSelect } from '../../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertInput, showAlertLoading, showAlertSelect, verifyCred } from '../../../Utils/utils'
 import { ModifyData, PostData } from '../../../Utils/Requests'
 import { AuthContext } from '../../../Contexts/Contexts'
 import AdminLoadingScreen from '../../Global/Loading'
 
 // Import styles
 import styles from '../../../styles/Details/CustomerDetail.module.css'
+import Swal from 'sweetalert2'
 
 // Component 
 export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
@@ -23,7 +24,10 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
 
     // Vars 
     let didFetch = false
+    const navigate = useNavigate()
     const ID = localStorage.getItem('id_peo') || 0
+    const roles = customerData?.roles?.split(', ')
+    const { user, login } = useContext(AuthContext)
 
     const GetCustomer = async () => {
         try {
@@ -41,10 +45,6 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
             didFetch = true
         }
     }
-
-    // Vars 
-    const navigate = useNavigate()
-    const { user } = useContext(AuthContext)
 
     // Functions 
     const handleAddNote = () => {
@@ -88,6 +88,67 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
         }
     }
 
+    const assignRol = async () => {
+        try {
+            const isAdd = await showAlertSelect('Editar Roles','¿Agregar o remover rol del usuario?','question','Remover', 'Agregar')
+            const rolName = await Swal.fire({
+                title: "Elige un rol",
+                input: "select",
+                inputOptions: {
+                    Administrador: "Administrador",
+                    Usuario: "Usuario"
+                },
+                inputPlaceholder: "Selecciona un Rol",
+                showCancelButton: true,
+                theme: localStorage.getItem('theme').toLowerCase() || 'light',
+                inputValidator: (value) => {
+                    return new Promise((resolve) => {
+                        if (value === "Usuario") {
+                            resolve("El rol de usuario no se puede modificar")
+                        } else resolve()
+                    })
+                }
+            })    
+            const data = {
+                isAdd: await isAdd?.value,
+                nom_rol: await rolName?.value,
+                email_per: customerData.email_per
+            }
+
+            // Reques to Change rol
+            const change = async () => {
+                showAlertLoading('Cambiando roles', 'Por favor, espere...', 'info')
+                const mod = await ModifyData(`${URL}/peoples/change-rol`, data)
+                didFetch = false
+                if (mod.success) {
+                    GetCustomer()
+                    showAlert('Roles Cambiados', 'Los roles han sido actualizados satisfactoriamente', 'success')
+                }
+            }
+
+            // Verify ask 
+            const verifyCred = async (URL = '', email = '') => {
+                const passwd = await showAlertInput('Verificar Privilegios', 'password','Contraseña')
+                showAlertLoading('Verificando credenciales', 'Por favor, espere...', 'info')
+                return await login(`${URL}/credential/login`, { firstData: email, secondData: await passwd })
+            }
+            const verify = await verifyCred(URL, user.email)
+            console.log(verify)
+            if (verify?.logged) change()
+                
+        } catch (err) {
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
+        }
+    }
+
+    const changeEmail = async () => {
+        const option = showAlertSelect('Cambiar Email','¿Desea cambiar el email a está persona?','question')
+        if ((await option).isConfirmed) {
+            showAlert('','En construcción, Papi te me calmas!!','info')
+        }
+    }
+
     useEffect(() => {
         if (ID) GetCustomer()
     },[ID])
@@ -125,10 +186,24 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                 <p className={styles.customerEmail}>
                                     <Mail />
                                     {customerData?.email_per}
+                                    <button 
+                                        type='button'
+                                        className='backButton'
+                                        onClick={changeEmail}
+                                    >
+                                        <NotebookPen />
+                                    </button>
                                 </p>
                                 <p className={styles.customerEmail}>
                                     <User />
                                     {customerData?.roles}
+                                    <button 
+                                        type='button'
+                                        className='backButton'
+                                        onClick={assignRol}
+                                    >
+                                        <UserRoundPen />
+                                    </button>
                                 </p>
                             </div>
                         </span>
@@ -246,6 +321,7 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
                                 {isEditing ? (
                                     <input
                                         type="date"
+                                        max={LegalAge()}
                                         value={formatDate(customerData?.fec_nac_per || '00-00-0000')}
                                         onChange={(e) => setCustomerData({ ...customerData, fec_nac_per: e.target.value })}
                                         className={styles.editInput}

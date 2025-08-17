@@ -49,6 +49,26 @@ Route.get('/all:by', async (req,res) => {
 // Call Middleware for verify the request data
 Route.use(Fullinfo(['nom2_per', 'cel2_per', 'fot_per', 'cel_per', 'dir_per']))
 
+Route.put('/change-rol', ValidatorRol('administrador'), async (req,res) => {
+    // Vars
+    const data = req.body
+    const modRol = new People(data)
+
+    try {
+        // Search in database
+        let log = await modRol.ChangeRoles()
+        if (!log.success) return res.status(500).json({ message: 'Error al editar roles' })
+
+        res.status(200).json(log)
+    } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({ message: err.message })
+
+        res.status(500).json({ message: err })
+    }
+})
+
 Route.post('/by', async (req,res) => {
     try {
         // Vars 

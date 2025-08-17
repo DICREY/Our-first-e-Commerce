@@ -40,13 +40,11 @@ export const LoginForm = ({ URL = '' }) => {
         passwd: pass || 'Password123*',
         url_img: user?.photoURL || '',
       }
-      console.log(userData)
 
       showAlertLoading('Cargando...', 'Por favor espera', 'info')
       const log = await login(`${URL}/credential/login-google`, userData)
       if (log) {
         showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
-        console.log(pass)
         setTimeout(() => {
           navigate('/')
         }, 2000)
