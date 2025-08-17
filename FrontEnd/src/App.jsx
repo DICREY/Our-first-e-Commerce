@@ -6,18 +6,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-
 import { CartProvider } from "./Contexts/CartContext"
 import { AuthProvider } from "./Contexts/Auth.context"
 import { AuthContext } from "./Contexts/Contexts"
-import { Dashboard } from './components/Admin/Dashboard'
-import { ProductList } from "./components/Admin/Products"
-import { OrdersList } from "./components/Admin/Orders"
-import { Customers } from "./components/Admin/Clients"
-import { OfferManager } from "./components/Admin/Offers";
+import { ProductList } from "./components/Dashboard/Products"
+import { OrdersList } from "./components/Dashboard/Orders"
+import { Customers } from "./components/Dashboard/Clients"
 import { NavAdmin } from "./components/Headers/Navs/NavAdmin"
 import { useDarkMode } from "./Hooks/Theme";
 import { ProductEdit } from "./components/Products/ProductEdit";
-import Header from "./components/Headers/Header"
-import HomePage from "./components/Pages/HomePage/HomePage"
-import ProductCatalog from "./components/Products/ProductCatalog"
-import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
 import { LoginForm } from "./components/Pages/MainForms/Login";
 import { RegisterForm } from "./components/Pages/MainForms/Register";
 import { ProductDetailAdmin } from "./components/Pages/Details/ProductDetail";
@@ -27,6 +21,13 @@ import { CustomerDetail } from "./components/Pages/Details/CustomersDetails";
 import { CustomerRegister } from "./components/Pages/Forms/CustomerRegister";
 import { AdminProfile } from "./components/Pages/Details/AdminProfile";
 import { OrderRegister } from "./components/Pages/Forms/OrderRegister";
+import { Dashboard } from "./components/Dashboard/Dashboard";
+import { OfferManager } from "./components/Dashboard/Offers";
+import { PasswordReset } from "./components/Pages/MainForms/ForgotPassword";
+import Header from "./components/Headers/Header"
+import HomePage from "./components/Pages/HomePage/HomePage"
+import ProductCatalog from "./components/Products/ProductCatalog"
+import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
 
 // Main Module 
 const App = () => {
@@ -147,6 +148,7 @@ const App = () => {
 
             {/* Auth Routes without Layout */}
             <Route path="/login" element={<LoginForm URL={URL} />} />
+            <Route path="/forgot-password" element={<PasswordReset URL={URL} />} />
             <Route path="/signup" element={<RegisterForm URL={URL} />} />
 
             {/* Private User Routes with Layout */}

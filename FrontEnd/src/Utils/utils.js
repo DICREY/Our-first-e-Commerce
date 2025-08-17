@@ -49,6 +49,7 @@ export const CheckImage = ({ src = '', alt = '', imgDefault = '', className = ''
     />
   );
 };
+
 // Convierte la primera letra en mayúscula y el resto en minúscula
 export const capitalize = (word = '') => {
   if (!word) return '';

@@ -2,12 +2,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 
 // Imports 
-import { AuthContext } from '../../Contexts/Contexts'
-import { errorStatusHandler, formatNumber, Greeting, showAlert } from '../../Utils/utils'
-import { GetData } from '../../Utils/Requests'
+import { AuthContext } from '../../../Contexts/Contexts'
+import { errorStatusHandler, formatNumber, Greeting, showAlert } from '../../../Utils/utils'
+import { GetData } from '../../../Utils/Requests'
 
 // Import styles 
-import styles from '../../styles/Admin/DailySummary.module.css'
+import styles from '../../../styles/Admin/DailySummary.module.css'
 
 // Component 
 export const DailySummary = ({ URL = '' }) => {

@@ -3,10 +3,10 @@ import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // Imports
-import { SellestProducts, TotalOrders, WeeklySales } from './Stats'
+import { SellestProducts, TotalOrders, WeeklySales } from './Stats/Stats'
 import { CheckImage } from '../../Utils/utils'
 import { AuthContext } from '../../Contexts/Contexts'
-import { DailySummary } from './DailySummary'
+import { DailySummary } from './Stats/DailySummary'
 import { TotalSales } from './TotalSales'
 
 // Import styles 

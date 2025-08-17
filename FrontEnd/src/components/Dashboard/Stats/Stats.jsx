@@ -16,11 +16,11 @@ import {
 } from 'chart.js'
 
 // Imports
-import { divideList, errorStatusHandler, formatNumber, PriceCompare, showAlert } from '../../Utils/utils'
-import { GetData } from '../../Utils/Requests'
+import { divideList, errorStatusHandler, formatNumber, PriceCompare, showAlert } from '../../../Utils/utils'
+import { GetData } from '../../../Utils/Requests'
 
 // Import styles 
-import styles from '../../styles/Admin/stats.module.css'
+import styles from '../../../styles/Admin/stats.module.css'
 
 ChartJS.register(
     CategoryScale,

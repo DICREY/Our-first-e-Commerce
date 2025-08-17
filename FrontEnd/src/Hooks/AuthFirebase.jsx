@@ -15,7 +15,7 @@ const firebaseConfig = {
 }
 
 // Inicializar project app
-const app = initializeApp(firebaseConfig)
+export const app = initializeApp(firebaseConfig)
 
 // Get Project App
 export const auth = getAuth(app)

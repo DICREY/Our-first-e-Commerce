@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 
 // Imports 
-import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
+import { CheckImage, errorStatusHandler, LegalAge, showAlert, showAlertLoading } from '../../../Utils/utils'
 import { PostData } from '../../../Utils/Requests'
 import AdminLoadingScreen from '../../Global/Loading'
 
@@ -220,6 +220,7 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                             <input
                                 type="date"
                                 name="fec_nac_per"
+                                max={LegalAge()}
                                 value={formData.fec_nac_per}
                                 onChange={handleChange}
                             />
