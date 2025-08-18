@@ -28,6 +28,7 @@ Route.get('/all', async ( req, res ) => {
 Route.get('/product', async ( req, res ) => {
     try {
         const search = await offerInst.offerProduct()
+        
         if (!search.result) return res.status(404).json({ message: "Ofertas no encontradas" })
 
         res.status(200).json(search)

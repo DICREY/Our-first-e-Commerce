@@ -1,13 +1,15 @@
 // Librarys 
 import { useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 
 // Imports
-import { SellestProducts, TotalOrders, WeeklySales } from './Stats/Stats'
-import { CheckImage } from '../../Utils/utils'
-import { AuthContext } from '../../Contexts/Contexts'
+import { TotalOrders } from './Stats/TotalOrders'
+import { WeeklySales } from './Stats/WeeklySales'
+import { SellestProducts } from './Stats/SellestProducts'
 import { DailySummary } from './Stats/DailySummary'
 import { TotalSales } from './TotalSales'
+import { AuthContext } from '../../Contexts/Contexts'
+import { CheckImage } from '../../Utils/utils'
 
 // Import styles 
 import styles from '../../styles/Admin/Dashboard.module.css'
@@ -17,6 +19,7 @@ export const Dashboard = ({ URL = '', imgDefault = '' }) => {
   // Vars 
   const { user, img } = useContext(AuthContext)
   const navigate = useNavigate()
+  
   
   return (
     <main className={styles.mainContent}>

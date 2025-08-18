@@ -1,7 +1,13 @@
 // Librarys
 import React, { useState } from 'react'
-import { sendPasswordResetEmail, confirmPasswordReset, getAuth } from 'firebase/auth'
+import { sendPasswordResetEmail, confirmPasswordReset } from 'firebase/auth'
+import { ChevronLeft, LoaderCircle, Mail, Send } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+
+// Imports 
 import { auth } from '../../../Hooks/AuthFirebase'
+import { PostData } from '../../../Utils/Requests'
+import { showAlertSelect } from '../../../Utils/utils'
 
 // Import styles 
 import styles from '../../../styles/Pages/MainForms/PasswordReset.module.css'
@@ -17,6 +23,10 @@ export const PasswordReset = ({ URL = '' }) => {
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const [loading, setLoading] = useState(false)
+    const [currentUser, setCurrentUser] = useState(null)
+
+    // vars 
+    const navigate = useNavigate()
 
     // Paso 1: Enviar código al correo
     const handleSendCode = async (e) => {
@@ -26,16 +36,20 @@ export const PasswordReset = ({ URL = '' }) => {
 
         try {
             // Aquí implementas tu lógica para enviar el código
-            // Ejemplo con Firebase:
             const actionCodeSettings = {
                 url: 'http://localhost:5173/forgot-password',
                 handleCodeInApp: true
             }
-            const send = await sendPasswordResetEmail(auth, email, actionCodeSettings)
-            console.log(send)
-
-            setSuccess(`Se ha enviado un código a ${email}`)
-            setStep(2)
+            const got = await PostData(`${URL}/peoples/by`, { by: email })
+            if (got?.[0]) {
+                setCurrentUser(got?.[0])
+                const verify = await showAlertSelect('Usuario encontrado', `¿Es usted ${got?.[0]?.nom_per} ${got?.[0]?.ape_per}?`)
+                if (await verify?.isConfirmed) {
+                    setStep(2)
+                    const send = await sendPasswordResetEmail(auth, email, actionCodeSettings)
+                    setSuccess(`Se ha enviado un código a ${email}`)
+                } else navigate(-1)
+            }
         } catch (err) {
             setError(err.message || 'Error al enviar el código')
         } finally {
@@ -82,8 +96,8 @@ export const PasswordReset = ({ URL = '' }) => {
     }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.card}>
+        <main className={styles.container}>
+            <section className={styles.card}>
                 <h2 className={styles.title}>Cambiar Contraseña</h2>
 
                 {error && <div className={styles.alertError}>{error}</div>}
@@ -92,18 +106,21 @@ export const PasswordReset = ({ URL = '' }) => {
                 {/* Paso 1: Ingresar email */}
                 {step === 1 && (
                     <form onSubmit={handleSendCode} className={styles.form}>
+                        <label htmlFor="email" className={styles.label}>Señor usuario digite su correo electrónico registrado en nuestro sistema</label>
                         <div className={styles.formGroup}>
                             <label htmlFor="email" className={styles.label}>Correo Electrónico</label>
                             <input
                                 type="email"
                                 id="email"
                                 value={email}
+                                placeholder='Escriba su email'
                                 onChange={(e) => setEmail(e.target.value)}
                                 className={styles.input}
                                 required
                             />
                         </div>
-                        <button type="submit" className={styles.button} disabled={loading}>
+                        <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
+                            <Send />
                             {loading ? 'Enviando...' : 'Enviar Código'}
                         </button>
                     </form>
@@ -118,23 +135,39 @@ export const PasswordReset = ({ URL = '' }) => {
                                 type="text"
                                 id="code"
                                 value={code}
+                                placeholder='Código de verificación'
                                 onChange={(e) => setCode(e.target.value)}
                                 className={styles.input}
                                 required
                             />
                             <small className={styles.helperText}>Revisa tu correo electrónico para obtener el código</small>
                         </div>
-                        <button 
-                            type="button"
-                            className={styles.button}
-                            onClick={handleSendCode}
-                            disabled={loading}
-                        >
-                            Reenviar Código
+                        <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
+                            {loading ? 
+                                (<><LoaderCircle />Verificando...</>): 
+                                (<><Mail /> Verificar Código</>)
+                            }
                         </button>
-                        <button type="submit" className={styles.button} disabled={loading}>
-                            {loading ? 'Verificando...' : 'Verificar Código'}
-                        </button>
+                        <span>
+                            <button 
+                                type="button"
+                                className={`backButton ${styles.button}`}
+                                onClick={() => setStep(1)}
+                                disabled={loading}
+                            >
+                                <ChevronLeft />
+                                Atrás
+                            </button>
+                            <button 
+                                type="button"
+                                className={`backButton ${styles.button}`}
+                                onClick={handleSendCode}
+                                disabled={loading}
+                            >
+                                <Send />
+                                Reenviar Código
+                            </button>
+                        </span>
                     </form>
                 )}
 
@@ -146,6 +179,7 @@ export const PasswordReset = ({ URL = '' }) => {
                             <input
                                 type="password"
                                 id="newPassword"
+                                placeholder='Nueva contraseña'
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 className={styles.input}
@@ -159,6 +193,7 @@ export const PasswordReset = ({ URL = '' }) => {
                                 type="password"
                                 id="confirmPassword"
                                 value={confirmPassword}
+                                placeholder='Confirmar Contraseña'
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 className={styles.input}
                                 minLength="6"
@@ -170,7 +205,15 @@ export const PasswordReset = ({ URL = '' }) => {
                         </button>
                     </form>
                 )}
-            </div>
-        </div>
+                <span className={"a-text"}>
+                    <Link
+                        to={'/login'}
+                        className={"a-link"}
+                    >
+                        Iniciar de sesión
+                    </Link>
+                </span>
+            </section>
+        </main>
     )
 }

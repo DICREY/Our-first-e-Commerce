@@ -31,7 +31,7 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
     } catch (err) {
       didFetch = true
       const message = errorStatusHandler(err)
-      showAlert('Error', message, 'error')
+      // showAlert('Error', message, 'error')
     }
   }
 
@@ -118,21 +118,24 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
                 imgDefault={imgDefault}
               />
 
-              {/* Floating elements */}
-              <div className={styles.floatingDiscount}>
-                <div className={styles.discountNumber}>-{currentProduct?.por_des_ofe || 0}%</div>
-                <div className={styles.discountLabel}>Descuento</div>
-              </div>
+              {currentProduct && (
+                <>
+                  <div className={styles.floatingDiscount}>
+                    <div className={styles.discountNumber}>-{currentProduct?.por_des_ofe || 0}%</div>
+                    <div className={styles.discountLabel}>Descuento</div>
+                  </div>
 
-              <div className={styles.floatingFeature}>
-                <div className={styles.featureIcon}>
-                  <span style={{ color: "var(--success-600)" }}>✓</span>
-                </div>
-                <div>
-                  <div className={styles.featureTitle}>{currentProduct?.nom_ofe}</div>
-                  <div className={styles.featureDescription}>{currentProduct?.des_ofe}</div>
-                </div>
-              </div>
+                  <div className={styles.floatingFeature}>
+                    <div className={styles.featureIcon}>
+                      <span style={{ color: "var(--success-600)" }}>✓</span>
+                    </div>
+                    <div>
+                      <div className={styles.featureTitle}>{currentProduct?.nom_ofe}</div>
+                      <div className={styles.featureDescription}>{currentProduct?.des_ofe}</div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </section>
         </div>

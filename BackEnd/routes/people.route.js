@@ -11,7 +11,7 @@ const people = new People()
 const Route = Router()
 
 // Middleware 
-Route.use(authenticateJWT)
+// Route.use(authenticateJWT)
 // Route.use(ValidatorRol("administrador"))
 
 // Routes

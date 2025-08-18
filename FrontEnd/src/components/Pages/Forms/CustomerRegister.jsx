@@ -17,7 +17,6 @@ import styles from '../../../styles/People/CustomerRegister.module.css'
 // Component 
 export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
     // Dynamic vars
-    const [ avatarPreview, setAvatarPreview ] = useState('')
     const [ errors, setErrors ] = useState({})
     const [ isLoading, setIsLoading ] = useState(true)
     const [ isSubmitting, setIsSubmitting ] = useState(false)
@@ -54,22 +53,6 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                 ...prev,
                 [name]: null
             }))
-        }
-    }
-
-    // Manejo de imagen
-    const handleImageChange = (e) => {
-        const file = e.target.files[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setAvatarPreview(reader.result)
-                setFormData(prev => ({
-                    ...prev,
-                    fot_per: reader.result
-                }))
-            }
-            reader.readAsDataURL(file)
         }
     }
 

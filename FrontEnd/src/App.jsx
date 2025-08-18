@@ -28,6 +28,8 @@ import Header from "./components/Headers/Header"
 import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
+// import { GetDataNoSQL, PostDataNoSQL } from "./Utils/Request.nosql";
+// import { categorias, personas } from "./Utils/DataBase";
 
 // Main Module 
 const App = () => {
@@ -35,11 +37,12 @@ const App = () => {
   const [product, setProduct] = useState()
   const [catPro, setCatPro] = useState()
   const [filterFetch, setFilterFetch] = useState(null)
-
+  
   // Vars 
   const URL = 'http://localhost:3000/ecommerce'
   const imgProduct = require('./Imgs/ProductDefault.png')
   const imgUser = require('./Imgs/UserDefault.webp')
+  let didFetch = false
 
   // Layout Component
   const MainLayout = ({ children }) => {
@@ -68,6 +71,20 @@ const App = () => {
       </main>
     ):<Navigate to="/login" />
   }
+
+  // const loop = (list = [], doc = '') => {
+  //   if (didFetch) return
+  //   list.forEach(item => {
+  //     PostDataNoSQL(doc, item)
+  //   })
+  //   didFetch = true
+  // }
+
+  // useEffect(() => {
+  //   GetDataNoSQL('roles')
+  //   loop(categorias, 'categorias')
+  // },[])
+
 
   return (
     <AuthProvider>
@@ -143,7 +160,7 @@ const App = () => {
                     setPro={setProduct}
                   />
                 } 
-              />
+              />            
             </Route>
 
             {/* Auth Routes without Layout */}
