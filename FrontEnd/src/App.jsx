@@ -6,28 +6,28 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-
 import { CartProvider } from "./Contexts/CartContext"
 import { AuthProvider } from "./Contexts/Auth.context"
 import { AuthContext } from "./Contexts/Contexts"
-import { ProductList } from "./components/Dashboard/Products"
-import { OrdersList } from "./components/Dashboard/Orders"
-import { Customers } from "./components/Dashboard/Clients"
-import { NavAdmin } from "./components/Headers/Navs/NavAdmin"
+import { ProductList } from "./Pages/Dashboard/Products/Products"
+import { OrdersList } from "./Pages/Dashboard/Orders/Orders"
+import { Customers } from "./Pages/Dashboard/Customers/Clients"
+import { NavAdmin } from "./components/Headers/NavAdmin/NavAdmin"
 import { useDarkMode } from "./Hooks/Theme";
 import { ProductEdit } from "./components/Products/ProductEdit";
-import { LoginForm } from "./components/Pages/MainForms/Login";
-import { RegisterForm } from "./components/Pages/MainForms/Register";
-import { ProductDetailAdmin } from "./components/Pages/Details/ProductDetail";
-import { ProductRegister } from "./components/Pages/Forms/ProductRegister";
-import { OrderDetail } from "./components/Pages/Details/OrdersDetails";
-import { CustomerDetail } from "./components/Pages/Details/CustomersDetails";
-import { CustomerRegister } from "./components/Pages/Forms/CustomerRegister";
-import { AdminProfile } from "./components/Pages/Details/AdminProfile";
-import { OrderRegister } from "./components/Pages/Forms/OrderRegister";
-import { Dashboard } from "./components/Dashboard/Dashboard";
-import { OfferManager } from "./components/Dashboard/Offers";
-import { PasswordReset } from "./components/Pages/MainForms/ForgotPassword";
+import { LoginForm } from "./Pages/MainForms/Login/Login";
+import { RegisterForm } from "./Pages/MainForms/Register/Register";
+import { ProductDetailAdmin } from "./Pages/Details/ProductDetail/ProductDetail";
+import { ProductRegister } from "./Pages/Forms/ProductForm/ProductRegister";
+import { OrderDetail } from "./Pages/Details/OrderDetail/OrdersDetails";
+import { CustomerDetail } from "./Pages/Details/CustomerDetail/CustomersDetails";
+import { CustomerRegister } from "./Pages/Forms/CustomerForm/CustomerRegister";
+import { AdminProfile } from "./Pages/Details/Profile/AdminProfile";
+import { OrderRegister } from "./Pages/Forms/OrderForm/OrderRegister";
+import { Dashboard } from "./Pages/Dashboard/Dashboard/Dashboard";
+import { OfferManager } from "./Pages/Dashboard/Offers/Offers";
+import { PasswordReset } from "./Pages/MainForms/PasswordReset/PasswordReset";
+import { HomePage } from "./Pages/HomePage/HomePage"
 import Header from "./components/Headers/Header"
-import HomePage from "./components/Pages/HomePage/HomePage"
 import ProductCatalog from "./components/Products/ProductCatalog"
-import ProductDetailPage from "./components/Pages/ProductDetail/ProductDetailPage"
+import ProductDetailPage from "./Pages/ProductDetail/ProductDetailPage"
 // import { GetDataNoSQL, PostDataNoSQL } from "./Utils/Request.nosql";
 // import { categorias, personas } from "./Utils/DataBase";
 

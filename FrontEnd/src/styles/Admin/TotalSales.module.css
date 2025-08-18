@@ -58,49 +58,6 @@
     padding: 1.5rem;
 }
 
-.summaryCard {
-    padding: 1.25rem;
-    background-color: var(--neutral-50);
-    border-radius: 8px;
-    border-left: 4px solid;
-    transition: transform 0.2s ease;
-}
-
-.summaryCard:hover {
-    transform: translateY(-3px);
-}
-
-.summaryLabel {
-    font-size: 0.875rem;
-    color: var(--gray-600);
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.summaryValue {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--neutral-800);
-    margin-bottom: 0.75rem;
-    display: block;
-}
-
-.comparison {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-}
-
-.comparisonValue {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--success-600);
-}
-
-.comparisonLabel {
-    font-size: 0.75rem;
-    color: var(--gray-500);
-}
 
 .chartContainer {
     height: 300px;

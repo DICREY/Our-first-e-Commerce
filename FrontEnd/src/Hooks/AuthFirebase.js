@@ -4,6 +4,7 @@ import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getAnalytics } from "firebase/analytics"
 import { getFirestore } from "firebase/firestore"
+import { getFunctions, httpsCallable } from "firebase/functions"
 
 // firebase project config
 const firebaseConfig = {
@@ -19,11 +20,29 @@ const firebaseConfig = {
 // Inicializar project app
 export const app = initializeApp(firebaseConfig)
 
-// Get Project App
+// Get Project Apps
 export const auth = getAuth(app)
-
-// Get FireStore
 export const db = getFirestore(app)
-
-// Get Analytics
 export const analytics = getAnalytics(app)
+export const functions = getFunctions(app)
+
+// Función para obtener datos de Analytics
+export const getAnalyticsData = async (timeRange) => {
+  try {
+    // Opción 1: Usando Cloud Functions (recomendado para datos complejos)
+    const getAnalyticsData = httpsCallable(functions, 'getAnalyticsData')
+    const result = await getAnalyticsData({ timeRange })
+    return result.data
+    
+    // Opción 2: Consultas directas (para datos simples)
+    // return await fetchAnalyticsDirectly(timeRange)
+  } catch (error) {
+    console.error("Error fetching analytics data:", error)
+    throw error
+  }
+}
+
+// Función para registrar eventos
+export const logAnalyticsEvent = (eventName, eventParams) => {
+  logEvent(analytics, eventName, eventParams)
+}
