@@ -207,7 +207,7 @@ export const PasswordReset = ({ URL = '' }) => {
                 )}
                 <span className={"a-text"}>
                     <Link
-                        to={'/login'}
+                        to='/login'
                         className={"a-link"}
                     >
                         Iniciar de sesión

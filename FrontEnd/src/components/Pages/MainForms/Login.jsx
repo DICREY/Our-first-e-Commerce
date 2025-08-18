@@ -1,6 +1,6 @@
 // Librarys 
 import React, { useContext, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { Mail } from 'lucide-react';
 
@@ -108,9 +108,9 @@ export const LoginForm = ({ URL = '' }) => {
         </button>
 
         <div className={styles["login-footer"]}>
-          <a href="/forgot-password" className={styles["footer-link"]}>¿Olvidaste tu contraseña?</a>
+          <Link to="/forgot-password" className={styles["footer-link"]}>¿Olvidaste tu contraseña?</Link>
           <span className={styles["footer-text"]}>
-            ¿No tienes cuenta? <a href="/signup" className={styles["footer-link"]}>Regístrate</a>
+            ¿No tienes cuenta? <Link to="/signup" className={styles["footer-link"]}>Regístrate</Link>
           </span>
           <span className={styles["footer-text"]}>
             <button 

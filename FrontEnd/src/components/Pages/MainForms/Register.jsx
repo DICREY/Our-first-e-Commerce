@@ -1,5 +1,6 @@
 // Librarys 
 import React, { useState } from "react"
+import { Link } from "react-router-dom"
 
 // Imports 
 import { PostData } from "../../../Utils/Requests"
@@ -223,7 +224,7 @@ export const RegisterForm = ({ URL = '' }) => {
           Registrarse
         </button>
         <span className={"footer-text"}>
-            ¿No tienes cuenta? <a href="/login" className={"footer-link"}>Ingresar</a>
+            ¿No tienes cuenta? <Link to="/login" className={"footer-link"}>Ingresar</Link>
         </span>
       </form>
     </main>

@@ -161,12 +161,12 @@ const App = () => {
                   />
                 } 
               />            
+              {/* Auth Routes without Layout */}
+              <Route path="/login" element={<LoginForm URL={URL} />} />
+              <Route path="/forgot-password" element={<PasswordReset URL={URL} />} />
+              <Route path="/signup" element={<RegisterForm URL={URL} />} />
             </Route>
 
-            {/* Auth Routes without Layout */}
-            <Route path="/login" element={<LoginForm URL={URL} />} />
-            <Route path="/forgot-password" element={<PasswordReset URL={URL} />} />
-            <Route path="/signup" element={<RegisterForm URL={URL} />} />
 
             {/* Private User Routes with Layout */}
             <Route element={<PrivateRoute />}>
