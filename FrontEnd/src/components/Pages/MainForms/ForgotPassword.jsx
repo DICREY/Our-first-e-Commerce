@@ -1,13 +1,13 @@
 // Librarys
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { sendPasswordResetEmail, confirmPasswordReset } from 'firebase/auth'
 import { ChevronLeft, LoaderCircle, Mail, Send } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // Imports 
 import { auth } from '../../../Hooks/AuthFirebase'
 import { PostData } from '../../../Utils/Requests'
-import { showAlertSelect } from '../../../Utils/utils'
+import { errorStatusHandler, showAlert, showAlertSelect } from '../../../Utils/utils'
 
 // Import styles 
 import styles from '../../../styles/Pages/MainForms/PasswordReset.module.css'
@@ -27,6 +27,8 @@ export const PasswordReset = ({ URL = '' }) => {
 
     // vars 
     const navigate = useNavigate()
+    const location = useLocation()
+    const params = new URLSearchParams(location.search)
 
     // Paso 1: Enviar código al correo
     const handleSendCode = async (e) => {
@@ -45,12 +47,13 @@ export const PasswordReset = ({ URL = '' }) => {
                 setCurrentUser(got?.[0])
                 const verify = await showAlertSelect('Usuario encontrado', `¿Es usted ${got?.[0]?.nom_per} ${got?.[0]?.ape_per}?`)
                 if (await verify?.isConfirmed) {
-                    setStep(2)
                     const send = await sendPasswordResetEmail(auth, email, actionCodeSettings)
-                    setSuccess(`Se ha enviado un código a ${email}`)
+                    setSuccess(`Se ha enviado un correo a ${email}`)
                 } else navigate(-1)
             }
         } catch (err) {
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
             setError(err.message || 'Error al enviar el código')
         } finally {
             setLoading(false)
@@ -94,6 +97,14 @@ export const PasswordReset = ({ URL = '' }) => {
             setLoading(false)
         }
     }
+
+    useEffect(() => {
+        const tokenReset = params.get('apiKey')
+        if (tokenReset) {
+            setStep(3)
+            setCode(params.get('oobCode'))
+        }
+    })
 
     return (
         <main className={styles.container}>
@@ -200,7 +211,7 @@ export const PasswordReset = ({ URL = '' }) => {
                                 required
                             />
                         </div>
-                        <button type="submit" className={styles.button} disabled={loading}>
+                        <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
                             {loading ? 'Cambiando...' : 'Cambiar Contraseña'}
                         </button>
                     </form>

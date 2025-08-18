@@ -7,14 +7,13 @@ import { getFirestore } from "firebase/firestore"
 
 // firebase project config
 const firebaseConfig = {
-  apiKey: "AIzaSyCStvcNp8HKgRPL1Ya_cgOb71I8G-fReHM",
-  authDomain: "ecommercethefour.firebaseapp.com",
-  databaseURL: "https://ecommercethefour-default-rtdb.firebaseio.com",
-  projectId: "ecommercethefour",
-  storageBucket: "ecommercethefour.firebasestorage.app",
-  messagingSenderId: "480099049799",
-  appId: "1:480099049799:web:2404084af7869a50762c62",
-  measurementId: "G-M9E0NK1WK7"
+  apiKey: "AIzaSyCy-JZIwev-ss3dbRkyKTg90IeYMCCuzQ4",
+  authDomain: "e-commerce-the-four.firebaseapp.com",
+  projectId: "e-commerce-the-four",
+  storageBucket: "e-commerce-the-four.firebasestorage.app",
+  messagingSenderId: "1021124126793",
+  appId: "1:1021124126793:web:aafb4f8dd08636e827b798",
+  measurementId: "G-01R0TW1E8Q"
 }
 
 // Inicializar project app
