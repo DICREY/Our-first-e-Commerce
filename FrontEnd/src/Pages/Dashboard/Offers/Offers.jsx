@@ -46,7 +46,6 @@ export const OfferManager = ({ URL }) => {
                 GetData(`${URL}/products/categories`)
             ])
 
-            console.log(productsRes)
             setOffers(await offersRes)
             setProducts(await productsRes)
             setProductsAlmc(await productsRes)

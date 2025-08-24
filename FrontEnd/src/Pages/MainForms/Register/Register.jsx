@@ -220,12 +220,14 @@ export const RegisterForm = ({ URL = '' }) => {
           />
         </div>
 
-        <button type="submit" className={styles.registerButton}>
+        <button type="submit" className={"primaryBtn"}>
           Registrarse
         </button>
-        <span className={"footer-text"}>
-            ¿No tienes cuenta? <Link to="/login" className={"footer-link"}>Ingresar</Link>
-        </span>
+        <footer>
+          <span className={"a-text"}>
+              ¿No tienes cuenta? <Link to="/login" className='a-link'>Ingresar</Link>
+          </span>
+        </footer>
       </form>
     </main>
   )

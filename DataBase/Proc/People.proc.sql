@@ -315,6 +315,6 @@ END //
 /* DROP PROCEDURE e_commerce.`SearchPeoplesBy`; */
 /* DROP PROCEDURE e_commerce.`SearchPeopleBy`; */
 /* DROP PROCEDURE e_commerce.`DeletePeople`; */
-DROP PROCEDURE e_commerce.`ChangeRoles`;
+/* DROP PROCEDURE e_commerce.`ChangeRoles`; */
 
 /* CALL `SearchPeoples`(); */

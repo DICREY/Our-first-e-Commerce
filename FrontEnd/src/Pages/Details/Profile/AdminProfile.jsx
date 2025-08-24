@@ -1,13 +1,14 @@
 // Librarys 
-import React, { useContext, useEffect, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
-  User, Mail, Phone, MapPin, Camera, Save, X, Calendar, CreditCard, Edit
+  User, Mail, Phone, MapPin, Camera, Save, X, Calendar, CreditCard, Edit,
+  LockKeyhole
 } from 'lucide-react'
 
 // Imports 
 import { AuthContext } from '../../../Contexts/Contexts'
 import { ModifyData, PostData } from '../../../Utils/Requests'
-import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertLoading } from '../../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertInput, showAlertLoading, showAlertSelect } from '../../../Utils/utils'
 import AdminLoadingScreen from '../../../components/Global/Loading'
 
 // Import styles 
@@ -16,8 +17,7 @@ import styles from './AdminProfile.module.css'
 // Component 
 export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
   // Vars 
-  const { user, roles } = useContext(AuthContext)
-  const fileInputRef = useRef(null)
+  const { user, login } = useContext(AuthContext)
   let didFetch = false
   
   // Estados
@@ -108,6 +108,45 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
       }
     } catch (err) {
       setIsLoading(false)
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
+    }
+  }
+
+  const ChangePassword = async (email) => {
+    try {
+      const passwd = await showAlertInput('Cambiar contraseña', 'password','Ingrese su nueva Contraseña')
+      if (!passwd) return
+      showAlertLoading('Cambiando su contraseña', 'Por favor, espere...', 'info')
+      const modPwd = await ModifyData(`${URL}/credential/change-password`,{
+        email: email,
+        password: passwd
+      })
+      if (modPwd?.success) {
+        showAlert('Contraseña cambiada','Su contraseña a sido cambiada satisfactoriamente','success')
+        // setTimeout(() => navigate('/login'), 2000)
+      }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
+    }
+  }
+
+  const VerifyPassword = async () => {
+    try {
+      const isAdd = await showAlertSelect('Editar Contraseña','¿Desea cambiar su contraseña?','question')
+      if (isAdd) {
+        // Verify ask 
+        const verifyCred = async (URL = '', email = '') => {
+          const passwd = await showAlertInput('Verificar Credenciales', 'password','Ingrese su Contraseña actual')
+          if (!passwd) return
+          showAlertLoading('Verificando credenciales', 'Por favor, espere...', 'info')
+          return await login(`${URL}/credential/login`, { firstData: email, secondData: await passwd })
+        }
+        const verify = await verifyCred(URL, formData.email_per)
+        if (verify?.logged) await ChangePassword(formData.email_per)
+      }
+    } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')
     }
@@ -364,6 +403,15 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                   ) : (
                     <div className={styles.readOnlyField}>{formData.cel2_per || 'No especificado'}</div>
                   )}
+                </div>
+
+                <div 
+                  className={styles.formGroup}
+                  style={{ cursor: 'pointer' }}
+                  onClick={VerifyPassword}
+                >
+                  <label><LockKeyhole size={16} />Contraseña</label>
+                  <div className={styles.readOnlyField}>{'************'}</div>
                 </div>
 
               </div>

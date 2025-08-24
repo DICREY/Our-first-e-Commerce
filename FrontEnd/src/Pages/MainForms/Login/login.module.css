@@ -3,36 +3,37 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100%;
+  /* max-height: 90vh; */
+  /* padding: 1rem; */
   background-color: var(--medium-gray);
-  padding: 20px;
 }
 
 /* Formulario */
 .login-form {
   background-color: var(--white);
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.9rem;
+  border-radius: .5rem;
+  box-shadow: 0 .25rem .3rem rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 26rem;
 }
 
 .login-title {
-  color: var(--gray-600);
+  color: var(--gray-700);
   text-align: center;
-  margin-bottom: 25px;
-  font-size: 24px;
+  margin-bottom: 1.2rem;
+  font-size: 1.6rem;
 }
 
 /* Inputs */
 .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.2rem;
 }
 
 .input-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: .25rem;
   color: var(--gray-600);
   font-weight: 500;
 }
@@ -58,8 +59,8 @@
   background-color: var(--blue-pastel);
   color: var(--white);
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: .25rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -71,9 +72,8 @@
 
 /* Footer (enlaces) */
 .login-footer {
-  margin-top: 20px;
   text-align: center;
-  font-size: 14px;
+  font-size: .97rem;
 }
 
 .footer-link {

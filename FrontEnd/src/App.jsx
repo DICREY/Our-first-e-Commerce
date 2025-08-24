@@ -39,7 +39,7 @@ const App = () => {
   const [filterFetch, setFilterFetch] = useState(null)
   
   // Vars 
-  const URL = 'http://localhost:3000/ecommerce'
+  const URL = process.env.REACT_APP_URL
   const imgProduct = require('./Imgs/ProductDefault.png')
   const imgUser = require('./Imgs/UserDefault.webp')
   let didFetch = false
@@ -84,7 +84,6 @@ const App = () => {
   //   GetDataNoSQL('roles')
   //   loop(categorias, 'categorias')
   // },[])
-
 
   return (
     <AuthProvider>

@@ -30,8 +30,6 @@ function validatorHeaders (req,res,next) {
 // Middleware de validación
 function authenticateJWT(req, res, next) {
     const token = req.signedCookies?.__cred
-
-    
     
     if (!token) return res.status(403).json({ error: 'Token no proporcionado' })
 

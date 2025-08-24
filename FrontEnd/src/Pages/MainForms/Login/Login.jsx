@@ -104,14 +104,16 @@ export const LoginForm = ({ URL = '' }) => {
           />
         </div>
 
-        <button type="submit" className={styles["login-button"]}>
+        <button type="submit" className={'primaryBtn expand'}>
           Ingresar
         </button>
 
-        <div className={styles["login-footer"]}>
-          <Link to="/forgot-password" className={styles["footer-link"]}>¿Olvidaste tu contraseña?</Link>
-          <span className={styles["footer-text"]}>
-            ¿No tienes cuenta? <Link to="/signup" className={styles["footer-link"]}>Regístrate</Link>
+        <footer className={styles["login-footer"]}>
+          <span className={"a-text"}>
+            <Link to="/forgot-password" className={"a-link"}>¿Olvidaste tu contraseña?</Link>
+          </span>
+          <span className={"a-text"}>
+            ¿No tienes cuenta? <Link to="/signup" className={"a-link"}>Regístrate</Link>
           </span>
           <span className={styles["footer-text"]}>
             <button 
@@ -123,7 +125,7 @@ export const LoginForm = ({ URL = '' }) => {
               Iniciar Sesion con Google
             </button>
           </span>
-        </div>
+        </footer>
       </form>
     </main>
   )

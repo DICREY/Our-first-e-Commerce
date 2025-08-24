@@ -1,13 +1,13 @@
 // Librarys
 import React, { useEffect, useState } from 'react'
-import { sendPasswordResetEmail, confirmPasswordReset } from 'firebase/auth'
-import { ChevronLeft, LoaderCircle, Mail, Send } from 'lucide-react'
+import { sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth'
+import { LockKeyhole, LockKeyholeOpen, Send } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // Imports 
 import { auth } from '../../../Hooks/AuthFirebase'
-import { PostData } from '../../../Utils/Requests'
-import { errorStatusHandler, showAlert, showAlertSelect } from '../../../Utils/utils'
+import { ModifyData, PostData } from '../../../Utils/Requests'
+import { errorStatusHandler, FirebaseErrorHandler, showAlert, showAlertSelect } from '../../../Utils/utils'
 
 // Import styles 
 import styles from './PasswordReset.module.css'
@@ -15,20 +15,42 @@ import styles from './PasswordReset.module.css'
 // Component 
 export const PasswordReset = ({ URL = '' }) => {
     // States 
-    const [email, setEmail] = useState('')
-    const [code, setCode] = useState('')
-    const [newPassword, setNewPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [step, setStep] = useState(1) // 1: Email, 2: Code, 3: New Password
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [currentUser, setCurrentUser] = useState(null)
+    const [ email, setEmail ] = useState('')
+    const [ code, setCode ] = useState('')
+    const [ inputType, setInputType ] = useState('password')
+    const [ inputTypeTwo, setInputTypeTwo ] = useState('password')
+    const [ newPassword, setNewPassword ] = useState('')
+    const [ confirmPassword, setConfirmPassword ] = useState('')
+    const [ step, setStep ] = useState(1) // 1: Email, 2: New Password
+    const [ methodOther, setMethodOther ] = useState(1)
+    const [ error, setError ] = useState('')
+    const [ success, setSuccess ] = useState('')
+    const [ loading, setLoading ] = useState(false)
+    const [ currentUser, setCurrentUser ] = useState(null)
 
     // vars 
     const navigate = useNavigate()
     const location = useLocation()
     const params = new URLSearchParams(location.search)
+    let didConfirmCode = false
+
+    const ChangePasswordRequest = async (pwd = '') => {
+        try {
+            const modPwd = await ModifyData(`${URL}/credential/change-password`,{
+                email: email,
+                password: pwd
+            })
+            if (modPwd?.success) {
+                showAlert('Contraseña cambiada','Su contraseña a sido cambiada satisfactoriamente','success')
+                setTimeout(() => navigate('/login'), 2000)
+            }
+        } catch (err) {
+            const message = errorStatusHandler(err)
+            showAlert('Error',message, 'error')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     // Paso 1: Enviar código al correo
     const handleSendCode = async (e) => {
@@ -47,7 +69,7 @@ export const PasswordReset = ({ URL = '' }) => {
                 setCurrentUser(got?.[0])
                 const verify = await showAlertSelect('Usuario encontrado', `¿Es usted ${got?.[0]?.nom_per} ${got?.[0]?.ape_per}?`)
                 if (await verify?.isConfirmed) {
-                    const send = await sendPasswordResetEmail(auth, email, actionCodeSettings)
+                    await sendPasswordResetEmail(auth, email, actionCodeSettings)
                     setSuccess(`Se ha enviado un correo a ${email}`)
                 } else navigate(-1)
             }
@@ -60,51 +82,56 @@ export const PasswordReset = ({ URL = '' }) => {
         }
     }
 
-    // Paso 2: Verificar código
-    const handleVerifyCode = (e) => {
-        e.preventDefault()
-        // Aquí normalmente verificarías el código con tu backend
-        // Por ahora solo avanzamos al siguiente paso
-        setStep(3)
-        setSuccess('Código verificado correctamente')
+    const ConfirmCodeReset = async (code) => {
+        if (didConfirmCode) return
+        didConfirmCode = true
+        try {
+            const resetCode = await verifyPasswordResetCode(auth, code)
+            if (resetCode) setStep(3)
+        } catch (err) {
+            didConfirmCode = true
+            const message = FirebaseErrorHandler(err)
+            showAlert('Error', message, 'error')
+        }
     }
 
-    // Paso 3: Cambiar contraseña
+    // Paso 2: Cambiar contraseña
     const handleResetPassword = async (e) => {
         e.preventDefault()
         setLoading(true)
         setError('')
 
         if (newPassword !== confirmPassword) {
-            setError('Las contraseñas no coinciden')
+            showAlert('Error','Las contraseñas no coinciden','error')
             setLoading(false)
             return
         }
 
         try {
-            // Aquí implementas la lógica para cambiar la contraseña
             const reset = await confirmPasswordReset(auth, code, newPassword)
-            console.log(reset)
-
-            // Simulación de éxito:
-            setSuccess('Contraseña cambiada exitosamente')
-            setTimeout(() => {
-                // Redirigir al login o dashboard
-            }, 2000)
+            if (reset) return
+            
+            await ChangePasswordRequest(newPassword)
         } catch (err) {
-            setError(err.message || 'Error al cambiar la contraseña')
+            const message = errorStatusHandler(err)
+            showAlert('Error',message, 'error')
         } finally {
             setLoading(false)
         }
     }
 
+    const handleVerifyCode = () => {
+        return
+    }
+
     useEffect(() => {
         const tokenReset = params.get('apiKey')
         if (tokenReset) {
-            setStep(3)
             setCode(params.get('oobCode'))
+            setEmail(params.get('em'))
+            ConfirmCodeReset(params.get('oobCode'))
         }
-    })
+    },[])
 
     return (
         <main className={styles.container}>
@@ -140,45 +167,22 @@ export const PasswordReset = ({ URL = '' }) => {
                 {/* Paso 2: Ingresar código */}
                 {step === 2 && (
                     <form onSubmit={handleVerifyCode} className={styles.form}>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="code" className={styles.label}>Código de Verificación</label>
-                            <input
-                                type="text"
-                                id="code"
-                                value={code}
-                                placeholder='Código de verificación'
-                                onChange={(e) => setCode(e.target.value)}
-                                className={styles.input}
-                                required
-                            />
-                            <small className={styles.helperText}>Revisa tu correo electrónico para obtener el código</small>
-                        </div>
-                        <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
-                            {loading ? 
-                                (<><LoaderCircle />Verificando...</>): 
-                                (<><Mail /> Verificar Código</>)
-                            }
-                        </button>
-                        <span>
-                            <button 
-                                type="button"
-                                className={`backButton ${styles.button}`}
-                                onClick={() => setStep(1)}
-                                disabled={loading}
-                            >
-                                <ChevronLeft />
-                                Atrás
-                            </button>
-                            <button 
-                                type="button"
-                                className={`backButton ${styles.button}`}
-                                onClick={handleSendCode}
-                                disabled={loading}
-                            >
-                                <Send />
-                                Reenviar Código
-                            </button>
-                        </span>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="code" className={styles.label}>Código de Verificación</label>
+                        <input
+                            type="text"
+                            id="code"
+                            placeholder='Código de verificación'
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            className={styles.input}
+                            required
+                        />
+                        <small className={styles.helperText}>Revisa tu celular para obtener el código</small>
+                    </div>
+                    <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
+                        {loading ? 'Verificando...' : 'Verificar Código'}
+                    </button>
                     </form>
                 )}
 
@@ -187,43 +191,71 @@ export const PasswordReset = ({ URL = '' }) => {
                     <form onSubmit={handleResetPassword} className={styles.form}>
                         <div className={styles.formGroup}>
                             <label htmlFor="newPassword" className={styles.label}>Nueva Contraseña</label>
-                            <input
-                                type="password"
-                                id="newPassword"
-                                placeholder='Nueva contraseña'
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                className={styles.input}
-                                minLength="6"
-                                required
-                            />
+                            <span
+                                className={styles.inputSpan}
+                            >
+                                <input
+                                    type={inputType}
+                                    id="newPassword"
+                                    placeholder='Nueva contraseña'
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    style={{ background: 'transparent', border: 'none', outline: 'none' }}
+                                    minLength="6"
+                                    required
+                                />
+                                <span
+                                    onClick={() => setInputType(inputType === 'text'?'password':'text')}
+                                >
+                                    {inputType === 'text'? <LockKeyholeOpen />: <LockKeyhole />}
+                                </span>
+                            </span>
                         </div>
                         <div className={styles.formGroup}>
                             <label htmlFor="confirmPassword" className={styles.label}>Confirmar Contraseña</label>
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                value={confirmPassword}
-                                placeholder='Confirmar Contraseña'
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                className={styles.input}
-                                minLength="6"
-                                required
-                            />
+                            <span
+                                className={styles.inputSpan}
+                            >
+                                <input
+                                    type={inputTypeTwo}
+                                    id="confirmPassword"
+                                    value={confirmPassword}
+                                    placeholder='Confirmar Contraseña'
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    minLength="6"
+                                    required
+                                />
+                                <span
+                                    onClick={() => setInputTypeTwo(inputTypeTwo === 'text'?'password':'text')}
+                                >
+                                    {inputTypeTwo === 'text'? <LockKeyholeOpen />: <LockKeyhole />}
+                                </span>
+                            </span>
                         </div>
                         <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
                             {loading ? 'Cambiando...' : 'Cambiar Contraseña'}
                         </button>
                     </form>
                 )}
-                <span className={"a-text"}>
-                    <Link
-                        to='/login'
-                        className={"a-link"}
-                    >
-                        Iniciar de sesión
-                    </Link>
-                </span>
+
+                <footer style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span className={"a-text"}>
+                        <button
+                            className={"a-link"}
+                            onClick={() => showAlert('','No sirve papi te me calmas!!','info')}
+                        >
+                            Probar otro metodo
+                        </button>
+                    </span>
+                    <span className={"a-text"}>
+                        <Link
+                            to='/login'
+                            className={"a-link"}
+                        >
+                            Inicio de sesión
+                        </Link>
+                    </span>
+                </footer>
             </section>
         </main>
     )

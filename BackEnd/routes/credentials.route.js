@@ -20,6 +20,27 @@ const Route = Router()
 Route.use(Fullinfo(['cel_per','url_img']))
 
 // Routes
+Route.put('/change-password', limiterLog, async (req,res) => {
+    try {
+        // Vars
+        const saltRounds = 15
+        const data = req.body
+        const hashPwd = await hash(data.password, saltRounds)
+        const cred = new Credentl({ ...data, hash_pass: await hashPwd })
+        
+        // Change password
+        const changed = await cred.ChangePassword()
+        if (changed?.success) return res.status(200).json(changed)
+
+        res.status(500).json({ message: 'Error en el servidor intentelo más tarde' })
+    } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({ message: err.message })
+        res.status(500).json({ message: err })
+    }
+})
+
 Route.post('/register', async (req,res) => {
     // Vars 
     const user = new People()

@@ -38,6 +38,38 @@ class Credentl {
         })
     }
 
+    async ChangePassword() {
+        return new Promise((res,rej) => {
+            // vars
+            const proc = "CALL ChangePassword(?,?);"
+            const params = [
+                this.args[0].email,
+                this.args[0].hash_pass
+            ]
+
+            // conect to database
+            this.database = new DataBase()
+            this.database.conect()
+
+            // verify conection and call procedure
+            if (this.database) this.database.conection.query(proc,params,(err) => {
+                if(err) {
+                    rej({ message: err })
+                } else {
+                    setTimeout(() => {
+                        res({
+                            message: "Changed",
+                            success: 1
+                        })
+                    },1000)
+                }
+            })
+
+            // close conection 
+            this.database.conection.end()
+        })
+    }
+
     async googleLogin() {
         return new Promise((res,rej) => {
             // vars

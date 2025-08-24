@@ -6,19 +6,19 @@ import AdminLoadingScreen from '../components/Global/Loading'
 
 export const AuthProvider = ({ children }) => {
     // Dynamic vars
-    const [user, setUser] = useState(null);
-    const [roles, setRoles] = useState(null);
-    const [mainRol, setMainRol] = useState(null);
-    const [theme, setTheme] = useState('DARK');
-    const [admin, setAdmin] = useState(false);
-    const [img, setImg] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [favorites, setFavorites] = useState([]);
-    const [token, setToken] = useState(null);
+    const [user, setUser] = useState(null)
+    const [roles, setRoles] = useState(null)
+    const [mainRol, setMainRol] = useState(null)
+    const [theme, setTheme] = useState('DARK')
+    const [admin, setAdmin] = useState(false)
+    const [img, setImg] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [favorites, setFavorites] = useState([])
+    const [token, setToken] = useState(null)
 
     // Vars 
-    let didFetch = false;
-    const URL = 'http://localhost:3000/ecommerce'
+    let didFetch = false
+    const URL = process.env.REACT_APP_URL
 
     // Función para cargar favoritos
     const loadFavorites = async (userDoc) => {

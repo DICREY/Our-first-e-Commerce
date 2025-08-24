@@ -78,6 +78,27 @@
   --text-primary: #1e293b;
   --text-secondary: #64748b;
 }
+html {
+  font-size: 16px;
+}
+
+@media (width > 1500px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (width > 2000px) {
+  html {
+    font-size: 22px;
+  }
+}
+
+@media (width > 3000px) {
+  html {
+    font-size: 30px;
+  }
+}
 
 ::-webkit-scrollbar {
   background-color: var(--gray-400);
@@ -111,15 +132,20 @@
 body {
   background-color: var(--neutral-50);
   color: var(--gray-600);
-  /* height: 100vh;
-  width: 100vw; */
   line-height: 1.6;
-  /* overflow: hidden; */
 }
 
 .container {
   flex: 1;
   width: 100%;
+}
+
+.App {
+  display: grid;
+  grid-template-rows: 1fr 9fr;
+  height: 100vh;
+  background-color: var(--light-gray);
+  overflow: auto;
 }
 
 .mainContainerAdmin {
@@ -141,28 +167,6 @@ body {
   background-color: var(--primary-50);
   color: var(--primary-600);
   font-weight: 600;
-}
-
-html {
-  font-size: 16px;
-}
-
-@media (width > 1500px) {
-  html {
-    font-size: 18px;
-  }
-}
-
-@media (width > 2000px) {
-  html {
-    font-size: 22px;
-  }
-}
-
-@media (width > 3000px) {
-  html {
-    font-size: 30px;
-  }
 }
 
 /* Loading state */
@@ -292,6 +296,8 @@ html {
   display: block;
   margin-top: 10px;
   color: var(--gray-600);
+  font-size: .97rem;
+  text-wrap-mode: nowrap;
 }
 
 .backButton {
@@ -314,6 +320,29 @@ html {
 
 .backButton:hover {
   background-color: var(--primary-100);
+  transform: translateY(-1px);
+}
+
+.primaryBtn {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .5rem 0.75rem;
+  gap: .2rem;
+  color: white;
+  font-weight:600;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 1px solid var(--primary-600);
+  border-radius: .5rem;
+  background-color: var(--primary-600);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.primaryBtn:hover {
+  background-color: var(--primary-500);
   transform: translateY(-1px);
 }
 

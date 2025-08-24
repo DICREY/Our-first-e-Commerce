@@ -40,9 +40,6 @@ Route.get('/product', async ( req, res ) => {
     }
 })
 
-// Middleware 
-Route.use(Fullinfo(['products', 'categories', 'dur_ofe']))
-
 Route.post('/by', async (req,res) => {
     try {
         // Vars 
@@ -61,7 +58,9 @@ Route.post('/by', async (req,res) => {
     }
 })
 
+// Middleware 
 Route.use(authenticateJWT)
+Route.use(Fullinfo(['products', 'categories', 'dur_ofe']))
 Route.use(ValidatorRol("administrador"))
 
 Route.post('/register', async (req,res) => {

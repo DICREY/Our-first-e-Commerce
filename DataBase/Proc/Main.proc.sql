@@ -115,12 +115,19 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM personas WHERE email_per = p_email) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email ingresado no existe en el sistema';
     END IF;
+
     UPDATE
         personas p
     SET
-        p.cont_per = p_passwd
+        p.pas_per = p_passwd
     WHERE
         p.email_per = p_email;
+
+    /* SELECT pas_per FROM personas WHERE email_per = p_email; */
+
+    COMMIT;
+    
+    SET autocommit = 1;
 END //
 
 CREATE PROCEDURE e_commerce.ChangeTheme(
@@ -178,8 +185,10 @@ BEGIN
 END //
 
 /* DROP PROCEDURE e_commerce.`Login`; */
+/* DROP PROCEDURE e_commerce.`ChangePassword`; */
 /* DROP PROCEDURE e_commerce.`GoogleLogin`; */
 /* DROP PROCEDURE e_commerce.ChangeTheme; */
 
 /* CALL e_commerce.Login('admin@gmail.com'); */
 /* CALL e_commerce.GoogleLogin('test@gmail.com','testName','testLastName','31312312','test123','test.jpg'); */
+/* CALL e_commerce.ChangePassword('admin@gmail.com', 'Perra123'); */

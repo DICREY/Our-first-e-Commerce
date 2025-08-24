@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
 // Imports 
-import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertInput, showAlertLoading, showAlertSelect, verifyCred } from '../../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertLoading, showAlertSelect, verifyCred } from '../../../Utils/utils'
 import { ModifyData, PostData } from '../../../Utils/Requests'
 import { AuthContext } from '../../../Contexts/Contexts'
 import AdminLoadingScreen from '../../../components/Global/Loading'
@@ -127,13 +127,7 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
             }
 
             // Verify ask 
-            const verifyCred = async (URL = '', email = '') => {
-                const passwd = await showAlertInput('Verificar Privilegios', 'password','Contraseña')
-                showAlertLoading('Verificando credenciales', 'Por favor, espere...', 'info')
-                return await login(`${URL}/credential/login`, { firstData: email, secondData: await passwd })
-            }
-            const verify = await verifyCred(URL, user.email)
-            console.log(verify)
+            const verify = await verifyCred(URL, user.email, login)
             if (verify?.logged) change()
                 
         } catch (err) {
@@ -143,9 +137,14 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
     }
 
     const changeEmail = async () => {
-        const option = showAlertSelect('Cambiar Email','¿Desea cambiar el email a está persona?','question')
-        if ((await option).isConfirmed) {
-            showAlert('','En construcción, Papi te me calmas!!','info')
+        try {
+            const verify = await verifyCred(URL, user.email, login)
+            const option = showAlertSelect('Cambiar Email','¿Desea cambiar el email a está persona?','question')
+            if ((await option).isConfirmed) {
+                showAlert('','En construcción, Papi te me calmas!!','info')
+            }
+        } catch (err) {
+
         }
     }
 

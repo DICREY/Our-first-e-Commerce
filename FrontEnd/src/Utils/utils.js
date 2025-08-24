@@ -181,6 +181,8 @@ export const getAge = (fec = "") => {
 
 // Handle request errors
 export const errorStatusHandler = (err) => {
+  const isFirebase = err?.code?.includes('auth')
+
   const returnMessage = (errStatus) => {
     let message = 'Error interno'
 
@@ -238,7 +240,39 @@ export const errorStatusHandler = (err) => {
 
     return message
   }
-  return returnMessage(err)
+  return isFirebase? FirebaseErrorHandler(err) : returnMessage(err)
+}
+
+export const FirebaseErrorHandler = (err) => {
+  let errorMessage = 'Error del sistema intentelo más tarde'
+  
+  switch (err?.code) {
+    case 'auth/expired-action-code':
+      errorMessage = 'El código ha expirado, Solicitar nuevo enlace'
+      break
+
+    case 'auth/invalid-action-code':
+      errorMessage = 'Código inválido, Verifica la URL'
+      break
+
+    case 'auth/user-disabled':
+      errorMessage = 'El usuario no se encuentra activo en el sistema, Contactar con el administrador'
+      break
+
+    case 'auth/user-not-found':
+      errorMessage = 'El email del usuario no esta registrado en google, Verificar email'
+      break
+
+    case 'auth/weak-password':
+      errorMessage = 'La Contraseña es demasiado débil, Usar contraseña más fuerte'
+      break
+
+    default:
+      errorMessage
+        break
+  }
+
+  return errorMessage
 }
 
 // Convertir horario 24h a 12h
@@ -319,7 +353,7 @@ export const showAlertLoading = (title, text, icon) => {
     showConfirmButton: false,
     allowOutsideClick: false,
     allowEscapeKey: false,
-    theme: localStorage.getItem('theme').toLowerCase() || 'light',
+    theme: localStorage.getItem('theme')?.toLowerCase() || 'light',
     didOpen: () => {
       Swal.showLoading()
     }
@@ -354,4 +388,15 @@ export const showAlertInput = async (title = '', type = '', label = '') => {
   })
 
   return value
+}
+
+export const verifyCred = async (URL = '', email = '', login) => {
+  try {
+    const passwd = await showAlertInput('Verificar Privilegios', 'password','Contraseña')
+    showAlertLoading('Verificando credenciales', 'Por favor, espere...', 'info')
+    return await login(`${URL}/credential/login`, { firstData: email, secondData: await passwd })
+  } catch(err) {
+    const message = errorStatusHandler(err)
+    showAlert('Error', message, 'error')
+  }
 }
