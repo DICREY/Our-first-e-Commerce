@@ -11,6 +11,7 @@ function validatorHeaders (req,res,next) {
     const contentType = req.headers['accept']
     const userAgent = req.headers['user-agent']
     const user = req.signedCookies? req.signedCookies.__userName: 'Unknow User'
+    console.log(req.headers)
 
     // Validation
     if (!apiKey || apiKey !== secret ) {

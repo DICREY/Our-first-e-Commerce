@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation, NavLink } from "react-router-dom";
 import { Heart, Search, ShoppingBag } from 'lucide-react';
 
 // Imports 
-import { CheckImage, errorStatusHandler } from "../../Utils/utils";
+import { CheckImage, errorStatusHandler, showAlert } from "../../Utils/utils";
 import { AuthContext } from "../../Contexts/Contexts";
 import { useCart } from "../../Contexts/CartContext"
 import CartSheet from "../CartSheet/CartSheet";
@@ -132,14 +132,14 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
         categoriesCache = catPro;
         lastFetchTime = now;
 
-        setNavigation(catPro);
-        setHasFetched(true);
+        setNavigation(catPro)
+        setHasFetched(true)
       }
     } catch (err) {
-      const message = errorStatusHandler(err);
-      console.log(message);
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     }
-  };
+  }
 
   useEffect(() => {
     if (!hasFetched) {
