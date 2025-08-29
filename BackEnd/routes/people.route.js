@@ -69,6 +69,26 @@ Route.put('/change-rol', ValidatorRol('administrador'), async (req,res) => {
     }
 })
 
+Route.put('/change-email', ValidatorRol('usuario'), async (req,res) => {
+    // Vars
+    const data = req.body
+    const modEmail = new People(data)
+
+    try {
+        // Search in database
+        const log = await modEmail.ChangeEmail()
+        if (!log.success) return res.status(500).json({ message: 'Error al editar email' })
+
+        res.status(200).json(log)
+    } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({ message: err.message })
+
+        res.status(500).json({ message: err })
+    }
+})
+
 Route.post('/by', async (req,res) => {
     try {
         // Vars 

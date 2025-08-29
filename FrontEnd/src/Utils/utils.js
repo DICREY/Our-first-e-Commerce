@@ -373,11 +373,12 @@ export const showAlertSelect = (title, text, icon, textBtnDeny = 'Cancelar', tex
   })
 }
 
-export const showAlertInput = async (title = '', type = '', label = '') => {
+export const showAlertInput = async (title = '', type = '', label = '', placeholder = '') => {
   const { value } = await Swal.fire({
     title: title,
     input: type,
     inputLabel: label,
+    inputPlaceholder: placeholder,
     showCancelButton: true,
     theme: localStorage.getItem('theme').toLowerCase() || 'light',
     inputValidator: (value) => {
@@ -393,8 +394,10 @@ export const showAlertInput = async (title = '', type = '', label = '') => {
 export const verifyCred = async (URL = '', email = '', login) => {
   try {
     const passwd = await showAlertInput('Verificar Privilegios', 'password','Contraseña')
-    showAlertLoading('Verificando credenciales', 'Por favor, espere...', 'info')
-    return await login(`${URL}/credential/login`, { firstData: email, secondData: await passwd })
+    if (passwd) {
+      showAlertLoading('Verificando credenciales', 'Por favor, espere...', 'info')
+      return await login(`${URL}/credential/login`, { firstData: email, secondData: await passwd })
+    } else return null
   } catch(err) {
     const message = errorStatusHandler(err)
     showAlert('Error', message, 'error')

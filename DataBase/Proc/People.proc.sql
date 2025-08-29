@@ -149,6 +149,41 @@ BEGIN
     COMMIT;
     SET autocommit = 1;
 END //
+CREATE PROCEDURE e_commerce.ChangeEmail(
+    IN p_new_email VARCHAR(100),
+    IN p_old_email VARCHAR(100)
+)
+BEGIN
+    DECLARE v_id_per INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET autocommit = 0;
+
+    START TRANSACTION;
+
+    SELECT id_per INTO v_id_per FROM personas WHERE email_per = p_old_email;
+    IF (v_id_per) IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email ingresado no existe en el sistema';
+    END IF;
+
+    IF (SELECT id_per FROM personas WHERE email_per = p_new_email) IS NOT NULL THEN 
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Este correo electrónico ya está registrado en el sistema';
+    END IF;
+
+    UPDATE 
+        personas p
+    SET
+        p.email_per = p_new_email
+    WHERE
+        p.email_per = p_old_email;
+
+    COMMIT;
+    SET autocommit = 1;
+END //
 CREATE PROCEDURE e_commerce.SearchPeoples()
 BEGIN
     IF NOT EXISTS(SELECT id_per FROM personas LIMIT 1) THEN
@@ -171,6 +206,7 @@ BEGIN
         p.gen_per,
         p.estado,
         p.fec_cre_per,
+        p.updated_at,
         p.fot_per,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 
@@ -212,6 +248,7 @@ BEGIN
         p.gen_per,
         p.estado,
         p.fec_cre_per,
+        p.updated_at,
         p.fot_per,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 
@@ -251,6 +288,7 @@ BEGIN
         p.gen_per,
         p.estado,
         p.fec_cre_per,
+        p.updated_at,
         p.fot_per,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 

@@ -375,6 +375,5 @@ body {
 .separator {
   background-color: var(--gray-200);
   filter: opacity(.7);
-  color: red;
   margin: 1rem 0;
 }

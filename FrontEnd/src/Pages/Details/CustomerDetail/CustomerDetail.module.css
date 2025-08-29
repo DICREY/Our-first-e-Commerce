@@ -91,6 +91,15 @@
     border: none;
 }
 
+.metaInfo {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
 .sectionTitle {
     font-size: 1.4rem;
     font-weight: 600;

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
 // Imports 
-import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertLoading, showAlertSelect, verifyCred } from '../../../Utils/utils'
+import { CheckImage, errorStatusHandler, formatDate, getAge, LegalAge, showAlert, showAlertInput, showAlertLoading, showAlertSelect, verifyCred } from '../../../Utils/utils'
 import { ModifyData, PostData } from '../../../Utils/Requests'
 import { AuthContext } from '../../../Contexts/Contexts'
 import AdminLoadingScreen from '../../../components/Global/Loading'
@@ -25,8 +25,7 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
     // Vars 
     let didFetch = false
     const navigate = useNavigate()
-    const ID = localStorage.getItem('id_peo') || 0
-    const roles = customerData?.roles?.split(', ')
+    let ID = localStorage.getItem('id_peo') || 0
     const { user, login } = useContext(AuthContext)
 
     const GetCustomer = async () => {
@@ -137,14 +136,41 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
     }
 
     const changeEmail = async () => {
-        try {
-            const verify = await verifyCred(URL, user.email, login)
-            const option = showAlertSelect('Cambiar Email','¿Desea cambiar el email a está persona?','question')
-            if ((await option).isConfirmed) {
-                showAlert('','En construcción, Papi te me calmas!!','info')
-            }
-        } catch (err) {
+        const change = async ( email = '' ) => {
+            try {
+                showAlertLoading('Cambiando email', 'Por favor, espere...', 'info')
 
+                didFetch = false
+                const data = {
+                    newEmail: email,
+                    oldEmail: customerData.email_per
+                }
+                const up = await ModifyData(`${URL}/peoples/change-email`, data)
+                if (up?.success) {
+                    localStorage.setItem('id_peo',email)
+                    ID = email
+                    showAlert('Éxito','El email ha sido cambiado correctamente','success')
+                    GetCustomer()
+                }
+            } catch (err) {
+                const message = errorStatusHandler(err)
+                showAlert('Error', message, 'error')
+            }
+        }
+        try {            
+            const verify = await verifyCred(URL, user.email, login)
+            
+            if (!verify) return
+            const option = showAlertSelect('Cambiar Email','¿Desea cambiar el email a está persona?','question')
+            if ((await option).isDenied) return
+            
+            const newEmail = await showAlertInput('Nuevo Email', 'email', 'Ingrese el nuevo email de la persona','Nuevo email')
+            
+            if (newEmail === customerData.email_per) return showAlert('Error','El email ingresado es el mismo al actual','error')
+            if (newEmail) await change(newEmail)
+        } catch (err) {
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
     }
 
@@ -228,7 +254,10 @@ export const CustomerDetail = ({ URL = '' , imgDefault = '' }) => {
 
                     <div className={styles.metaInfo}>
                         <span>
-                            Cliente registrado el {formatDate(customerData?.fec_cre_per)} a las {new Date(customerData?.fec_cre_per).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            Cliente registrado el {formatDate(customerData?.fec_cre_per) || '0000-00-00' } a las {new Date(customerData?.fec_cre_per || new Date()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                        <span>
+                            Ultima actualización {formatDate(customerData?.updated_at) || '0000-00-00' } a las {new Date(customerData?.updated_at || new Date()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                     </div>
 
