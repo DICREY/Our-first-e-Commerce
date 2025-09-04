@@ -555,28 +555,28 @@ class Product {
 
     async addToFavorites() {
         return new Promise((res, rej) => {
-            const proc = "CALL AddToFavorites(?, ?)";
+            const proc = "CALL AddToFavorites(?,?)";
             const params = [
-                this.args[0].userDoc,  
+                this.args[0].email,
                 this.args[0].productId
-            ];
+            ]
 
-            this.database.conect();
+            this.database.conect()
 
             if (this.database) this.database.conection.query(proc, params, (err, result) => {
-                this.database.conection.end();
+                this.database.conection.end()
                 if (err) {
-                    rej({ message: err });
+                    rej({ message: err })
                 } else if (result) {
                     setTimeout(() => {
                         res({
                             message: "Producto agregado a favoritos",
                             success: true,
-                            result: result[0]
+                            result: result?.[0]
                         });
-                    }, 1000);
+                    }, 1000)
                 } else {
-                    rej({ message: 'Error interno', status: 500 });
+                    rej({ message: 'Error interno', status: 500 })
                 }
             });
         });
@@ -584,70 +584,70 @@ class Product {
 
     async removeFromFavorites() {
         return new Promise((res, rej) => {
-            const proc = "CALL RemoveFromFavorites(?, ?)";
+            const proc = "CALL RemoveFromFavorites(?, ?)"
             const params = [
-                this.args[0].userDoc,  // Cambiado de userId a userDoc
+                this.args[0].email,  // Cambiado de userId a userDoc
                 this.args[0].productId
-            ];
+            ]
 
-            this.database.conect();
+            this.database.conect()
 
             if (this.database) this.database.conection.query(proc, params, (err, result) => {
-                this.database.conection.end();
+                this.database.conection.end()
                 if (err) {
-                    rej({ message: err });
+                    rej({ message: err })
                 } else if (result) {
                     setTimeout(() => {
                         res({
                             message: "Producto eliminado de favoritos",
                             success: true,
                             result: result[0]
-                        });
-                    }, 1000);
+                        })
+                    }, 1000)
                 } else {
-                    rej({ message: 'Error interno', status: 500 });
+                    rej({ message: 'Error interno', status: 500 })
                 }
-            });
-        });
+            })
+        })
     }
 
     async getUserFavorites() {
         return new Promise((res, rej) => {
             const proc = "CALL GetUserFavorites(?)";
-            const userDoc = this.args[0];  // Ahora espera el documento en lugar del ID
+            const email = this.args[0]
 
-            this.database.conect();
+            this.database.conect()
 
-            if (this.database) this.database.conection.query(proc, [userDoc], (err, result) => {
-                this.database.conection.end();
+            if (this.database) this.database.conection.query(proc, [email], (err, result) => {
+                this.database.conection.end()
                 if (err) {
-                    rej({ message: err });
+                    rej({ message: err })
                 } else if (result) {
-                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img']);
-                    const lastRes = this.global.iterar(resOne, 'sizes');
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
+                    const lastRes = this.global.iterar(resOne, 'sizes')
 
                     setTimeout(() => {
                         res({
                             message: "Favoritos obtenidos",
                             result: lastRes
-                        });
-                    }, 1000);
+                        })
+                    }, 1000)
                 } else {
-                    rej({ message: 'Error interno', status: 500 });
+                    rej({ message: 'Error interno', status: 500 })
                 }
-            });
-        });
+            })
+        })
     }
 
     async getProductInventory() {
         return new Promise((res, rej) => {
-            const proc = "CALL GetProductInventory(?)";
-            const productId = this.args[0];
+            const proc = "CALL GetProductInventory(?)"
+            const productId = this.args[0]
 
-            this.database.conect();
+            this.database.conect()
 
             if (this.database) this.database.conection.query(proc, [productId], (err, result) => {
-                this.database.conection.end();
+                this.database.conection.end()
                 if (err) {
                     rej({ message: err });
                 } else if (result) {

@@ -10,7 +10,6 @@ import { ProductList } from "./Pages/Dashboard/Products/Products"
 import { OrdersList } from "./Pages/Dashboard/Orders/Orders"
 import { Customers } from "./Pages/Dashboard/Customers/Clients"
 import { NavAdmin } from "./components/Headers/NavAdmin/NavAdmin"
-import { useDarkMode } from "./Hooks/Theme";
 import { ProductEdit } from "./components/Products/ProductEdit";
 import { LoginForm } from "./Pages/MainForms/Login/Login";
 import { RegisterForm } from "./Pages/MainForms/Register/Register";

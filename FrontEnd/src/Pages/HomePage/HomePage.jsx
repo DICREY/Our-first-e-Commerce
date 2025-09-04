@@ -1,5 +1,5 @@
 // Librarys 
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { NavLink } from "react-router-dom"
 import { ChevronRight } from "lucide-react"
 
@@ -13,17 +13,19 @@ import { GetData } from "../../Utils/Requests"
 
 // Import styles 
 import styles from "./HomePage.module.css"
+import { AuthContext } from "../../Contexts/Contexts"
 
 // Component 
 export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
   // Dynamic vars 
-  const [selectedCategory, setSelectedCategory] = useState("Todos")
-  const [sellest, setSellest] = useState(null)
-  const [categorie, setCategories] = useState([])
-  const saleProducts = sellest?.filter((product) => product.onSale)
-
+  const [ selectedCategory, setSelectedCategory ] = useState("Todos")
+  const [ sellest, setSellest ] = useState(null)
+  const [ categorie, setCategories  ] = useState([])
+  
   // Vars 
   const mainUrl = `${URL}/stats`
+  const { isFavorite } = useContext(AuthContext)
+  const saleProducts = sellest?.filter((product) => product.onSale)
 
   // Get products sellest 
   const GetSellest = async () => {
@@ -34,7 +36,7 @@ export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
       }
     } catch (err) {
       const message = errorStatusHandler(err)
-      showAlert('Error', String(message), 'error')
+      showAlert('Error', message, 'error')
     }
   }
 
@@ -44,13 +46,13 @@ export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
   }, [])
 
   return (
-    <div className={styles.page}>
+    <main className={styles.page}>
       {/* Hero Section */}
       <HeroSection URL={URL} imgDefault={imgProduct} />
 
       {/* Features */}
       <section className={styles.features}>
-        <div className="container">
+        <section className="container">
           <div className={styles.featuresGrid}>
             <div className={styles.feature}>
               <div className={styles.featureIcon}>🚚</div>
@@ -76,7 +78,7 @@ export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
               </p>
             </div>
           </div>
-        </div>
+        </section>
       </section>
 
       {/* Featured Products */}
@@ -93,10 +95,12 @@ export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
           <div className={styles.productsGrid}>
             {sellest?.map((product, index) => (
               <ProductCard
+                URL={URL}
                 key={index + 129}
                 data={product}
                 imgDefault={imgProduct}
                 set={setProduct}
+                isFavorite={product?.id_pro && isFavorite(product?.id_pro)}
               />
             ))}
           </div>
@@ -127,10 +131,12 @@ export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
             <div className={styles.productsGrid}>
               {saleProducts?.map((product, index) => (
                 <ProductCard
+                  URL={URL}
                   key={index + 98}
                   data={product}
                   imgDefault={imgProduct}
                   set={setProduct}
+                  isFavorite={product?.id_pro && isFavorite(product?.id_pro)}
                 />
               ))}
             </div>
@@ -167,10 +173,12 @@ export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
                   ?.slice(0, 8)
                   ?.map((product, index) => (
                     <ProductCard
+                      URL={URL}
                       key={index + 789}
                       data={product}
                       imgDefault={imgProduct}
                       set={setProduct}
+                      isFavorite={product?.id_pro && isFavorite(product?.id_pro)}
                     />
                   ))}
               </div>
@@ -202,6 +210,6 @@ export const HomePage = ({ URL = '', imgProduct = '', setProduct }) => {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   )
 }

@@ -5,42 +5,41 @@ import { useNavigate } from "react-router-dom"
 
 // Imports
 import { useCart } from "../../Contexts/CartContext"
-import { CheckImage, formatNumber, showAlert, Discount} from "../../Utils/utils"
-import { GetData, PostData, DeleteData } from "../../Utils/Requests"
+import { CheckImage, formatNumber, showAlert, Discount, errorStatusHandler} from "../../Utils/utils"
+import { AuthContext } from "../../Contexts/Contexts"
 import Button from "../Button/Button"
 import Badge from "../Badge/Badge"
 import ProductQuickView from "./ProductQuickView"
-import { AuthContext } from "../../Contexts/Contexts"
 
 // Import styles 
 import styles from "../../styles/Products/ProductCard.module.css"
 
 // Component 
-const ProductCard = ({ URL = '', data = {}, imgDefault = '', set }) => {
+const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = null }) => {
   // Contexts and hooks
   const { addToCart: addToCartContext } = useCart()
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { user, toggleFavorite } = useContext(AuthContext)
+  const navigate = useNavigate()
 
   // Obtén el token desde el contexto o localStorage
-  const token = useContext(AuthContext)?.token || localStorage.getItem('token');
+  const token = useContext(AuthContext)?.token || localStorage.getItem('token')
 
   // State
   const [showQuickView, setShowQuickView] = useState(false)
   const [showImg, setShowImg] = useState(imgDefault)
   const [imgError, setImgError] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
+  const [isLiked, setIsLiked] = useState(isFavorite)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
 
   // Normalize product data
   const product = useMemo(() => {
-    if (!data) return null;
+    if (!data) return null
 
     // Handle product images
-    let productImage = '';
+    let productImage = ''
     if (data.url_img?.trim()) {
-      productImage = data.url_img;
+      productImage = data.url_img
     }
 
     // Process colors
@@ -48,21 +47,21 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set }) => {
     if (data.colors) {
       if (typeof data.colors === 'string') {
         productColors = data.colors.split('---').map(colorStr => {
-          const [nom_col, hex_col, nom_img, url_img] = colorStr.split(';');
+          const [nom_col, hex_col, nom_img, url_img] = colorStr.split(';')
           return {
             nom_col: nom_col || '',
             hex_col: hex_col || '#ccc',
             nom_img: nom_img || '',
             url_img: url_img || ''
-          };
-        });
+          }
+        })
       } else if (Array.isArray(data.colors)) {
         productColors = data.colors.map(color => ({
           nom_col: color.nom_col || '',
           hex_col: color.hex_col || '#ccc',
           nom_img: color.nom_img || '',
           url_img: color.url_img || ''
-        }));
+        }))
       }
     }
 
@@ -77,17 +76,17 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set }) => {
       featured: Boolean(data.featured),
       ...data
     };
-  }, [data]);
+  }, [data])
 
   // Set initial image and check if product is liked
   useEffect(() => {
-    if (!product) return;
+    if (!product) return
 
-    let imageToShow = imgDefault;
+    let imageToShow = imgDefault
 
     // First check product main image
     if (product.url_img) {
-      imageToShow = product.url_img;
+      imageToShow = product.url_img
     }
     // Then check colors for images
     else if (Array.isArray(product.colors)) {
@@ -95,102 +94,32 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set }) => {
         color => color.url_img?.trim()
       );
       if (colorWithImage) {
-        imageToShow = colorWithImage.url_img;
+        imageToShow = colorWithImage.url_img
       }
     }
 
-    setShowImg(imageToShow);
-    setImgError(false);
+    setShowImg(imageToShow)
+    setImgError(false)
 
     // Check if product is in favorites
-    if (user?.doc && product?.id_pro) {
+    if (user?.email && product?.id_pro) {
       // checkIfProductIsLiked();
     }
   }, [product, imgDefault, user])
-
-const checkIfProductIsLiked = useCallback(async () => {
-    try {
-        // Verificar si hay usuario y documento
-        if (!user?.doc) {
-            setIsLiked(false);
-            return;
-        }
-
-        // Usar POST en lugar de GET
-        const response = await PostData(
-            `${URL}/products/favorites/by`,
-            { doc_per: user.doc },
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-
-        // Verificar estructura de respuesta
-        if (response?.success && Array.isArray(response.data)) {
-            const isFavorite = response.data.some(fav => fav.id_pro === product.id_pro);
-            setIsLiked(isFavorite);
-        } else {
-            console.error("Respuesta inesperada:", response);
-            setIsLiked(false);
-        }
-    } catch (error) {
-        console.error("Error checking favorites:", error);
-        
-        // No mostrar alerta para errores de autenticación
-        if (error.response?.status !== 401 && error.response?.status !== 403) {
-            showAlert("Error", "Error al verificar favoritos", "error");
-        }
-        setIsLiked(false);
-    }
-}, [user, product.id_pro, URL, token]);
 
   // Handle add to favorites (backend integration)
   const handleLike = useCallback(async (e) => {
     e?.stopPropagation();
 
-    // Solo verifica si hay usuario
-    if (!user) {
-      navigate('/login');
-      showAlert("Atención", "Debes iniciar sesión para guardar favoritos", "info");
-      return;
-    }
-
     setIsTogglingFavorite(true);
-
     try {
-      if (isLiked) {
-        // Remove from favorites
-        await DeleteData(`${URL}/products/favorites/remove`, {
-          doc_per: user.doc,
-          productId: product.id_pro
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        showAlert("Éxito", "Producto eliminado de favoritos", "success");
-      } else {
-        // Add to favorites
-        await PostData(`${URL}/products/favorites/add`, {
-          doc_per: user.doc,
-          productId: product.id_pro
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        showAlert("Éxito", "Producto agregado a favoritos", "success");
-      }
-
-      setIsLiked(!isLiked);
+      await toggleFavorite(product.id_pro)
+      setIsLiked(!isLiked)
     } catch (error) {
-      console.error("Error updating favorites:", error);
-      showAlert("Error", "Error al actualizar favoritos", "error");
+      const message = errorStatusHandler(error)
+      showAlert("Error", message, "error")
     } finally {
-      setIsTogglingFavorite(false);
+      setIsTogglingFavorite(false)
     }
   }, [isLiked, user, product, navigate, URL, token])
 

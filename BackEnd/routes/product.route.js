@@ -145,13 +145,11 @@ Route.post('/cart/remove', cartFavoriteMiddleware, async (req, res) => {
         const body = req.body;
         const userDoc = req.body.doc_per;
         const productService = new Product({ userDoc, ...body });
-        console.log(body);
 
         const result = await productService.removeFromCart();
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        console.error(err);
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -166,15 +164,16 @@ Route.post('/cart/remove', cartFavoriteMiddleware, async (req, res) => {
 // Carrito - obtener por POST
 Route.post('/cart/by', cartFavoriteMiddleware, async (req, res) => {
     try {
-        const { doc_per } = req.body;
-        if (doc_per !== req.body.doc_per) {
-            return res.status(403).json({ message: 'No autorizado' });
-        }
-        const productService = new Product(doc_per);
-        const result = await productService.getUserCart();
-        res.status(200).json(result);
+        const { email } = req.body
+        const productService = new Product(email)
+
+        const result = await productService.getUserCart()
+        res.status(200).json(result)
     } catch (err) {
         console.log(err);
+        if (err?.message?.sqlState === '45000') {
+            return res.status(400).json({ message: err?.message?.sqlMessage });
+        }
         res.status(500).json({
             message: 'Error del servidor por favor intentelo mas tarde',
             error: err.message
@@ -187,11 +186,10 @@ Route.post('/cart/by', cartFavoriteMiddleware, async (req, res) => {
 Route.post('/favorites/add', cartFavoriteMiddleware, async (req, res) => {
     try {
         const body = req.body;
-        const userDoc = body.doc_per;
-        const productService = new Product({ userDoc, ...body });
-        console.log('Adding to favorites:', userDoc);
-        const result = await productService.addToFavorites();
-        res.status(200).json(result);
+        const productService = new Product({...body})
+
+        const result = await productService.addToFavorites()
+        res.status(200).json({ result: result })
     } catch (err) {
         console.error(err);
         if (err?.message?.sqlState === '45000') {
@@ -207,11 +205,10 @@ Route.post('/favorites/add', cartFavoriteMiddleware, async (req, res) => {
 Route.post('/favorites/remove', cartFavoriteMiddleware, async (req, res) => {
     try {
         const body = req.body;
-        const userDoc = req.user.doc_per;
-        const productService = new Product({ userDoc, ...body });
+        const productService = new Product({...body})
 
         const result = await productService.removeFromFavorites();
-        res.status(200).json(result);
+        res.status(200).json({ result: result })
     } catch (err) {
         console.error(err);
         if (err?.message?.sqlState === '45000') {
@@ -227,16 +224,19 @@ Route.post('/favorites/remove', cartFavoriteMiddleware, async (req, res) => {
 // Favoritos - obtener por POST
 Route.post('/favorites/by', cartFavoriteMiddleware, async (req, res) => {
     try {
-        const { doc_per } = req.body;
-        if (doc_per !== req.body.doc_per) {
+        const { email } = req.body;
+        if (email !== req.body.email) {
             return res.status(403).json({ message: 'No autorizado' });
         }
 
-        const productService = new Product(doc_per);
+        const productService = new Product(email);
         const result = await productService.getUserFavorites();
-        res.status(200).json(result);
+        res.status(200).json(result)
     } catch (err) {
         console.error(err);
+        if (err?.message?.sqlState === '45000') {
+            return res.status(400).json({ message: err?.message?.sqlMessage });
+        }
         res.status(500).json({
             message: 'Error del servidor por favor intentelo mas tarde',
             error: err.message
@@ -255,6 +255,9 @@ Route.post('/inventory', async (req, res) => {
         res.status(200).json(result);
     } catch (err) {
         console.error(err);
+        if (err?.message?.sqlState === '45000') {
+            return res.status(400).json({ message: err?.message?.sqlMessage });
+        }
         res.status(500).json({
             message: 'Error del servidor por favor intentelo mas tarde',
             error: err.message

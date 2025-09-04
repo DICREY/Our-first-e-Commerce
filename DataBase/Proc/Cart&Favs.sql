@@ -1,6 +1,6 @@
 -- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.AddToCart(
-    IN p_user_doc VARCHAR(20),
+    IN p_user VARCHAR(20),
     IN p_id_inv INT,
     IN p_quantity INT
 )
@@ -18,7 +18,8 @@ BEGIN
     START TRANSACTION;
 
     -- Verificar usuario
-    SELECT id_per INTO v_user_id FROM personas WHERE doc_per = p_user_doc;
+    SELECT id_per INTO v_user_id FROM personas 
+    WHERE doc_per = p_user OR email_per = p_user;
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
     END IF;
@@ -59,7 +60,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.UpdateCartQuantity(
-    IN p_user_doc VARCHAR(20),
+    IN p_user VARCHAR(20),
     IN p_cart_id INT,
     IN p_new_quantity INT
 )
@@ -79,7 +80,7 @@ BEGIN
     -- Obtener el ID del usuario basado en el documento
     SELECT id_per INTO v_user_id 
     FROM personas 
-    WHERE doc_per = p_user_doc;
+    WHERE doc_per = p_user OR email_per = p_user;
     
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
@@ -121,7 +122,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.RemoveFromCart(
-    IN p_user_doc VARCHAR(20),
+    IN p_user VARCHAR(20),
     IN p_cart_id INT
 )
 BEGIN
@@ -139,7 +140,7 @@ BEGIN
     -- Obtener el ID del usuario basado en el documento
     SELECT id_per INTO v_user_id 
     FROM personas 
-    WHERE doc_per = p_user_doc;
+    WHERE doc_per = p_user OR email_per = p_user;
     
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
@@ -161,7 +162,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.AddToFavorites(
-    IN p_user_doc VARCHAR(20),
+    IN p_user VARCHAR(20),
     IN p_product_id INT
 )
 BEGIN
@@ -180,7 +181,7 @@ BEGIN
     -- Obtener el ID del usuario basado en el documento
     SELECT id_per INTO v_user_id 
     FROM personas 
-    WHERE doc_per = p_user_doc;
+    WHERE doc_per = p_user OR email_per = p_user;
     
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
@@ -209,12 +210,23 @@ BEGIN
     INSERT INTO favoritos (id_per_fav, id_pro_fav)
     VALUES (v_user_id, p_product_id);
 
+    SELECT 
+        p.*
+        cp.id_cat_pro,
+        cp.nom_cat_pro
+    FROM
+        productos p
+    JOIN
+        cat_productos cp ON p.cat_pro = cp.id_cat_pro
+    WHERE
+        p.id_pro = p_product_id;
+
     COMMIT;
     SET autocommit = 1;
 END //
 
 CREATE PROCEDURE e_commerce.RemoveFromFavorites(
-    IN p_user_doc VARCHAR(20),
+    IN p_user VARCHAR(20),
     IN p_product_id INT
 )
 BEGIN
@@ -232,8 +244,8 @@ BEGIN
     -- Obtener el ID del usuario basado en el documento
     SELECT id_per INTO v_user_id 
     FROM personas 
-    WHERE doc_per = p_user_doc;
-    
+    WHERE doc_per = p_user OR email_per = p_user;
+
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
     END IF;
@@ -254,15 +266,16 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.GetUserCart(
-    IN p_user_doc VARCHAR(20))
+    IN p_user VARCHAR(50)
+)
 BEGIN
     DECLARE v_user_id INT;
     
-    -- Obtener el ID del usuario basado en el documento
+    -- Obtener el ID del usuario basado en el email
     SELECT id_per INTO v_user_id 
     FROM personas 
-    WHERE doc_per = p_user_doc;
-    
+    WHERE email_per = p_user OR doc_per = p_user;
+
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
     END IF;
@@ -301,7 +314,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.GetUserFavorites(
-    IN p_user_doc VARCHAR(20)
+    IN p_user VARCHAR(20)
 )
 BEGIN
     DECLARE v_user_id INT;
@@ -309,8 +322,8 @@ BEGIN
     -- Obtener el ID del usuario basado en el documento
     SELECT id_per INTO v_user_id 
     FROM personas 
-    WHERE doc_per = p_user_doc;
-    
+    WHERE email_per = p_user OR doc_per = p_user;
+
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
     END IF;
@@ -352,3 +365,12 @@ BEGIN
     ORDER BY 
         f.created_at DESC;
 END //
+
+/* DROP PROCEDURE e_commerce.GetUserCart; */
+/* DROP PROCEDURE e_commerce.AddToCart; */
+/* DROP PROCEDURE e_commerce.UpdateCartQuantity; */
+/* DROP PROCEDURE e_commerce.RemoveFromCart; */
+
+/* DROP PROCEDURE e_commerce.GetUserFavorites; */
+/* DROP PROCEDURE e_commerce.AddToFavorites; */
+/* DROP PROCEDURE e_commerce.RemoveFromFavorites; */

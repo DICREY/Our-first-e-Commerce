@@ -1,14 +1,18 @@
+// Librarys 
 import React, { useState, useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
+
+// Imports 
 import { decodeJWT, errorStatusHandler, showAlert } from '../Utils/utils'
-import { PostCookie, PostData, GetData } from '../Utils/Requests'
+import { PostCookie, PostData } from '../Utils/Requests'
 import { AuthContext } from './Contexts'
 import AdminLoadingScreen from '../components/Global/Loading'
 
+// Contexts 
 export const AuthProvider = ({ children }) => {
     // Dynamic vars
     const [user, setUser] = useState(null)
     const [roles, setRoles] = useState(null)
-    const [mainRol, setMainRol] = useState(null)
     const [theme, setTheme] = useState('DARK')
     const [admin, setAdmin] = useState(false)
     const [img, setImg] = useState(null)
@@ -21,74 +25,71 @@ export const AuthProvider = ({ children }) => {
     const URL = process.env.REACT_APP_URL
 
     // Función para cargar favoritos
-    const loadFavorites = async (userDoc) => {
+    const loadFavorites = async (email) => {
         try {
+            if (!user) return []
             // 1. Primero verificar si hay datos en localStorage
-            const cachedFavorites = localStorage.getItem(`favorites_${userDoc}`);
-            
-            if (cachedFavorites) {
-                setFavorites(JSON.parse(cachedFavorites));
-            }
+            const cachedFavorites = localStorage.getItem(`favorites_${email}`)
+            if (cachedFavorites) setFavorites(JSON.parse(cachedFavorites))
 
             // 2. Siempre hacer fetch para mantener sincronizados
-            const freshFavorites = await GetData(`${URL}/products/favorites/${userDoc}`);
-            setFavorites(freshFavorites);
-            localStorage.setItem(`favorites_${userDoc}`, JSON.stringify(freshFavorites));
+            const freshFavorites = await PostData(`${URL}/products/favorites/by`,{ email: email })
+            if (freshFavorites) {
+                setFavorites(freshFavorites)
+                localStorage.setItem(`favorites_${email}`, JSON.stringify(freshFavorites))
+            }
         } catch (error) {
-            console.error("Error loading favorites:", error);
+            const message = errorStatusHandler(error)
+            console.log(message)
         }
-    };
-
+    }
 
     // Iniciar sesion 
     const login = async (url = '', data = {}) => {
-        if (didFetch) return;
+        if (didFetch) return
         try {            
-            const response = await PostCookie(url, data);
-            didFetch = true;
-            setLoading(null);
+            const response = await PostCookie(url, data)
+            didFetch = true
+            setLoading(null)
             if (response) {
-                const userData = decodeJWT(response.__cred);
-                setUser(userData);
-                await loadFavorites(userData.doc);
-                setToken(response.__cred); // Guardar el token
-                setTheme(userData.theme);
-                setImg(userData.img);
-                setRoles(userData.roles?.split(', ') || ['Usuario']);
-                setMainRol(userData.roles?.split(', ')[0] || ['Usuario']);
-                setAdmin(userData.roles?.split(', ').includes('Administrador'));
+                const userData = decodeJWT(response.__cred)
+                setUser(userData)
+                setToken(response.__cred) // Guardar el token
+                setTheme(userData.theme)
+                setImg(userData.img)
+                setRoles(userData.roles?.split(', ') || ['Usuario'])    
+                setAdmin(userData.roles?.split(', ').includes('Administrador'))
 
-                localStorage.setItem('theme', userData.theme);
-                await loadFavorites(userData.doc_per); // Cargar favoritos al iniciar sesión
+                localStorage.setItem('theme', userData.theme)
 
-                return { data: userData, logged: 1 };
-            } else return response;
+                await loadFavorites(userData.email) // Cargar favoritos al iniciar sesión
+                return { data: userData, logged: 1 }
+            } else return response
         } catch (err) {
-            const message = errorStatusHandler(err);
-            showAlert('Error', message, 'error');
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
-    };
+    }
     
     // Cerrar sesion 
     const logout = async (URL = '') => {
         try {
-            const check = await PostCookie(`${URL}/cookies/clear`, {});
-            setLoading(null);
+            const check = await PostCookie(`${URL}/cookies/clear`, {})
+            setLoading(null)
             if (check) {
-                setUser(null);
-                setToken(null);
-                setMainRol(null);
-                setRoles(null);
-                setAdmin(null);
-                setTheme(null);
-                setFavorites([]);
-                window.location.href = '/login';
+                setUser(null)
+                setToken(null)
+                setRoles(null)
+                setAdmin(null)
+                setTheme(null)
+                setFavorites([])
+                return <Navigate to="/login" />
             }
         } catch (err) {
-            const message = errorStatusHandler(err);
-            showAlert('Error', message, 'error');
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
-    };
+    }
 
     // Change Theme
     const changeTheme = async () => {
@@ -96,97 +97,84 @@ export const AuthProvider = ({ children }) => {
             const got = await PostData(`${URL}/credential/preffers/change-theme`, {
                 doc: user.doc,
                 theme: theme
-            });
+            })
             if (got.success && got.result) {
-                localStorage.setItem('theme', got?.result?.[0]?.theme);
-                setTheme(got?.result?.[0]?.theme || 'DARK');
+                localStorage.setItem('theme', got?.result?.[0]?.theme)
+                setTheme(got?.result?.[0]?.theme || 'DARK')
             }
         } catch (err) {
-            const message = errorStatusHandler(err);
-            showAlert('Error', message, 'error');
+            const message = errorStatusHandler(err)
+            showAlert('Error', message, 'error')
         }
-    };
+    }
     
     // Verificar sesión al cargar
     useEffect(() => {
         const checkAuth = async () => {
-            if (didFetch) return;
-            setLoading(true);
+            if (didFetch) return
+            setLoading(true)
             try {
-                const check = await PostCookie(`${URL}/cookies/check`, { name: '__cred' });
-                didFetch = true;
-                setLoading(null);
+                const check = await PostCookie(`${URL}/cookies/check`, { name: '__cred' })
+                didFetch = true
+                setLoading(null)
                 if (check) {
-                    const userData = decodeJWT(check.data);
-                    setUser(userData);
-                    setToken(check.data); // Guardar el token
-                    setTheme(userData.theme);
-                    setImg(userData.img);
-                    setRoles(userData?.roles?.split(', ') || ['Usuario']);
-                    setMainRol(userData.roles?.split(', ')[0] || 'Usuario');
-                    setAdmin(userData.roles?.split(', ').includes('Administrador')? 1: 0);
+                    const userData = decodeJWT(check.data)
+                    setUser(userData)
+                    setToken(check.data) // Guardar el token
+                    setTheme(userData.theme)
+                    setImg(userData.img)
+                    setRoles(userData?.roles?.split(', ') || ['Usuario'])
+                    setAdmin(userData.roles?.split(', ').includes('Administrador')? 1: 0)
                     
-                    // Cargar favoritos al verificar autenticación
-                    await loadFavorites(userData.doc_per);
+                    // Cargar favoritos al verificar autenticación                    
+                    await loadFavorites(userData.email)
                 }
             } catch (err) {
-                setLoading(null);
-                const message = errorStatusHandler(err);
+                setLoading(null)
+                const message = errorStatusHandler(err)
+                console.log(message)
             }
-        };
-        checkAuth();
-    }, []);
+        }
+        checkAuth()
+    }, [])
 
        // Función para alternar favoritos
     const toggleFavorite = async (productId) => {
-        if (!user) {
-            // Manejar redirección a login
-            return false;
-        }
-
+        if (!user) return false
         try {
-            let updatedFavorites;
-            const isCurrentlyFavorite = favorites.some(fav => fav.id_pro === productId);
+            const isCurrentlyFavorite = favorites.some(fav => fav.id_pro === productId)
             
             if (isCurrentlyFavorite) {
                 // Eliminar de favoritos
-                await DeleteData(`${URL}/products/favorites/remove`, {
-                    doc_per: user.doc,
+                await PostData(`${URL}/products/favorites/remove`, {
+                    email: user.email,
                     productId
-                }, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                updatedFavorites = favorites.filter(fav => fav.id_pro !== productId);
+                })       
+                showAlert("Éxito", "Producto eliminado de favoritos", "success")
             } else {
                 // Agregar a favoritos
-                const response = await PostData(`${URL}/products/favorites/add`, {
-                    doc_per: user.doc,
+                await PostData(`${URL}/products/favorites/add`, {
+                    email: user.email,
                     productId
-                }, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                })
                 
-                updatedFavorites = [...favorites, response.product];
+                showAlert("Éxito", "Producto agregado a favoritos", "success")
             }
 
             // Actualizar estado y localStorage
-            setFavorites(updatedFavorites);
-            localStorage.setItem(`favorites_${user.doc}`, JSON.stringify(updatedFavorites));
-            
-            return true;
+            await loadFavorites(user.email)
+            return true
         } catch (error) {
-            console.error("Error toggling favorite:", error);
-            return false;
+            const message = errorStatusHandler(error)
+            console.log(message)
         }
-    };
+    }
 
     return (
         <AuthContext.Provider value={{ 
             admin, 
             theme, 
             img, 
-            mainRol, 
             user, 
             roles, 
             token,
@@ -195,12 +183,12 @@ export const AuthProvider = ({ children }) => {
             logout, 
             changeTheme,
             toggleFavorite,
-            isFavorite: (productId) => favorites.some(fav => fav.id_pro === productId)
+            isFavorite: (productId) => favorites?.some(fav => fav?.id_pro === productId)
         }}>
             {loading ? (
                 <AdminLoadingScreen fullScreen message='Cargando datos...' />
                 ) : children
             }
         </AuthContext.Provider>
-    );
-};
+    )
+}

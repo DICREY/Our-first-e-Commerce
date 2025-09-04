@@ -1,93 +1,60 @@
-import { useEffect, useState, useContext } from "react";
+// Librarys 
+import { useState, useContext, useEffect } from "react";
 import { Heart } from 'lucide-react';
 import { AuthContext } from "../../Contexts/Contexts";
 import Modal from "../Modal/Modal";
 import ProductCard from "../Products/ProductCard";
-import { GetData, PostData, DeleteData } from "../../Utils/Requests";
+
+// Import styles 
 import styles from "./FavoritesSheet.module.css";
 
+// Component 
 const FavoritesSheet = ({ URL = '', isOpen, onClose, img = '' }) => {
-  const [favorites, setFavorites] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  // Dynamic vars 
+  const [ loading, setLoading ] = useState(false)
 
-  const fetchFavorites = async () => {
-    try {
-      setLoading(true);
-      const data = await PostData(`${URL}/products/favorites/by`, {
-        doc_per: user?.doc
-      });
-      setFavorites(data);
-    } catch (error) {
-      console.error("Error fetching favorites:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Agregar/eliminar favorito
-  const toggleFavorite = async (productId, isCurrentlyFavorite) => {
-    try {
-      if (isCurrentlyFavorite) {
-        await PostData(`${URL}/products/favorites/remove`, {
-          doc_per: user?.doc,
-          productId
-        });
-      } else {
-        await PostData(`${URL}/products/favorites/add`, {
-          doc_per: user?.doc,
-          productId
-        });
-      }
-      fetchFavorites(); // Refrescar lista
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchFavorites();
-    }
-  }, [isOpen]);
+  // Vars
+  let { user } = useContext(AuthContext)
+  const favorites = JSON.parse(localStorage.getItem(`favorites_${user?.email}`))
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Tus Favoritos">
-      <div className={styles.container}>
-        <div className={styles.header}>
+      {console.log(favorites)}
+      <section className={styles.container}>
+        <header className={styles.header}>
           {favorites?.length > 0 && (
             <span className={styles.countBadge}>
               {favorites?.length} {favorites?.length === 1 ? "producto" : "productos"}
             </span>
           )}
-        </div>
+        </header>
 
         {loading ? (
-          <div className={styles.emptyState}>
+          <section className={styles.emptyState}>
             <p>Cargando favoritos...</p>
-          </div>
+          </section>
         ) : favorites?.length === 0 ? (
-          <div className={styles.emptyState}>
+          <section className={styles.emptyState}>
             <div className={styles.emptyIcon}><Heart /></div>
             <h3 className={styles.emptyTitle}>Tu lista de favoritos está vacía</h3>
             <p className={styles.emptyDescription}>
               Guarda tus productos favoritos haciendo clic en el corazón para verlos aquí.
             </p>
-          </div>
+          </section>
         ) : (
-          <div className={styles.productsGrid}>
-            {favorites?.map((product, index) => (
+          <section className={styles.productsGrid}>
+            {favorites && favorites?.map((product, index) => (
               <ProductCard
+                URL={URL}
                 key={index + 129}
                 data={product}
                 imgDefault={img}
-                onToggleFavorite={() => toggleFavorite(product.id_pro, true)}
                 isFavorite={true}
               />
             ))}
-          </div>
+          </section>
         )}
-      </div>
+      </section>
     </Modal>
   );
 };
