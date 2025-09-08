@@ -1,6 +1,6 @@
 -- Active: 1746130779175@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.AddToCart(
-    IN p_user VARCHAR(20),
+    IN p_user VARCHAR(100),
     IN p_id_inv INT,
     IN p_quantity INT
 )
@@ -60,7 +60,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.UpdateCartQuantity(
-    IN p_user VARCHAR(20),
+    IN p_user VARCHAR(100),
     IN p_cart_id INT,
     IN p_new_quantity INT
 )
@@ -122,7 +122,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.RemoveFromCart(
-    IN p_user VARCHAR(20),
+    IN p_user VARCHAR(100),
     IN p_cart_id INT
 )
 BEGIN
@@ -162,7 +162,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.AddToFavorites(
-    IN p_user VARCHAR(20),
+    IN p_user VARCHAR(100),
     IN p_product_id INT
 )
 BEGIN
@@ -211,7 +211,7 @@ BEGIN
     VALUES (v_user_id, p_product_id);
 
     SELECT 
-        p.*
+        p.*,
         cp.id_cat_pro,
         cp.nom_cat_pro
     FROM
@@ -226,7 +226,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.RemoveFromFavorites(
-    IN p_user VARCHAR(20),
+    IN p_user VARCHAR(100),
     IN p_product_id INT
 )
 BEGIN
@@ -266,7 +266,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.GetUserCart(
-    IN p_user VARCHAR(50)
+    IN p_user VARCHAR(100)
 )
 BEGIN
     DECLARE v_user_id INT;
@@ -314,7 +314,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE e_commerce.GetUserFavorites(
-    IN p_user VARCHAR(20)
+    IN p_user VARCHAR(100)
 )
 BEGIN
     DECLARE v_user_id INT;

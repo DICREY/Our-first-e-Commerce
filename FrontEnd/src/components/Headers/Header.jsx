@@ -97,17 +97,20 @@ const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, imgDefault, handleLogo
 
 // Componente principal Header
 const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro = null }) => {
-  const location = useLocation();
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [navigation, setNavigation] = useState([{ name: "Inicio", href: "/" }]);
-  const profileMenuRef = useRef();
-  const navigate = useNavigate();
+  // Vars 
+  const { logout, admin } = useContext(AuthContext)
+  const { getTotalItems } = useCart()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const profileMenuRef = useRef()
 
-  const { getTotalItems } = useCart();
-  const { logout, admin } = useContext(AuthContext);
-  const [hasFetched, setHasFetched] = useState(false);
+  // Dynamic vars 
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+  const [navigation, setNavigation] = useState([{ name: "Inicio", href: "/" }])
+  const [hasFetched, setHasFetched] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const getProductCategories = async () => {
     // Verificar si ya tenemos datos en caché y si no han expirado
@@ -167,7 +170,19 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   const isActive = (href) => {
     return location.pathname === href ||
       (href !== '/' && location.pathname.startsWith(href));
-  };
+  }
+
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const handleClickOutside = (event) => {
+      const nav = document.querySelector(`.${styles.mobileNavContent}`)
+      if (nav && !nav.contains(event.target)) {
+        setIsMenuOpen(false)
+      }
+    };
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
+  }, [isMenuOpen])
 
   return (
     <>
@@ -182,7 +197,7 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
 
         {/* Desktop Navigation */}
         <nav className={styles.navigation}>
-          {navigation.map((item, index) => (
+          {navigation?.map((item, index) => (
             <NavLinkItem
               key={`nav-${index}-${item.href}`} // Clave más única
               item={item}
@@ -237,6 +252,62 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
           </div>
         </nav>
       </header>
+
+      {isMenuOpen && (
+        <nav className={styles.mobileNav}>
+          <div className={styles.mobileNavContent}>
+            {navigation?.map((item, index) => (
+              <NavLinkItem
+                key={`mobile-nav-${index}-${item.href}`}
+                item={item}
+                setCatPro={setCatPro}
+                isActive={isActive(item.href)}
+              />
+            ))}
+            {admin && (
+              <Link
+                to="/admin/home"
+                className={`${styles.navLink} ${isActive('/admin/home') ? styles.activeLink : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Administración
+              </Link>
+            )}
+            <div className={styles.mobileNavActions}>
+              <ProfileMenu
+                ref={profileMenuRef}
+                isOpen={isProfileMenuOpen}
+                setIsOpen={setIsProfileMenuOpen}
+                imgDefault={imgDefault}
+                handleLogout={handleLogout}
+                styles={styles}
+              />
+              <Button variant="ghost" size="icon" onClick={() => {
+                setIsFavoritesOpen(true)
+                setIsMenuOpen(false)
+              }}>
+                <Heart style={{ color: 'var(--gray-700)' }} />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => {
+                setIsCartOpen(true)
+                setIsMenuOpen(false)
+              }}>
+                <ShoppingBag style={{ color: 'var(--gray-700)' }} />
+                {getTotalItems() > 0 && <span className={styles.cartBadge}>{getTotalItems()}</span>}
+              </Button>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={styles.mobileNavClose}
+              onClick={() => setIsMenuOpen(false)}
+              aria-label="Cerrar menú móvil"
+            >
+              ✕
+            </Button>
+          </div>
+        </nav>
+      )}
 
       <CartSheet
         URL={URL}

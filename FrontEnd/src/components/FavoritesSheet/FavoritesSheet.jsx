@@ -19,7 +19,6 @@ const FavoritesSheet = ({ URL = '', isOpen, onClose, img = '' }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Tus Favoritos">
-      {console.log(favorites)}
       <section className={styles.container}>
         <header className={styles.header}>
           {favorites?.length > 0 && (

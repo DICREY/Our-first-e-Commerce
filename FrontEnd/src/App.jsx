@@ -1,6 +1,6 @@
 // Librarys 
 import { useContext, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom";
 
 // Imports 
 import { CartProvider } from "./Contexts/CartContext"
@@ -69,6 +69,19 @@ const App = () => {
         <Outlet />
       </main>
     ):<Navigate to="/login" />
+  }
+
+  const HandleFirebase = () => {
+    const params = new URLSearchParams(window.location.search)
+    const apiKey = params.get('apiKey')
+    const em = params.get('em')
+    const oobCode = params.get('oobCode')
+    const resetpassword = params.get('resetpassword')
+    console.log({apiKey, em, oobCode, resetpassword})
+
+    return resetpassword?
+      <Navigate to={`/forgot-password?apiKey=${apiKey}&em=${em}&oobCode=${oobCode}`} />
+      :<Navigate to="/login" />
   }
 
   // const loop = (list = [], doc = '') => {
@@ -160,6 +173,7 @@ const App = () => {
                 } 
               />            
               {/* Auth Routes without Layout */}
+              <Route path="/handle-firebase" element={<HandleFirebase />} />
               <Route path="/login" element={<LoginForm URL={URL} />} />
               <Route path="/forgot-password" element={<PasswordReset URL={URL} />} />
               <Route path="/signup" element={<RegisterForm URL={URL} />} />
