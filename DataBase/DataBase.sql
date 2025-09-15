@@ -26,6 +26,8 @@ CREATE TABLE e_commerce.personas(
     gen_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
     estado ENUM('DISPONIBLE','NO-DISPONIBLE') DEFAULT 'DISPONIBLE' NOT NULL, # Estado de la persona
     fot_per TEXT DEFAULT("N/A") NOT NULL,
+    auth_provider ENUM('LOCAL','GOOGLE','FACEBOOK','TWITTER') DEFAULT 'LOCAL' NOT NULL,
+    verificado BOOLEAN DEFAULT 0 NOT NULL,
     fec_cre_per TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización'
 );

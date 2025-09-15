@@ -56,8 +56,8 @@ BEGIN
     START TRANSACTION;
 
     IF NOT EXISTS (SELECT 1 FROM personas WHERE email_per = p_email) THEN
-        INSERT INTO personas (email_per,nom_per,ape_per,cel_per,pas_per,fot_per)VALUES
-        (p_email,p_nom,p_ape,p_cel,p_passwd,p_url_img);
+        INSERT INTO personas (email_per,nom_per,ape_per,cel_per,pas_per,fot_per, auth_provider, verificado)VALUES
+        (p_email,p_nom,p_ape,p_cel,p_passwd,p_url_img, 'GOOGLE', 1);
 
         SET p_id_persona = LAST_INSERT_ID();
 

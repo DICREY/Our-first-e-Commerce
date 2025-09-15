@@ -135,7 +135,6 @@ Route.put('/complete', ValidatorRol("administrador"),async (req,res) => {
 Route.delete('/delete', ValidatorRol("administrador"),async (req,res) => {
     // Vars 
     const { body } = req
-    console.log(body)
         
     try {
         // Verifiy if exist
