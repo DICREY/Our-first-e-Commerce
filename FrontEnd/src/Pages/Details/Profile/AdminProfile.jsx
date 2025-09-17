@@ -13,11 +13,13 @@ import AdminLoadingScreen from '../../../components/Global/Loading'
 
 // Import styles 
 import styles from './AdminProfile.module.css'
+import { useNavigate } from 'react-router-dom'
 
 // Component 
 export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
   // Vars 
   const { user, login } = useContext(AuthContext)
+  const navigate = useNavigate()
   let didFetch = false
   
   // Estados
@@ -217,13 +219,22 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
             </nav>
 
             {!isEditing && (
-              <button
-                type="button"
-                className={styles.editToggleButton}
-                onClick={() => setIsEditing(true)}
-              >
-                <Edit size={16} /> Editar Perfil
-              </button>
+              <span>
+                <button
+                  type="button"
+                  className={styles.editToggleButton}
+                  onClick={() => setIsEditing(true)}
+                  >
+                  <Edit size={16} /> Editar Perfil
+                </button>
+                <button
+                  type="button"
+                  className={styles.editToggleButton}
+                  onClick={() => navigate(`/email-reset?em=${user.email}`)}
+                  >
+                  <Edit size={16} /> Cambiar Email
+                </button>
+              </span>
             )}
 
             <div className={styles.formGrid}>

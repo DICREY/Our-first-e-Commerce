@@ -208,6 +208,8 @@ BEGIN
         p.fec_cre_per,
         p.updated_at,
         p.fot_per,
+        p.auth_provider,
+        p.verificado,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 
         personas p
@@ -250,6 +252,8 @@ BEGIN
         p.fec_cre_per,
         p.updated_at,
         p.fot_per,
+        p.auth_provider,
+        p.verificado,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 
         personas p
@@ -290,6 +294,8 @@ BEGIN
         p.fec_cre_per,
         p.updated_at,
         p.fot_per,
+        p.auth_provider,
+        p.verificado,
         GROUP_CONCAT(r.nom_rol SEPARATOR ', ') AS roles
     FROM 
         personas p

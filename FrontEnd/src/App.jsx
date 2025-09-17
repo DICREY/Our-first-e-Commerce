@@ -1,6 +1,6 @@
 // Librarys 
-import { useContext, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom";
+import { useContext, useState } from "react"
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom"
 
 // Imports 
 import { CartProvider } from "./Contexts/CartContext"
@@ -10,25 +10,24 @@ import { ProductList } from "./Pages/Dashboard/Products/Products"
 import { OrdersList } from "./Pages/Dashboard/Orders/Orders"
 import { Customers } from "./Pages/Dashboard/Customers/Clients"
 import { NavAdmin } from "./components/Headers/NavAdmin/NavAdmin"
-import { ProductEdit } from "./components/Products/ProductEdit";
-import { LoginForm } from "./Pages/MainForms/Login/Login";
-import { RegisterForm } from "./Pages/MainForms/Register/Register";
-import { ProductDetailAdmin } from "./Pages/Details/ProductDetail/ProductDetail";
-import { ProductRegister } from "./Pages/Forms/ProductForm/ProductRegister";
-import { OrderDetail } from "./Pages/Details/OrderDetail/OrdersDetails";
-import { CustomerDetail } from "./Pages/Details/CustomerDetail/CustomersDetails";
-import { CustomerRegister } from "./Pages/Forms/CustomerForm/CustomerRegister";
-import { AdminProfile } from "./Pages/Details/Profile/AdminProfile";
-import { OrderRegister } from "./Pages/Forms/OrderForm/OrderRegister";
-import { Dashboard } from "./Pages/Dashboard/Dashboard/Dashboard";
-import { OfferManager } from "./Pages/Dashboard/Offers/Offers";
-import { PasswordReset } from "./Pages/MainForms/PasswordReset/PasswordReset";
+import { ProductEdit } from "./components/Products/ProductEdit"
+import { LoginForm } from "./Pages/MainForms/Login/Login"
+import { RegisterForm } from "./Pages/MainForms/Register/Register"
+import { ProductDetailAdmin } from "./Pages/Details/ProductDetail/ProductDetail"
+import { ProductRegister } from "./Pages/Forms/ProductForm/ProductRegister"
+import { OrderDetail } from "./Pages/Details/OrderDetail/OrdersDetails"
+import { CustomerDetail } from "./Pages/Details/CustomerDetail/CustomersDetails"
+import { CustomerRegister } from "./Pages/Forms/CustomerForm/CustomerRegister"
+import { AdminProfile } from "./Pages/Details/Profile/AdminProfile"
+import { OrderRegister } from "./Pages/Forms/OrderForm/OrderRegister"
+import { Dashboard } from "./Pages/Dashboard/Dashboard/Dashboard"
+import { OfferManager } from "./Pages/Dashboard/Offers/Offers"
+import { PasswordReset } from "./Pages/MainForms/PasswordReset/PasswordReset"
 import { HomePage } from "./Pages/HomePage/HomePage"
 import Header from "./components/Headers/Header"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./Pages/ProductDetail/ProductDetailPage"
-// import { GetDataNoSQL, PostDataNoSQL } from "./Utils/Request.nosql";
-// import { categorias, personas } from "./Utils/DataBase";
+import { EmailChange } from "./Pages/MainForms/GmailReset/EmailChange"
 
 // Main Module 
 const App = () => {
@@ -77,10 +76,12 @@ const App = () => {
     const em = params.get('em')
     const oobCode = params.get('oobCode')
     const resetpassword = params.get('resetpassword')
-    console.log({apiKey, em, oobCode, resetpassword})
+    const emailChange = params.get('emailChange')
 
     return resetpassword?
       <Navigate to={`/forgot-password?apiKey=${apiKey}&em=${em}&oobCode=${oobCode}`} />
+      : emailChange ?
+      <Navigate to={`/email-change?apiKey=${apiKey}&em=${em}&oobCode=${oobCode}`} />
       :<Navigate to="/login" />
   }
 
@@ -176,6 +177,7 @@ const App = () => {
               <Route path="/handle-firebase" element={<HandleFirebase />} />
               <Route path="/login" element={<LoginForm URL={URL} />} />
               <Route path="/forgot-password" element={<PasswordReset URL={URL} />} />
+              <Route path="/email-reset" element={<EmailChange URL={URL} />} />
               <Route path="/signup" element={<RegisterForm URL={URL} />} />
             </Route>
 
