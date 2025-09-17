@@ -641,7 +641,7 @@ class Product {
 
     async getProductInventory() {
         return new Promise((res, rej) => {
-            const proc = "CALL GetProductInventory(?)"
+            const proc = "CALL GetProductBy(?)"
             const productId = this.args[0]
 
             this.database.conect()
