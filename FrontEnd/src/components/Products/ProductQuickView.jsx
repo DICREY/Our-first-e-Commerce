@@ -1,13 +1,17 @@
+import { useNavigate } from "react-router-dom"
 import { useEffect, useState, useContext } from "react";
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import { CheckImage, showAlert } from "../../Utils/utils";
 import { PostData } from "../../Utils/Requests";
 import { AuthContext } from "../../Contexts/Contexts";
-import { useNavigate } from "react-router-dom"
+
+// Import styles 
 import styles from "../../styles/Products/ProductQuickView.module.css";
 
+// Component 
 const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
+  // Dynamic Vars 
   const [showImg, setShowImg] = useState(null);
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -18,6 +22,7 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const navigate = useNavigate();
 
+  // Vars 
   const { user } = useContext(AuthContext);
   const token = useContext(AuthContext)?.token || localStorage.getItem('token');
 
@@ -26,19 +31,11 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
     const fetchInventory = async () => {
       if (isOpen && product?.id_pro) {
         try {
-          const response = await PostData(`${URL}/products/inventory`, {
-            productId: product.id_pro
-          });
-
-          if (response && Array.isArray(response)) {
-            setInventory(response);
-          } else {
-            setInventory([]);
-            console.error("Formato de respuesta inesperado:", response);
-          }
+          const response = await PostData(`${URL}/products/by`, { by: product.id_pro })
+          if (response?.[0]?.inv) setInventory(response?.[0]?.inv)
         } catch (error) {
-          console.error("Error fetching inventory:", error);
-          setInventory([]);
+          console.error("Error fetching inventory:", error)
+          setInventory([])
         }
       }
     };
@@ -94,33 +91,29 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
 
   // Buscar el id_inv según la selección
   const getSelectedInventoryId = () => {
-    if (!selectedColor || !selectedSize) return null;
+    if (!selectedColor || !selectedSize) return null
 
     const found = inventory.find(
       inv =>
         inv.nom_col === selectedColor.nom_col &&
-        (inv.id_tal_inv === selectedSize.id_tal_pro ||
-          inv.nom_tal_pro === selectedSize.nom_tal_pro)
-    );
+        inv.size === selectedSize.nom_tal_pro
+    )
 
     if (!found) {
-      console.warn("No se encontró inventario para:", {
-        color: selectedColor.nom_col,
-        size: selectedSize.nom_tal_pro
-      });
-      return null;
+      showAlert('Error', 'No se encontraron productos en el inventario', 'error')
+      return
     }
 
     if (found.cantidad < quantity) {
       showAlert("Error", `Solo quedan ${found.cantidad} unidades disponibles`, "error");
-      return null;
+      return null
     }
 
-    return found.id_inv;
-  };
+    return found.id_inv
+  }
 
   const getAvailableSizesForColor = (color) => {
-    if (!color || !inventory.length) return safeSizes;
+    if (!color || !inventory.length) return safeSizes
 
     const availableSizes = inventory
       .filter(item => item.nom_col === color.nom_col && item.cantidad > 0)

@@ -252,7 +252,7 @@ Route.post('/inventory', async (req, res) => {
         }
         const productService = new Product(productId);
         const result = await productService.getProductInventory();
-        res.status(200).json(result);
+        res.status(200).json({result});
     } catch (err) {
         console.error(err);
         if (err?.message?.sqlState === '45000') {

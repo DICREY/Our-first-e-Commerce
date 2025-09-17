@@ -4,15 +4,15 @@ import { Heart, PackagePlus, Eye } from 'lucide-react'
 import { useNavigate } from "react-router-dom"
 
 // Imports
-import { useCart } from "../../Contexts/CartContext"
-import { CheckImage, formatNumber, showAlert, Discount, errorStatusHandler} from "../../Utils/utils"
-import { AuthContext } from "../../Contexts/Contexts"
-import Button from "../Button/Button"
-import Badge from "../Badge/Badge"
-import ProductQuickView from "./ProductQuickView"
+import { useCart } from "../../../Contexts/CartContext"
+import { CheckImage, formatNumber, showAlert, Discount, errorStatusHandler } from "../../../Utils/utils"
+import { AuthContext } from "../../../Contexts/Contexts"
+import Button from "../../Button/Button"
+import Badge from "../../Badge/Badge"
+import ProductQuickView from "../ProductQuickView"
 
 // Import styles 
-import styles from "../../styles/Products/ProductCard.module.css"
+import styles from "./ProductCard.module.css"
 
 // Component 
 const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = null }) => {
@@ -207,7 +207,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
           <h3 className={styles.productName}>{product.nom_pro}</h3>
 
           <div className={styles.priceContainer}>
-            {product?.offers? (
+            {product?.offers ? (
               <>
                 <span className={styles.price}>
                   ${formatNumber(Discount(product.pre_pro, product.offers?.[0]?.por_des_ofe))}
@@ -216,7 +216,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
                   ${formatNumber(product.pre_pro)}
                 </span>
               </>
-            ):(
+            ) : (
               <span className={styles.price}>
                 ${formatNumber(product.pre_pro)}
               </span>
