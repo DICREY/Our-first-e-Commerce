@@ -1,32 +1,39 @@
-import { useContext, useEffect, useState } from "react";
-import { ShoppingBag } from 'lucide-react';
-import { useCart } from "../../Contexts/CartContext";
-import { AuthContext } from "../../Contexts/Contexts";
-import { CheckImage } from "../../Utils/utils";
-import { GetData, PostData, ModifyData, DeleteData } from "../../Utils/Requests";
-import Badge from "../Badge/Badge";
-import styles from "./CartSheet.module.css";
+// Librarys 
+import { useContext, useEffect, useState } from "react"
+import { ShoppingBag } from 'lucide-react'
 
+// Imports 
+import { useCart } from "../../Contexts/CartContext"
+import { AuthContext } from "../../Contexts/Contexts"
+import { CheckImage } from "../../Utils/utils"
+import { PostData, ModifyData } from "../../Utils/Requests"
+import Badge from "../Badge/Badge"
+
+// Import styles 
+import styles from "./CartSheet.module.css"
+
+// Component
 const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  // Dynamic vars
+  const [cartItems, setCartItems] = useState([])
+  const [loading, setLoading] = useState(false)
+  const { user } = useContext(AuthContext)
 
   // Obtener carrito del backend
-  const fetchCart = async () => {
+  const fnnNNetchCart = async () => {
     try {
-      setLoading(true);
+      setLoading(true)
       // Cambia GetData por PostData y envía el documento en el body
       const data = await PostData(`${URL}/products/cart/by`, {
         doc_per: user?.doc
-      });
-      setCartItems(data);
+      })
+      setCartItems(data)
     } catch (error) {
-      console.error("Error fetching cart:", error);
+      console.error("Error fetching cart:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Actualizar cantidad
   const updateQuantity = async (cartId, newQuantity) => {
@@ -35,12 +42,12 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
         doc_per: user?.doc,
         cartId,
         newQuantity
-      });
-      fetchCart();
+      })
+      fetchCart()
     } catch (error) {
-      console.error("Error updating quantity:", error);
+      console.error("Error updating quantity:", error)
     }
-  };
+  }
 
   // Eliminar del carrito
   const removeFromCart = async (cartId) => {
@@ -48,37 +55,37 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
       await PostData(`${URL}/products/cart/remove`, {
         doc_per: user?.doc,
         cartId
-      });
-      fetchCart();
+      })
+      fetchCart()
     } catch (error) {
-      console.error("Error removing from cart:", error);
+      console.error("Error removing from cart:", error)
     }
-  };
+  }
 
   // Calcular total
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.pre_pro * item.cantidad), 0);
-  };
+    return cartItems.reduce((total, item) => total + (item.pre_pro * item.cantidad), 0)
+  }
 
   // Calcular total de items
   const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.cantidad, 0);
-  };
+    return cartItems.reduce((total, item) => total + item.cantidad, 0)
+  }
 
   useEffect(() => {
     if (isOpen) {
-      fetchCart();
-      document.body.style.overflow = "hidden";
+      fetchCart()
+      document.body.style.overflow = "hidden"
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "unset"
     }
 
     return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+      document.body.style.overflow = "unset"
+    }
+  }, [isOpen])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <>
@@ -179,7 +186,7 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
         </section>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default CartSheet;
+export default CartSheet
