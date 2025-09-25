@@ -5,7 +5,7 @@ import { ShoppingBag } from 'lucide-react'
 // Imports 
 import { useCart } from "../../Contexts/CartContext"
 import { AuthContext } from "../../Contexts/Contexts"
-import { CheckImage } from "../../Utils/utils"
+import { CheckImage, errorStatusHandler, formatNumber } from "../../Utils/utils"
 import { PostData, ModifyData } from "../../Utils/Requests"
 import Badge from "../Badge/Badge"
 
@@ -20,16 +20,17 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
   const { user } = useContext(AuthContext)
 
   // Obtener carrito del backend
-  const fnnNNetchCart = async () => {
+  const fetchCart = async () => {
     try {
       setLoading(true)
       // Cambia GetData por PostData y envía el documento en el body
       const data = await PostData(`${URL}/products/cart/by`, {
-        doc_per: user?.doc
+        email: user?.email
       })
       setCartItems(data)
     } catch (error) {
-      console.error("Error fetching cart:", error)
+      const message = errorStatusHandler(error)
+      console.error(message)
     } finally {
       setLoading(false)
     }
@@ -64,7 +65,7 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
 
   // Calcular total
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.pre_pro * item.cantidad), 0)
+    return formatNumber(cartItems.reduce((total, item) => total + (item.pre_pro * item.cantidad), 0))
   }
 
   // Calcular total de items
@@ -90,7 +91,7 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
   return (
     <>
       <main className={styles.overlay} onClick={onClose} />
-      <main className={`${styles.sheet} ${isOpen ? styles.open : ""}`}>
+      <main className={`${styles.sheet} ${isOpen && styles.open}`}>
         <header className={styles.header}>
           <div className={styles.title}>
             Carrito de Compras
@@ -137,7 +138,7 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
                           <span className={styles.itemMetaText}>Color: {item.nom_col}</span>
                         </div>
                         <div className={styles.itemFooter}>
-                          <span className={styles.itemPrice}>${item.pre_pro.toFixed(2)}</span>
+                          <span className={styles.itemPrice}>${formatNumber(item.pre_pro)}</span>
                           <div className={styles.itemControls}>
                             <button
                               className={styles.quantityButton}
@@ -171,7 +172,7 @@ const CartSheet = ({ URL = '', isOpen, onClose, imgProductDefault = '' }) => {
               <div className={styles.footer}>
                 <div className={styles.total}>
                   <span className={styles.totalLabel}>Total:</span>
-                  <span className={styles.totalAmount}>${getTotalPrice().toFixed(2)}</span>
+                  <span className={styles.totalAmount}>${getTotalPrice()}</span>
                 </div>
 
                 <div className={styles.actions}>

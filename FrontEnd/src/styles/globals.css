@@ -378,3 +378,17 @@ body {
   filter: opacity(.7);
   margin: 1rem 0;
 }
+
+.floatText {
+  position: absolute;
+  top: -.6rem;
+  right: -.15rem;
+  width: auto;
+  padding: .01rem .2rem;
+  font-size: .85rem;
+  font-weight: 600;
+  text-wrap: nowrap;
+  color: white;
+  border-radius: 2px;
+  background: var(--accent-800);
+}

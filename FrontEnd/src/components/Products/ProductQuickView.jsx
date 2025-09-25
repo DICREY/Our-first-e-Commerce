@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState, useContext } from "react";
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
-import { CheckImage, showAlert } from "../../Utils/utils";
+import { CheckImage, errorStatusHandler, showAlert, showAlertSelect } from "../../Utils/utils";
 import { PostData } from "../../Utils/Requests";
 import { AuthContext } from "../../Contexts/Contexts";
 
@@ -89,6 +89,11 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
     setSelectedSize({ nom_tal_pro: size.nom_tal_pro || size, id_tal_pro: size.id_tal_pro || size });
   };
 
+  const isInventory = (color) => {
+    const found = inventory?.find(inv => inv.nom_col === color)
+    return found? null:1
+  }
+
   // Buscar el id_inv según la selección
   const getSelectedInventoryId = () => {
     if (!selectedColor || !selectedSize) return null
@@ -96,9 +101,9 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
     const found = inventory.find(
       inv =>
         inv.nom_col === selectedColor.nom_col &&
-        inv.size === selectedSize.nom_tal_pro
+      inv.size === selectedSize.nom_tal_pro
     )
-
+    
     if (!found) {
       showAlert('Error', 'No se encontraron productos en el inventario', 'error')
       return
@@ -108,7 +113,6 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
       showAlert("Error", `Solo quedan ${found.cantidad} unidades disponibles`, "error");
       return null
     }
-
     return found.id_inv
   }
 
@@ -131,22 +135,20 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
   const handleAddToCart = async () => {
     // 1. Validar usuario
     if (!user) {
-      if (window.confirm("Debes iniciar sesión para agregar al carrito. ¿Deseas ir al login?")) {
-        navigate('/login');
-      }
-      return;
+      const option = showAlertSelect('Credenciales invalidas','Debes iniciar sesión para agregar al carrito. ¿Deseas ir al login?','question')
+      if ((await option).isConfirmed) return navigate('/login')
     }
 
     // 2. Validar selección
     if (!selectedSize || !selectedColor) {
-      alert("Debes seleccionar talla y color");
-      return;
-    }
+      showAlert('Alerta','Debes seleccionar una talla y color')
+      return
+    } 
 
     // 3. Validar inventario
-    const id_inv = getSelectedInventoryId();
+    const id_inv = await getSelectedInventoryId();
     if (!id_inv) {
-      alert("No hay inventario disponible");
+      showAlert('Error',"No hay inventario disponible",'error')
       return;
     }
 
@@ -154,20 +156,19 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
 
     try {
       // 4. Llamada API
-      await PostData(`${URL}/products/cart/add`, {
-        doc_per: user.doc,
+      console.log(user)
+      const add = await PostData(`${URL}/products/cart/add`, {
+        user: user.email,
         id_inv,
         quantity: quantity
-      }, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      })
 
       // 5. Éxito
-      alert("Producto agregado al carrito");
-      onClose();
+      if(add) showAlert('Producto Agregado', 'Producto agregado correctamente al carrito', 'success')
+      onClose()
     } catch (error) {
-      console.error("Error:", error);
-      alert(error.message || "Error al agregar al carrito");
+      const message = errorStatusHandler(error)
+      showAlert('Error',message, 'error')
     } finally {
       setIsAddingToCart(false);
     }
@@ -199,7 +200,8 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
                   style={{ backgroundColor: color.hex_col }}
                   title={color.nom_col}
                   aria-label={`Color ${color.nom_col}`}
-                />
+                  disabled={isInventory(color.nom_col)?1:null}
+                >{isInventory(color.nom_col) && (<p className="floatText">0 u</p>)}</button>
               ))}
             </div>
           )}

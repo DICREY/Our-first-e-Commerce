@@ -146,36 +146,6 @@ class Product {
         })
     }
 
-    async test() {
-        return new Promise((res, rej) => {
-            // vars
-            const proc = "INSERT INTO e_commerce.colores (hex_col) VALUES (?)"
-            const params = [
-                this.args[0].key_col
-            ]
-
-            // conect to database
-            this.database = new DataBase()
-            this.database.conect()
-
-            // verify conection and call procedure
-            if (this.database) this.database.conection.query(proc, params, (err) => {
-                if (err) {
-                    rej({ message: err })
-                } else setTimeout(() => {
-                    res({
-                        message: "Registro exitoso",
-                        success: true
-                    })
-                }, 1000)
-
-            })
-
-            // close conection 
-            this.database.conection.end()
-        })
-    }
-
     // function to find all
     async findAll() {
         return new Promise((res, rej) => {
@@ -192,7 +162,7 @@ class Product {
                     rej({ message: err })
                 } else if (result) {
                     const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img', 'stock'])
-                    const resTwo = this.global.format(resOne, 'inv', ['nom_col', 'hex_col', 'stock', 'size'])
+                    const resTwo = this.global.format(resOne, 'inv', ['id_inv','nom_col', 'hex_col', 'stock', 'size'])
                     const lastRes = this.global.iterar(resTwo, 'sizes')
                     const lastLastRes = this.global.format(lastRes, 'offers', [
                         'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
@@ -228,7 +198,7 @@ class Product {
                     rej({ message: err })
                 } else if (result) {
                     const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
-                    const resTwo = this.global.format(resOne, 'inv', ['nom_col', 'hex_col', 'stock', 'size'])
+                    const resTwo = this.global.format(resOne, 'inv', [ 'id_inv','nom_col', 'hex_col', 'stock', 'size'])
                     const lastRes = this.global.iterar(resTwo, 'sizes')
                     const lastLastRes = this.global.format(lastRes, 'offers', [
                         'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
@@ -262,10 +232,16 @@ class Product {
                 if (err) {
                     rej({ message: err })
                 } else if (result) {
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
+                    const resTwo = this.global.format(resOne, 'inv', [ 'id_inv','nom_col', 'hex_col', 'stock', 'size'])
+                    const lastRes = this.global.iterar(resTwo, 'sizes')
+                    const lastLastRes = this.global.format(lastRes, 'offers', [
+                        'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
+                    ])
                     setTimeout(() => {
                         res({
-                            message: "Products found",
-                            result: result[0]
+                            message: "Info found",
+                            result: lastLastRes
                         })
                     }, 1000)
                 } else rej({ message: 'Error interno', status: 500 })
@@ -380,7 +356,7 @@ class Product {
                     rej({ message: err })
                 } else if (result) {
                     const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img', 'stock'])
-                    const resTwo = this.global.format(resOne, 'inv', ['nom_col', 'hex_col', 'stock', 'size'])
+                    const resTwo = this.global.format(resOne, 'inv', ['id_inv','nom_col', 'hex_col', 'stock', 'size'])
                     const lastRes = this.global.iterar(resTwo, 'sizes')
                     const lastLastRes = this.global.format(lastRes, 'offers', [
                         'id_ofe', 'nom_ofe', 'des_ofe', 'dur_ofe', 'fec_ini_ofe', 'fec_fin_ofe', 'por_des_ofe', 'created_at', 'updated_at'
@@ -435,7 +411,7 @@ class Product {
         return new Promise((res, rej) => {
             const proc = "CALL AddToCart(?, ?, ?)"
             const params = [
-                this.args[0].userDoc,
+                this.args[0].user,
                 this.args[0].id_inv,
                 this.args[0].quantity
             ]
