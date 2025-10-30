@@ -1,5 +1,5 @@
 // Librarys 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, cache } from 'react'
 import { Navigate } from 'react-router-dom'
 
 // Imports 
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     // Función para cargar favoritos
     const loadFavorites = async (email) => {
         try {
-            if (!user) return []
+            if (!email) return []
             // 1. Primero verificar si hay datos en localStorage
             const cachedFavorites = localStorage.getItem(`favorites_${email}`)
             if (cachedFavorites) setFavorites(JSON.parse(cachedFavorites))

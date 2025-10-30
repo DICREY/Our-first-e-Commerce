@@ -104,6 +104,7 @@ BEGIN
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
+                    inv.id_inv,
                     co.nom_col,
                     co.hex_col,
                     inv.cantidad,
@@ -118,7 +119,7 @@ BEGIN
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
             JOIN
-                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv
+                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv AND pco.col_pro_col = inv.id_col_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,
@@ -254,6 +255,7 @@ BEGIN
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
+                    inv.id_inv,
                     co.nom_col,
                     co.hex_col,
                     inv.cantidad,
@@ -268,7 +270,7 @@ BEGIN
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
             JOIN
-                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv
+                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv AND pco.col_pro_col = inv.id_col_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,
@@ -415,6 +417,7 @@ BEGIN
         (
             SELECT GROUP_CONCAT(
                 CONCAT_WS(';',
+                    inv.id_inv,
                     co.nom_col,
                     co.hex_col,
                     inv.cantidad,
@@ -429,7 +432,7 @@ BEGIN
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
             JOIN
-                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv
+                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv AND pco.col_pro_col = inv.id_col_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,

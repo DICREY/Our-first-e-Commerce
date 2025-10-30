@@ -21,7 +21,6 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
   const [ inv, setInv ] = useState(null)
   const [ almcInv, setAlmcInv ] = useState(null)
   const [ currentCol, setCurrentCol ] = useState(null)
-  const [ currentSize, setCurrentSize ] = useState(null)
   const [ currentInv, setCurrentInv ] = useState(null)
   const [ imgExpand, setImgExpand ] = useState(null)
   const [ nameAdd, setNameAdd ] = useState(null)

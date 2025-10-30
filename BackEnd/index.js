@@ -20,6 +20,7 @@ const secret = process.env.JWT_SECRET
 app.disable('x-powered-by')
 
 // middlewares
+app.set('trust proxy', 1)
 app.use(bodyParser.json({ limit: '1mb' }));
 app.use(express.json())
 app.use(cors(corsOptions))

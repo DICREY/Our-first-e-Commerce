@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react"
 // Imports 
 import { errorStatusHandler, showAlert } from "../../Utils/utils"
 import { GetData } from "../../Utils/Requests"
-import ProductCard from "./ProductCard"
+import ProductCard from "./ProductCard/ProductCard"
 
 // Import styles 
 import styles from "../../styles/Products/ProductCatalog.module.css"

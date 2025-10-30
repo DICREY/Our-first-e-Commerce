@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react"
 
 // Imports
 import HeroSection from "../../components/HeroSection/HeroSection"
-import ProductCard from "../../components/Products/ProductCard"
+import ProductCard from "../../components/Products/ProductCard/ProductCard"
 import Badge from "../../components/Badge/Badge"
 import Button from "../../components/Button/Button"
 import { errorStatusHandler, showAlert } from "../../Utils/utils"

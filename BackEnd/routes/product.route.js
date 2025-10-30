@@ -99,20 +99,18 @@ Route.get('/brands', async (req, res) => {
 const cartFavoriteMiddleware = [authenticateJWT, ValidatorRol("usuario")];
 
 // ============ CARRITO ============
-
 Route.post('/cart/add', cartFavoriteMiddleware, async (req, res) => {
     try {
-        const { doc_per, id_inv, quantity } = req.body;
-        const userDoc = doc_per;
-        const productService = new Product({ userDoc, id_inv, quantity });
+        const data = req.body
+        const productService = new Product(data)
 
-        const result = await productService.addToCart();
-        res.status(200).json(result);
+        const result = await productService.addToCart()
+        if (result.success) return res.status(200).json({ result })
+        
+        res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde'})
     } catch (err) {
         console.error(err);
-        if (err?.message?.sqlState === '45000') {
-            return res.status(400).json({ message: err?.message?.sqlMessage });
-        }
+        if (err?.message?.sqlState === '45000') return res.status(400).json({ message: err?.message?.sqlMessage })
         res.status(500).json({
             message: 'Error del servidor por favor intentelo mas tarde',
             error: err.message
@@ -252,7 +250,7 @@ Route.post('/inventory', async (req, res) => {
         }
         const productService = new Product(productId);
         const result = await productService.getProductInventory();
-        res.status(200).json(result);
+        res.status(200).json({result});
     } catch (err) {
         console.error(err);
         if (err?.message?.sqlState === '45000') {

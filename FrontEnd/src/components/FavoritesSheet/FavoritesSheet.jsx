@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { Heart } from 'lucide-react';
 import { AuthContext } from "../../Contexts/Contexts";
 import Modal from "../Modal/Modal";
-import ProductCard from "../Products/ProductCard";
+import ProductCard from "../Products/ProductCard/ProductCard";
 
 // Import styles 
 import styles from "./FavoritesSheet.module.css";
@@ -11,7 +11,7 @@ import styles from "./FavoritesSheet.module.css";
 // Component 
 const FavoritesSheet = ({ URL = '', isOpen, onClose, img = '' }) => {
   // Dynamic vars 
-  const [ loading, setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   // Vars
   let { user } = useContext(AuthContext)
@@ -32,7 +32,7 @@ const FavoritesSheet = ({ URL = '', isOpen, onClose, img = '' }) => {
           <section className={styles.emptyState}>
             <p>Cargando favoritos...</p>
           </section>
-        ) : favorites?.length === 0 ? (
+        ) : !favorites || favorites.length < 1 ? (
           <section className={styles.emptyState}>
             <div className={styles.emptyIcon}><Heart /></div>
             <h3 className={styles.emptyTitle}>Tu lista de favoritos está vacía</h3>
