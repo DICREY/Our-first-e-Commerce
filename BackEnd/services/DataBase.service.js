@@ -30,6 +30,17 @@ class DataBase {
             return 1
         })
     }
+
+    // Function to close connection to BD everytime after a query
+    closeConnection (){
+        this.connection.end((err) =>{
+            if (err){
+                console.log('Error al desconectar a la base de datos',err)
+                return
+            }
+            console.log('Desconexion exitosa')
+        })
+    }
 }
 
 // Exports 
