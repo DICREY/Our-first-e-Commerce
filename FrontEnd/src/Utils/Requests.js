@@ -7,7 +7,7 @@ export async function GetData( URL = '', set = null ) {
     try {
         const response = await axios.get(URL,{
             headers: {
-                    'x-api-key': 'e_commerce'
+                    'x-api-key': 'temach_un_dios'
             },
             withCredentials: true })
 
@@ -23,7 +23,7 @@ export async function PostCookie( URL = '', datas = {}) {
     try {
         const response = await axios.post( URL, {...datas}, { 
             headers: {
-                'x-api-key': 'e_commerce'
+                'x-api-key': 'temach_un_dios'
             },
             withCredentials: true} )
   
@@ -41,7 +41,7 @@ export async function PostData( URL = '', datas = {}) {
     try {
         const response = await axios.post( URL, {...datas}, { 
             headers: {
-                'x-api-key': 'e_commerce'
+                'x-api-key': 'temach_un_dios'
             },
             withCredentials: true} )
   
@@ -60,7 +60,7 @@ export async function ModifyData( URL = '', datas = {}, set = null ) {
     try {
         const response = await axios.put( URL, {...datas}, { 
             headers: {
-                'x-api-key': 'e_commerce'
+                'x-api-key': 'temach_un_dios'
             },
             withCredentials: true } )
 
@@ -77,7 +77,7 @@ export async function DeleteData( URL = '', datas = {} ) {
     try {
         const response = await axios.delete( URL, {...datas}, { 
             headers: {
-                'x-api-key': 'e_commerce'
+                'x-api-key': 'temach_un_dios'
             },
             withCredentials: true } )
 

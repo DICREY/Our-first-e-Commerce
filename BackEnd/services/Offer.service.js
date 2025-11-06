@@ -250,7 +250,6 @@ class Offer {
                 if(err) {
                     rej({ message: err })
                 } else if (result) {
-                    console.log(result[0]?.[0])
                     setTimeout(() => {
                         res({
                             message: "Info found",

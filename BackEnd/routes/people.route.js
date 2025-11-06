@@ -61,7 +61,6 @@ Route.put('/change-rol', ValidatorRol('administrador'), async (req,res) => {
 
         res.status(200).json(log)
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 
@@ -81,7 +80,6 @@ Route.put('/change-email', ValidatorRol('usuario'), async (req,res) => {
 
         res.status(200).json(log)
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 
@@ -98,7 +96,6 @@ Route.post('/by', async (req,res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -115,7 +112,6 @@ Route.post('/register', async (req,res) => {
 
         res.status(201).json(create)
     } catch(err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -133,7 +129,6 @@ Route.put('/modify', async (req,res) => {
             
         res.status(400).json({ message: "Petición no valida"})
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({ message: err.message })
 
@@ -151,7 +146,6 @@ Route.put('/delete', async (req,res) => {
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })

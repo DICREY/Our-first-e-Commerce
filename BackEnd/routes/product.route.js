@@ -18,7 +18,6 @@ Route.get('/all', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -36,7 +35,6 @@ Route.get('/categories', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -54,7 +52,6 @@ Route.get('/colors', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -72,7 +69,6 @@ Route.get('/sizes', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -89,7 +85,6 @@ Route.get('/brands', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -109,7 +104,6 @@ Route.post('/cart/add', cartFavoriteMiddleware, async (req, res) => {
         
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde'})
     } catch (err) {
-        console.error(err);
         if (err?.message?.sqlState === '45000') return res.status(400).json({ message: err?.message?.sqlMessage })
         res.status(500).json({
             message: 'Error del servidor por favor intentelo mas tarde',
@@ -127,7 +121,6 @@ Route.put('/cart/update', cartFavoriteMiddleware, async (req, res) => {
         const result = await productService.updateCartItem();
         res.status(200).json(result);
     } catch (err) {
-        console.error(err);
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -146,8 +139,7 @@ Route.post('/cart/remove', cartFavoriteMiddleware, async (req, res) => {
 
         const result = await productService.removeFromCart();
         res.status(200).json(result);
-    } catch (err) {
-        console.log(err);
+    } catch (err) {;
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -167,8 +159,7 @@ Route.post('/cart/by', cartFavoriteMiddleware, async (req, res) => {
 
         const result = await productService.getUserCart()
         res.status(200).json(result)
-    } catch (err) {
-        console.log(err);
+    } catch (err) {;
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -189,7 +180,6 @@ Route.post('/favorites/add', cartFavoriteMiddleware, async (req, res) => {
         const result = await productService.addToFavorites()
         res.status(200).json({ result: result })
     } catch (err) {
-        console.error(err);
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -208,7 +198,6 @@ Route.post('/favorites/remove', cartFavoriteMiddleware, async (req, res) => {
         const result = await productService.removeFromFavorites();
         res.status(200).json({ result: result })
     } catch (err) {
-        console.error(err);
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -231,7 +220,6 @@ Route.post('/favorites/by', cartFavoriteMiddleware, async (req, res) => {
         const result = await productService.getUserFavorites();
         res.status(200).json(result)
     } catch (err) {
-        console.error(err);
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -252,7 +240,6 @@ Route.post('/inventory', async (req, res) => {
         const result = await productService.getProductInventory();
         res.status(200).json({result});
     } catch (err) {
-        console.error(err);
         if (err?.message?.sqlState === '45000') {
             return res.status(400).json({ message: err?.message?.sqlMessage });
         }
@@ -279,7 +266,6 @@ Route.post('/all/by', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -300,7 +286,6 @@ Route.post('/by', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -321,7 +306,6 @@ Route.post('/by/categorie', async (req, res) => {
 
         res.status(200).json(search)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -343,7 +327,6 @@ Route.post('/register', async (req, res) => {
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -361,7 +344,6 @@ Route.put('/modify', ValidatorRol("administrador"), async (req, res) => {
         
         res.status(500).json({ message: "Error en la petición" })
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })
@@ -378,7 +360,6 @@ Route.put('/change-status', ValidatorRol("administrador"), async (req, res) => {
 
         if (modified.success) return res.status(200).json(modified)
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 
@@ -415,7 +396,6 @@ Route.post('/test', async (req, res) => {
 
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde' })
     } catch (err) {
-        console.log(err)
         if (err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: 'Error del servidor por favor intentelo mas tarde', error: err })

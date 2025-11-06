@@ -34,7 +34,6 @@ Route.put('/change-password', limiterLog, async (req,res) => {
 
         res.status(500).json({ message: 'Error en el servidor intentelo más tarde' })
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
         res.status(500).json({ message: err })
@@ -94,7 +93,6 @@ Route.post('/login', limiterLog, async (req,res) => {
         res.status(200).json({ __cred: token })
 
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 
@@ -136,7 +134,6 @@ Route.post('/login-google', limiterLog, async (req,res) => {
         res.status(200).json({ __cred: token })
 
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 
@@ -157,7 +154,6 @@ Route.post('/preffers/change-theme', limiterLog, async (req,res) => {
         res.status(200).json({ result: log })
 
     } catch (err) {
-        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 
