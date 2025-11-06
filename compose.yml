@@ -13,7 +13,7 @@ services:
     container_name: BackEndEcommerce
     image: node
     build: 
-      context: ./back-end
+      context: ./BackEnd
       dockerfile: DockerFile
     ports:
       - 3000:3000
@@ -24,7 +24,7 @@ services:
     container_name: FrontEndEcommerce
     image: node
     build: 
-      context: ./front-end
+      context: ./FrontEnd
       dockerfile: DockerFile
     ports:
       - "5173:5173"
