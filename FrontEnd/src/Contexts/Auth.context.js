@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }) => {
                     setTheme(userData.theme)
                     setImg(userData.img)
                     setRoles(userData?.roles?.split(', ') || ['Usuario'])
-                    setAdmin(userData.roles?.split(', ').includes('Administrador')? 1: 0)
+                    setAdmin(userData.roles?.split(', ').includes('Administrador')? true: false)
                     
                     // Cargar favoritos al verificar autenticación                    
                     await loadFavorites(userData.email)
