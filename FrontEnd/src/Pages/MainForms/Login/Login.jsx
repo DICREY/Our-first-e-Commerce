@@ -13,7 +13,7 @@ import { auth } from "../../../Hooks/AuthFirebase"
 import styles from './login.module.css'
 
 // Component 
-export const LoginForm = ({ URL = '' }) => {
+export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
   // Dynamic Vars 
   const [ email, setEmail ] = useState("")
   const [ password, setPassword ] = useState("")
@@ -31,25 +31,23 @@ export const LoginForm = ({ URL = '' }) => {
       const credential = GoogleAuthProvider.credentialFromResult(result)
       const token = credential.accessToken
       const user = result.user
-      console.log(result)
       const pass = `Password_${user?.displayName?.split(' ')?.[0]?.toLowerCase()}*`
       const userData = { 
         email: user?.email || '',
-        nom_per: user?.displayName?.split(' ')?.[0] || 'test',
-        ape_per: user?.displayName?.split(' ')?.[1] || 'test',
+        nom_per: user?.displayName?.split(' ')?.[0] || '',
+        ape_per: user?.displayName?.split(' ')?.[1] || '',
         cel_per: user?.phoneNumber,
         passwd: pass || 'Password123*',
         url_img: user?.photoURL || '',
       }
 
       showAlertLoading('Cargando...', 'Por favor espera', 'info')
-      const log = await login(`${URL}/credential/login-google`, userData)
-      if (log) {
-        showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
-        setTimeout(() => {
-          navigate('/')
-        }, 2000)
-      }
+      showAlert('Éxito', 'Completa tus datos para continuar', 'success')
+      console.log('GMAIL USER DATA:', gmailUserData)
+      gmailUserData?? setGmailUserData(userData)
+      setTimeout(() => {
+        navigate(`${URL}/credential/validate-data/`)
+      }, 2000)
     } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')

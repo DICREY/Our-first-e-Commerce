@@ -28,12 +28,14 @@ import Header from "./components/Headers/Header"
 import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./Pages/ProductDetail/ProductDetailPage"
 import { EmailChange } from "./Pages/MainForms/GmailReset/EmailChange"
+import { ValidateData } from "./Pages/MainForms/ValidateUserData/ValidateUserData"
 
 // Main Module 
 const App = () => {
   // Dynamic vars
   const [product, setProduct] = useState()
   const [catPro, setCatPro] = useState()
+  const [gmailUserData, setGmailUserData] = useState({})
   const [filterFetch, setFilterFetch] = useState(null)
   
   // Vars 
@@ -175,10 +177,11 @@ const App = () => {
               />            
               {/* Auth Routes without Layout */}
               <Route path="/handle-firebase" element={<HandleFirebase />} />
-              <Route path="/login" element={<LoginForm URL={URL} />} />
+              <Route path="/login" element={<LoginForm URL={URL} gmailUserData={setGmailUserData} />} />
               <Route path="/forgot-password" element={<PasswordReset URL={URL} />} />
               <Route path="/email-reset" element={<EmailChange URL={URL} />} />
               <Route path="/signup" element={<RegisterForm URL={URL} />} />
+              <Route path="/validate-data" element={<ValidateData URL={URL} gmailUserData={gmailUserData} />} />
             </Route>
 
 

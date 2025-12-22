@@ -4,13 +4,14 @@ import { Link } from "react-router-dom"
 
 // Imports 
 import { PostData } from "../../../Utils/Requests"
-import { errorStatusHandler, showAlert, showAlertLoading } from "../../../Utils/utils"
+import { errorStatusHandler, LegalAge, showAlert, showAlertLoading } from "../../../Utils/utils"
 
 // Import styles 
 import styles from './register.module.css'
 
 // Component 
 export const RegisterForm = ({ URL = '' }) => {
+  // Dynamic Vars 
   const [formData, setFormData] = useState({
     nom: "",
     ape: "",
@@ -25,6 +26,10 @@ export const RegisterForm = ({ URL = '' }) => {
     gen: "",
   })
 
+  // Vars
+  const legalAge = LegalAge()
+
+  // Functions
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
@@ -93,6 +98,7 @@ export const RegisterForm = ({ URL = '' }) => {
               id="fec_nac"
               name="fec_nac"
               value={formData.fec_nac}
+              max={legalAge}
               onChange={handleChange}
               className={styles.inputField}
               required
@@ -125,7 +131,6 @@ export const RegisterForm = ({ URL = '' }) => {
               value={formData.tip_doc}
               onChange={handleChange}
               className={styles.inputField}
-              required
             >
               <option value="CC">CC</option>
               <option value="DNI">DNI</option>
@@ -143,7 +148,6 @@ export const RegisterForm = ({ URL = '' }) => {
               value={formData.doc}
               onChange={handleChange}
               className={styles.inputField}
-              required
             />
           </div>
         </div>
