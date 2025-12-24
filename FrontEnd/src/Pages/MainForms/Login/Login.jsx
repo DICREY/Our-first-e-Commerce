@@ -42,11 +42,10 @@ export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
       }
 
       showAlertLoading('Cargando...', 'Por favor espera', 'info')
-      showAlert('Éxito', 'Completa tus datos para continuar', 'success')
-      console.log('GMAIL USER DATA:', gmailUserData)
-      gmailUserData?? setGmailUserData(userData)
+      showAlert('Éxito', 'Completa tus datos para continuar', 'success')  
+      setGmailUserData(userData)
       setTimeout(() => {
-        navigate(`${URL}/credential/validate-data/`)
+        navigate(`${URL}/validate-data/`)
       }, 2000)
     } catch (err) {
       const message = errorStatusHandler(err)

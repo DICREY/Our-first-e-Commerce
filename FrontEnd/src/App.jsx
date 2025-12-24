@@ -177,7 +177,7 @@ const App = () => {
               />            
               {/* Auth Routes without Layout */}
               <Route path="/handle-firebase" element={<HandleFirebase />} />
-              <Route path="/login" element={<LoginForm URL={URL} gmailUserData={setGmailUserData} />} />
+              <Route path="/login" element={<LoginForm URL={URL} setGmailUserData={setGmailUserData} />} />
               <Route path="/forgot-password" element={<PasswordReset URL={URL} />} />
               <Route path="/email-reset" element={<EmailChange URL={URL} />} />
               <Route path="/signup" element={<RegisterForm URL={URL} />} />
