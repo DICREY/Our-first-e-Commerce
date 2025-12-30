@@ -137,8 +137,7 @@ const App = () => {
                   <ProductCatalog 
                     URL={URL} 
                     imgDefault={imgProduct} 
-                    setProduct={setProduct} 
-                    preSelectedCat='Lencería'
+                    setProduct={setProduct}
                   />
                 } 
               />
@@ -148,8 +147,7 @@ const App = () => {
                   <ProductCatalog 
                     URL={URL} 
                     imgDefault={imgProduct} 
-                    setProduct={setProduct} 
-                    preSelectedCat='Lencería'
+                    setProduct={setProduct}
                   />
                 } 
               />
@@ -159,8 +157,7 @@ const App = () => {
                   <ProductCatalog 
                     URL={URL} 
                     imgDefault={imgProduct} 
-                    setProduct={setProduct} 
-                    preSelectedCat='Ropa de Mujer'
+                    setProduct={setProduct}
                   />
                 } 
               />

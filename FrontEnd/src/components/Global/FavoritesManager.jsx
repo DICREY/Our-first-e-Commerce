@@ -3,7 +3,7 @@ import { useEffect, useContext } from 'react';
 import { AuthContext } from '../Contexts/Contexts';
 import { GetData } from '../Utils/Requests';
 
-const FavoritesManager = () => {
+const FavoritesManager = ({ URL = '' }) => {
   const { user, setFavorites } = useContext(AuthContext);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const FavoritesManager = () => {
           setFavorites(freshFavorites);
           localStorage.setItem(`favorites_${user.doc_per}`, JSON.stringify(freshFavorites));
         } catch (error) {
-          console.error("Error loading favorites:", error);
+          // Error loading favorites - silently fail
         }
       } else {
         // Usuario no logueado - limpiar favoritos
@@ -31,7 +31,7 @@ const FavoritesManager = () => {
     };
 
     loadFavorites();
-  }, [user, setFavorites]);
+  }, [user, setFavorites, URL]);
 
   return null; // Este componente no renderiza nada
 };
