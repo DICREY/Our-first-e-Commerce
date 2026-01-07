@@ -3,7 +3,8 @@ import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Imports 
-import { LegalAge } from "../../../Utils/utils"
+import { errorStatusHandler, LegalAge, showAlert, showAlertLoading } from "../../../Utils/utils"
+import { PostData } from "../../../Utils/Requests"
 
 // Import styles
 import styles from './ValidateUserData.module.css'
@@ -12,17 +13,21 @@ import styles from './ValidateUserData.module.css'
 export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
   // Dynamic Vars
   const [errors, setErrors] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: gmailUserData?.email || '',
     passwd: '',
     confirmPassword: '',
     gen_per: '',
-    dir_per: '',
     fec_nac_per: '',
-    cel_per: gmailUserData?.cel_per || ''
+    nom_per: gmailUserData?.nom_per || '',
+    ape_per: gmailUserData?.ape_per || '',
+    img: gmailUserData?.url_img || '',
+    theme: gmailUserData?.theme || 'LIGHT'
   })
 
-  // Vars 
+  // Vars
   const legalAge = LegalAge()
   const navigate = useNavigate()
 
@@ -63,17 +68,23 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    
+    showAlertLoading('Cargando...', 'Por favor espere', 'info')
+
     if (validateForm()) {
-      console.log('Form data:', formData)
-      
-      const log = false
-      if (log) {
-        setTimeout(() => {
-          navigate(`${URL}/login`)
-        })
+      try {        
+        const post = await PostData(`${URL}/credential/login-google`, formData)
+        
+        if(post) {
+          showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+          setTimeout(() => {
+            navigate('/')
+          }, 2000)
+        }
+      } catch (err) {
+        const message = errorStatusHandler(err)
+        showAlert('Error', message, 'error')
       }
     }
   }
@@ -109,15 +120,35 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
               <label htmlFor="passwd" className={styles["form-label"]}>
                 Contraseña <span className={styles["required"]}>*</span>
               </label>
-              <input
-                type="passwd"
-                id="passwd"
-                name="passwd"
-                value={formData.passwd}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.passwd ? styles["input-error"] : ''}`}
-                placeholder="Ingresa tu contraseña"
-              />
+              <div className={styles["password-wrapper"]}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="passwd"
+                  name="passwd"
+                  value={formData.passwd}
+                  onChange={handleChange}
+                  className={`${styles["form-input"]} ${errors.passwd ? styles["input-error"] : ''}`}
+                  placeholder="Ingresa tu contraseña"
+                />
+                <button
+                  type="button"
+                  className={styles["toggle-password"]}
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  )}
+                </button>
+              </div>
               {errors.passwd && <span className={styles["error-message"]}>{errors.passwd}</span>}
             </div>
 
@@ -126,15 +157,35 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
               <label htmlFor="confirmPassword" className={styles["form-label"]}>
                 Confirmar Contraseña <span className={styles["required"]}>*</span>
               </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.confirmPassword ? styles["input-error"] : ''}`}
-                placeholder="Confirma tu contraseña"
-              />
+              <div className={styles["password-wrapper"]}>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={`${styles["form-input"]} ${errors.confirmPassword ? styles["input-error"] : ''}`}
+                  placeholder="Confirma tu contraseña"
+                />
+                <button
+                  type="button"
+                  className={styles["toggle-password"]}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showConfirmPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && <span className={styles["error-message"]}>{errors.confirmPassword}</span>}
             </div>
 
@@ -151,10 +202,10 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
                 className={styles["form-select"]}
               >
                 <option value="">Selecciona tu género</option>
-                <option value="male">Masculino</option>
-                <option value="female">Femenino</option>
-                <option value="other">Otro</option>
-                <option value="prefer-not">Prefiero no decir</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Other">Otro</option>
+                <option value="Prefer-not">Prefiero no decir</option>
               </select>
             </div>
 
@@ -179,7 +230,6 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
               <label htmlFor="fec_nac_per" className={styles["form-label"]}>
                 Fecha de Nacimiento <span className={styles["required"]}>*</span>
               </label>
-              {console.log('Legal Age:', legalAge)}
               <input
                 type="date"
                 id="fec_nac_per"

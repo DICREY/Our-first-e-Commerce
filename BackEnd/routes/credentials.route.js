@@ -17,7 +17,7 @@ const secret = process.env.JWT_SECRET
 const Route = Router()
 
 // Middleware 
-Route.use(Fullinfo(['cel_per','url_img']))
+Route.use(Fullinfo(['cel_per','url_img','doc_per']))
 
 // Routes
 Route.put('/change-password', limiterLog, async (req,res) => {
@@ -48,8 +48,9 @@ Route.post('/register', async (req,res) => {
     
     try {   
         const create = await user.create({hash_pass: await hash(body.pas_per,saltRounds), ...body})
-        res.status(201).json(create)
+        res.status(201).json({result: { ...create }})
     } catch(err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: err })
@@ -127,11 +128,11 @@ Route.post('/login-google', limiterLog, async (req,res) => {
 
         res.cookie('__cred', token, cookiesOptionsLog)
         res.cookie('__nit', secret, cookiesOptionsLog)
-
+        
         if (user.roles) res.cookie('__user', user.roles, cookiesOptionsLog)
         if (user.nom_per && user.ape_per) res.cookie('__userName', `${user.nom_per} ${user.ape_per}`, cookiesOptionsLog)
-
-        res.status(200).json({ __cred: token })
+                
+        if (token) return res.status(200).json({ result: token })
 
     } catch (err) {
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })

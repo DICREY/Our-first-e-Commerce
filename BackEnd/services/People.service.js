@@ -169,23 +169,18 @@ class People {
     async create(data) {
         return new Promise((res,rej) => {
             // data 
+            let procedure = "CALL RegistPeoples(?,?,?,?,?,?,?,?,?);"
             const newUser = [
                 data.nom_per,
                 data.nom2_per,
                 data.ape_per,
                 data.ape2_per,
                 data.fec_nac_per,
-                data.tip_doc_per,
-                data.doc_per,
-                data.dir_per,
-                data.cel_per,
-                data.cel2_per,
                 data.email_per,
                 data.hash_pass,
                 data.gen_per,
-                data.fot_per || 'No-registrado'
+                data.theme
             ]
-            let procedure = "CALL RegistPeoples(?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 
             // conect to database
             this.database = new DataBase()

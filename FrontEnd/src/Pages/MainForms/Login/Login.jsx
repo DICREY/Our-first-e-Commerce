@@ -17,6 +17,7 @@ export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
   // Dynamic Vars 
   const [ email, setEmail ] = useState("")
   const [ password, setPassword ] = useState("")
+  const [ showPassword, setShowPassword ] = useState(false)
 
   // Vars 
   const { login } = useContext(AuthContext)
@@ -25,27 +26,25 @@ export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
   // Functions 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
       const result = await signInWithPopup(auth, provider);
       // Esto te da un Google Access Token.
-      const credential = GoogleAuthProvider.credentialFromResult(result)
-      const token = credential.accessToken
+      // const credential = GoogleAuthProvider.credentialFromResult(result)
+      // const token = credential.accessToken
       const user = result.user
-      const pass = `Password_${user?.displayName?.split(' ')?.[0]?.toLowerCase()}*`
       const userData = { 
         email: user?.email || '',
         nom_per: user?.displayName?.split(' ')?.[0] || '',
         ape_per: user?.displayName?.split(' ')?.[1] || '',
         cel_per: user?.phoneNumber,
-        passwd: pass || 'Password123*',
         url_img: user?.photoURL || '',
       }
 
-      showAlertLoading('Cargando...', 'Por favor espera', 'info')
-      showAlert('Éxito', 'Completa tus datos para continuar', 'success')  
+      showAlert('Éxito', 'Completa tus datos para continuar', 'success')
       setGmailUserData(userData)
       setTimeout(() => {
-        navigate(`${URL}/validate-data/`)
+        navigate('/validate-data/')
       }, 2000)
     } catch (err) {
       const message = errorStatusHandler(err)
@@ -90,15 +89,35 @@ export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
 
         <div className={styles["input-group"]}>
           <label htmlFor="password" className={styles["input-label"]}>Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles["input-field"]}
-            placeholder="Contraseña"
-            required
-          />
+          <div className={styles["password-wrapper"]}>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={styles["input-field"]}
+              placeholder="Contraseña"
+              required
+            />
+            <button
+              type="button"
+              className={styles["toggle-password"]}
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
 
         <button type="submit" className={'primaryBtn expand'}>

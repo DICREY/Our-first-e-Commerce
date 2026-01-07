@@ -1,4 +1,4 @@
--- Active: 1761607626419@@127.0.0.1@3306@e_commerce
+-- Active: 1766887804132@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.Login(
     IN p_firstData VARCHAR(100)
 )
@@ -37,9 +37,16 @@ CREATE PROCEDURE e_commerce.GoogleLogin(
     IN p_email VARCHAR(100),
     IN p_nom VARCHAR(100),
     IN p_ape VARCHAR(100),
-    IN p_cel VARCHAR(100),
+    IN p_fec_nac DATE,
+    IN p_tip_doc VARCHAR(5),
+    IN p_doc VARCHAR(20),
+    IN p_dir VARCHAR(100),
+    IN p_cel VARCHAR(20),
+    IN p_cel2 VARCHAR(20),
     IN p_passwd TEXT,
-    IN p_url_img TEXT
+    IN p_gen VARCHAR(50),
+    IN p_url_img TEXT,
+    IN p_theme VARCHAR(20)
 )
 BEGIN
     DECLARE p_id_persona INT;
@@ -56,8 +63,37 @@ BEGIN
     START TRANSACTION;
 
     IF NOT EXISTS (SELECT 1 FROM personas WHERE email_per = p_email) THEN
-        INSERT INTO personas (email_per,nom_per,ape_per,cel_per,pas_per,fot_per, auth_provider, verificado)VALUES
-        (p_email,p_nom,p_ape,p_cel,p_passwd,p_url_img, 'GOOGLE', 1);
+        INSERT INTO personas (
+            email_per,
+            nom_per,
+            ape_per,
+            fec_nac_per,
+            tip_doc_per,
+            doc_per,
+            dir_per,
+            cel_per,
+            cel2_per,
+            pas_per,
+            gen_per,
+            fot_per, 
+            auth_provider,
+            verificado
+        ) VALUES (
+            p_email,
+            p_nom,
+            p_ape,
+            p_fec_nac,
+            p_tip_doc,
+            p_doc,
+            p_dir,
+            p_cel,
+            p_cel2,
+            p_passwd,
+            p_gen,
+            p_url_img,
+            'GOOGLE',
+            1
+        );
 
         SET p_id_persona = LAST_INSERT_ID();
 
@@ -67,7 +103,7 @@ BEGIN
         VALUES (p_id_persona,p_id_rol,CURRENT_DATE());
 
         INSERT INTO preferencias (per_pre,theme) 
-        VALUES (p_id_persona, 'LIGHT');
+        VALUES (p_id_persona, p_theme);
     END IF;
 
     SELECT
@@ -184,11 +220,11 @@ BEGIN
     SET autocommit = 1;
 END //
 
-/* DROP PROCEDURE e_commerce.`Login`; */
-/* DROP PROCEDURE e_commerce.`ChangePassword`; */
-/* DROP PROCEDURE e_commerce.`GoogleLogin`; */
-/* DROP PROCEDURE e_commerce.ChangeTheme; */
+-- DROP PROCEDURE e_commerce.`Login`;
+-- DROP PROCEDURE e_commerce.`ChangePassword`;
+-- DROP PROCEDURE e_commerce.`GoogleLogin`;
+-- DROP PROCEDURE e_commerce.ChangeTheme;
 
-/* CALL e_commerce.Login('admin@gmail.com'); */
-/* CALL e_commerce.GoogleLogin('test@gmail.com','testName','testLastName','31312312','test123','test.jpg'); */
-/* CALL e_commerce.ChangePassword('admin@gmail.com', 'Perra123'); */
+-- CALL e_commerce.Login('admin@gmail.com');
+-- CALL e_commerce.GoogleLogin('test@gmail.com','testName','testLastName','31312312','test123','test.jpg');
+-- CALL e_commerce.ChangePassword('admin@gmail.com', 'Perra123');

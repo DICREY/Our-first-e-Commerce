@@ -1,4 +1,4 @@
--- Active: 1761607626419@@127.0.0.1@3306@e_commerce
+-- Active: 1766887804132@@127.0.0.1@3306@e_commerce
 -- Roles
 INSERT INTO e_commerce.roles (nom_rol) VALUES
 ('Administrador'),
