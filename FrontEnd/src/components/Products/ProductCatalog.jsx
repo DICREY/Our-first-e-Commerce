@@ -1,5 +1,6 @@
 // Librarys 
 import { useState, useMemo, useEffect } from "react"
+import { useParams, useLocation } from "react-router-dom"
 
 // Imports 
 import { errorStatusHandler, showAlert } from "../../Utils/utils"
@@ -9,10 +10,29 @@ import ProductCard from "./ProductCard/ProductCard"
 // Import styles 
 import styles from "../../styles/Products/ProductCatalog.module.css"
 
+// Mapeo de slugs a nombres de categorías
+const SLUG_TO_CATEGORY = {
+  'ropa-de-mujer': 'Ropa de Mujer',
+  'lenceria': 'Lencería',
+  'ropa-deportiva-mujer': 'Ropa Deportiva Mujer',
+  'all': 'Todos'
+}
+
 // Component 
 const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', setProduct }) => {
+  const location = useLocation()
+  
+  // Obtener la categoría del slug de la URL
+  const getCategoryFromPath = () => {
+    const path = location.pathname
+    if (path === '/' || path === '/profile') return 'Todos'
+    
+    const slug = path.replace('/productos/', '').toLowerCase()
+    return SLUG_TO_CATEGORY[slug] || 'Todos'
+  }
+
   // Dynamic vars 
-  const [selectedCategory, setSelectedCategory] = useState(preSelectedCat || "Todos")
+  const [selectedCategory, setSelectedCategory] = useState(getCategoryFromPath())
   const [search, setSearch] = useState("")
   const [selectedColor, setSelectedColor] = useState("")
   const [categories, setCategories] = useState([])
@@ -23,6 +43,12 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
   const [sort, setSort] = useState("default")
   const [priceRange, setPriceRange] = useState([0, 200])
   const [isLoading, setIsLoading] = useState(true)
+
+  // Actualizar categoría cuando cambie la ruta
+  useEffect(() => {
+    const newCategory = getCategoryFromPath()
+    setSelectedCategory(newCategory)
+  }, [location.pathname])
 
   // Función para procesar los productos del backend
   // En ProductCatalog.js, modificar la función processProducts:
@@ -64,35 +90,104 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
         ...product,
         url_img: mainImage,
         colors: productColors,
-        sizes: Array.isArray(product.sizes) ? product.sizes : []
+        sizes: Array.isArray(product.sizes) ? product.sizes : [],
+        // Asegurar que inv siempre está presente y es un array
+        inv: Array.isArray(product.inv) ? product.inv : (product.inventario || [])
       };
     });
   };
-  // Cargar datos iniciales
+  // Cargar datos iniciales con caching
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const [
-          catData,
-          colorsData,
-          sizesData,
-          prodsData
-        ] = await Promise.all([
-          GetData(`${URL}/products/categories`),
-          GetData(`${URL}/products/colors`),
-          GetData(`${URL}/products/sizes`),
-          GetData(`${URL}/products/all`)
-        ]);
 
-        if (catData) setCategories(catData);
-        if (colorsData) setColors(colorsData);
-        if (sizesData) setSizes(sizesData);
-        if (prodsData) setProducts(processProducts(prodsData));
+        // Intentar cargar desde localStorage primero
+        const cachedData = localStorage.getItem('ecommerce_products_data');
+        const cacheTimestamp = localStorage.getItem('ecommerce_products_timestamp');
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos (antes era 30)
+
+        let useCache = false;
+        let cachedProducts = null;
+        let cachedCategories = null;
+        let cachedColors = null;
+        let cachedSizes = null;
+
+        if (cachedData && cacheTimestamp) {
+          const age = Date.now() - parseInt(cacheTimestamp);
+          if (age < CACHE_DURATION) {
+            try {
+              const parsed = JSON.parse(cachedData);
+              cachedProducts = parsed.products;
+              cachedCategories = parsed.categories;
+              cachedColors = parsed.colors;
+              cachedSizes = parsed.sizes;
+              useCache = true;
+            } catch (e) {
+              console.warn('Error parsing cached data:', e);
+            }
+          }
+        }
+
+        // Si hay cache válido, usarlo inicialmente
+        if (useCache) {
+          if (cachedCategories) setCategories(cachedCategories);
+          if (cachedColors) setColors(cachedColors);
+          if (cachedSizes) setSizes(cachedSizes);
+          if (cachedProducts) setProducts(processProducts(cachedProducts));
+          setIsLoading(false);
+        }
+
+        // Siempre intentar actualizar desde la API en segundo plano
+        try {
+          const [
+            catData,
+            colorsData,
+            sizesData,
+            prodsData
+          ] = await Promise.all([
+            GetData(`${URL}/products/categories`),
+            GetData(`${URL}/products/colors`),
+            GetData(`${URL}/products/sizes`),
+            GetData(`${URL}/products/all`)
+          ]);
+
+          // Actualizar estado - IMPORTANTE: esto sobrescribe el cache
+          if (catData) setCategories(catData);
+          if (colorsData) setColors(colorsData);
+          if (sizesData) setSizes(sizesData);
+          if (prodsData) {
+            const processedProducts = processProducts(prodsData);
+            setProducts(processedProducts);
+
+            // Guardar en localStorage
+            const dataToCache = {
+              products: prodsData,
+              categories: catData,
+              colors: colorsData,
+              sizes: sizesData
+            };
+            localStorage.setItem('ecommerce_products_data', JSON.stringify(dataToCache));
+            localStorage.setItem('ecommerce_products_timestamp', Date.now().toString());
+          }
+          
+          // Si no había cache, marcar como cargado
+          if (!useCache) {
+            setIsLoading(false);
+          }
+        } catch (apiError) {
+          console.warn('Error updating from API:', apiError);
+          // Si no hay cache y la API falla, mostrar error
+          if (!useCache) {
+            const message = errorStatusHandler(apiError);
+            showAlert('Error', message, 'error');
+            setIsLoading(false);
+          }
+        }
+
       } catch (err) {
         const message = errorStatusHandler(err);
         showAlert('Error', message, 'error');
-      } finally {
         setIsLoading(false);
       }
     };
@@ -168,6 +263,15 @@ const ProductCatalog = ({ URL = '', imgDefault = '', preSelectedCat = 'Todos', s
     )
   }
 
+  // Limpiar filtros al cambiar de categoría
+  useEffect(() => {
+    setSearch("");
+    setSelectedColor("");
+    setSelectedSizes([]);
+    setSort("default");
+  }, [selectedCategory]);
+
+  // Actualizar rango de precios cuando los productos cambien
   useEffect(() => {
     if (products.length > 0) {
       setPriceRange([minPrice, maxPrice]);

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 // Imports 
 import { PostData } from "../../Utils/Requests";
-import { showAlert } from "../../Utils/utils";
+import { showAlert, errorStatusHandler } from "../../Utils/utils";
 import ProductCard from "./ProductCard/ProductCard";
 
 // Import styles 
@@ -17,6 +17,57 @@ const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '', setProdu
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [page, setPage] = useState(1)
+
+  // Función para procesar productos (igual que en ProductCatalog)
+  const processProducts = (rawProducts) => {
+    if (!rawProducts) return [];
+    const productsArray = Array.isArray(rawProducts) ? rawProducts : [rawProducts];
+    
+    return productsArray.filter(product => product && product.id_pro).map(product => {
+      const mainImage = product.url_img && product.url_img.trim() !== ''
+        ? product.url_img
+        : (product.imagen_default || '');
+
+      let productColors = [];
+      if (product.colors) {
+        if (typeof product.colors === 'string') {
+          productColors = product.colors.split('---').map(colorStr => {
+            const parts = colorStr.split(';');
+            return {
+              nom_col: parts[0] || '',
+              hex_col: parts[1] || '#ccc',
+              nom_img: parts[2] || '',
+              url_img: parts[3] || ''
+            };
+          });
+        } else if (Array.isArray(product.colors)) {
+          productColors = product.colors.map(color => ({
+            nom_col: color.nom_col || '',
+            hex_col: color.hex_col || '#ccc',
+            nom_img: color.nom_img || '',
+            url_img: color.url_img || ''
+          }));
+        }
+      }
+
+      // Procesar tallas - puede venir de múltiples fuentes
+      let sizes = [];
+      if (Array.isArray(product.sizes)) {
+        sizes = product.sizes;
+      } else if (product.tallas_disponibles && typeof product.tallas_disponibles === 'string') {
+        // Si vienen de endpoints como /by/categorie, están como string separadas por comas
+        sizes = product.tallas_disponibles.split(',').map(t => ({ nom_tal_pro: t.trim() }));
+      }
+
+      return {
+        ...product,
+        url_img: mainImage,
+        colors: productColors,
+        sizes: sizes,
+        inv: Array.isArray(product.inv) ? product.inv : (product.inventario || [])
+      };
+    });
+  };
 
   // Vars 
   const productsPerLoad = 10
@@ -34,10 +85,12 @@ const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '', setProdu
         });
         
         let productsData = response?.result || response || [];
-        productsData = Array.isArray(productsData) ? productsData : [productsData];
+        
+        // Procesar los productos para asegurar que tengan la estructura correcta
+        const processedProducts = processProducts(productsData);
         
         // Mezclar los productos para orden aleatorio
-        const shuffledProducts = [...productsData].sort(() => Math.random() - 0.5);
+        const shuffledProducts = [...processedProducts].sort(() => Math.random() - 0.5);
         setAllProducts(shuffledProducts);
         setDisplayedProducts(shuffledProducts.slice(0, 10)); // Mostrar 10 inicialmente (2 filas de 5)
       } catch (err) {

@@ -46,16 +46,6 @@ const HeroSection = ({ URL = '', imgDefault = '' }) => {
       showAlert('Error', message, 'error')
     }
   }
-  
-  
-  const changeCurrentProduct = async () => {
-    try {
-      const data = await PostData(`${URL}`)
-    } catch (err) {
-      const message = errorStatusHandler(err)
-      showAlert('Error', message, 'error')
-    }
-  }
 
   useEffect(() => {
     GetStats()

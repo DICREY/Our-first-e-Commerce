@@ -65,6 +65,29 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
       }
     }
 
+    // Determine if product is out of stock
+    // A product is ONLY out of stock if:
+    // 1. It explicitly has inventory data AND no items with stock > 0
+    // 2. It has NO inventory data AND no sizes available
+    // Otherwise, assume it's available (products from API filtered out unavailable ones)
+    let isOutOfStock = false;
+    
+    const hasInvData = Array.isArray(data.inv) && data.inv.length > 0;
+    const hasSizes = Array.isArray(data.sizes) && data.sizes.length > 0;
+    
+    if (hasInvData) {
+      // If inventory data exists, check if there are items with stock > 0
+      // The 'stock' field can be either a number or a string from the database
+      isOutOfStock = !data.inv.some(item => {
+        const stock = parseInt(item.stock) || parseInt(item.cantidad) || 0;
+        return stock > 0;
+      });
+    } else if (!hasSizes) {
+      // Only mark as out of stock if NO inventory data AND no sizes
+      isOutOfStock = true;
+    }
+    // Otherwise, consider it available (default behavior)
+
     return {
       id_pro: data.id_pro || '',
       nom_pro: data.nom_pro || '',
@@ -74,6 +97,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
       sizes: Array.isArray(data.sizes) ? data.sizes : [],
       onSale: Boolean(data.onSale),
       featured: Boolean(data.featured),
+      isOutOfStock,
       ...data
     };
   }, [data])
@@ -116,8 +140,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
       await toggleFavorite(product.id_pro)
       setIsLiked(!isLiked)
     } catch (error) {
-      const message = errorStatusHandler(error)
-      showAlert("Error", message, "error")
+      // Silently fail on error - no alert needed
     } finally {
       setIsTogglingFavorite(false)
     }
@@ -145,7 +168,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
 
   const displayColors = Array.isArray(product.colors) ? product.colors : [];
   return (
-    <div className={styles.card} onClick={handleCardClick}>
+    <div className={`${styles.card} ${product.isOutOfStock ? styles.outOfStock : ''}`} onClick={handleCardClick}>
       <div className={styles.imageContainer}>
         <CheckImage
           src={imgError ? imgDefault : showImg}
@@ -160,6 +183,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
         <div className={styles.badges}>
           {product?.offers && <Badge variant="sale">-{product.offers?.[0].por_des_ofe}%</Badge>}
           {product.featured && <Badge variant="featured">Destacado</Badge>}
+          {product.isOutOfStock && <Badge variant="warning">Agotado</Badge>}
         </div>
 
         {/* Acciones */}
@@ -172,7 +196,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
                 e.stopPropagation();
                 setShowQuickView(true);
               }}
-              disabled={isAddingToCart || isTogglingFavorite}
+              disabled={isAddingToCart || isTogglingFavorite || product.isOutOfStock}
             >
               <Eye /> Vista Rápida
             </Button>
@@ -180,9 +204,9 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
               size="sm"
               variant="primary"
               onClick={handleQuickAddClick}
-              disabled={isAddingToCart || isTogglingFavorite}
+              disabled={isAddingToCart || isTogglingFavorite || product.isOutOfStock}
             >
-              <PackagePlus /> Añadir
+              {product.isOutOfStock ? 'Agotado' : <><PackagePlus /> Añadir</>}
             </Button>
           </div>
         </div>
@@ -191,7 +215,7 @@ const ProductCard = ({ URL = '', data = {}, imgDefault = '', set, isFavorite = n
         <button
           className={styles.wishlistButton}
           onClick={handleLike}
-          disabled={isAddingToCart || isTogglingFavorite}
+          disabled={isAddingToCart || isTogglingFavorite || product.isOutOfStock}
           aria-label={isLiked ? "Quitar de favoritos" : "Agregar a favoritos"}
         >
           <Heart

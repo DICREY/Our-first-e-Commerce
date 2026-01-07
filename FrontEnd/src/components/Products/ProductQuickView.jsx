@@ -20,6 +20,7 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [inventory, setInventory] = useState([]);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isLoadingInventory, setIsLoadingInventory] = useState(false);
   const navigate = useNavigate();
 
   // Vars 
@@ -30,12 +31,15 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
   useEffect(() => {
     const fetchInventory = async () => {
       if (isOpen && product?.id_pro) {
+        setIsLoadingInventory(true);
         try {
           const response = await PostData(`${URL}/products/by`, { by: product.id_pro })
           if (response?.[0]?.inv) setInventory(response?.[0]?.inv)
         } catch (error) {
           console.error("Error fetching inventory:", error)
           setInventory([])
+        } finally {
+          setIsLoadingInventory(false);
         }
       }
     };
@@ -235,35 +239,42 @@ const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {
           {selectedColor && getAvailableSizesForColor(selectedColor).length > 0 && (
             <div className={styles.sizesSection}>
               <h4 className={styles.sectionTitle}>Tallas disponibles</h4>
-              <div className={styles.sizeOptions}>
-                {getAvailableSizesForColor(selectedColor).map((size, index) => {
-                  const inventoryItem = inventory.find(
-                    inv =>
-                      inv.nom_col === selectedColor?.nom_col &&
-                      (inv.id_tal_inv === size.id_tal_pro || inv.nom_tal_pro === size.nom_tal_pro)
-                  );
+              {isLoadingInventory ? (
+                <div className={styles.loadingSizes}>
+                  <div className={styles.loadingSpinner}></div>
+                  <p>Cargando tallas...</p>
+                </div>
+              ) : (
+                <div className={styles.sizeOptions}>
+                  {getAvailableSizesForColor(selectedColor).map((size, index) => {
+                    const inventoryItem = inventory.find(
+                      inv =>
+                        inv.nom_col === selectedColor?.nom_col &&
+                        (inv.id_tal_inv === size.id_tal_pro || inv.nom_tal_pro === size.nom_tal_pro)
+                    );
 
-                  const isOutOfStock = inventoryItem?.cantidad === 0;
-                  const isLowStock = inventoryItem?.cantidad < 5 && inventoryItem?.cantidad > 0;
+                    const isOutOfStock = inventoryItem?.cantidad === 0;
+                    const isLowStock = inventoryItem?.cantidad < 5 && inventoryItem?.cantidad > 0;
 
-                  return (
-                    <button
-                      key={`size-${index}`}
-                      className={`${styles.sizeOption} ${selectedSize?.id_tal_pro === size.id_tal_pro ? styles.active : ''
-                        } ${isOutOfStock ? styles.outOfStock : ''}`}
-                      onClick={() => !isOutOfStock && handleSizeSelect(size)}
-                      disabled={isOutOfStock}
-                      title={isOutOfStock ? "Agotado" : isLowStock ? `Últimas ${inventoryItem.cantidad} unidades` : ""}
-                    >
-                      {size.nom_tal_pro}
-                      {isOutOfStock && <span className={styles.stockBadge}>Agotado</span>}
-                      {isLowStock && !isOutOfStock && (
-                        <span className={styles.lowStockBadge}>{inventoryItem.cantidad}</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                    return (
+                      <button
+                        key={`size-${index}`}
+                        className={`${styles.sizeOption} ${selectedSize?.id_tal_pro === size.id_tal_pro ? styles.active : ''
+                          } ${isOutOfStock ? styles.outOfStock : ''}`}
+                        onClick={() => !isOutOfStock && handleSizeSelect(size)}
+                        disabled={isOutOfStock}
+                        title={isOutOfStock ? "Agotado" : isLowStock ? `Últimas ${inventoryItem.cantidad} unidades` : ""}
+                      >
+                        {size.nom_tal_pro}
+                        {isOutOfStock && <span className={styles.stockBadge}>Agotado</span>}
+                        {isLowStock && !isOutOfStock && (
+                          <span className={styles.lowStockBadge}>{inventoryItem.cantidad}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
