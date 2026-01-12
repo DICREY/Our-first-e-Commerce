@@ -5,15 +5,16 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { Mail } from 'lucide-react';
 
 // Imports
-import { errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
+import { decodeJWT, errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
 import { AuthContext } from "../../../Contexts/Contexts"
 import { auth } from "../../../Hooks/AuthFirebase"
 
 // Import styles 
 import styles from './login.module.css'
+import { PostData } from "../../../Utils/Requests";
 
 // Component 
-export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
+export const LoginForm = ({ URL = '' }) => {
   // Dynamic Vars 
   const [ email, setEmail ] = useState("")
   const [ password, setPassword ] = useState("")
@@ -31,7 +32,9 @@ export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
       const result = await signInWithPopup(auth, provider);
       // Esto te da un Google Access Token.
       // const credential = GoogleAuthProvider.credentialFromResult(result)
-      // const token = credential.accessToken
+      // const googleToken = credential.accessToken
+
+      // Map data 
       const user = result.user
       const userData = { 
         email: user?.email || '',
@@ -41,10 +44,31 @@ export const LoginForm = ({ URL = '', setGmailUserData = null }) => {
         url_img: user?.photoURL || '',
       }
 
+      // Login with google 
+      const post = await PostData(`${URL}/credential/login-google`, userData)
+
+      // Check log 
+      if(post?.login) {
+        showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+        setTimeout(() => {
+          navigate('/')
+        }, 2000)
+        return
+      }
+
+      // Encode Data 
+      if (userData?.email) {
+        const encode = await PostData(`${URL}/credential/JWT-encoder`, {
+          content: JSON.stringify(userData),
+          lifeTime: 8
+        })
+        
+        if (encode) localStorage.setItem("gmailUserData", encode )
+      }
+
       showAlert('Éxito', 'Completa tus datos para continuar', 'success')
-      setGmailUserData(userData)
       setTimeout(() => {
-        navigate('/validate-data/')
+        navigate('/validate-data')
       }, 2000)
     } catch (err) {
       const message = errorStatusHandler(err)

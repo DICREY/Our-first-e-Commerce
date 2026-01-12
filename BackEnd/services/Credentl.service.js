@@ -78,11 +78,11 @@ class Credentl {
                 this.args[0].email,
                 this.args[0].nom_per || '',
                 this.args[0].ape_per || '',
-                this.args[0].fec_nac_per || '',
+                this.args[0].fec_nac_per || '2000-00-00',
                 this.args[0].hash_pass || '',
                 this.args[0].gen_per || '',
                 this.args[0].img || '',
-                this.args[0].theme || '',
+                this.args[0].theme || 'LIGHT',
             ]
 
             // conect to database

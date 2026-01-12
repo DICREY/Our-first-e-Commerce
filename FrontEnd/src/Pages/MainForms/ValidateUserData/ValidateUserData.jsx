@@ -3,14 +3,19 @@ import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Imports 
-import { errorStatusHandler, LegalAge, showAlert, showAlertLoading } from "../../../Utils/utils"
+import { decodeJWT, errorStatusHandler, LegalAge, showAlert, showAlertLoading } from "../../../Utils/utils"
 import { PostData } from "../../../Utils/Requests"
 
 // Import styles
 import styles from './ValidateUserData.module.css'
 
 // Component
-export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
+export const ValidateData = ({ URL = '' }) => {
+  // Vars
+  const legalAge = LegalAge()
+  const navigate = useNavigate()
+  const gmailUserData = decodeJWT(localStorage.getItem('gmailUserData'))
+
   // Dynamic Vars
   const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
@@ -26,10 +31,6 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
     img: gmailUserData?.url_img || '',
     theme: gmailUserData?.theme || 'LIGHT'
   })
-
-  // Vars
-  const legalAge = LegalAge()
-  const navigate = useNavigate()
 
   // Functions
   const handleChange = (e) => {
@@ -49,6 +50,10 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
   const validateForm = () => {
     const newErrors = {}
     
+    if (!formData.nom_per.trim()) newErrors.nom_per = 'El nombre es requerido'
+
+    if (!formData.ape_per.trim()) newErrors.ape_per = 'El apellido es requerido'
+
     if (!formData.passwd.trim()) {
       newErrors.passwd = 'La contraseña es requerida'
     } else if (formData.passwd.length < 8) {
@@ -62,7 +67,6 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
     if (!formData.fec_nac_per) newErrors.fec_nac_per = 'La fecha de nacimiento es requerida'
     if (formData.fec_nac_per > legalAge) newErrors.fec_nac_per = 'Debes ser mayor de edad'
 
-    if (!formData.cel_per.trim()) newErrors.cel_per = 'El celular es requerido'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -74,10 +78,14 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
 
     if (validateForm()) {
       try {        
-        const post = await PostData(`${URL}/credential/login-google`, formData)
+        const post = await PostData(`${URL}/credential/login-google`, { 
+          requestState: '2',
+          ...formData
+        })
         
         if(post) {
           showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+          localStorage.removeItem('gmailUserData')
           setTimeout(() => {
             navigate('/')
           }, 2000)
@@ -113,7 +121,42 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
                 />
             </div>
           <section className={styles["form-section"]}>
-            
+
+            {/* Nombre */}
+            {!gmailUserData?.nom_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="nom_per" className={styles["form-label"]}>
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  id="nom_per"
+                  name="nom_per"
+                  value={formData.nom_per}
+                  onChange={handleChange}
+                  className={`${styles["form-input"]} ${errors.nom_per ? styles["input-error"] : ''}`}
+                  placeholder="Ingresa tu Nombre"
+                />
+              </div>
+            )}
+
+            {/* Apellido */}
+            {!gmailUserData?.ape_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="ape_per" className={styles["form-label"]}>
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  id="ape_per"
+                  name="ape_per"
+                  value={formData.ape_per}
+                  onChange={handleChange}
+                  className={`${styles["form-input"]} ${errors.ape_per ? styles["input-error"] : ''}`}
+                  placeholder="Ingresa tu Apellido"
+                />
+              </div>
+            )}
 
             {/* Contraseña */}
             <div className={styles["form-group"]}>
@@ -190,74 +233,46 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
             </div>
 
             {/* Género */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="gen_per" className={styles["form-label"]}>
-                Género
-              </label>
-              <select
-                id="gen_per"
-                name="gen_per"
-                value={formData.gen_per}
-                onChange={handleChange}
-                className={styles["form-select"]}
-              >
-                <option value="">Selecciona tu género</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Other">Otro</option>
-                <option value="Prefer-not">Prefiero no decir</option>
-              </select>
-            </div>
-
-            {/* Dirección */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="dir_per" className={styles["form-label"]}>
-                Dirección
-              </label>
-              <input
-                type="text"
-                id="dir_per"
-                name="dir_per"
-                value={formData.dir_per}
-                onChange={handleChange}
-                className={styles["form-input"]}
-                placeholder="Ingresa tu dirección completa"
-              />
-            </div>
+            {!gmailUserData?.gen_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="gen_per" className={styles["form-label"]}>
+                  Género
+                </label>
+                <select
+                  id="gen_per"
+                  name="gen_per"
+                  value={formData.gen_per}
+                  onChange={handleChange}
+                  className={styles["form-select"]}
+                >
+                  <option value="">Selecciona tu género</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Other">Otro</option>
+                  <option value="Prefer-not">Prefiero no decir</option>
+                </select>
+              </div>
+            )}
 
             {/* Fecha de Nacimiento */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="fec_nac_per" className={styles["form-label"]}>
-                Fecha de Nacimiento <span className={styles["required"]}>*</span>
-              </label>
-              <input
-                type="date"
-                id="fec_nac_per"
-                name="fec_nac_per"
-                value={formData.fec_nac_per}
-                max={legalAge}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.fec_nac_per ? styles["input-error"] : ''}`}
-              />
-              {errors.fec_nac_per && <span className={styles["error-message"]}>{errors.fec_nac_per}</span>}
-            </div>
+            {!gmailUserData?.fec_nac_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="fec_nac_per" className={styles["form-label"]}>
+                  Fecha de Nacimiento <span className={styles["required"]}>*</span>
+                </label>
+                <input
+                  type="date"
+                  id="fec_nac_per"
+                  name="fec_nac_per"
+                  value={formData.fec_nac_per}
+                  max={legalAge}
+                  onChange={handleChange}
+                  className={`${styles["form-input"]} ${errors.fec_nac_per ? styles["input-error"] : ''}`}
+                  />
+                {errors.fec_nac_per && <span className={styles["error-message"]}>{errors.fec_nac_per}</span>}
+              </div>
+            )}
 
-            {/* Celular */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="cel_per" className={styles["form-label"]}>
-                Celular <span className={styles["required"]}>*</span>
-              </label>
-              <input
-                type="tel"
-                id="cel_per"
-                name="cel_per"
-                value={formData.cel_per}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.cel_per ? styles["input-error"] : ''}`}
-                placeholder="Ingresa tu número de celular"
-              />
-              {errors.cel_per && <span className={styles["error-message"]}>{errors.cel_per}</span>}
-            </div>
           </section>
           {/* Botones */}
           <div className={styles["form-actions"]}>
