@@ -1,6 +1,7 @@
 // Librarys 
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form"
 
 // Imports 
 import { PostData } from "../../../Utils/Requests"
@@ -27,14 +28,18 @@ export const RegisterForm = ({ URL = '' }) => {
   const legalAge = LegalAge()
   const navigate = useNavigate()
 
+  // Form config 
+  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' })
+
   // Functions
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  // Request 
+  const onSubmit = async (data) => {
+    console.log(data)
     showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
       const req = await PostData(`${URL}/credential/register`, formData)
@@ -50,7 +55,7 @@ export const RegisterForm = ({ URL = '' }) => {
 
   return (
     <main className={styles.registerContainer}>
-      <form onSubmit={handleSubmit} className={styles.registerForm}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.registerForm}>
         <h2 className={styles.registerTitle}>Registro de Usuario</h2>
 
         {/* Nombres y Apellidos */}
@@ -62,11 +67,24 @@ export const RegisterForm = ({ URL = '' }) => {
               id="nom_per"
               name="nom_per"
               placeholder="Nombres"
-              value={formData.nom_per}
-              onChange={handleChange}
               className={styles.inputField}
-              required
+              {...register('nom_per', {
+                required: 'Este campo es requerido',
+                minLength: {
+                  value: 2,
+                  message: 'Debe contener minimo 2 characteres'
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe contener menos de 100 characteres'
+                },
+              })}
             />
+            {errors.nom_per && (
+              <p id="nom_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.nom_per.message}
+              </p>
+            )}
           </div>
           <div className={styles.inputGroup}>
             <label htmlFor="ape_per" className={styles.inputLabel}>Apellidos*</label>
@@ -75,11 +93,24 @@ export const RegisterForm = ({ URL = '' }) => {
               id="ape_per"
               name="ape_per"
               placeholder="Apellidos"
-              value={formData.ape_per}
-              onChange={handleChange}
               className={styles.inputField}
-              required
+              {...register('ape_per', {
+                required: 'Este campo es requerido',
+                minLength: {
+                  value: 2,
+                  message: 'Debe contener minimo 2 characteres'
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe contener menos de 100 characteres'
+                },
+              })}
             />
+            {errors.ape_per && (
+              <p id="ape_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.ape_per.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -91,12 +122,21 @@ export const RegisterForm = ({ URL = '' }) => {
               type="date"
               id="fec_nac_per"
               name="fec_nac_per"
-              value={formData.fec_nac_per}
               max={legalAge}
-              onChange={handleChange}
               className={styles.inputField}
-              required
+              {...register('fec_nac_per', {
+                required: 'Este campo es requerido',
+                max: {
+                  value: legalAge,
+                  message: 'Debe ser mayor de edad'
+                }
+              })}
             />
+            {errors.fec_nac_per && (
+              <p id="fec_nac_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.fec_nac_per.message}
+              </p>
+            )}
           </div>
           <div className={styles.inputGroup}>
             <label htmlFor="gen_per" className={styles.inputLabel}>Género</label>
@@ -124,11 +164,29 @@ export const RegisterForm = ({ URL = '' }) => {
             id="email_per"
             name="email_per"
             placeholder="Correo electrónico"
-            value={formData.email_per}
-            onChange={handleChange}
             className={styles.inputField}
             required
-          />
+            {...register('email_per', {
+                required: 'Este campo es requerido',
+                minLength: {
+                  value: 8,
+                  message: 'Debe contener al menos 8 caracteres',
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe contener menos de 100 caracteres',
+                },
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Este correo es inválido'
+                }
+              })}
+            />
+            {errors.email_per && (
+              <p id="email_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.email_per.message}
+              </p>
+            )}
         </div>
         <div className={styles.inputGroup}>
           <label htmlFor="pas_per" className={styles.inputLabel}>Contraseña*</label>
@@ -138,10 +196,18 @@ export const RegisterForm = ({ URL = '' }) => {
               id="pas_per"
               name="pas_per"
               placeholder="Contraseña"
-              value={formData.pas_per}
-              onChange={handleChange}
               className={styles.inputField}
-              required
+              {...register('pas_per', {
+                required: 'Este campo es requerido',
+                minLength: {
+                  value: 8,
+                  message: 'Debe contener minimo 8 characteres'
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe contener menos de 100 characteres'
+                },
+              })}
             />
             <button
               type="button"
@@ -162,6 +228,11 @@ export const RegisterForm = ({ URL = '' }) => {
               )}
             </button>
           </div>
+          {errors.pas_per && (
+            <p id="pas_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.pas_per.message}
+            </p>
+          )}
         </div>
 
         <button type="submit" className={"primaryBtn"}>

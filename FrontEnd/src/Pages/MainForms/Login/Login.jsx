@@ -2,27 +2,29 @@
 import React, { useContext, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { useForm } from "react-hook-form"
 import { Mail } from 'lucide-react';
 
 // Imports
-import { decodeJWT, errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
+import { errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
 import { AuthContext } from "../../../Contexts/Contexts"
 import { auth } from "../../../Hooks/AuthFirebase"
+import { PostData } from "../../../Utils/Requests";
 
 // Import styles 
 import styles from './login.module.css'
-import { PostData } from "../../../Utils/Requests";
 
 // Component 
 export const LoginForm = ({ URL = '' }) => {
   // Dynamic Vars 
-  const [ email, setEmail ] = useState("")
-  const [ password, setPassword ] = useState("")
   const [ showPassword, setShowPassword ] = useState(false)
 
   // Vars 
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
+
+  // Form config 
+  const { handleSubmit, register, formState: { errors } } = useForm({ mode: "onChange" })
 
   // Functions 
   const signInWithGoogle = async () => {
@@ -76,26 +78,25 @@ export const LoginForm = ({ URL = '' }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const onSubmit = async ( data ) => {
     showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
-        const log = await login(`${URL}/credential/login`, { firstData: email, secondData: password })
-        if (log) {
-          showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
-          setTimeout(() => {
-            navigate('/')
-          }, 2000)
-        }
+      const log = await login(`${URL}/credential/login`, { firstData: data.email, secondData: data.password })
+      if (log) {
+        showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+        setTimeout(() => {
+          navigate('/')
+        }, 2000)
+      }
     } catch (err) {
-        const message = errorStatusHandler(err)
-        showAlert('Error', String(message), 'error')
+      const message = errorStatusHandler(err)
+      showAlert('Error', String(message), 'error')
     }
   }
 
   return (
     <main className={styles["login-container"]}>
-      <form onSubmit={handleSubmit} className={styles["login-form"]}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles["login-form"]}>
         <h2 className={styles["login-title"]}>Iniciar Sesión</h2>
         
         <div className={styles["input-group"]}>
@@ -103,12 +104,30 @@ export const LoginForm = ({ URL = '' }) => {
           <input
             type="email"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             className={styles["input-field"]}
             placeholder="Correo electrónico"
-            required
+            {...register('email', {
+              required: 'Este campo es requerido',
+              minLength: {
+                value: 8,
+                message: 'Debe contener al menos 8 caracteres',
+              },
+              maxLength: {
+                value: 100,
+                message: 'Debe contener menos de 100 caracteres',
+              },
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Este correo es inválido'
+              }
+            })}
+            autoFocus
           />
+          {errors.email && (
+            <p id="email-error" className='mensaje-error' role="alert" aria-live="assertive">
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <div className={styles["input-group"]}>
@@ -117,11 +136,20 @@ export const LoginForm = ({ URL = '' }) => {
             <input
               type={showPassword ? "text" : "password"}
               id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password', {
+                required: 'Este campo es requerido',
+                minLength: {
+                  value: 8,
+                  message: 'Debe contener minimo 8 characteres'
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe contener menos de 100 caracteres',
+                },
+              })}
               className={styles["input-field"]}
               placeholder="Contraseña"
-              required
+              maxLength={100}
             />
             <button
               type="button"
@@ -142,6 +170,11 @@ export const LoginForm = ({ URL = '' }) => {
               )}
             </button>
           </div>
+          {errors.password && (
+            <p id="password-error" className='mensaje-error' role="alert" aria-live="assertive">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <button type="submit" className={'primaryBtn expand'}>

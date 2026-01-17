@@ -8,6 +8,7 @@ import { PostData } from "../../../Utils/Requests"
 
 // Import styles
 import styles from './ValidateUserData.module.css'
+import { useForm } from "react-hook-form"
 
 // Component
 export const ValidateData = ({ URL = '' }) => {
@@ -17,7 +18,6 @@ export const ValidateData = ({ URL = '' }) => {
   const gmailUserData = decodeJWT(localStorage.getItem('gmailUserData'))
 
   // Dynamic Vars
-  const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -31,6 +31,9 @@ export const ValidateData = ({ URL = '' }) => {
     img: gmailUserData?.url_img || '',
     theme: gmailUserData?.theme || 'LIGHT'
   })
+
+  // Form Config 
+  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' })
 
   // Functions
   const handleChange = (e) => {
@@ -59,10 +62,6 @@ export const ValidateData = ({ URL = '' }) => {
     } else if (formData.passwd.length < 8) {
       newErrors.passwd = 'La contraseña debe tener al menos 8 caracteres'
     }
-    
-    if (formData.passwd !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden'
-    }
 
     if (!formData.fec_nac_per) newErrors.fec_nac_per = 'La fecha de nacimiento es requerida'
     if (formData.fec_nac_per > legalAge) newErrors.fec_nac_per = 'Debes ser mayor de edad'
@@ -72,7 +71,7 @@ export const ValidateData = ({ URL = '' }) => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     showAlertLoading('Cargando...', 'Por favor espere', 'info')
 
@@ -105,7 +104,7 @@ export const ValidateData = ({ URL = '' }) => {
           <p className={styles["form-subtitle"]}>Por favor completa todos los campos requeridos</p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles["form"]}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles["form"]}>
           {/* Email */}
           <div className={styles["form-group"]}>
               <label htmlFor="email" className={styles["form-label"]}>
@@ -209,6 +208,17 @@ export const ValidateData = ({ URL = '' }) => {
                   onChange={handleChange}
                   className={`${styles["form-input"]} ${errors.confirmPassword ? styles["input-error"] : ''}`}
                   placeholder="Confirma tu contraseña"
+                  {...register('confirmPassword', {
+                    required: 'Este campo es requerido',
+                    minLength: {
+                      value: 8,
+                      message: 'Debe contener minimo 8 characteres'
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: 'Debe contener menos de 100 characteres'
+                    },
+                  })}
                 />
                 <button
                   type="button"
@@ -228,8 +238,12 @@ export const ValidateData = ({ URL = '' }) => {
                     </svg>
                   )}
                 </button>
+                {errors.confirmPassword && (
+                  <p id="confirmPassword-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
-              {errors.confirmPassword && <span className={styles["error-message"]}>{errors.confirmPassword}</span>}
             </div>
 
             {/* Género */}

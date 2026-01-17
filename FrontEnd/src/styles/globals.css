@@ -392,3 +392,10 @@ body {
   border-radius: 2px;
   background: var(--accent-800);
 }
+
+.mensaje-error {
+  color: var(--accent-800);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 4px;
+}
