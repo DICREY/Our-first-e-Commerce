@@ -24,7 +24,12 @@ export const LoginForm = ({ URL = '' }) => {
   const navigate = useNavigate()
 
   // Form config 
-  const { handleSubmit, register, formState: { errors } } = useForm({ mode: "onChange" })
+  const { 
+    handleSubmit,
+    register,
+    getValues,
+    formState: { errors } 
+  } = useForm({ mode: "onChange" })
 
   // Functions 
   const signInWithGoogle = async () => {
@@ -79,10 +84,12 @@ export const LoginForm = ({ URL = '' }) => {
   };
 
   const onSubmit = async ( data ) => {
-    console.log(data)
     showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
-      const log = await login(`${URL}/credential/login`, { firstData: data.email, secondData: data.password })
+      const log = await login(`${URL}/credential/login`, { 
+        firstData: getValues('email'),
+        secondData: getValues('password') 
+      })
       if (log) {
         showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
         setTimeout(() => {

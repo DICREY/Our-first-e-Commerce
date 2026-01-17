@@ -337,7 +337,7 @@ export const showAlert = (title, text, icon) => {
     title: title,
     text: text,
     icon: icon,
-    theme: localStorage.getItem('theme')?.toLowerCase() || 'light',
+    theme: localStorage.getItem('theme')?.toLowerCase() || 'LIGHT',
     confirmButtonText: 'Aceptar',
     customClass: {
       confirmButton: 'btn btn-primary'

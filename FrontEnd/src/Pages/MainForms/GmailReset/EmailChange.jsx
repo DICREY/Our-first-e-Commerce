@@ -113,7 +113,7 @@ export const EmailChange = ({ URL = "" }) => {
               id="newEmail"
               name="newEmail"
               className={errors.newEmail ? styles.inputError : styles.input}
-              placeholder="nuevo@correo.com"
+              placeholder="nuevo correo electrónico"
               disabled={loading}
               {...register('newEmail', {
                 required: 'El nuevo correo es obligatorio',
@@ -151,7 +151,7 @@ export const EmailChange = ({ URL = "" }) => {
               id="confirmEmail"
               name="confirmEmail"
               className={errors.confirmEmail ? styles.inputError : styles.input}
-              placeholder="nuevo@correo.com"
+              placeholder="confirma tu nuevo correo electrónico"
               disabled={loading}
               {...register('confirmEmail', {
                 required: 'La confirmación de correo es obligatoria',

@@ -14,35 +14,25 @@ import styles from './register.module.css'
 export const RegisterForm = ({ URL = '' }) => {
   // Dynamic Vars 
   const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({
-    nom_per: "",
-    ape_per: "",
-    fec_nac_per: "",
-    email_per: "",
-    pas_per: "",
-    gen_per: "",
-    theme: "LIGHT"
-  })
 
   // Vars
   const legalAge = LegalAge()
   const navigate = useNavigate()
 
   // Form config 
-  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' })
+  const { register, handleSubmit, formState: { errors } } = useForm({ 
+    mode: 'onChange',
+    defaultValues: {
+      theme: 'LIGHT'
+    }
+  })
 
   // Functions
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
-
   // Request 
   const onSubmit = async (data) => {
-    console.log(data)
     showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
-      const req = await PostData(`${URL}/credential/register`, formData)
+      const req = await PostData(`${URL}/credential/register`, data)
       if (req.success) {
           showAlert('Éxito', 'Registro exitoso', 'success')
           setTimeout(() => navigate('/login'), 3000)
@@ -138,14 +128,14 @@ export const RegisterForm = ({ URL = '' }) => {
               </p>
             )}
           </div>
+
           <div className={styles.inputGroup}>
-            <label htmlFor="gen_per" className={styles.inputLabel}>Género</label>
+            <label htmlFor="gen_per" className={styles.inputLabel}>Género (Opcional)</label>
             <select
               id="gen_per"
               name="gen_per"
-              value={formData.gen_per}
-              onChange={handleChange}
               className={styles.inputField}
+              {...register('gen_per')}
             >
               <option value="">Selecciona tu género</option>
               <option value="Masculino">Masculino</option>
@@ -153,6 +143,11 @@ export const RegisterForm = ({ URL = '' }) => {
               <option value="Other">Otro</option>
               <option value="Prefer-not">Prefiero no decir</option>
             </select>
+            {errors.gen_per && (
+              <p id="gen_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.gen_per.message}
+              </p>
+            )}
           </div>
         </div>
 
