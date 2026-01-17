@@ -87,19 +87,6 @@ const App = () => {
       :<Navigate to="/login" />
   }
 
-  // const loop = (list = [], doc = '') => {
-  //   if (didFetch) return
-  //   list.forEach(item => {
-  //     PostDataNoSQL(doc, item)
-  //   })
-  //   didFetch = true
-  // }
-
-  // useEffect(() => {
-  //   GetDataNoSQL('roles')
-  //   loop(categorias, 'categorias')
-  // },[])
-
   return (
     <AuthProvider>
       <CartProvider>

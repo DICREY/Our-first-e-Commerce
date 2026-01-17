@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { sendEmailVerification, signInWithEmailAndPassword, updateEmail } from 'firebase/auth'
 import { Navigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 
 // Imports 
 import { auth } from '../../../Hooks/AuthFirebase'
@@ -22,16 +23,13 @@ export const EmailChange = ({ URL = "" }) => {
 
   // Dynamic vars
   const [ loading, setLoading ] = useState(false)
-  const [ errors, setErrors ] = useState({})
   const [ success, setSuccess ] = useState(false)
   const [ currentUser, setCurrentUser ] = useState()
-  const [ formData, setFormData ] = useState({
-    currentEmail: em || '',
-    newEmail: '',
-    confirmEmail: '',
-    password: ''
-  })
 
+  // Form config 
+  const { register, getValues, reset, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' })
+
+  // Get info of current user
   const getUser = async () => {
     if (didFetch) return
     didFetch = true
@@ -44,37 +42,20 @@ export const EmailChange = ({ URL = "" }) => {
     }
   }
 
-  const validateForm = () => {
-    const newErrors = {}
-
-    if (!formData.newEmail) {
-      newErrors.newEmail = 'El nuevo correo es requerido'
-    } else if (!/\S+@\S+\.\S+/.test(formData.newEmail)) newErrors.newEmail = 'Formato de correo inválido'
-    if (formData.newEmail !== formData.confirmEmail) newErrors.confirmEmail = 'Los correos no coinciden'
-    if (!formData.password) newErrors.password = 'La contraseña es requerida'
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!validateForm()) return
-
+  // Send Request 
+  const onSubmit = async (data) => {
     setLoading(true)
-    setErrors({})
 
     try {
       // Update email using Firebase Auth
       if (currentUser?.verificado && currentUser?.auth_provider === "GOOGLE") {
         // 1. Inicia sesión y reautentica
-        const verifyCredential = await signInWithEmailAndPassword(auth, em, formData.password)
-        const credential = EmailAuthProvider.credential(em, formData.password)
+        const verifyCredential = await signInWithEmailAndPassword(auth, em, data.password)
+        const credential = EmailAuthProvider.credential(em, data.password)
         await reauthenticateWithCredential(auth.currentUser, credential)
 
         // 2. Cambia el correo
-        await updateEmail(auth.currentUser, formData.newEmail)
+        await updateEmail(auth.currentUser, data.newEmail)
 
         // 3. Envía email de verificación al nuevo correo
         await sendEmailVerification(auth.currentUser)
@@ -83,7 +64,7 @@ export const EmailChange = ({ URL = "" }) => {
       } else {
         const mod = await ModifyData(`${URL}/peoples/change-email`, {
           oldEmail: em,
-          newEmail: formData.newEmail
+          newEmail: data.newEmail
         })
 
         if (mod?.success) {
@@ -94,25 +75,8 @@ export const EmailChange = ({ URL = "" }) => {
     } catch (error) {
       const message = errorStatusHandler(error)
       showAlert('Error', message, 'error')
-      setErrors({ submit: message })
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
     }
   }
 
@@ -130,7 +94,7 @@ export const EmailChange = ({ URL = "" }) => {
       </header>
 
       <section className={styles.card}>
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           {/* Current Email Display */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Correo actual</label>
@@ -148,14 +112,32 @@ export const EmailChange = ({ URL = "" }) => {
               type="email"
               id="newEmail"
               name="newEmail"
-              value={formData.newEmail}
-              onChange={handleChange}
               className={errors.newEmail ? styles.inputError : styles.input}
               placeholder="nuevo@correo.com"
               disabled={loading}
+              {...register('newEmail', {
+                required: 'El nuevo correo es obligatorio',
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Formato de correo inválido'
+                },
+                validate: value =>
+                  value !== em || 'El nuevo correo no puede ser igual al actual',
+                maxLength: {
+                  value: 100,
+                  message: 'El correo no puede exceder los 100 caracteres'
+                },
+                minLength: {
+                  value: 8,
+                  message: 'El correo debe tener al menos 8 caracteres'
+                }
+              })}
+
             />
-            {errors.newEmail && (
-              <span className={styles.errorMessage}>{errors.newEmail}</span>
+             {errors.newEmail && (
+              <p id="newEmail-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.newEmail.message}
+              </p>
             )}
           </div>
 
@@ -168,14 +150,19 @@ export const EmailChange = ({ URL = "" }) => {
               type="email"
               id="confirmEmail"
               name="confirmEmail"
-              value={formData.confirmEmail}
-              onChange={handleChange}
               className={errors.confirmEmail ? styles.inputError : styles.input}
               placeholder="nuevo@correo.com"
               disabled={loading}
+              {...register('confirmEmail', {
+                required: 'La confirmación de correo es obligatoria',
+                validate: value =>
+                  value === getValues('newEmail') || 'Los correos no coinciden'
+              })}
             />
             {errors.confirmEmail && (
-              <span className={styles.errorMessage}>{errors.confirmEmail}</span>
+                <p id="confirmEmail-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.confirmEmail.message}
+                </p>
             )}
           </div>
 
@@ -188,23 +175,27 @@ export const EmailChange = ({ URL = "" }) => {
               type="password"
               id="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
               className={errors.password ? styles.inputError : styles.input}
               placeholder="Ingresa tu contraseña actual"
               disabled={loading}
+              {...register('password', {
+                required: 'La contraseña es obligatoria',
+                minLength: {
+                  value: 8,
+                  message: 'La contraseña debe tener al menos 8 caracteres'
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'La contraseña no puede exceder los 100 caracteres'
+                }
+              })}
             />
             {errors.password && (
-              <span className={styles.errorMessage}>{errors.password}</span>
+                <p id="password-error" className='mensaje-error' role="alert" aria-live="assertive">
+                {errors.password.message}
+                </p>
             )}
           </div>
-
-          {/* Submit Error */}
-          {errors.submit && (
-            <div className={styles.errorBanner}>
-              {errors.submit}
-            </div>
-          )}
 
           {/* Success Message */}
           {success && (
@@ -218,12 +209,7 @@ export const EmailChange = ({ URL = "" }) => {
             <button
               type="button"
               className="deleteButton"
-              onClick={() => setFormData({
-                currentEmail: currentEmail,
-                newEmail: '',
-                confirmEmail: '',
-                password: ''
-              })}
+              onClick={reset}
               disabled={loading}
             >
               Cancelar

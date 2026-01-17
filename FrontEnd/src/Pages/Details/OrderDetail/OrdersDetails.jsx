@@ -20,7 +20,7 @@ import { CheckImage, errorStatusHandler, formatNumber, showAlert, showAlertLoadi
 import AdminLoadingScreen from '../../../components/Global/Loading'
 
 // Import styles 
-import styles from './OrderDetail.module.css'
+import styles from './OrdersDetail.module.css'
 
 // Component 
 export const OrderDetail = ({ URL = '', imgDefault = '' }) => {

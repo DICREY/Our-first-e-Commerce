@@ -79,6 +79,7 @@ export const LoginForm = ({ URL = '' }) => {
   };
 
   const onSubmit = async ( data ) => {
+    console.log(data)
     showAlertLoading('Cargando...', 'Por favor espera', 'info')
     try {
       const log = await login(`${URL}/credential/login`, { firstData: data.email, secondData: data.password })

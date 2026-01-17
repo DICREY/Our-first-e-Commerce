@@ -394,8 +394,10 @@ body {
 }
 
 .mensaje-error {
+  /* position: relative; */
+  /* top: 100%; */
+  padding: 4px;
   color: var(--accent-800);
   font-size: 0.9rem;
   font-weight: 500;
-  padding: 4px;
 }

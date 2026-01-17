@@ -36,6 +36,7 @@ export const PasswordReset = ({ URL = '' }) => {
     // Form Config 
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: "onChange" })
 
+    // Send Request 
     const ChangePasswordRequest = async (pwd = '') => {
         try {
             const modPwd = await ModifyData(`${URL}/credential/change-password`,{
