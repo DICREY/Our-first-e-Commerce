@@ -18,38 +18,50 @@ import styles from './ProductRegister.module.css'
 
 // Component 
 export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
-    const [ currentColor, setCurrentColor ] = useState({ nom_col: '', hex_col: '#000000', url_img: '', nom_img: '' })
     const [ currentSize, setCurrentSize ] = useState('')
     const [ categories, setCategories ] = useState(null)
     const [ brands, setBrands ] = useState(null)
     const [ sizes, setSizes ] = useState(null)
+    const [ colors, setColors ] = useState([])
     const [ showDropDown, setShowDropDown ] = useState(null)
     const [ imgExpand, setImgExpand ] = useState(null)
     const [ isSubmitting, setIsSubmitting ] = useState(false)
     const [ isLoading, setIsLoading ] = useState()
-    const [ formData, setFormData ] = useState({
-        nom_pro: '',
-        pre_ori_pro: '',
-        pre_pro: '',
-        des_pro: '',
-        onSale: false,
-        nom_cat: '',
-        nom_mar: '',
-        colores: [],
-        tallas: [],
+    const [ currentColor, setCurrentColor ] = useState({ 
+        nom_col: '',
+        hex_col: '#000000',
+        url_img: '',
+        nom_img: '',
+        tallas: []
     })
 
     // Vars
     const navigate = useNavigate()
 
     // Form config 
-    const { register, setValue, getValues, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' })
+    const { register, setValue, getValues, handleSubmit, formState: { errors } } = useForm({
+        mode: 'onChange',
+        defaultValues: {
+            nom_pro: '',
+            pre_ori_pro: '',
+            pre_pro: '',
+            des_pro: '',
+            onSale: false,
+            nom_cat: '',
+            nom_mar: '',
+            colores: [],
+        }
+    })
 
     // Functions 
     const addSize = () => {
         if (!currentSize) return
 
-        setValue('tallas', [...getValues('tallas'), currentSize])
+        setCurrentColor({
+            ...currentColor,
+            tallas: [...currentColor?.tallas, currentSize]
+        })
+
         setCurrentSize('')
     }
 
@@ -59,13 +71,13 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
 
     // Send Request 
     const onSubmit = async (data) => {
-        console.log(data)
-
+        setValue('colores', colors)
+        const endData = getValues()
         setIsSubmitting(true)
         showAlertLoading('Cargando...', 'Por favor espera', 'info')
 
         try {
-            const response = await PostData(`${URL}/products/register`, data)
+            const response = await PostData(`${URL}/products/register`, endData)
             if (response?.success) {
                 setIsSubmitting(false)
                 setIsLoading(false)
@@ -306,139 +318,65 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                 </p>
                             )}
                         </div>
-
-                        {/* Sección de tallas */}
-                        <div className={`${styles.formGroup} ${errors.tallas ? styles.hasError : ''}`}>
-                            <label><Palette size={16} /> Tallas*</label>
-                            <div className={styles.multiInputGroup}>
-                                <input
-                                    type="text"
-                                    value={currentSize}
-                                    onChange={(e) => {
-                                        setCurrentSize(e.target.value)
-                                    }}
-                                    placeholder="Ingrese una talla"
-                                    className={styles.input}
-                                    onFocus={() => setShowDropDown(1)}
-                                />
-                                {showDropDown && (
-                                    <div className="dropdown">
-                                        {sizes?.map((size, index) => (
-                                            <div
-                                                key={index + 9082}
-                                                className="dropdown-item"
-                                                onClick={() => {
-                                                    const currentSizes = getValues('tallas') || []
-                                                    setValue('tallas', [...currentSizes, size.nom_tal_pro])
-                                                    setCurrentSize(size.nom_tal_pro)
-                                                    setShowDropDown(false)
-                                                }}
-                                            >
-                                                <div className="dropdown-contenido">
-                                                    <div className="dropdown-nombre">{size.nom_tal_pro}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                <button
-                                    type="button"
-                                    onClick={addSize}
-                                    className={styles.addButton}
-                                >
-                                    <Plus size={16} />
-                                </button>
-                            </div>
-
-                            <div className={styles.tagsContainer}>
-                                {getValues('tallas')?.map((size, index) => (
-                                    <div key={index} className={styles.sizeTag}>
-                                        {size}
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem('tallas', index)}
-                                            className={styles.tagRemove}
-                                        >
-                                            <X size={14} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                            
-                        </div>
                     </div>
                     
                     {/* Sección Integrada de Colores e Imágenes */}
                     <section className={styles.integratedSection}>
                         <section className={`${styles.formGroup} ${errors.colors ? styles.hasError : ''}`}>
-                            <label><Palette size={16} /> Colores e Imágenes*</label>
+                            <label><Palette size={16} /> Colores, Imágenes y Tallas*</label>
 
                             {/* Lista de colores con sus imágenes */}
-                            {getValues('colores')?.map((color, colorIndex) => (
-                                <section key={colorIndex} className={styles.colorImageGroup}>
-                                    <section>
-                                        <div className={styles.colorHeader}>
-                                            <span
-                                                className={styles.colorBadge}
-                                                style={{ backgroundColor: color.hex_col }}
-                                            />
-                                            <span className={styles.colorName}>{color.nom_col }</span>
+                            {colors?.map((color, colorIndex) => {
+                                return (
+                                    <section key={colorIndex} className={styles.colorImageGroup}>
+                                        <section>
+                                            <div className={styles.colorHeader}>
+                                                <span
+                                                    className={styles.colorBadge}
+                                                    style={{ backgroundColor: color.hex_col }} />
+                                                <span className={styles.colorName}>{color.nom_col}</span>
+                                                <button
+                                                    type="button"
+                                                    className={styles.tagRemove}
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+
+                                            {/* Input para agregar imágenes a este color específico */}
+                                            <div className={styles.imageInputGroup}>
+                                                <input
+                                                    type="text"
+                                                    placeholder="URL de imagen para este color"
+                                                    className={styles.input}
+                                                />
+                                            </div>
+                                        </section>
+
+                                        {/* Previsualización de imágenes para este color */}
+                                        <section
+                                            className={styles.imagePreviewItem}
+                                            style={{ borderColor: color.hex }}
+                                        >
+                                            <picture
+                                                onClick={() => setImgExpand(color?.url_img || '')}
+                                            >
+                                                <CheckImage
+                                                    src={colors?.[colorIndex].url_img}
+                                                    alt={colors?.[colorIndex].nom_col}
+                                                    imgDefault={imgDefault} />
+                                            </picture>
                                             <button
                                                 type="button"
-                                                
-                                                className={styles.tagRemove}
+                                                onClick={() => removeItem('colores', colorIndex)}
+                                                className={styles.imageRemove}
                                             >
-                                                <X size={14} />
+                                                <Trash2 />
                                             </button>
-                                        </div>
-
-                                        {/* Input para agregar imágenes a este color específico */}
-                                        <div className={styles.imageInputGroup}>
-                                            <input
-                                                type="text"
-                                                placeholder="URL de imagen para este color"
-                                                className={styles.input}
-                                                {...register(`colores.${colorIndex}.url_img`, {
-                                                    required: 'La URL de la imagen es obligatoria',
-                                                    // pattern: {
-                                                    //     value: /^(https?:)$/,
-                                                    //     message: 'Ingrese una URL válida de imagen'
-                                                    // }
-                                                })}
-                                            />
-                                            {errors.colores?.[colorIndex]?.url_img && (
-                                                <p id="des_pro-error" className='mensaje-error' role="alert" aria-live="assertive">
-                                                {errors.colores?.[colorIndex]?.url_img.message}
-                                                </p>
-                                            )}
-                                        </div>
+                                        </section>
                                     </section>
-
-                                    {/* Previsualización de imágenes para este color */}
-                                    
-                                    <section 
-                                        className={styles.imagePreviewItem}
-                                        style={{ borderColor: color.hex }}
-                                    >
-                                        <picture
-                                            onClick={() => setImgExpand(color?.url_img || '')}
-                                        >
-                                            <CheckImage
-                                                src={getValues(`colores.${colorIndex}.url_img`)}
-                                                alt={getValues(`colores.${colorIndex}.nom_col`)}
-                                                imgDefault={imgDefault}
-                                            />
-                                        </picture>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem('colores', colorIndex)}
-                                            className={styles.imageRemove}
-                                        >
-                                            <Trash2 />
-                                        </button>
-                                    </section>
-                                </section>
-                            ))}
+                                )
+                            })}
 
                             {/* Input para agregar nuevo color */}
                             <div className={styles.formGrid}>
@@ -461,22 +399,77 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                             onChange={(e) => setCurrentColor({ 
                                                 ...currentColor,
                                                 url_img: e.target.value,
-                                                nom_img: `${formData.nom_pro.split(' ')?.[0] || ''}${currentColor?.nom_col || ''}`
+                                                nom_img: `${currentColor?.nom_col?.split(' ')?.[0] || ''}${currentColor?.nom_col || ''}`
                                             })}
                                             placeholder="URL de imagen para este color"
                                             className={styles.input}
                                         />
                                     </div>
-                                    <div className={styles.formGroup}>
-                                        <label htmlFor="">Codigo hex del color*</label>
-                                        <div className={styles.colorPickerWrapper}>
+                                    {/* Sección de tallas */}
+                                    <div className={`${styles.formGroup} ${errors.tallas ? styles.hasError : ''}`}>
+                                        <label><Palette size={16} /> Tallas*</label>
+                                        <div className={styles.multiInputGroup}>
                                             <input
-                                                type="color"
-                                                value={currentColor.hex_col}
-                                                onChange={(e) => setCurrentColor({ ...currentColor, hex_col: e.target.value })}
+                                                type="text"
+                                                value={currentSize}
+                                                onChange={(e) => {
+                                                    setCurrentSize(e.target.value)
+                                                }}
+                                                placeholder="Ingrese una talla"
+                                                className={styles.input}
+                                                onFocus={() => setShowDropDown(1)}
                                             />
-                                            <span>{currentColor.hex_col}</span>
+                                            {showDropDown && (
+                                                <div className="dropdown">
+                                                    {sizes?.map((size, index) => (
+                                                        <div
+                                                            key={index + 9082}
+                                                            className="dropdown-item"
+                                                            onClick={() => {
+                                                                setCurrentColor({
+                                                                    ...currentColor,
+                                                                    tallas: [...currentColor.tallas, size.nom_tal_pro]
+                                                                })
+                                                                
+                                                                setCurrentSize(size.nom_tal_pro)
+                                                                setShowDropDown(false)
+                                                            }}
+                                                        >
+                                                            <div className="dropdown-contenido">
+                                                                <div className="dropdown-nombre">{size.nom_tal_pro}</div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={addSize}
+                                                className={styles.addButton}
+                                            >
+                                                <Plus size={16} />
+                                            </button>
                                         </div>
+
+                                        <div className={styles.tagsContainer}>
+                                            {currentColor.tallas?.map((size, index) => (
+                                                <div key={index} className={styles.sizeTag}>
+                                                    {size}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const newSizes = [...currentColor.tallas];
+                                                            newSizes.splice(index, 1);
+                                                            setCurrentColor({ ...currentColor, tallas: newSizes });
+                                                        }}
+                                                        className={styles.tagRemove}
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
                                     </div>
                                 </div>
                                 <div className={styles.formColumn}>
@@ -494,21 +487,31 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                             />
                                         </section>
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (currentColor.nom_col && currentColor.hex_col && currentColor.url_img) {
-                                                const currentColors = getValues('colores') || []
-                                                setValue('colores', [...currentColors, currentColor])
-                                                setCurrentColor({ nom_col: '', hex_col: '#ffffff', url_img: '', nom_img: '' });
-                                            }
-                                        }}
-                                        className={styles.addButton}
-                                    >
-                                        <Plus size={16} /> Color
-                                    </button>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="">Codigo hex del color*</label>
+                                        <div className={styles.colorPickerWrapper}>
+                                            <input
+                                                type="color"
+                                                value={currentColor.hex_col}
+                                                onChange={(e) => setCurrentColor({ ...currentColor, hex_col: e.target.value })}
+                                            />
+                                            <span>{currentColor.hex_col}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (currentColor?.nom_col && currentColor?.hex_col && currentColor?.url_img) {
+                                        setColors( prev => [ ...prev , { ...currentColor }]);
+                                        setCurrentColor({ nom_col: '', hex_col: '#ffffff', url_img: '', nom_img: '', tallas: [] });
+                                    }
+                                }}
+                                className={styles.addButton}
+                            >
+                                <Plus size={16} /> Color
+                            </button>
                             
                         </section>
                     </section>    

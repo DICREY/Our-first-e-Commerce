@@ -33,7 +33,22 @@ export const ValidateData = ({ URL = '' }) => {
   })
 
   // Form Config 
-  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' })
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({ 
+    mode: 'onChange',
+    defaultValues: {
+      email: gmailUserData?.email || '',
+      passwd: '',
+      confirmPassword: '',
+      gen_per: '',
+      fec_nac_per: '',
+      nom_per: gmailUserData?.nom_per || '',
+      ape_per: gmailUserData?.ape_per || '',
+      img: gmailUserData?.url_img || '',
+      theme: gmailUserData?.theme || 'LIGHT'
+    }
+  })
+
+  const passwordValue = watch('passwd')
 
   // Functions
   const handleChange = (e) => {
@@ -42,57 +57,26 @@ export const ValidateData = ({ URL = '' }) => {
       ...prev,
       [name]: value
     }))
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
-    }
   }
 
-  const validateForm = () => {
-    const newErrors = {}
-    
-    if (!formData.nom_per.trim()) newErrors.nom_per = 'El nombre es requerido'
-
-    if (!formData.ape_per.trim()) newErrors.ape_per = 'El apellido es requerido'
-
-    if (!formData.passwd.trim()) {
-      newErrors.passwd = 'La contraseña es requerida'
-    } else if (formData.passwd.length < 8) {
-      newErrors.passwd = 'La contraseña debe tener al menos 8 caracteres'
-    }
-
-    if (!formData.fec_nac_per) newErrors.fec_nac_per = 'La fecha de nacimiento es requerida'
-    if (formData.fec_nac_per > legalAge) newErrors.fec_nac_per = 'Debes ser mayor de edad'
-
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const onSubmit = async (e) => {
-    e.preventDefault()
+  const onSubmit = async (data) => {
     showAlertLoading('Cargando...', 'Por favor espere', 'info')
-
-    if (validateForm()) {
-      try {        
-        const post = await PostData(`${URL}/credential/login-google`, { 
-          requestState: '2',
-          ...formData
-        })
-        
-        if(post) {
-          showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
-          localStorage.removeItem('gmailUserData')
-          setTimeout(() => {
-            navigate('/')
-          }, 2000)
-        }
-      } catch (err) {
-        const message = errorStatusHandler(err)
-        showAlert('Error', message, 'error')
+    try {        
+      const post = await PostData(`${URL}/credential/login-google`, { 
+        requestState: '2',
+        ...data
+      })
+      
+      if(post) {
+        showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+        localStorage.removeItem('gmailUserData')
+        setTimeout(() => {
+          navigate('/')
+        }, 2000)
       }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     }
   }
 
@@ -130,12 +114,25 @@ export const ValidateData = ({ URL = '' }) => {
                 <input
                   type="text"
                   id="nom_per"
-                  name="nom_per"
-                  value={formData.nom_per}
-                  onChange={handleChange}
-                  className={`${styles["form-input"]} ${errors.nom_per ? styles["input-error"] : ''}`}
                   placeholder="Ingresa tu Nombre"
+                  className={`${styles["form-input"]} ${errors.nom_per ? styles["input-error"] : ''}`}
+                  {...register('nom_per', {
+                    required: 'El nombre es requerido',
+                    minLength: {
+                      value: 2,
+                      message: 'El nombre debe tener al menos 2 caracteres'
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: 'El nombre no puede exceder 50 caracteres'
+                    },
+                    pattern: {
+                      value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+                      message: 'El nombre solo puede contener letras'
+                    }
+                  })}
                 />
+                {errors.nom_per && <span className={styles["error-message"]}>{errors.nom_per.message}</span>}
               </div>
             )}
 
@@ -143,17 +140,30 @@ export const ValidateData = ({ URL = '' }) => {
             {!gmailUserData?.ape_per && (
               <div className={styles["form-group"]}>
                 <label htmlFor="ape_per" className={styles["form-label"]}>
-                  Nombre
+                  Apellido
                 </label>
                 <input
                   type="text"
                   id="ape_per"
-                  name="ape_per"
-                  value={formData.ape_per}
-                  onChange={handleChange}
-                  className={`${styles["form-input"]} ${errors.ape_per ? styles["input-error"] : ''}`}
                   placeholder="Ingresa tu Apellido"
+                  className={`${styles["form-input"]} ${errors.ape_per ? styles["input-error"] : ''}`}
+                  {...register('ape_per', {
+                    required: 'El apellido es requerido',
+                    minLength: {
+                      value: 2,
+                      message: 'El apellido debe tener al menos 2 caracteres'
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: 'El apellido no puede exceder 50 caracteres'
+                    },
+                    pattern: {
+                      value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+                      message: 'El apellido solo puede contener letras'
+                    }
+                  })}
                 />
+                {errors.ape_per && <span className={styles["error-message"]}>{errors.ape_per.message}</span>}
               </div>
             )}
 
@@ -166,11 +176,23 @@ export const ValidateData = ({ URL = '' }) => {
                 <input
                   type={showPassword ? "text" : "password"}
                   id="passwd"
-                  name="passwd"
-                  value={formData.passwd}
-                  onChange={handleChange}
-                  className={`${styles["form-input"]} ${errors.passwd ? styles["input-error"] : ''}`}
                   placeholder="Ingresa tu contraseña"
+                  className={`${styles["form-input"]} ${errors.passwd ? styles["input-error"] : ''}`}
+                  {...register('passwd', {
+                    required: 'La contraseña es requerida',
+                    minLength: {
+                      value: 8,
+                      message: 'La contraseña debe tener al menos 8 caracteres'
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: 'La contraseña no puede exceder 100 caracteres'
+                    },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+                      message: 'Debe contener mayúsculas, minúsculas, números y caracteres especiales'
+                    },
+                  })}
                 />
                 <button
                   type="button"
@@ -191,7 +213,7 @@ export const ValidateData = ({ URL = '' }) => {
                   )}
                 </button>
               </div>
-              {errors.passwd && <span className={styles["error-message"]}>{errors.passwd}</span>}
+              {errors.passwd && <span className={styles["error-message"]}>{errors.passwd.message}</span>}
             </div>
 
             {/* Confirmar Contraseña */}
@@ -203,21 +225,24 @@ export const ValidateData = ({ URL = '' }) => {
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`${styles["form-input"]} ${errors.confirmPassword ? styles["input-error"] : ''}`}
                   placeholder="Confirma tu contraseña"
+                  className={`${styles["form-input"]} ${errors.confirmPassword ? styles["input-error"] : ''}`}
                   {...register('confirmPassword', {
-                    required: 'Este campo es requerido',
+                    required: 'La confirmación de contraseña es requerida',
                     minLength: {
                       value: 8,
-                      message: 'Debe contener minimo 8 characteres'
+                      message: 'Debe contener minimo 8 caracteres'
                     },
                     maxLength: {
                       value: 100,
-                      message: 'Debe contener menos de 100 characteres'
+                      message: 'Debe contener menos de 100 caracteres'
                     },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+                      message: 'Debe contener mayúsculas, minúsculas, números y caracteres especiales'
+                    },
+                    validate: (value) => 
+                      value === passwordValue || 'Las contraseñas no coinciden'
                   })}
                 />
                 <button
@@ -238,12 +263,10 @@ export const ValidateData = ({ URL = '' }) => {
                     </svg>
                   )}
                 </button>
-                {errors.confirmPassword && (
-                  <p id="confirmPassword-error" className='mensaje-error' role="alert" aria-live="assertive">
-                      {errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
+              {errors.confirmPassword && (
+                <span className={styles["error-message"]}>{errors.confirmPassword.message}</span>
+              )}
             </div>
 
             {/* Género */}
@@ -254,10 +277,10 @@ export const ValidateData = ({ URL = '' }) => {
                 </label>
                 <select
                   id="gen_per"
-                  name="gen_per"
-                  value={formData.gen_per}
-                  onChange={handleChange}
                   className={styles["form-select"]}
+                  {...register('gen_per', {
+                    required: 'El género es requerido'
+                  })}
                 >
                   <option value="">Selecciona tu género</option>
                   <option value="Masculino">Masculino</option>
@@ -265,6 +288,7 @@ export const ValidateData = ({ URL = '' }) => {
                   <option value="Other">Otro</option>
                   <option value="Prefer-not">Prefiero no decir</option>
                 </select>
+                {errors.gen_per && <span className={styles["error-message"]}>{errors.gen_per.message}</span>}
               </div>
             )}
 
@@ -277,13 +301,26 @@ export const ValidateData = ({ URL = '' }) => {
                 <input
                   type="date"
                   id="fec_nac_per"
-                  name="fec_nac_per"
-                  value={formData.fec_nac_per}
-                  max={legalAge}
-                  onChange={handleChange}
                   className={`${styles["form-input"]} ${errors.fec_nac_per ? styles["input-error"] : ''}`}
+                  {...register('fec_nac_per', {
+                    required: 'La fecha de nacimiento es requerida',
+                    validate: (value) => {
+                      if (value > legalAge) {
+                        return 'Debes ser mayor de edad'
+                      }
+                      return true
+                    },
+                    min: {
+                      value: '1900-01-01',
+                      message: 'La fecha de nacimiento no puede ser anterior a 1900-01-01'
+                    },
+                    max: {
+                      value: legalAge,
+                      message: 'Debes ser mayor de edad'
+                    }
+                  })}
                   />
-                {errors.fec_nac_per && <span className={styles["error-message"]}>{errors.fec_nac_per}</span>}
+                {errors.fec_nac_per && <span className={styles["error-message"]}>{errors.fec_nac_per.message}</span>}
               </div>
             )}
 

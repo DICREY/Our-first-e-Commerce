@@ -1,4 +1,4 @@
--- Active: 1766887804132@@127.0.0.1@3306@e_commerce
+-- Active: 1768620430430@@127.0.0.1@3306@e_commerce
 -- Roles
 INSERT INTO e_commerce.roles (nom_rol) VALUES
 ('Administrador'),
@@ -81,7 +81,17 @@ INSERT INTO e_commerce.tallas (nom_tal_pro) VALUES
 
 -- Marcas
 INSERT INTO e_commerce.marcas_productos ( nom_mar ) VALUES
-('N/A');
+("Zara"),
+("H&M"),
+("Nike"),
+("Adidas"),
+("Victoria's Secret"),
+("Under Armour"),
+("Calvin Klein"),
+("Mothercare"),
+("Forever 21"),
+("Mango"),
+("N/A");
 
 -- Productos
 INSERT INTO e_commerce.productos (cat_pro, nom_pro, mar_pro, pre_pro, pre_ori_pro, des_pro, sta_pro) VALUES

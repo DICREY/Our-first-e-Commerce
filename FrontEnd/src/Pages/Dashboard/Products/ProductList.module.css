@@ -314,7 +314,7 @@
 }
 
 .stockCell.outOfStock {
-  color: var(--error-500);
+  color: var(--accent-850);
 }
 
 .stockCell.lowStock {

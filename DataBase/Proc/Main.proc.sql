@@ -1,4 +1,4 @@
--- Active: 1766887804132@@127.0.0.1@3306@e_commerce
+-- Active: 1768620430430@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.Login(
     IN p_firstData VARCHAR(100)
 )

@@ -14,6 +14,8 @@ class Product {
     // function to register
     async create() {
         return new Promise((res, rej) => {
+            console.log(JSON.stringify(this.args[0].colores))
+            
             // vars
             const proc = "CALL RegisterProduct(?,?,?,?,?,?,?,?,?,?,?)"
             const params = [
