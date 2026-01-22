@@ -11,6 +11,7 @@ import { errorStatusHandler, FirebaseErrorHandler, showAlert, showAlertSelect } 
 
 // Import styles 
 import styles from './PasswordReset.module.css'
+import { useForm } from 'react-hook-form'
 
 // Component 
 export const PasswordReset = ({ URL = '' }) => {
@@ -19,8 +20,6 @@ export const PasswordReset = ({ URL = '' }) => {
     const [ code, setCode ] = useState('')
     const [ inputType, setInputType ] = useState('password')
     const [ inputTypeTwo, setInputTypeTwo ] = useState('password')
-    const [ newPassword, setNewPassword ] = useState('')
-    const [ confirmPassword, setConfirmPassword ] = useState('')
     const [ step, setStep ] = useState(1) // 1: Email, 2: New Password
     const [ methodOther, setMethodOther ] = useState(1)
     const [ error, setError ] = useState('')
@@ -34,6 +33,10 @@ export const PasswordReset = ({ URL = '' }) => {
     const params = new URLSearchParams(location.search)
     let didConfirmCode = false
 
+    // Form Config 
+    const { register, handleSubmit, formState: { errors } } = useForm({ mode: "onChange" })
+
+    // Send Request 
     const ChangePasswordRequest = async (pwd = '') => {
         try {
             const modPwd = await ModifyData(`${URL}/credential/change-password`,{
@@ -53,8 +56,7 @@ export const PasswordReset = ({ URL = '' }) => {
     }
 
     // Paso 1: Enviar código al correo
-    const handleSendCode = async (e) => {
-        e.preventDefault()
+    const handleSendCode = async (data) => {
         setLoading(true)
         setError('')
 
@@ -64,13 +66,13 @@ export const PasswordReset = ({ URL = '' }) => {
                 url: 'http://localhost:5173/forgot-password',
                 handleCodeInApp: true
             }
-            const got = await PostData(`${URL}/peoples/by`, { by: email })
+            const got = await PostData(`${URL}/peoples/by`, { by: data.email })
             if (got?.[0]) {
                 setCurrentUser(got?.[0])
                 const verify = await showAlertSelect('Usuario encontrado', `¿Es usted ${got?.[0]?.nom_per} ${got?.[0]?.ape_per}?`)
                 if (await verify?.isConfirmed) {
-                    await sendPasswordResetEmail(auth, email, actionCodeSettings)
-                    setSuccess(`Se ha enviado un correo a ${email}`)
+                    await sendPasswordResetEmail(auth, data.email, actionCodeSettings)
+                    setSuccess(`Se ha enviado un correo a ${data.email}`)
                 } else navigate(-1)
             }
         } catch (err) {
@@ -96,22 +98,21 @@ export const PasswordReset = ({ URL = '' }) => {
     }
 
     // Paso 2: Cambiar contraseña
-    const handleResetPassword = async (e) => {
-        e.preventDefault()
+    const handleResetPassword = async (data) => {
         setLoading(true)
         setError('')
 
-        if (newPassword !== confirmPassword) {
+        if (data.newPassword !== data.confirmPassword) {
             showAlert('Error','Las contraseñas no coinciden','error')
             setLoading(false)
             return
         }
 
         try {
-            const reset = await confirmPasswordReset(auth, code, newPassword)
+            const reset = await confirmPasswordReset(auth, code, data.newPassword)
             if (reset) return
             
-            await ChangePasswordRequest(newPassword)
+            await ChangePasswordRequest(data.newPassword)
         } catch (err) {
             const message = errorStatusHandler(err)
             showAlert('Error',message, 'error')
@@ -143,19 +144,36 @@ export const PasswordReset = ({ URL = '' }) => {
 
                 {/* Paso 1: Ingresar email */}
                 {step === 1 && (
-                    <form onSubmit={handleSendCode} className={styles.form}>
+                    <form onSubmit={handleSubmit(handleSendCode)} className={styles.form}>
                         <label htmlFor="email" className={styles.label}>Señor usuario digite su correo electrónico registrado en nuestro sistema</label>
                         <div className={styles.formGroup}>
                             <label htmlFor="email" className={styles.label}>Correo Electrónico</label>
                             <input
                                 type="email"
                                 id="email"
-                                value={email}
                                 placeholder='Escriba su email'
-                                onChange={(e) => setEmail(e.target.value)}
                                 className={styles.input}
-                                required
+                                {...register('email',{
+                                    required: 'Este campo es requerido',
+                                    minLength: {
+                                        value: 8,
+                                        message: 'Debe contener minimo 8 characteres'
+                                    },
+                                    maxLength: {
+                                        value: 100,
+                                        message: 'Debe contener menos de 100 characteres'
+                                    },
+                                    pattern: {
+                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: 'El correo es inválido',
+                                    },
+                                })}
                             />
+                            {errors.email && (
+                                <p id="email-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.email.message}
+                                </p>
+                            )}
                         </div>
                         <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
                             <Send />
@@ -166,7 +184,7 @@ export const PasswordReset = ({ URL = '' }) => {
 
                 {/* Paso 2: Ingresar código */}
                 {step === 2 && (
-                    <form onSubmit={handleVerifyCode} className={styles.form}>
+                    <form onSubmit={handleSubmit(handleVerifyCode)} className={styles.form}>
                     <div className={styles.formGroup}>
                         <label htmlFor="code" className={styles.label}>Código de Verificación</label>
                         <input
@@ -188,7 +206,7 @@ export const PasswordReset = ({ URL = '' }) => {
 
                 {/* Paso 3: Nueva contraseña */}
                 {step === 3 && (
-                    <form onSubmit={handleResetPassword} className={styles.form}>
+                    <form onSubmit={handleSubmit(handleResetPassword)} className={styles.form}>
                         <div className={styles.formGroup}>
                             <label htmlFor="newPassword" className={styles.label}>Nueva Contraseña</label>
                             <span
@@ -198,11 +216,19 @@ export const PasswordReset = ({ URL = '' }) => {
                                     type={inputType}
                                     id="newPassword"
                                     placeholder='Nueva contraseña'
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    {...register('newPassword', {
+                                        required: 'Este campo es requerido',
+                                        minLength: {
+                                            value: 8,
+                                            message: 'Debe contener minimo 8 characteres'
+                                        },
+                                        maxLength: {
+                                            value: 100,
+                                            message: 'Debe contener menos de 100 characteres'
+                                        },
+                                    })}
                                     style={{ background: 'transparent', border: 'none', outline: 'none' }}
-                                    minLength="6"
-                                    required
+                                    
                                 />
                                 <span
                                     onClick={() => setInputType(inputType === 'text'?'password':'text')}
@@ -210,6 +236,11 @@ export const PasswordReset = ({ URL = '' }) => {
                                     {inputType === 'text'? <LockKeyholeOpen />: <LockKeyhole />}
                                 </span>
                             </span>
+                            {errors.newPassword && (
+                                <p id="newPassword-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                    {errors.newPassword.message}
+                                </p>
+                            )}
                         </div>
                         <div className={styles.formGroup}>
                             <label htmlFor="confirmPassword" className={styles.label}>Confirmar Contraseña</label>
@@ -219,11 +250,19 @@ export const PasswordReset = ({ URL = '' }) => {
                                 <input
                                     type={inputTypeTwo}
                                     id="confirmPassword"
-                                    value={confirmPassword}
                                     placeholder='Confirmar Contraseña'
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                     minLength="6"
-                                    required
+                                    {...register('confirmPassword', {
+                                        required: 'Este campo es requerido',
+                                        minLength: {
+                                            value: 8,
+                                            message: 'Debe contener minimo 8 characteres'
+                                        },
+                                        maxLength: {
+                                            value: 100,
+                                            message: 'Debe contener menos de 100 characteres'
+                                        },                                        
+                                    })}
                                 />
                                 <span
                                     onClick={() => setInputTypeTwo(inputTypeTwo === 'text'?'password':'text')}
@@ -231,6 +270,11 @@ export const PasswordReset = ({ URL = '' }) => {
                                     {inputTypeTwo === 'text'? <LockKeyholeOpen />: <LockKeyhole />}
                                 </span>
                             </span>
+                            {errors.confirmPassword && (
+                                <p id="confirmPassword-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                    {errors.confirmPassword.message}
+                                </p>
+                            )}
                         </div>
                         <button type="submit" className={`backButton ${styles.button}`} disabled={loading}>
                             {loading ? 'Cambiando...' : 'Cambiar Contraseña'}

@@ -73,14 +73,16 @@ class Credentl {
     async googleLogin() {
         return new Promise((res,rej) => {
             // vars
-            const proc = "CALL GoogleLogin(?,?,?,?,?,?);"
+            const proc = "CALL GoogleLogin(?,?,?,?,?,?,?,?);"
             const params = [
                 this.args[0].email,
                 this.args[0].nom_per || '',
                 this.args[0].ape_per || '',
-                this.args[0].cel_per || '',
+                this.args[0].fec_nac_per || '2000-00-00',
                 this.args[0].hash_pass || '',
-                this.args[0].url_img || ''
+                this.args[0].gen_per || '',
+                this.args[0].img || '',
+                this.args[0].theme || 'LIGHT',
             ]
 
             // conect to database

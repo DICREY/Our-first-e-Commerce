@@ -162,6 +162,44 @@ export const searchFilter = (term = '', data = [], headers = []) => {
   if (find) return find
 }
 
+export const searchCustomFilter = (term = '', data = [], headers = [], range = '') => {
+  if (!term || !data || !headers || !Array.isArray(data) || !Array.isArray(headers)) return data
+
+  // const termLower = term == ''? term.toLowerCase(): term
+  const termLower = term.toLowerCase().trim()
+
+  const find = data?.filter(item => {
+    switch (range) {
+      case '<':
+        return headers?.some(field =>
+          item[field]?.toLowerCase() < termLower
+        )
+      case '<=':
+        return headers?.some(field =>
+          item[field]?.toLowerCase() <= termLower
+        )
+      case '>':
+        return headers?.some(field =>
+          item[field]?.toLowerCase() > termLower
+        )
+      case '>=':
+        return headers?.some(field =>
+          item[field]?.toLowerCase() >= termLower
+        )
+      case '===':
+        return headers?.some(field =>
+          item[field]?.toLowerCase() === termLower
+        )
+      default:
+        return headers?.some(field =>
+          item[field]?.toLowerCase().includes(termLower)
+        )
+    }
+  })
+
+  if (find) return find
+}
+
 // Get age of birthday
 export const getAge = (fec = "") => {
   const calcAge = (fechaNac) => {
@@ -337,7 +375,7 @@ export const showAlert = (title, text, icon) => {
     title: title,
     text: text,
     icon: icon,
-    theme: localStorage.getItem('theme')?.toLowerCase() || 'light',
+    theme: localStorage.getItem('theme')?.toLowerCase() || 'LIGHT',
     confirmButtonText: 'Aceptar',
     customClass: {
       confirmButton: 'btn btn-primary'

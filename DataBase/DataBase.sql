@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1768620430430@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 
@@ -12,20 +12,20 @@ CREATE TABLE e_commerce.roles(
 CREATE TABLE e_commerce.personas(
     id_per INT AUTO_INCREMENT PRIMARY KEY,
     nom_per VARCHAR(100) NOT NULL,
-    nom2_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
+    nom2_per VARCHAR(100) DEFAULT 'N/A',
     ape_per VARCHAR(100) NOT NULL,
-    ape2_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
+    ape2_per VARCHAR(100) DEFAULT 'N/A',
     fec_nac_per DATE DEFAULT CURRENT_TIME NOT NULL,
-    tip_doc_per VARCHAR(10) DEFAULT 'CC' NOT NULL,
+    tip_doc_per VARCHAR(10) DEFAULT 'CC',
     doc_per VARCHAR(20) UNIQUE,INDEX(doc_per),
-    dir_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
-    cel_per VARCHAR(20) DEFAULT 'N/A' NOT NULL,
-    cel2_per VARCHAR(20) DEFAULT 'N/A' NOT NULL,
+    dir_per VARCHAR(100) DEFAULT 'N/A',
+    cel_per VARCHAR(20) DEFAULT 'N/A' ,
+    cel2_per VARCHAR(20) DEFAULT 'N/A' ,
     email_per VARCHAR(100) UNIQUE NOT NULL,INDEX(email_per),
     pas_per VARCHAR(255) NOT NULL,
-    gen_per VARCHAR(100) DEFAULT 'N/A' NOT NULL,
+    gen_per VARCHAR(100) DEFAULT 'N/A',
     estado ENUM('DISPONIBLE','NO-DISPONIBLE') DEFAULT 'DISPONIBLE' NOT NULL, # Estado de la persona
-    fot_per TEXT DEFAULT("N/A") NOT NULL,
+    fot_per TEXT DEFAULT("N/A"),
     auth_provider ENUM('LOCAL','GOOGLE','FACEBOOK','TWITTER') DEFAULT 'LOCAL' NOT NULL,
     verificado BOOLEAN DEFAULT 0 NOT NULL,
     fec_cre_per TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',

@@ -6,6 +6,7 @@ import {
     X, Save, Plus, Trash2,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 
 // Imports 
 import { CheckImage, errorStatusHandler, showAlert, showAlertLoading } from '../../../Utils/utils'
@@ -17,84 +18,66 @@ import styles from './ProductRegister.module.css'
 
 // Component 
 export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
-    const [ currentColor, setCurrentColor ] = useState({ nom_col: '', hex_col: '#000000' })
     const [ currentSize, setCurrentSize ] = useState('')
     const [ categories, setCategories ] = useState(null)
     const [ brands, setBrands ] = useState(null)
     const [ sizes, setSizes ] = useState(null)
+    const [ colors, setColors ] = useState([])
     const [ showDropDown, setShowDropDown ] = useState(null)
     const [ imgExpand, setImgExpand ] = useState(null)
-    const [ errors, setErrors ] = useState({})
     const [ isSubmitting, setIsSubmitting ] = useState(false)
     const [ isLoading, setIsLoading ] = useState()
-    const [ formData, setFormData ] = useState({
-        nom_pro: '',
-        pre_ori_pro: '',
-        pre_pro: '',
-        des_pro: '',
-        onSale: false,
-        nom_cat: '',
-        nom_mar: '',
-        colores: [],
-        tallas: [],
+    const [ currentColor, setCurrentColor ] = useState({ 
+        nom_col: '',
+        hex_col: '#000000',
+        url_img: '',
+        nom_img: '',
+        tallas: []
     })
 
     // Vars
     const navigate = useNavigate()
 
-    // Functions
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }))
-
-        if (errors[name]) {
-            setErrors(prev => ({ ...prev, [name]: null }))
+    // Form config 
+    const { register, setValue, getValues, handleSubmit, formState: { errors } } = useForm({
+        mode: 'onChange',
+        defaultValues: {
+            nom_pro: '',
+            pre_ori_pro: '',
+            pre_pro: '',
+            des_pro: '',
+            onSale: false,
+            nom_cat: '',
+            nom_mar: '',
+            colores: [],
         }
-    }
+    })
 
+    // Functions 
     const addSize = () => {
         if (!currentSize) return
 
-        setFormData(prev => ({
-            ...prev,
-            tallas: [...prev.tallas, currentSize]
-        }))
+        setCurrentColor({
+            ...currentColor,
+            tallas: [...currentColor?.tallas, currentSize]
+        })
+
         setCurrentSize('')
     }
 
     const removeItem = (type, index) => {
-        setFormData(prev => ({
-            ...prev,
-            [type]: prev[type].filter((_, i) => i !== index)
-        }))
+        setValue(type, getValues(type).filter((_, i) => i !== index))
     }
 
-    const validateForm = () => {
-        const newErrors = {}
-
-        if (!formData.nom_pro) newErrors.nom_pro = 'Nombre requerido'
-        if (!formData.pre_pro || isNaN(formData.pre_pro) || formData.pre_pro.length > 10 ) newErrors.pre_pro = 'Precio inválido maximo 10 numeros'
-        if (!formData.nom_cat) newErrors.category = 'Categoría requerida'
-        if (formData.colores.length === 0) newErrors.colores = 'Al menos un color requerido'
-        if (formData.tallas.length === 0) newErrors.tallas = 'Al menos una talla requerida'
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        if (!validateForm()) return
-
+    // Send Request 
+    const onSubmit = async (data) => {
+        setValue('colores', colors)
+        const endData = getValues()
         setIsSubmitting(true)
         showAlertLoading('Cargando...', 'Por favor espera', 'info')
 
         try {
-            const response = await PostData(`${URL}/products/register`, formData)
+            const response = await PostData(`${URL}/products/register`, endData)
             if (response?.success) {
                 setIsSubmitting(false)
                 setIsLoading(false)
@@ -158,13 +141,7 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                 <p className={styles.subtitle}>Complete los detalles del producto</p>
             </header>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
-                {errors.general && (
-                    <div className={styles.formError}>
-                        {errors.general}
-                    </div>
-                )}
-
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
                 <div className={styles.formGrid}>
                     {/* Columna izquierda - Información básica */}
                     <div className={styles.formColumn}>
@@ -173,12 +150,26 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                             <input
                                 type="text"
                                 name="nom_pro"
-                                value={formData.nom_pro}
-                                onChange={handleChange}
-                                placeholder="Ej: Camiseta básica"
+                                placeholder="Nombre del producto"
                                 className={styles.input}
+                                {...register('nom_pro', {
+                                    required: 'El nombre del producto es obligatorio', 
+                                    minLength: {
+                                        value: 3,
+                                        message: 'El nombre debe tener al menos 3 caracteres'
+                                    },
+                                    maxLength: {
+                                        value: 100,
+                                        message: 'El nombre no puede exceder los 100 caracteres'
+                                    }
+                                })}
+                                
                             />
-                            {errors.nom_pro && <span className={styles.errorText}>{errors.nom_pro}</span>}
+                            {errors.nom_pro && (
+                                <p id="nom_pro-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.nom_pro.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
@@ -187,9 +178,8 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                 <input
                                     type="checkbox"
                                     name="onSale"
-                                    checked={formData.onSale}
-                                    onChange={handleChange}
                                     className={styles.toggleSwitch}
+                                    {...register('onSale')}
                                 />
                             </label>
                         </div>
@@ -198,28 +188,42 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                             <label><List size={16} /> Marca*</label>
                             <select
                                 name="nom_mar"
-                                value={formData.nom_mar}
-                                onChange={handleChange}
                                 className={styles.select}
+                                {...register('nom_mar', {
+                                    required: 'La marca es obligatoria'
+                                })}
                             >
                                 <option value="">Seleccionar marca</option>
                                 {brands?.map((cat, idx) => (
                                     <option key={idx + 989} value={cat.nom_mar}>{cat.nom_mar}</option>
                                 ))}
                             </select>
-                            {errors.nom_mar && <span className={styles.errorText}>{errors.nom_mar}</span>}
+                            {errors.nom_mar && (
+                                <p id="nom_mar-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.nom_mar.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
                             <label><AlignLeft size={16} /> Descripción</label>
                             <textarea
                                 name="des_pro"
-                                value={formData.des_pro}
-                                onChange={handleChange}
                                 placeholder="Detalles del producto..."
                                 rows="4"
                                 className={styles.textarea}
+                                {...register('des_pro', {
+                                    maxLength: {
+                                        value: 500,
+                                        message: 'La descripción no puede exceder los 500 caracteres'
+                                    },
+                                })}
                             />
+                            {errors.des_pro && (
+                                <p id="des_pro-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.des_pro.message}
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -232,16 +236,27 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                 <input
                                     type="number"
                                     name="pre_ori_pro"
-                                    value={formData.pre_ori_pro}
-                                    onChange={handleChange}
-                                    placeholder="0.00"
+                                    placeholder="Precio de compra"
                                     step="0.01"
-                                    min="0"
-                                    maxLength={10}
                                     className={styles.input}
+                                    {...register('pre_ori_pro', {
+                                        required: 'El precio original es obligatorio',
+                                        min: {
+                                            value: 0,
+                                            message: 'El precio no puede ser negativo'
+                                        },
+                                        maxLength: {
+                                            value: 10,
+                                            message: 'El precio no puede exceder los 10 caracteres'
+                                        }
+                                    })}
                                 />
                             </div>
-                            {errors.pre_ori_pro && <span className={styles.errorText}>{errors.pre_ori_pro}</span>}
+                            {errors.pre_ori_pro && (
+                                <p id="pre_ori_pro-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.pre_ori_pro.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={`${styles.formGroup} ${errors.pre_pro ? styles.hasError : ''}`}>
@@ -251,16 +266,27 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                 <input
                                     type="number"
                                     name="pre_pro"
-                                    value={formData.pre_pro}
-                                    onChange={handleChange}
-                                    placeholder="0.00"
+                                    placeholder="Precio de venta"
                                     step="0.01"
-                                    min="0"
-                                    maxLength={10}
                                     className={styles.input}
+                                    {...register('pre_pro', {
+                                        required: 'El precio es obligatorio',
+                                        min: {
+                                            value: 0,
+                                            message: 'El precio no puede ser negativo'
+                                        },
+                                        maxLength: {
+                                            value: 10,
+                                            message: 'El precio no puede exceder los 10 caracteres'
+                                        }
+                                    })}
                                 />
                             </div>
-                            {errors.pre_pro && <span className={styles.errorText}>{errors.pre_pro}</span>}
+                            {errors.pre_pro && (
+                                <p id="pre_pro-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.pre_pro.message}
+                                </p>
+                            )}
                         </div>
 
 
@@ -268,141 +294,89 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                             <label><List size={16} /> Categoría*</label>
                             <select
                                 name="nom_cat"
-                                value={formData.nom_cat}
-                                onChange={handleChange}
                                 className={styles.select}
+                                {...register('nom_cat', {
+                                    required: 'La categoría es obligatoria',
+                                    minLength: {
+                                        value: 3,
+                                        message: 'La categoría debe tener al menos 3 caracteres'
+                                    },
+                                    maxLength: {
+                                        value: 50,
+                                        message: 'La categoría no puede exceder los 50 caracteres'
+                                    }
+                                })}
                             >
                                 <option value="">Seleccionar categoría</option>
                                 {categories?.map((cat, idx) => (
                                     <option key={idx + 989} value={cat.nom_cat_pro}>{cat.nom_cat_pro}</option>
                                 ))}
                             </select>
-                            {errors.nom_cat && <span className={styles.errorText}>{errors.nom_cat}</span>}
-                        </div>
-
-                        {/* Sección de tallas */}
-                        <div className={`${styles.formGroup} ${errors.tallas ? styles.hasError : ''}`}>
-                            <label><Palette size={16} /> Tallas*</label>
-                            <div className={styles.multiInputGroup}>
-                                <input
-                                    type="text"
-                                    value={currentSize}
-                                    onChange={(e) => {
-                                        setCurrentSize(e.target.value)
-                                    }}
-                                    placeholder="Ingrese una talla"
-                                    className={styles.input}
-                                    onFocus={() => setShowDropDown(1)}
-                                />
-                                {showDropDown && (
-                                    <div className="dropdown">
-                                        {sizes?.map((size, index) => (
-                                            <div
-                                                key={index + 9082}
-                                                className="dropdown-item"
-                                                onClick={() => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        tallas: [...prev.tallas, size.nom_tal_pro]
-                                                    }))
-                                                    setCurrentSize(size.nom_tal_pro)
-                                                    setShowDropDown(false)
-                                                }}
-                                            >
-                                                <div className="dropdown-contenido">
-                                                    <div className="dropdown-nombre">{size.nom_tal_pro}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                <button
-                                    type="button"
-                                    onClick={addSize}
-                                    className={styles.addButton}
-                                >
-                                    <Plus size={16} />
-                                </button>
-                            </div>
-
-                            <div className={styles.tagsContainer}>
-                                {formData?.tallas?.map((size, index) => (
-                                    <div key={index} className={styles.sizeTag}>
-                                        {size}
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem('tallas', index)}
-                                            className={styles.tagRemove}
-                                        >
-                                            <X size={14} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                            {errors.tallas && <span className={styles.errorText}>{errors.tallas}</span>}
+                            {errors.nom_cat && (
+                                <p id="nom_cat-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.nom_cat.message}
+                                </p>
+                            )}
                         </div>
                     </div>
                     
                     {/* Sección Integrada de Colores e Imágenes */}
                     <section className={styles.integratedSection}>
                         <section className={`${styles.formGroup} ${errors.colors ? styles.hasError : ''}`}>
-                            <label><Palette size={16} /> Colores e Imágenes*</label>
+                            <label><Palette size={16} /> Colores, Imágenes y Tallas*</label>
 
                             {/* Lista de colores con sus imágenes */}
-                            {formData?.colores?.map((color, colorIndex) => (
-                                <section key={colorIndex} className={styles.colorImageGroup}>
-                                    <section>
-                                        <div className={styles.colorHeader}>
-                                            <span
-                                                className={styles.colorBadge}
-                                                style={{ backgroundColor: color.hex_col }}
-                                            />
-                                            <span className={styles.colorName}>{color.nom_col }</span>
+                            {colors?.map((color, colorIndex) => {
+                                return (
+                                    <section key={colorIndex} className={styles.colorImageGroup}>
+                                        <section>
+                                            <div className={styles.colorHeader}>
+                                                <span
+                                                    className={styles.colorBadge}
+                                                    style={{ backgroundColor: color.hex_col }} />
+                                                <span className={styles.colorName}>{color.nom_col}</span>
+                                                <button
+                                                    type="button"
+                                                    className={styles.tagRemove}
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+
+                                            {/* Input para agregar imágenes a este color específico */}
+                                            <div className={styles.imageInputGroup}>
+                                                <input
+                                                    type="text"
+                                                    placeholder="URL de imagen para este color"
+                                                    className={styles.input}
+                                                />
+                                            </div>
+                                        </section>
+
+                                        {/* Previsualización de imágenes para este color */}
+                                        <section
+                                            className={styles.imagePreviewItem}
+                                            style={{ borderColor: color.hex }}
+                                        >
+                                            <picture
+                                                onClick={() => setImgExpand(color?.url_img || '')}
+                                            >
+                                                <CheckImage
+                                                    src={colors?.[colorIndex].url_img}
+                                                    alt={colors?.[colorIndex].nom_col}
+                                                    imgDefault={imgDefault} />
+                                            </picture>
                                             <button
                                                 type="button"
-                                                
-                                                className={styles.tagRemove}
+                                                onClick={() => removeItem('colores', colorIndex)}
+                                                className={styles.imageRemove}
                                             >
-                                                <X size={14} />
+                                                <Trash2 />
                                             </button>
-                                        </div>
-
-                                        {/* Input para agregar imágenes a este color específico */}
-                                        <div className={styles.imageInputGroup}>
-                                            <input
-                                                type="text"
-                                                value={color.url_img || ''}                                                
-                                                placeholder="URL de imagen para este color"
-                                                className={styles.input}
-                                            />    
-                                        </div>
+                                        </section>
                                     </section>
-
-                                    {/* Previsualización de imágenes para este color */}
-                                    
-                                    <section 
-                                        className={styles.imagePreviewItem}
-                                        style={{ borderColor: color.hex }}
-                                    >
-                                        <picture
-                                            onClick={() => setImgExpand(color?.url_img || '')}
-                                        >
-                                            <CheckImage
-                                                src={color.url_img}
-                                                alt={color.nom_img}
-                                                imgDefault={imgDefault}
-                                            />
-                                        </picture>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem('colores', colorIndex)}
-                                            className={styles.imageRemove}
-                                        >
-                                            <Trash2 />
-                                        </button>
-                                    </section>
-                                </section>
-                            ))}
+                                )
+                            })}
 
                             {/* Input para agregar nuevo color */}
                             <div className={styles.formGrid}>
@@ -425,22 +399,77 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                             onChange={(e) => setCurrentColor({ 
                                                 ...currentColor,
                                                 url_img: e.target.value,
-                                                nom_img: `${formData.nom_pro.split(' ')?.[0] || ''}${currentColor?.nom_col || ''}`
+                                                nom_img: `${currentColor?.nom_col?.split(' ')?.[0] || ''}${currentColor?.nom_col || ''}`
                                             })}
                                             placeholder="URL de imagen para este color"
                                             className={styles.input}
                                         />
                                     </div>
-                                    <div className={styles.formGroup}>
-                                        <label htmlFor="">Codigo hex del color*</label>
-                                        <div className={styles.colorPickerWrapper}>
+                                    {/* Sección de tallas */}
+                                    <div className={`${styles.formGroup} ${errors.tallas ? styles.hasError : ''}`}>
+                                        <label><Palette size={16} /> Tallas*</label>
+                                        <div className={styles.multiInputGroup}>
                                             <input
-                                                type="color"
-                                                value={currentColor.hex_col}
-                                                onChange={(e) => setCurrentColor({ ...currentColor, hex_col: e.target.value })}
+                                                type="text"
+                                                value={currentSize}
+                                                onChange={(e) => {
+                                                    setCurrentSize(e.target.value)
+                                                }}
+                                                placeholder="Ingrese una talla"
+                                                className={styles.input}
+                                                onFocus={() => setShowDropDown(1)}
                                             />
-                                            <span>{currentColor.hex_col}</span>
+                                            {showDropDown && (
+                                                <div className="dropdown">
+                                                    {sizes?.map((size, index) => (
+                                                        <div
+                                                            key={index + 9082}
+                                                            className="dropdown-item"
+                                                            onClick={() => {
+                                                                setCurrentColor({
+                                                                    ...currentColor,
+                                                                    tallas: [...currentColor.tallas, size.nom_tal_pro]
+                                                                })
+                                                                
+                                                                setCurrentSize(size.nom_tal_pro)
+                                                                setShowDropDown(false)
+                                                            }}
+                                                        >
+                                                            <div className="dropdown-contenido">
+                                                                <div className="dropdown-nombre">{size.nom_tal_pro}</div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={addSize}
+                                                className={styles.addButton}
+                                            >
+                                                <Plus size={16} />
+                                            </button>
                                         </div>
+
+                                        <div className={styles.tagsContainer}>
+                                            {currentColor.tallas?.map((size, index) => (
+                                                <div key={index} className={styles.sizeTag}>
+                                                    {size}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const newSizes = [...currentColor.tallas];
+                                                            newSizes.splice(index, 1);
+                                                            setCurrentColor({ ...currentColor, tallas: newSizes });
+                                                        }}
+                                                        className={styles.tagRemove}
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
                                     </div>
                                 </div>
                                 <div className={styles.formColumn}>
@@ -458,24 +487,32 @@ export const ProductRegister = ({ URL = '', imgDefault = '' }) => {
                                             />
                                         </section>
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (currentColor.nom_col && currentColor.hex_col && currentColor.url_img) {
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    colores: [...prev.colores, currentColor ]
-                                                }))
-                                                setCurrentColor({ nom_col: '', hex_col: '#ffffff', url_img: '', nom_img: '' });
-                                            }
-                                        }}
-                                        className={styles.addButton}
-                                    >
-                                        <Plus size={16} /> Color
-                                    </button>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="">Codigo hex del color*</label>
+                                        <div className={styles.colorPickerWrapper}>
+                                            <input
+                                                type="color"
+                                                value={currentColor.hex_col}
+                                                onChange={(e) => setCurrentColor({ ...currentColor, hex_col: e.target.value })}
+                                            />
+                                            <span>{currentColor.hex_col}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            {errors.colores && <span className={styles.errorText}>{errors.colores}</span>}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (currentColor?.nom_col && currentColor?.hex_col && currentColor?.url_img) {
+                                        setColors( prev => [ ...prev , { ...currentColor }]);
+                                        setCurrentColor({ nom_col: '', hex_col: '#ffffff', url_img: '', nom_img: '', tallas: [] });
+                                    }
+                                }}
+                                className={styles.addButton}
+                            >
+                                <Plus size={16} /> Color
+                            </button>
+                            
                         </section>
                     </section>    
                 </div>

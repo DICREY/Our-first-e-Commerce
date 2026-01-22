@@ -3,28 +3,52 @@ import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Imports 
-import { LegalAge } from "../../../Utils/utils"
+import { decodeJWT, errorStatusHandler, LegalAge, showAlert, showAlertLoading } from "../../../Utils/utils"
+import { PostData } from "../../../Utils/Requests"
 
 // Import styles
 import styles from './ValidateUserData.module.css'
+import { useForm } from "react-hook-form"
 
 // Component
-export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
+export const ValidateData = ({ URL = '' }) => {
+  // Vars
+  const legalAge = LegalAge()
+  const navigate = useNavigate()
+  const gmailUserData = decodeJWT(localStorage.getItem('gmailUserData'))
+
   // Dynamic Vars
-  const [errors, setErrors] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: gmailUserData?.email || '',
     passwd: '',
     confirmPassword: '',
     gen_per: '',
-    dir_per: '',
     fec_nac_per: '',
-    cel_per: gmailUserData?.cel_per || ''
+    nom_per: gmailUserData?.nom_per || '',
+    ape_per: gmailUserData?.ape_per || '',
+    img: gmailUserData?.url_img || '',
+    theme: gmailUserData?.theme || 'LIGHT'
   })
 
-  // Vars 
-  const legalAge = LegalAge()
-  const navigate = useNavigate()
+  // Form Config 
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({ 
+    mode: 'onChange',
+    defaultValues: {
+      email: gmailUserData?.email || '',
+      passwd: '',
+      confirmPassword: '',
+      gen_per: '',
+      fec_nac_per: '',
+      nom_per: gmailUserData?.nom_per || '',
+      ape_per: gmailUserData?.ape_per || '',
+      img: gmailUserData?.url_img || '',
+      theme: gmailUserData?.theme || 'LIGHT'
+    }
+  })
+
+  const passwordValue = watch('passwd')
 
   // Functions
   const handleChange = (e) => {
@@ -33,48 +57,26 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
       ...prev,
       [name]: value
     }))
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
-    }
   }
 
-  const validateForm = () => {
-    const newErrors = {}
-    
-    if (!formData.passwd.trim()) {
-      newErrors.passwd = 'La contraseña es requerida'
-    } else if (formData.passwd.length < 8) {
-      newErrors.passwd = 'La contraseña debe tener al menos 8 caracteres'
-    }
-    
-    if (formData.passwd !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden'
-    }
-
-    if (!formData.fec_nac_per) newErrors.fec_nac_per = 'La fecha de nacimiento es requerida'
-    if (formData.fec_nac_per > legalAge) newErrors.fec_nac_per = 'Debes ser mayor de edad'
-
-    if (!formData.cel_per.trim()) newErrors.cel_per = 'El celular es requerido'
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    if (validateForm()) {
-      console.log('Form data:', formData)
+  const onSubmit = async (data) => {
+    showAlertLoading('Cargando...', 'Por favor espere', 'info')
+    try {        
+      const post = await PostData(`${URL}/credential/login-google`, { 
+        requestState: '2',
+        ...data
+      })
       
-      const log = false
-      if (log) {
+      if(post) {
+        showAlert('Éxito', 'Inicio de sesión exitoso', 'success')
+        localStorage.removeItem('gmailUserData')
         setTimeout(() => {
-          navigate(`${URL}/login`)
-        })
+          navigate('/')
+        }, 2000)
       }
+    } catch (err) {
+      const message = errorStatusHandler(err)
+      showAlert('Error', message, 'error')
     }
   }
 
@@ -86,7 +88,7 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
           <p className={styles["form-subtitle"]}>Por favor completa todos los campos requeridos</p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles["form"]}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles["form"]}>
           {/* Email */}
           <div className={styles["form-group"]}>
               <label htmlFor="email" className={styles["form-label"]}>
@@ -102,23 +104,116 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
                 />
             </div>
           <section className={styles["form-section"]}>
-            
+
+            {/* Nombre */}
+            {!gmailUserData?.nom_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="nom_per" className={styles["form-label"]}>
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  id="nom_per"
+                  placeholder="Ingresa tu Nombre"
+                  className={`${styles["form-input"]} ${errors.nom_per ? styles["input-error"] : ''}`}
+                  {...register('nom_per', {
+                    required: 'El nombre es requerido',
+                    minLength: {
+                      value: 2,
+                      message: 'El nombre debe tener al menos 2 caracteres'
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: 'El nombre no puede exceder 50 caracteres'
+                    },
+                    pattern: {
+                      value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+                      message: 'El nombre solo puede contener letras'
+                    }
+                  })}
+                />
+                {errors.nom_per && <span className={styles["error-message"]}>{errors.nom_per.message}</span>}
+              </div>
+            )}
+
+            {/* Apellido */}
+            {!gmailUserData?.ape_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="ape_per" className={styles["form-label"]}>
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  id="ape_per"
+                  placeholder="Ingresa tu Apellido"
+                  className={`${styles["form-input"]} ${errors.ape_per ? styles["input-error"] : ''}`}
+                  {...register('ape_per', {
+                    required: 'El apellido es requerido',
+                    minLength: {
+                      value: 2,
+                      message: 'El apellido debe tener al menos 2 caracteres'
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: 'El apellido no puede exceder 50 caracteres'
+                    },
+                    pattern: {
+                      value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+                      message: 'El apellido solo puede contener letras'
+                    }
+                  })}
+                />
+                {errors.ape_per && <span className={styles["error-message"]}>{errors.ape_per.message}</span>}
+              </div>
+            )}
 
             {/* Contraseña */}
             <div className={styles["form-group"]}>
               <label htmlFor="passwd" className={styles["form-label"]}>
                 Contraseña <span className={styles["required"]}>*</span>
               </label>
-              <input
-                type="passwd"
-                id="passwd"
-                name="passwd"
-                value={formData.passwd}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.passwd ? styles["input-error"] : ''}`}
-                placeholder="Ingresa tu contraseña"
-              />
-              {errors.passwd && <span className={styles["error-message"]}>{errors.passwd}</span>}
+              <div className={styles["password-wrapper"]}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="passwd"
+                  placeholder="Ingresa tu contraseña"
+                  className={`${styles["form-input"]} ${errors.passwd ? styles["input-error"] : ''}`}
+                  {...register('passwd', {
+                    required: 'La contraseña es requerida',
+                    minLength: {
+                      value: 8,
+                      message: 'La contraseña debe tener al menos 8 caracteres'
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: 'La contraseña no puede exceder 100 caracteres'
+                    },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+                      message: 'Debe contener mayúsculas, minúsculas, números y caracteres especiales'
+                    },
+                  })}
+                />
+                <button
+                  type="button"
+                  className={styles["toggle-password"]}
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  )}
+                </button>
+              </div>
+              {errors.passwd && <span className={styles["error-message"]}>{errors.passwd.message}</span>}
             </div>
 
             {/* Confirmar Contraseña */}
@@ -126,88 +221,109 @@ export const ValidateData = ({ URL = '', gmailUserData = {} }) => {
               <label htmlFor="confirmPassword" className={styles["form-label"]}>
                 Confirmar Contraseña <span className={styles["required"]}>*</span>
               </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.confirmPassword ? styles["input-error"] : ''}`}
-                placeholder="Confirma tu contraseña"
-              />
-              {errors.confirmPassword && <span className={styles["error-message"]}>{errors.confirmPassword}</span>}
+              <div className={styles["password-wrapper"]}>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  placeholder="Confirma tu contraseña"
+                  className={`${styles["form-input"]} ${errors.confirmPassword ? styles["input-error"] : ''}`}
+                  {...register('confirmPassword', {
+                    required: 'La confirmación de contraseña es requerida',
+                    minLength: {
+                      value: 8,
+                      message: 'Debe contener minimo 8 caracteres'
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: 'Debe contener menos de 100 caracteres'
+                    },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+                      message: 'Debe contener mayúsculas, minúsculas, números y caracteres especiales'
+                    },
+                    validate: (value) => 
+                      value === passwordValue || 'Las contraseñas no coinciden'
+                  })}
+                />
+                <button
+                  type="button"
+                  className={styles["toggle-password"]}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showConfirmPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  )}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <span className={styles["error-message"]}>{errors.confirmPassword.message}</span>
+              )}
             </div>
 
             {/* Género */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="gen_per" className={styles["form-label"]}>
-                Género
-              </label>
-              <select
-                id="gen_per"
-                name="gen_per"
-                value={formData.gen_per}
-                onChange={handleChange}
-                className={styles["form-select"]}
-              >
-                <option value="">Selecciona tu género</option>
-                <option value="male">Masculino</option>
-                <option value="female">Femenino</option>
-                <option value="other">Otro</option>
-                <option value="prefer-not">Prefiero no decir</option>
-              </select>
-            </div>
-
-            {/* Dirección */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="dir_per" className={styles["form-label"]}>
-                Dirección
-              </label>
-              <input
-                type="text"
-                id="dir_per"
-                name="dir_per"
-                value={formData.dir_per}
-                onChange={handleChange}
-                className={styles["form-input"]}
-                placeholder="Ingresa tu dirección completa"
-              />
-            </div>
+            {!gmailUserData?.gen_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="gen_per" className={styles["form-label"]}>
+                  Género
+                </label>
+                <select
+                  id="gen_per"
+                  className={styles["form-select"]}
+                  {...register('gen_per', {
+                    required: 'El género es requerido'
+                  })}
+                >
+                  <option value="">Selecciona tu género</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Other">Otro</option>
+                  <option value="Prefer-not">Prefiero no decir</option>
+                </select>
+                {errors.gen_per && <span className={styles["error-message"]}>{errors.gen_per.message}</span>}
+              </div>
+            )}
 
             {/* Fecha de Nacimiento */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="fec_nac_per" className={styles["form-label"]}>
-                Fecha de Nacimiento <span className={styles["required"]}>*</span>
-              </label>
-              {console.log('Legal Age:', legalAge)}
-              <input
-                type="date"
-                id="fec_nac_per"
-                name="fec_nac_per"
-                value={formData.fec_nac_per}
-                max={legalAge}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.fec_nac_per ? styles["input-error"] : ''}`}
-              />
-              {errors.fec_nac_per && <span className={styles["error-message"]}>{errors.fec_nac_per}</span>}
-            </div>
+            {!gmailUserData?.fec_nac_per && (
+              <div className={styles["form-group"]}>
+                <label htmlFor="fec_nac_per" className={styles["form-label"]}>
+                  Fecha de Nacimiento <span className={styles["required"]}>*</span>
+                </label>
+                <input
+                  type="date"
+                  id="fec_nac_per"
+                  className={`${styles["form-input"]} ${errors.fec_nac_per ? styles["input-error"] : ''}`}
+                  {...register('fec_nac_per', {
+                    required: 'La fecha de nacimiento es requerida',
+                    validate: (value) => {
+                      if (value > legalAge) {
+                        return 'Debes ser mayor de edad'
+                      }
+                      return true
+                    },
+                    min: {
+                      value: '1900-01-01',
+                      message: 'La fecha de nacimiento no puede ser anterior a 1900-01-01'
+                    },
+                    max: {
+                      value: legalAge,
+                      message: 'Debes ser mayor de edad'
+                    }
+                  })}
+                  />
+                {errors.fec_nac_per && <span className={styles["error-message"]}>{errors.fec_nac_per.message}</span>}
+              </div>
+            )}
 
-            {/* Celular */}
-            <div className={styles["form-group"]}>
-              <label htmlFor="cel_per" className={styles["form-label"]}>
-                Celular <span className={styles["required"]}>*</span>
-              </label>
-              <input
-                type="tel"
-                id="cel_per"
-                name="cel_per"
-                value={formData.cel_per}
-                onChange={handleChange}
-                className={`${styles["form-input"]} ${errors.cel_per ? styles["input-error"] : ''}`}
-                placeholder="Ingresa tu número de celular"
-              />
-              {errors.cel_per && <span className={styles["error-message"]}>{errors.cel_per}</span>}
-            </div>
           </section>
           {/* Botones */}
           <div className={styles["form-actions"]}>

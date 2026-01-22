@@ -5,6 +5,7 @@ import {
     Lock, Calendar, CreditCard, Camera,
     X, Save
 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 
 // Imports 
 import { CheckImage, errorStatusHandler, LegalAge, showAlert, showAlertLoading } from '../../../Utils/utils'
@@ -17,82 +18,20 @@ import styles from './CustomerRegister.module.css'
 // Component 
 export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
     // Dynamic vars
-    const [ errors, setErrors ] = useState({})
     const [ isLoading, setIsLoading ] = useState(true)
     const [ isSubmitting, setIsSubmitting ] = useState(false)
-    const [ formData, setFormData ] = useState({
-        nom_per: '',
-        nom2_per: '',
-        ape_per: '',
-        ape2_per: '',
-        fec_nac_per: '',
-        tip_doc_per: 'CC',
-        doc_per: '',
-        dir_per: '',
-        cel_per: '',
-        cel2_per: '',
-        email_per: '',
-        pas_per: '',
-        confirmPassword: '',
-        gen_per: '',
-        fot_per: ''
-    })
+    const [ formData, setFormData ] = useState({})
 
-
-    // Manejo de cambios
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-
-        // Limpiar error al cambiar
-        if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: null
-            }))
-        }
-    }
-
-    // Validación del formulario
-    const validateForm = () => {
-        const newErrors = {}
-
-        if (!formData.nom_per) newErrors.nom_per = 'Nombre requerido'
-        if (!formData.ape_per) newErrors.ape_per = 'Apellido requerido'
-        if (!formData.doc_per) newErrors.doc_per = 'Documento requerido'
-        if (!formData.email_per) {
-            newErrors.email_per = 'Email requerido'
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email_per)) {
-            newErrors.email_per = 'Email inválido'
-        }
-        if (!formData.cel_per) newErrors.cel_per = 'Celular requerido'
-        if (!formData.pas_per) {
-            newErrors.pas_per = 'Contraseña requerida'
-        } else if (formData.pas_per.length < 8) {
-            newErrors.pas_per = 'Mínimo 8 caracteres'
-        }
-        if (formData.pas_per !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'Las contraseñas no coinciden'
-        }
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
+    // Form config 
+    const { register, getValues, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' })
 
     // Envío del formulario
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        if (!validateForm()) return
-
+    const onSubmit = async (data) => {
+        console.log(data)
         setIsSubmitting(true)
         showAlertLoading('Cargando...', 'Por favor espera', 'info')
         try {
-            const response = await PostData(`${URL}/peoples/register`, formData)
-            console.log(response)
+            const response = await PostData(`${URL}/peoples/register`, data)
             if (response.success) {
                 setIsSubmitting(false)
                 showAlert('Éxito', 'Cliente registrado correctamente', 'success')
@@ -117,7 +56,7 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                 <p>Complete todos los campos requeridos para registrar un nuevo cliente</p>
             </header>
 
-            <form onSubmit={handleSubmit} className={styles.registerForm}>
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.registerForm}>
                 {/* Sección de avatar */}
                 <div className={styles.avatarSection}>
                     <div className={styles.formGroup}>
@@ -132,19 +71,17 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                         <input
                             type="text"
                             name='fot_per'
-                            onChange={handleChange}
                             className={errors.fot_per ? styles.errorInput : ''}
                             placeholder="URL de imagen"
-                            />
-                        {errors.nom_per && <span className={styles.errorText}>{errors.nom_per}</span>}
+                            {...register('fot_per')}
+                        />
+                        {errors.fot_per && (
+                            <p id="fot_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                            {errors.fot_per.message}
+                            </p>
+                        )}
                     </div>
                 </div>
-
-                {errors.general && (
-                    <div className={styles.errorMessage}>
-                        <Frown size={16} /> {errors.general}
-                    </div>
-                )}
 
                 {/* Grid de 2 columnas */}
                 <div className={styles.formGrid}>
@@ -155,22 +92,34 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                             <input
                                 type="text"
                                 name="nom_per"
-                                value={formData.nom_per}
-                                onChange={handleChange}
                                 placeholder="Primer nombre"
                                 className={errors.nom_per ? styles.errorInput : ''}
+                                {...register('nom_per', { 
+                                    required: 'Nombre requerido',
+                                    minLength: {
+                                        value: 3,
+                                        message: 'Debe contener al menos 3 caracteres',
+                                    },
+                                    maxLength: {
+                                        value: 100,
+                                        message: 'Debe contener menos de 100 caracteres',
+                                    },
+                                })}
                             />
-                            {errors.nom_per && <span className={styles.errorText}>{errors.nom_per}</span>}
+                            {errors.nom_per && (
+                                <p id="nom_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.nom_per.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Segundo Nombre</label>
+                            <label>Segundo Nombre (Opcional)</label>
                             <input
                                 type="text"
                                 name="nom2_per"
-                                value={formData.nom2_per}
-                                onChange={handleChange}
-                                placeholder="Segundo nombre (opcional)"
+                                placeholder="Segundo nombre"
+                                {...register('nom2_per')}
                             />
                         </div>
 
@@ -179,45 +128,70 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                             <input
                                 type="text"
                                 name="ape_per"
-                                value={formData.ape_per}
-                                onChange={handleChange}
                                 placeholder="Primer apellido"
                                 className={errors.ape_per ? styles.errorInput : ''}
+                                {...register('ape_per', { 
+                                    required: 'Apellido requerido',
+                                    minLength: {
+                                        value: 3,
+                                        message: 'Debe contener al menos 3 caracteres',
+                                    },
+                                    maxLength: {
+                                        value: 100,
+                                        message: 'Debe contener menos de 100 caracteres',
+                                    },
+                                })}
                             />
-                            {errors.ape_per && <span className={styles.errorText}>{errors.ape_per}</span>}
+                            {errors.ape_per && (
+                                <p id="ape_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.ape_per.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Segundo Apellido</label>
+                            <label>Segundo Apellido (Opcional)</label>
                             <input
                                 type="text"
                                 name="ape2_per"
-                                value={formData.ape2_per}
-                                onChange={handleChange}
                                 placeholder="Segundo apellido (opcional)"
-                            />
+                                {...register('ape2_per')}
+                                />
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label><Calendar size={16} /> Fecha de Nacimiento</label>
+                            <label><Calendar size={16} /> Fecha de Nacimiento*</label>
                             <input
                                 type="date"
                                 name="fec_nac_per"
-                                max={LegalAge()}
-                                value={formData.fec_nac_per}
-                                onChange={handleChange}
+                                {...register('fec_nac_per', { 
+                                    validate: value => {
+                                        if (value > LegalAge()) {
+                                            return 'Debe ser mayor de edad'
+                                        }
+                                    },
+                                    max: {
+                                        value: new Date().toISOString().split('T')[0],
+                                        message: 'La fecha no puede ser en el futuro'
+                                    },
+                                    required: 'Fecha de nacimiento requerida'
+                                })}
                             />
+                            {errors.fec_nac_per && (
+                                <p id="fec_nac_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.fec_nac_per.message}
+                                </p>
+                            )}
                         </div>
                     </div>
 
                     {/* Columna 2 */}
                     <div className={styles.formColumn}>
                         <div className={styles.formGroup}>
-                            <label><CreditCard size={16} /> Tipo de Documento*</label>
+                            <label><CreditCard size={16} /> Tipo de Documento (Opcional)</label>
                             <select
                                 name="tip_doc_per"
-                                value={formData.tip_doc_per}
-                                onChange={handleChange}
+                                {...register('tip_doc_per')}
                             >
                                 <option value="CC">CC</option>
                                 <option value="DNI">DNI</option>
@@ -227,16 +201,28 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label><CreditCard size={16} /> Número de Documento*</label>
+                            <label><CreditCard size={16} /> Número de Documento (Opcional)</label>
                             <input
                                 type="text"
                                 name="doc_per"
-                                value={formData.doc_per}
-                                onChange={handleChange}
                                 placeholder="Número de documento"
                                 className={errors.doc_per ? styles.errorInput : ''}
+                                {...register('doc_per', { 
+                                    minLength: {
+                                        value: 5,
+                                        message: 'Debe contener al menos 5 caracteres',
+                                    },
+                                    maxLength: {
+                                        value: 20,
+                                        message: 'Debe contener menos de 20 caracteres',
+                                    },
+                                })}
                             />
-                            {errors.doc_per && <span className={styles.errorText}>{errors.doc_per}</span>}
+                            {errors.doc_per && (
+                                <p id="doc_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.doc_per.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
@@ -244,58 +230,104 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                             <input
                                 type="email"
                                 name="email_per"
-                                value={formData.email_per}
-                                onChange={handleChange}
                                 placeholder="Correo electrónico"
                                 className={errors.email_per ? styles.errorInput : ''}
+                                {...register('email_per', { 
+                                    required: 'Email requerido',
+                                    pattern: {
+                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: 'Email inválido'
+                                    },
+                                    maxLength: {
+                                        value: 100,
+                                        message: 'Debe contener menos de 100 caracteres',
+                                    },
+                                })}
                             />
-                            {errors.email_per && <span className={styles.errorText}>{errors.email_per}</span>}
+                            {errors.email_per && (
+                                <p id="email_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.email_per.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label><Phone size={16} /> Celular Principal*</label>
+                            <label><Phone size={16} /> Celular Principal (Opcional)</label>
                             <input
                                 type="tel"
                                 name="cel_per"
-                                value={formData.cel_per}
-                                onChange={handleChange}
                                 placeholder="Número de Celular"
                                 className={errors.cel_per ? styles.errorInput : ''}
+                                {...register('cel_per', { 
+                                    pattern: {
+                                        value: /^[0-9]{7,15}$/,
+                                        message: 'Número de celular inválido'
+                                    },
+                                    maxLength: {
+                                        value: 20,
+                                        message: 'Debe contener menos de 20 caracteres',
+                                    },
+                                })}
                             />
-                            {errors.cel_per && <span className={styles.errorText}>{errors.cel_per}</span>}
+                            {errors.cel_per && (
+                                <p id="cel_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.cel_per.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label><Phone size={16} /> Celular Secundario</label>
+                            <label><Phone size={16} /> Celular Secundario (Opcional)</label>
                             <input
                                 type="tel"
                                 name="cel2_per"
-                                value={formData.cel2_per}
-                                onChange={handleChange}
                                 placeholder="Celular adicional (opcional)"
+                                {...register('cel2_per', { 
+                                    pattern: {
+                                        value: /^[0-9]{7,15}$/,
+                                        message: 'Número de celular inválido'
+                                    },
+                                    maxLength: {
+                                        value: 20,
+                                        message: 'Debe contener menos de 20 caracteres',
+                                    },
+                                })}
                             />
+                            {errors.cel2_per && (
+                                <p id="cel2_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.cel2_per.message}
+                                </p>
+                            )}
                         </div>
                     </div>
 
                     {/* Columna 3 */}
                     <div className={styles.formColumn}>
                         <div className={styles.formGroup}>
-                            <label><MapPin size={16} /> Dirección</label>
+                            <label><MapPin size={16} /> Dirección (Opcional)</label>
                             <input
                                 type="text"
                                 name="dir_per"
-                                value={formData.dir_per}
-                                onChange={handleChange}
                                 placeholder="Dirección completa"
+                                {...register('dir_per', { 
+                                    maxLength: {
+                                        value: 200,
+                                        message: 'Debe contener menos de 200 caracteres',
+                                    },
+                                })}
                             />
+                            {errors.dir_per && (
+                                <p id="dir_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.dir_per.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Género</label>
+                            <label>Género (Opcional)</label>
                             <select
                                 name="gen_per"
-                                value={formData.gen_per}
-                                onChange={handleChange}
+                                {...register('gen_per')}
                             >
                                 {/* <option value="">Seleccionar...</option> */}
                                 <option value="">Cacorro</option>
@@ -311,12 +343,29 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                             <input
                                 type="password"
                                 name="pas_per"
-                                value={formData.pas_per}
-                                onChange={handleChange}
                                 placeholder="Mínimo 8 caracteres"
                                 className={errors.pas_per ? styles.errorInput : ''}
+                                {...register('pas_per', {
+                                    minLength: {
+                                        value: 8,
+                                        message: 'Debe contener al menos 8 caracteres',
+                                    },
+                                    required: 'Contraseña requerida',
+                                    maxLength: {
+                                        value: 100,
+                                        message: 'Debe contener menos de 100 caracteres',
+                                    },
+                                    pattern: {
+                                        value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+                                        message: 'Debe contener una letra mayuscula, minuscula, número y un carácter especial',
+                                    },
+                                })}
                             />
-                            {errors.pas_per && <span className={styles.errorText}>{errors.pas_per}</span>}
+                            {errors.pas_per && (
+                                <p id="pas_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.pas_per.message}
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>
@@ -324,13 +373,22 @@ export const CustomerRegister = ({ URL = '', imgDefault = '' }) => {
                             <input
                                 type="password"
                                 name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
                                 placeholder="Repita la contraseña"
                                 className={errors.confirmPassword ? styles.errorInput : ''}
+                                {...register('confirmPassword', { 
+                                    validate: value => 
+                                        value === getValues('pas_per') || 'Las contraseñas no coinciden',
+                                    required: 'Confirmación de contraseña requerida',
+                                    maxLength: {
+                                        value: 100,
+                                        message: 'Debe contener menos de 100 caracteres',
+                                    },
+                                })} 
                             />
                             {errors.confirmPassword && (
-                                <span className={styles.errorText}>{errors.confirmPassword}</span>
+                                <p id="confirmPassword-error" className='mensaje-error' role="alert" aria-live="assertive">
+                                {errors.confirmPassword.message}
+                                </p>
                             )}
                         </div>
                     </div>

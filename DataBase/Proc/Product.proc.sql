@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1768620430430@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.GetProductsCategories()
 BEGIN
     -- Verifica si hay categorias
@@ -24,8 +24,11 @@ BEGIN
 
     SELECT
         c.nom_col,
-        c.hex_col
-    FROM colores c
+        c.hex_col,
+        i.url_img
+    FROM productos_colores pc
+    JOIN colores c ON pc.col_pro_col = c.id_col
+    JOIN imagenes i ON pc.img_pro_col = i.id_img
     LIMIT 1000;
 END //
 CREATE PROCEDURE e_commerce.GetProductsSizes()
@@ -119,7 +122,7 @@ BEGIN
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
             JOIN
-                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv AND pco.col_pro_col = inv.id_col_inv
+                productos p ON p.id_pro = inv.id_pro_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,
@@ -270,7 +273,7 @@ BEGIN
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
             JOIN
-                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv AND pco.col_pro_col = inv.id_col_inv
+                productos p ON p.id_pro = inv.id_pro_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,
@@ -432,7 +435,7 @@ BEGIN
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
             JOIN
-                productos_colores pco ON pco.pro_col_pro = inv.id_pro_inv AND pco.col_pro_col = inv.id_col_inv
+                productos p ON p.id_pro = inv.id_pro_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,

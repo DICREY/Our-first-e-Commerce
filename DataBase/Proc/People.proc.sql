@@ -1,19 +1,14 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1768620430430@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.RegistPeoples(
     IN p_nom_per VARCHAR(100),
     IN p_nom2_per VARCHAR(100),
     IN p_ape_per VARCHAR(100),
     IN p_ape2_per VARCHAR(100),
     IN p_fec_nac_per DATE,
-    IN p_tip_doc_per VARCHAR(10),
-    IN p_doc_per VARCHAR(20),
-    IN p_dir_per VARCHAR(100),
-    IN p_cel_per VARCHAR(20),
-    IN p_cel2_per VARCHAR(20),
     IN p_email_per VARCHAR(100),
     IN p_cont_per VARCHAR(255),
     IN p_gen_per VARCHAR(20),
-    IN p_img_per VARCHAR(255)
+    IN p_theme VARCHAR(20)
 )
 BEGIN
     DECLARE p_id_persona INT;
@@ -28,10 +23,11 @@ BEGIN
     SET autocommit = 0;
 
     START TRANSACTION;
-
-    IF (SELECT id_per FROM personas WHERE doc_per = p_doc_per) THEN 
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Este numero de documento ya está registrado en el sistema';
-    END IF;
+    -- IF (p_doc_per) THEN
+    --     IF (SELECT id_per FROM personas WHERE doc_per = p_doc_per) THEN 
+    --         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Este numero de documento ya está registrado en el sistema';
+    --     END IF;
+    -- END IF;
 
     
     IF (SELECT id_per FROM personas WHERE email_per = p_email_per) THEN 
@@ -39,10 +35,24 @@ BEGIN
     END IF;
 
     INSERT INTO personas (
-        nom_per,nom2_per,ape_per,ape2_per,fec_nac_per,tip_doc_per,doc_per,dir_per,cel_per,cel2_per,email_per,pas_per,gen_per,fot_per
+        nom_per,
+        nom2_per,
+        ape_per,
+        ape2_per,
+        fec_nac_per,
+        email_per,
+        pas_per,
+        gen_per
     )
     VALUES (
-        p_nom_per,p_nom2_per,p_ape_per,p_ape2_per,p_fec_nac_per,p_tip_doc_per,p_doc_per,p_dir_per,p_cel_per,p_cel2_per,p_email_per,p_cont_per,p_gen_per,p_img_per
+        p_nom_per,
+        p_nom2_per,
+        p_ape_per,
+        p_ape2_per,
+        p_fec_nac_per,
+        p_email_per,
+        p_cont_per,
+        p_gen_per
     );
 
     SET p_id_persona = LAST_INSERT_ID();
@@ -53,7 +63,7 @@ BEGIN
     VALUES (p_id_persona,p_id_rol,CURRENT_DATE());
 
     INSERT INTO preferencias (per_pre,theme) 
-    VALUES (p_id_persona, 'LIGHT');
+    VALUES (p_id_persona, p_theme);
 
     COMMIT;
     SET autocommit = 1;
@@ -353,12 +363,12 @@ BEGIN
     SET autocommit = 1;
 END //
 
-/* DROP PROCEDURE e_commerce.`ModifyPeople`; */
-/* DROP PROCEDURE e_commerce.`RegistPeoples`; */
-/* DROP PROCEDURE e_commerce.SearchPeoples; */
-/* DROP PROCEDURE e_commerce.`SearchPeoplesBy`; */
-/* DROP PROCEDURE e_commerce.`SearchPeopleBy`; */
-/* DROP PROCEDURE e_commerce.`DeletePeople`; */
-/* DROP PROCEDURE e_commerce.`ChangeRoles`; */
+-- DROP PROCEDURE e_commerce.`ModifyPeople`;
+-- DROP PROCEDURE e_commerce.`RegistPeoples`;
+-- DROP PROCEDURE e_commerce.SearchPeoples;
+-- DROP PROCEDURE e_commerce.`SearchPeoplesBy`;
+-- DROP PROCEDURE e_commerce.`SearchPeopleBy`;
+-- DROP PROCEDURE e_commerce.`DeletePeople`;
+-- DROP PROCEDURE e_commerce.`ChangeRoles`;
 
 /* CALL `SearchPeoples`(); */

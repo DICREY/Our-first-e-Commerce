@@ -17,7 +17,7 @@ const secret = process.env.JWT_SECRET
 const Route = Router()
 
 // Middleware 
-Route.use(Fullinfo(['cel_per','url_img']))
+Route.use(Fullinfo(['cel_per','url_img','doc_per']))
 
 // Routes
 Route.put('/change-password', limiterLog, async (req,res) => {
@@ -48,8 +48,9 @@ Route.post('/register', async (req,res) => {
     
     try {   
         const create = await user.create({hash_pass: await hash(body.pas_per,saltRounds), ...body})
-        res.status(201).json(create)
+        res.status(201).json({result: { ...create }})
     } catch(err) {
+        // console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if(err.status) return res.status(err.status).json({message: err.message})
         res.status(500).json({ message: err })
@@ -104,12 +105,36 @@ Route.post('/login-google', limiterLog, async (req,res) => {
     try {
         // Vars
         const data = req.body
+        const { requestState } = req.body
         const saltRounds = 15
-        const global = new Credentl({ hash_pass: await hash(data.passwd,saltRounds), ...data})
+        let user = null
 
-        // Search in database
-        let log = await global.googleLogin()
-        let user = await log.result[0]
+        const loginWithGoogle = async () => {
+            try {
+                // Check recived data
+                const globalLogin = new Credentl(String(data.email))
+                let login = await globalLogin.login()
+    
+                if (!login?.result[0]?.pas_per) return res.status(202).json({ result: { login: false } })
+
+                user = await login?.result[0]
+            } catch (err) {
+                if(err?.message?.sqlState === '45000') return res.status(202).json({ result: { login: false } })
+            }
+        }
+        
+        const registerWithGoogle = async () => {
+            // Registrar con google
+            const globalRegister = new Credentl({ hash_pass: await hash(data.passwd,saltRounds), ...data})
+    
+            // Search in database
+            let regist = await globalRegister.googleLogin()
+            user = await regist.result[0]
+        }
+
+        requestState === '2'? await registerWithGoogle(): await loginWithGoogle()
+
+        if (!user) return
 
         const token = jwt.sign(
             {   
@@ -127,13 +152,43 @@ Route.post('/login-google', limiterLog, async (req,res) => {
 
         res.cookie('__cred', token, cookiesOptionsLog)
         res.cookie('__nit', secret, cookiesOptionsLog)
-
+        
         if (user.roles) res.cookie('__user', user.roles, cookiesOptionsLog)
         if (user.nom_per && user.ape_per) res.cookie('__userName', `${user.nom_per} ${user.ape_per}`, cookiesOptionsLog)
-
-        res.status(200).json({ __cred: token })
+                
+        if (token) return res.status(200).json({
+            result: {
+                login: true,
+                ...token
+            } 
+        })
 
     } catch (err) {
+        console.log(err)
+        if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
+        if (err.status) return res.status(err.status).json({ message: err.message })
+
+        res.status(500).json({ message: err })
+    }
+})
+
+Route.post('/JWT-encoder', limiterLog, async (req,res) => {
+    try {
+        // Vars
+        let { content, lifeTime } = req.body
+        const data = JSON.parse(content)
+        lifeTime = `${lifeTime}h`
+
+        const token = jwt.sign(
+            data,
+            secret,
+            { expiresIn: lifeTime }
+        )
+                
+        if (token) return res.status(200).json({ result: token })
+
+    } catch (err) {
+        console.log(err)
         if(err?.message?.sqlState === '45000') return res.status(500).json({ message: err?.message?.sqlMessage })
         if (err.status) return res.status(err.status).json({ message: err.message })
 

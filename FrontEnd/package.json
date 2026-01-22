@@ -13,13 +13,14 @@
     "ajv": "^8.17.1",
     "axios": "^1.13.2",
     "chart.js": "^4.5.1",
-    "firebase": "^12.5.0",
-    "lucide-react": "^0.552.0",
-    "react": "^19.2.0",
+    "firebase": "^12.7.0",
+    "lucide-react": "^0.562.0",
+    "react": "^19.2.3",
     "react-chartjs-2": "^5.3.1",
-    "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.5",
-    "sweetalert2": "^11.26.3"
+    "react-dom": "^19.2.3",
+    "react-hook-form": "^7.71.1",
+    "react-router-dom": "^7.11.0",
+    "sweetalert2": "^11.26.17"
   },
   "browserslist": {
     "production": [

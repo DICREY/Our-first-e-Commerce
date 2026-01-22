@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import { Check, ChevronLeft, Plus, X } from 'lucide-react'
 
 // Imports 
-import { GetData, ModifyData, PostData } from '../../Utils/Requests'
-import { CheckImage, errorStatusHandler, searchFilter, showAlert, showAlertLoading } from '../../Utils/utils'
+import { GetData, ModifyData, PostData } from '../../../Utils/Requests'
+import { CheckImage, errorStatusHandler, searchCustomFilter, searchFilter, showAlert, showAlertLoading } from '../../../Utils/utils'
 
 // Import styles
-import styles from '../../styles/Products/ProductEdit.module.css'
+import styles from './ProductEdit.module.css'
+import { useForm } from 'react-hook-form'
 
 // Component 
 export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
@@ -31,6 +32,12 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
   const navigate = useNavigate()
   const ID = localStorage.getItem('id_pro') || 0
   let didFetch = false
+
+  // Form config 
+  const { register, handleSubmit, formState: { errors } } = useForm({ 
+    mode: 'onChange',
+    defaultValues: formData
+   })
 
   // Requests
   const fetchProduct = async () => {
@@ -129,7 +136,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
     }))
   }
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     try {
       const dataMod = { ...formData }
@@ -161,7 +168,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
         </span>
       </header>
 
-      <form className={styles.form} onSubmit={handleSubmit}>  
+      <form className={styles.form} onSubmit={onSubmit}>  
         <section className={styles.formGrid}>
           <div className={styles.formGroup}>
             <label className={styles.label} htmlFor="nom_pro">Nombre del Producto</label>
@@ -305,78 +312,32 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
           </div>
 
           <aside className={`${styles.formGroup} ${styles.formGroupFullWidth} ${styles.formGroupFullWidthTwo}`}>
-            <label className={styles.label}><h3>Tallas</h3></label>
-            <section className={styles.formGridSizes}>
-              {formData?.sizes?.map((size, idx) => (
-                <span key={idx + 47} className={styles.formSpan}>
-                  {size}
-                </span>
-              ))}
-            </section>
-
-            <hr className='separator' />
-
             <header className={styles.headerAside}>
-              <label className={styles.label}><h3>Colores</h3></label>
-              <span
-                // className={styles.input}
-              >
-                <button
-                  type='button'
-                  className='backButton'
-                  onClick={() => setNameAdd('Color')}
-                >
-                  <Plus />
-                  Añadir
-                </button>
-              </span>
-            </header>
-            <section className={styles.formGrid}>
-              {formData?.colors?.map((col, idx) => (
-                <div 
-                  key={idx + 89}
-                  className={styles.formGroup}
-                >
-                  <span className={styles.formSpan}>
-                    <span>
-                      <label className={styles.label}>
-                        {col.nom_col} ({col.stock}u)
-                      </label>
-                      <input
-                        type="color"
-                        defaultValue={col.hex_col}
-                        disabled
-                      />
-                    </span>
-                    <picture 
-                      style={{ cursor: 'zoom-in' }}
-                      onClick={() => setImgExpand(col.url_img)}
-                    >
-                      <CheckImage 
-                        className={styles.imgColor}
-                        src={col.url_img}
-                        imgDefault={imgDefault}
-                      />
-                    </picture>
-                  </span>
-                </div>
-              ))}
-            </section>
-
-            <hr className='separator' />
-
-            <header className={styles.headerAside}>
-              <label className={styles.label}><h3>Inventario</h3></label>
+              <label className={styles.label}><h1>Inventario</h1></label>
               <span
                 style={{ display: 'flex',alignItems: 'center', gap: '1rem'}}
               >
+                <select 
+                  name="filter"
+                  id="filter"
+                  className={styles.select}
+                  onChange={(e) => {
+                    const term = e.target.value
+                    const filterData = searchCustomFilter(term,almcInv,['stock'],'<=')
+                    if (filterData) setInv(filterData)
+                  }}
+                >
+                  <option value="">Filtrar</option>
+                  <option value={10}>Bajo Stock (10)</option>
+                  <option value={0}>Sin Stock (0)</option>
+                </select>
                 <input
                   type='search'
                   className={styles.input}
-                  placeholder='Filtrar por color o talla'
+                  placeholder='Filtrar por color,talla o marca'
                   onChange={(e) => {
                     const term = e.target.value
-                    const filterData = searchFilter(term,almcInv,['nom_col','size','hex_col'])
+                    const filterData = searchFilter(term,almcInv,['nom_col','size','hex_col','mar_pro'])
                     if (filterData) setInv(filterData)
                   }}
                 />

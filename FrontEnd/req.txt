@@ -1,5 +1,5 @@
-yarn add react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 sweetalert2 firebase @react-firebase/auth
+yarn add react react-dom lucide-react react-router-dom react-hook-form axios chart.js react-chartjs-2 sweetalert2 firebase @react-firebase/auth
 yarn add -D react-scripts
 
-npm i react react-dom lucide-react react-router-dom axios chart.js react-chartjs-2 sweetalert2 firebase @react-firebase/auth
+npm i react react-dom lucide-react react-router-dom react-hook-form axios chart.js react-chartjs-2 sweetalert2 firebase @react-firebase/auth
 npm i -D react-scripts

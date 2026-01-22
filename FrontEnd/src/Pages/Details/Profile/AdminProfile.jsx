@@ -4,6 +4,8 @@ import {
   User, Mail, Phone, MapPin, Camera, Save, X, Calendar, CreditCard, Edit,
   LockKeyhole
 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 
 // Imports 
 import { AuthContext } from '../../../Contexts/Contexts'
@@ -13,7 +15,6 @@ import AdminLoadingScreen from '../../../components/Global/Loading'
 
 // Import styles 
 import styles from './AdminProfile.module.css'
-import { useNavigate } from 'react-router-dom'
 
 // Component 
 export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
@@ -29,55 +30,37 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
   const [ isLoading, setIsLoading ] = useState(true)
   const [ isEditing, setIsEditing ] = useState(false)
   const [ hasChanges, setHasChanges ] = useState(false)
-  const [ formData, setFormData ] = useState({
-    nom_per: '',
-    nom2_per: '',
-    ape_per: '',
-    ape2_per: '',
-    fec_nac_per: '',
-    doc_per: '',
-    dir_per: '',
-    cel_per: '',
-    cel2_per: '',
-    email_per: '',
-    gen_per: '',
-    fot_per: ''
+
+  // Form config 
+  let { register, handleSubmit, getValues, setValue, reset, clearErrors, formState: { errors } } = useForm({ 
+    mode: 'onChange',
+    defaultValues: initialData
   })
 
-  // Manejo de cambios en el formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => {
-      const newData = { ...prev, [name]: value }
-      checkForChanges(newData)
-      return newData
-    })
-  }
-
-  // Verifica si hay cambios
-  const checkForChanges = (currentData) => {
-    const changed = Object.keys(currentData).some(
-      key => initialData && currentData[key] !== initialData[key]
-    )
-    setHasChanges(changed)
-  }
+  // Actualizar valores del formulario cuando initialData cambia
+  useEffect(() => {
+    if (initialData) {
+      reset(initialData)
+    }
+  }, [initialData, reset])
 
   // Envío del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const onSubmit = async (data) => {
     showAlertLoading('Cargando...', 'Por favor espera', 'info')
 
     try {
-      formData.fec_nac_per = formatDate(formData.fec_nac_per)
-      const response = await ModifyData(`${URL}/peoples/modify`, formData)
-      
+      setValue('fec_nac_per', formatDate(data.fec_nac_per))
+      const allData = getValues()
+      console.log(allData)
+      const response = await ModifyData(`${URL}/peoples/modify`, allData)
+
       if (response.success) {
         fetchData()
         setIsEditing(false)
-        setInitialData(formData)
+        setInitialData(allData)
         setHasChanges(false)
+        clearErrors()
         showAlert('Éxito', 'Perfil actualizado correctamente', 'success')
-        
       }
     } catch (error) {
       const message = errorStatusHandler(error)
@@ -89,8 +72,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
 
   // Cancelar edición
   const handleCancel = () => {
-    setIsEditing(false)
-    setFormData(initialData)
+    setIsEditing(false)    
     setAvatarPreview(initialData?.fot_per || user?.img || '')
     setHasChanges(false)
   }
@@ -104,7 +86,6 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
       if (response && response[0]) {
         const userData = response[0]
         setInitialData(userData)
-        setFormData(userData)
         setAvatarPreview(userData.fot_per || user?.img || '')
         setIsLoading(false)
       }
@@ -126,7 +107,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
       })
       if (modPwd?.success) {
         showAlert('Contraseña cambiada','Su contraseña a sido cambiada satisfactoriamente','success')
-        // setTimeout(() => navigate('/login'), 2000)
+        setTimeout(() => navigate('/login'), 2000)
       }
     } catch (err) {
       const message = errorStatusHandler(err)
@@ -145,8 +126,8 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
           showAlertLoading('Verificando credenciales', 'Por favor, espere...', 'info')
           return await login(`${URL}/credential/login`, { firstData: email, secondData: await passwd })
         }
-        const verify = await verifyCred(URL, formData.email_per)
-        if (verify?.logged) await ChangePassword(formData.email_per)
+        const verify = await verifyCred(URL, getValues('email_per'))
+        if (verify?.logged) await ChangePassword(getValues('email_per'))
       }
     } catch (err) {
       const message = errorStatusHandler(err)
@@ -157,7 +138,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
   // Efecto para cargar datos iniciales
   useEffect(() => {
     fetchData()
-  }, [user?.doc])
+  }, [user?.email])
 
   return (
     <>
@@ -170,7 +151,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
             <p>{isEditing ? 'Edita tu información personal' : 'Visualiza tu información personal'}</p>
           </header>
 
-          <form onSubmit={handleSubmit} className={styles.profileForm}>
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.profileForm}>
             <nav className={styles.avatarSection}>
               <div className={styles.avatarUpload}>
                 <picture
@@ -193,20 +174,33 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                       <input
                         name='fot_per'
                         type="text"
-                        value={formData.fot_per || ''}
-                        onChange={handleChange}
                         placeholder='Url de imagen'
+                        {...register('fot_per', {
+                          value: getValues('fot_per') || '',
+                          onChange: (e) => {
+                            setAvatarPreview(e.target.value)
+                            setHasChanges(true)
+                          },
+                          maxLength: {
+                            value: 255,
+                            message: 'La URL es demasiado larga'
+                          }
+                        })}
                       />
+                      {errors.fot_per && (
+                        <p id="fot_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                          {errors.fot_per.message}
+                        </p>
+                      )}
                       </div>
                     </label>
-                    {formData.fot_per && (
+                    {getValues('fot_per') && (
                       <button
                         type="button"
                         className={styles.removeAvatarButton}
-                        // onClick={() => alert('No sirve papi te me calmas!!')}
                         onClick={() => {
                           setAvatarPreview('')
-                          setFormData(prev => ({ ...prev, fot_per: '' }))
+                          setValue('fot_per', '')
                           setHasChanges(true)
                         }}
                       >
@@ -246,13 +240,28 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                     <input
                       type="text"
                       name="nom_per"
-                      value={formData.nom_per || ''}
-                      onChange={handleChange}
                       placeholder="Nombre"
-                      required
+                      {...register('nom_per', {
+                        value: getValues('nom_per') || '',
+                        required: 'El nombre es obligatorio',
+                        maxLength: {
+                          value: 50,
+                          message: 'El nombre no puede exceder los 50 caracteres'
+                        },
+                        minLength: {
+                          value: 2,
+                          message: 'El nombre debe tener al menos 2 caracteres'
+                        }
+                      })}
                     />
+                    
                   ) : (
-                    <div className={styles.readOnlyField}>{formData.nom_per || 'No especificado'}</div>
+                    <div className={styles.readOnlyField}>{getValues('nom_per') || 'No especificado'}</div>
+                  )}
+                  {errors.nom_per && (
+                    <p id="nom_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.nom_per.message}
+                    </p>
                   )}
                 </div>
 
@@ -262,13 +271,27 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                     <input
                       type="text"
                       name="ape_per"
-                      value={formData.ape_per || ''}
-                      onChange={handleChange}
                       placeholder="Apellido"
-                      required
+                      {...register('ape_per', {
+                        value: getValues('ape_per') || '',
+                        required: 'El apellido es obligatorio',
+                        maxLength: {
+                          value: 50,
+                          message: 'El apellido no puede exceder los 50 caracteres'
+                        },
+                        minLength: {
+                          value: 2,
+                          message: 'El apellido debe tener al menos 2 caracteres'
+                        }
+                      })}
                     />
                   ) : (
-                    <div className={styles.readOnlyField}>{formData.ape_per || 'No especificado'}</div>
+                    <div className={styles.readOnlyField}>{getValues('ape_per') || 'No especificado'}</div>
+                  )}
+                  {errors.ape_per && (
+                    <p id="ape_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.ape_per.message}
+                    </p>
                   )}
                 </div>
 
@@ -277,15 +300,26 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                   {isEditing ? (
                     <input
                       type="date"
-                      max={LegalAge()}
                       name="fec_nac_per"
-                      value={formatDate(formData.fec_nac_per) || ''}
-                      onChange={handleChange}
+                      {...register('fec_nac_per', { 
+                        required: 'La fecha de nacimiento es obligatoria',
+                        value: getValues('fec_nac_per') || '',
+                        validate: value => {
+                          if (value > LegalAge()) {
+                            return 'Debe ser mayor de edad'
+                          }
+                        }
+                      })}
                     />
                   ) : (
                     <div className={styles.readOnlyField}>
-                      {formData.fec_nac_per ? `${formatDate(formData.fec_nac_per)} (${getAge(formData.fec_nac_per)} Años)` : 'No especificada'}
+                      {getValues('fec_nac_per') ? `${formatDate(getValues('fec_nac_per'))} (${getAge(getValues('fec_nac_per'))} Años)` : 'No especificada'}
                     </div>
+                  )}
+                  {errors.fec_nac_per && (
+                    <p id="fec_nac_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.fec_nac_per.message}
+                    </p>
                   )}
                 </div>
 
@@ -295,13 +329,26 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                     <input
                       type="number"
                       name="doc_per"
-                      value={formData.doc_per || ''}
-                      onChange={handleChange}
                       placeholder="Numero de documento"
-                      required
+                      {...register('doc_per', {
+                        value: getValues('doc_per') || '',
+                        maxLength: {
+                          value: 20,
+                          message: 'El documento no puede exceder los 20 caracteres'
+                        },
+                        minLength: {
+                          value: 5,
+                          message: 'El documento debe tener al menos 5 caracteres'
+                        }
+                      })}
                     />
                   ) : (
-                    <div className={styles.readOnlyField}>{formData.doc_per || 'N/A'}</div>
+                    <div className={styles.readOnlyField}>{getValues('doc_per') || 'N/A'}</div>
+                  )}
+                  {errors.doc_per && (
+                    <p id="doc_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.doc_per.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -314,13 +361,26 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                     <input
                       type="text"
                       name="nom2_per"
-                      value={formData.nom2_per || ''}
-                      onChange={handleChange}
                       placeholder="Segundo nombre"
-                      required
+                      {...register('nom2_per', {
+                        value: getValues('nom2_per') || '',
+                        minLength: {
+                          value: 2,
+                          message: 'Debe contener minimo 2 characteres'
+                        },
+                        maxLength: {
+                          value: 100,
+                          message: 'Debe contener menos de 100 characteres'
+                        },
+                      })}
                     />
                   ) : (
-                    <div className={styles.readOnlyField}>{formData.nom2_per || 'No especificado'}</div>
+                    <div className={styles.readOnlyField}>{getValues('nom2_per') || 'No especificado'}</div>
+                  )}
+                  {errors.nom2_per && (
+                    <p id="nom2_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.nom2_per.message}
+                    </p>
                   )}
                 </div>
 
@@ -330,32 +390,59 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                     <input
                       type="text"
                       name="ape2_per"
-                      value={formData.ape2_per || ''}
-                      onChange={handleChange}
-                      placeholder="Segundo pellido"
-                      required
+                      placeholder="Segundo apellido"
+                      {...register('ape2_per', {
+                        value: getValues('ape2_per') || '',
+                        minLength: {
+                          value: 2,
+                          message: 'Debe contener minimo 2 characteres'
+                        },
+                        maxLength: {
+                          value: 100,
+                          message: 'Debe contener menos de 100 characteres'
+                        },
+                      })}
                     />
                   ) : (
-                    <div className={styles.readOnlyField}>{formData.ape2_per || 'No especificado'}</div>
+                    <div className={styles.readOnlyField}>{getValues('ape2_per') || 'No especificado'}</div>
+                  )}
+                  {errors.ape2_per && (
+                    <p id="ape2_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.ape2_per.message}
+                    </p>
                   )}
                 </div>
                 <div className={styles.formGroup}>
                   <label><Mail size={16} /> Email</label>  
-                  <div className={styles.readOnlyField}>{formData.email_per || 'No especificado'}</div>
+                  <div className={styles.readOnlyField}>{getValues('email_per') || 'No especificado'}</div>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label><Phone size={16} /> Teléfono Principal</label>
+                  <label><Phone size={16} /> Celular Principal</label>
                   {isEditing ? (
                     <input
                       type="tel"
                       name="cel_per"
-                      value={formData.cel_per || ''}
-                      onChange={handleChange}
-                      placeholder="Teléfono principal"
+                      placeholder="Celular principal"
+                      {...register('cel_per', {
+                        value: getValues('cel_per') || '',
+                        maxLength: {
+                          value: 15,
+                          message: 'El celular no puede exceder los 15 caracteres'
+                        },
+                        minLength: {
+                          value: 7,
+                          message: 'El celular debe tener al menos 7 caracteres'
+                        }
+                      })}
                     />
                   ) : (
-                    <div className={styles.readOnlyField}>{formData.cel_per || 'No especificado'}</div>
+                    <div className={styles.readOnlyField}>{getValues('cel_per') || 'No especificado'}</div>
+                  )}
+                  {errors.cel_per && (
+                    <p id="cel_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.cel_per.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -368,14 +455,32 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                     <input
                       type="text"
                       name="dir_per"
-                      value={formData.dir_per || ''}
-                      onChange={handleChange}
                       placeholder="Dirección completa"
+                      {...register('dir_per', {
+                        value: getValues('dir_per') || '',
+                        maxLength: {
+                          value: 255,
+                          message: 'La dirección no puede exceder los 255 caracteres'
+                        },
+                        minLength: {
+                          value: 5,
+                          message: 'La dirección debe tener al menos 5 caracteres'
+                        },
+                        pattern: {
+                          value: /^[a-zA-Z0-9\s,'-]*$/,
+                          message: 'La dirección contiene caracteres inválidos'
+                        }
+                      })}
                     />
                   ) : (
                     <div className={styles.readOnlyField}>
-                      {formData.dir_per || 'No especificada'}
+                      {getValues('dir_per') || 'No especificada'}
                     </div>
+                  )}
+                  {errors.dir_per && (
+                    <p id="dir_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.dir_per.message}
+                    </p>
                   )}
                 </div>
 
@@ -384,8 +489,9 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                   {isEditing ? (
                     <select
                       name="gen_per"
-                      value={formData.gen_per || ''}
-                      onChange={handleChange}
+                      {...register('gen_per', {
+                        value: getValues('gen_per') || ''
+                      })}
                     >
                       <option value="">Seleccionar...</option>
                       <option value="MASCULINO">Masculino</option>
@@ -394,25 +500,39 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                     </select>
                   ) : (
                     <div className={styles.readOnlyField}>
-                      {formData.gen_per === 'MASCULINO' ? 'Masculino' : 
-                      formData.gen_per === 'FEMENINO' ? 'Femenino' : 
-                      formData.gen_per === 'OTRO' ? 'Otro' : 'No especificado'}
+                      {getValues('gen_per') === 'MASCULINO' ? 'Masculino' : 
+                      getValues('gen_per') === 'FEMENINO' ? 'Femenino' : 
+                      getValues('gen_per') === 'OTRO' ? 'Otro' : 'No especificado'}
                     </div>
                   )}
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label><Phone size={16} /> Teléfono Secundario</label>
+                  <label><Phone size={16} />Celular Secundario</label>
                   {isEditing ? (
                     <input
                       type="tel"
                       name="cel2_per"
-                      value={formData.cel2_per || ''}
-                      onChange={handleChange}
-                      placeholder="Teléfono secundario (opcional)"
+                      placeholder="Celular secundario (opcional)"
+                      {...register('cel2_per', {
+                        value: getValues('cel2_per') || '',
+                        maxLength: {
+                          value: 15,
+                          message: 'El Celular no puede exceder los 15 caracteres'
+                        },
+                        minLength: {
+                          value: 7,
+                          message: 'El Celular debe tener al menos 7 caracteres'
+                        }
+                      })}
                     />
                   ) : (
-                    <div className={styles.readOnlyField}>{formData.cel2_per || 'No especificado'}</div>
+                    <div className={styles.readOnlyField}>{getValues('cel2_per') || 'No especificado'}</div>
+                  )}
+                  {errors.cel2_per && (
+                    <p id="cel2_per-error" className='mensaje-error' role="alert" aria-live="assertive">
+                      {errors.cel2_per.message}
+                    </p>
                   )}
                 </div>
 
@@ -441,7 +561,7 @@ export const AdminProfile = ({ URL = '', imgDefault = '' }) => {
                 <button
                   type="submit"
                   className={styles.saveButton}
-                  disabled={isLoading || !hasChanges}
+                  disabled={isLoading}
                 >
                   {isLoading ? (
                     'Guardando...'
