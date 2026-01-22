@@ -1,4 +1,4 @@
--- Active: 1768620430430@@127.0.0.1@3306@e_commerce
+-- Active: 1747352860830@@127.0.0.1@3306@e_commerce
 DROP DATABASE IF EXISTS e_commerce;
 CREATE DATABASE e_commerce;
 
