@@ -1,20 +1,20 @@
 import { memo, useContext, useEffect, useRef, useState, forwardRef } from "react";
 import { Link, useNavigate, useLocation, NavLink } from "react-router-dom";
-import { Heart, Search, ShoppingBag } from 'lucide-react';
+import { Heart, Search, ShoppingBag, Sun, Moon } from 'lucide-react';
 
 // Imports 
-import { CheckImage, errorStatusHandler, showAlert } from "../../Utils/utils";
+import { CheckImage } from "../../Utils/utils";
 import { AuthContext } from "../../Contexts/Contexts";
 import { useCart } from "../../Contexts/CartContext"
 import CartSheet from "../CartSheet/CartSheet";
 import Button from "../Button/Button";
 import FavoritesSheet from "../FavoritesSheet/FavoritesSheet";
-import { GetData } from "../../Utils/Requests"
+import { useDarkMode } from "../../Hooks/Theme"
 
 // Import styles 
 import styles from "./Header.module.css"
 
-// Cache para las categorías
+// Cache para las categorías (no usado)
 let categoriesCache = null;
 let lastFetchTime = 0;
 const CACHE_DURATION = 60 * 60 * 1000; // 60 minutos en milisegundos
@@ -98,7 +98,7 @@ const ProfileMenu = memo(forwardRef(({ isOpen, setIsOpen, imgDefault, handleLogo
 // Componente principal Header
 const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCatPro = null }) => {
   // Vars 
-  const { logout, admin } = useContext(AuthContext)
+  const { logout, admin, theme, changeTheme } = useContext(AuthContext)
   const { getTotalItems } = useCart()
   const navigate = useNavigate()
   const location = useLocation()
@@ -108,47 +108,9 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
-  const [navigation, setNavigation] = useState([{ name: "Inicio", href: "/" }])
-  const [hasFetched, setHasFetched] = useState(false)
+  const [navigation] = useState([{ name: "Inicio", href: "/" }, { name: "Productos", href: "/productos/all" }])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const getProductCategories = async () => {
-    // Verificar si ya tenemos datos en caché y si no han expirado
-    const now = Date.now();
-    if (categoriesCache && (now - lastFetchTime < CACHE_DURATION)) {
-      setNavigation(categoriesCache);
-      return;
-    }
-
-    try {
-      const product = await GetData(`${URL}/products/categories`);
-      if (product) {
-        const catPro = [{ name: "Inicio", href: "/" }];
-        product?.forEach(cat => {
-          catPro.push({
-            name: cat.nom_cat_pro,
-            href: `/productos/${cat.slug?.toLowerCase()}`
-          });
-        });
-
-        // Actualizar caché
-        categoriesCache = catPro;
-        lastFetchTime = now;
-
-        setNavigation(catPro)
-        setHasFetched(true)
-      }
-    } catch (err) {
-      const message = errorStatusHandler(err)
-      showAlert('Error', message, 'error')
-    }
-  }
-
-  useEffect(() => {
-    if (!hasFetched) {
-      getProductCategories();
-    }
-  }, [URL, hasFetched]);
+  const [isDarkMode, toggleDarkMode] = useDarkMode()
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -217,6 +179,18 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
 
         {/* Actions */}
         <nav className={styles.actions}>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => {
+              changeTheme()
+              toggleDarkMode(!isDarkMode)
+            }}
+            aria-label="Cambiar tema"
+          >
+            {theme === 'DARK' ? <Sun style={{ color: 'var(--gray-700)' }} /> : <Moon style={{ color: 'var(--gray-700)' }} />}
+          </Button>
+
           <Button variant="ghost" size="icon" className={styles.hidden}>
             <Search style={{ color: 'var(--gray-700)' }} />
           </Button>
@@ -274,6 +248,19 @@ const Header = memo(({ URL = '', imgProductDefault = '', imgDefault = '', setCat
               </Link>
             )}
             <div className={styles.mobileNavActions}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => {
+                  changeTheme()
+                  toggleDarkMode(!isDarkMode)
+                  setIsMenuOpen(false)
+                }}
+                aria-label="Cambiar tema"
+              >
+                {theme === 'DARK' ? <Sun style={{ color: 'var(--gray-700)' }} /> : <Moon style={{ color: 'var(--gray-700)' }} />}
+              </Button>
+
               <ProfileMenu
                 ref={profileMenuRef}
                 isOpen={isProfileMenuOpen}
