@@ -121,8 +121,6 @@ BEGIN
                 colores co ON inv.id_col_inv = co.id_col
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
-            JOIN
-                productos p ON p.id_pro = inv.id_pro_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,
@@ -237,11 +235,7 @@ BEGIN
                     co.nom_col,
                     co.hex_col,
                     img.nom_img,
-                    img.url_img,
-                    (
-                        SELECT SUM(inv.cantidad) FROM inventario inv
-                        WHERE inv.id_pro_inv = p.id_pro AND inv.id_col_inv = co.id_col
-                    )
+                    img.url_img
                 ) 
                 SEPARATOR '---'
             )
@@ -272,8 +266,6 @@ BEGIN
                 colores co ON inv.id_col_inv = co.id_col
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
-            JOIN
-                productos p ON p.id_pro = inv.id_pro_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,
@@ -434,8 +426,6 @@ BEGIN
                 colores co ON inv.id_col_inv = co.id_col
             JOIN
                 tallas tpInv ON tpInv.id_tal_pro = inv.id_tal_inv
-            JOIN
-                productos p ON p.id_pro = inv.id_pro_inv
             WHERE
                 inv.id_pro_inv = p.id_pro
         ) AS inv,
@@ -865,7 +855,7 @@ END //
 /* DROP PROCEDURE e_commerce.`GetProductsSizes`; */
 /* DROP PROCEDURE e_commerce.`GetProductsBrands`; */
 /* DROP PROCEDURE e_commerce.GetAllProducts; */
-/* DROP PROCEDURE e_commerce.`GetProductBy`; */
+DROP PROCEDURE e_commerce.`GetProductBy`;
 /* DROP PROCEDURE e_commerce.GetProductsByCategory; */
 /* DROP PROCEDURE e_commerce.`ChangeStatusProduct`; */
 /* DROP PROCEDURE e_commerce.RegisterProduct; */

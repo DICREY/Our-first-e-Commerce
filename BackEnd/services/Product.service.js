@@ -357,7 +357,7 @@ class Product {
                 if (err) {
                     rej({ message: err })
                 } else if (result) {
-                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img', 'stock'])
+                    const resOne = this.global.format(result[0], 'colors', ['nom_col', 'hex_col', 'nom_img', 'url_img'])
                     const resTwo = this.global.format(resOne, 'inv', ['id_inv','nom_col', 'hex_col', 'stock', 'size'])
                     const lastRes = this.global.iterar(resTwo, 'sizes')
                     const lastLastRes = this.global.format(lastRes, 'offers', [

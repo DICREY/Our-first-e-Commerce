@@ -6,6 +6,8 @@
 }
 
 .formHeader {
+  position: sticky;
+  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,6 +16,7 @@
   background: var(--white);
   box-shadow: var(--shadow-md);
   padding: 1.5rem;
+  z-index: 60;
 }
 
 .headerAside {
