@@ -12,9 +12,6 @@ import styles from "../../styles/Products/ProductCatalog.module.css"
 
 // Mapeo de slugs a nombres de categorías
 const SLUG_TO_CATEGORY = {
-  'ropa-de-mujer': 'Ropa de Mujer',
-  'lenceria': 'Lencería',
-  'ropa-deportiva-mujer': 'Ropa Deportiva Mujer',
   'all': 'Todos'
 }
 
