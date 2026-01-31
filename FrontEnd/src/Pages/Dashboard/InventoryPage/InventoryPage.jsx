@@ -1,6 +1,7 @@
 // Libraries
-import { Plus} from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 
 // Imports 
 import { useInventoryModal, InventoryModal } from '../../../components/Inventory/InventoryModal/InventoryModal'
@@ -13,9 +14,9 @@ import styles from './InventoryPage.module.css'
 // Component
 export const InventoryPage = ({ URL = '' }) => {
     // Dynamic Vars 
-    const [ page, setPage ] = useState('inventory')
+    const [page, setPage] = useState('inventory')
     const { isOpen, openModal, closeModal } = useInventoryModal()
-    
+
     return (
         <div className={styles.container}>
             {/* Header con botón para abrir modal */}
@@ -40,22 +41,23 @@ export const InventoryPage = ({ URL = '' }) => {
                 isOpen={isOpen}
                 onClose={closeModal}
             />
-            
+
             {/* Contenido principal de la página */}
             <section className={styles.content}>
                 <header className={styles.mainHeaderPage}>
-                    <button 
-                        className={styles.active}
+                    <button
+                        className={(`${styles.navLink} ${page === 'inventory' ? styles.active : ''}`)}
                         onClick={() => setPage('inventory')}
                     >Inventario</button>
                     <button
+                        className={(`${styles.navLink} ${page === 'entries' ? styles.active : ''}`)}
                         onClick={() => setPage('entries')}
                     >Entradas</button>
                 </header>
                 <div className={styles.pageContent}>
-                    {page === 'inventory'? (
+                    {page === 'inventory' ? (
                         <InventoryView URL={URL} />
-                    ): (
+                    ) : (
                         <InventoryEntries URL={URL} />
                     )}
                 </div>

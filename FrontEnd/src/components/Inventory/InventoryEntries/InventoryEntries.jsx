@@ -49,7 +49,6 @@ const InventoryEntries = ({ URL }) => {
         <div className={styles.content}>
             {/* Entries Table Section */}
             <div className={styles.tableSection}>
-                <h2>Entradas Registradas ({entries.length})</h2>
 
                 {entries.length > 0 ? (
                     <div className={styles.tableWrapper}>
@@ -106,18 +105,6 @@ const InventoryEntries = ({ URL }) => {
                                 ))}
                             </tbody>
                         </table>
-
-                        {/* Totals */}
-                        <div className={styles.totals}>
-                            <div className={styles.totalRow}>
-                                <span>Total Cantidad:</span>
-                                <strong>{totalQuantity.toFixed(0)} unidades</strong>
-                            </div>
-                            <div className={styles.totalRow}>
-                                <span>Costo Total:</span>
-                                <strong>${formatNumber(totalCost)}</strong>
-                            </div>
-                        </div>
 
                         {/* Submit All Button */}
                     </div>

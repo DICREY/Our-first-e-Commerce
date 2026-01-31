@@ -69,11 +69,7 @@ export const NavAdmin = () => {
         {
             path: "/admin/orders",
             icon: <Package size={20} />,
-            label: "Pedidos",
-            submenu: [
-                { path: "/admin/orders/canceled", label: "Cancelados" },
-                { path: "/admin/orders/returns", label: "Devoluciones" }
-            ]
+            label: "Pedidos"
         },
         {
             path: "/admin/customers",
