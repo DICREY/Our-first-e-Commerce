@@ -1,0 +1,144 @@
+.container {
+  flex: 1;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: auto;
+  transition: var(--transition);
+}
+
+.pageHeader {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--white);
+  box-shadow: var(--shadow);
+  color: var(--primary-700);
+  z-index: 50;
+}
+
+.headerContent h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.headerContent p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.content {
+  padding: 0 1rem;
+}
+
+.mainHeaderPage {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom: 1px solid var(--neutral-300);
+  background: var(--white);
+}
+
+.pageContent {
+  background: var(--white);
+}
+
+/* Totals Section */
+.totals {
+  background-color: var(--neutral-50);
+  padding: 1.25rem;
+  border-radius: 0.6rem;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid var(--neutral-200);
+}
+
+.totalRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.totalRow span {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.totalRow strong {
+  font-size: 1.25rem;
+  color: var(--primary-600);
+  font-weight: 600;
+}
+
+/* Submit Button */
+.submitButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--success-600);
+  color: var(--white);
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.submitButton:hover {
+  background-color: var(--success-500);
+  transform: translateY(-0.1rem);
+  box-shadow: var(--shadow-md);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-secondary);
+}
+
+.emptyState p {
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+}
+
+.emptyState p:first-child {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .openButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page {
+    padding: 1rem;
+  }
+}

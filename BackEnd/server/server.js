@@ -10,6 +10,7 @@ const products = require('../routes/product.route')
 const orders = require('../routes/order.route')
 const offer = require('../routes/offer.route')
 const testing = require('../routes/test.route')
+const inventory = require('../routes/Inventory/inventory.route')
 
 // function to Define routers
 function routerApi(app) {
@@ -28,6 +29,7 @@ function routerApi(app) {
     router.use('/orders',orders)
     router.use('/offers',offer)
     router.use('/test',testing)
+    router.use('/inventory',inventory)
 }
 
 // Export Router

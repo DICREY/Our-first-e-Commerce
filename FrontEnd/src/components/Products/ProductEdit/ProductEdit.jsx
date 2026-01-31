@@ -15,19 +15,19 @@ import { all } from 'axios'
 // Component 
 export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
   // Dynamic vars
-  const [ categories, setCategories ] = useState(null)
-  const [ allSizes, setAllSizes ] = useState(null)
-  const [ allColors, setAllColors ] = useState(null)
-  const [ brands, setBrands ] = useState(null)
-  const [ inv, setInv ] = useState(null)
-  const [ almcInv, setAlmcInv ] = useState(null)
-  const [ imgExpand, setImgExpand ] = useState(null)
-  const [ nameAdd, setNameAdd ] = useState(null)
-  const [ showDropDown, setShowDropDown ] = useState(null)
-  const [ showDropDownTwo, setShowDropDownTwo ] = useState(null)
-  const [ editingColorIdx, setEditingColorIdx ] = useState(null)
-  const [ editingInvIdx, setEditingInvIdx ] = useState(null)
-  
+  const [categories, setCategories] = useState(null)
+  const [allSizes, setAllSizes] = useState(null)
+  const [allColors, setAllColors] = useState(null)
+  const [brands, setBrands] = useState(null)
+  const [inv, setInv] = useState(null)
+  const [almcInv, setAlmcInv] = useState(null)
+  const [imgExpand, setImgExpand] = useState(null)
+  const [nameAdd, setNameAdd] = useState(null)
+  const [showDropDown, setShowDropDown] = useState(null)
+  const [showDropDownTwo, setShowDropDownTwo] = useState(null)
+  const [editingColorIdx, setEditingColorIdx] = useState(null)
+  const [editingInvIdx, setEditingInvIdx] = useState(null)
+
   // Vars 
   const navigate = useNavigate()
   const formRef = useRef(null)
@@ -35,15 +35,15 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
   let didFetch = false
 
   // Form config principal (Producto)
-  const { 
-    register: registerProduct, 
+  const {
+    register: registerProduct,
     handleSubmit: handleSubmitProduct,
     formState: { errors: errorsProduct },
     reset: resetProduct,
     getValues: getValuesProduct,
     watch: watchProduct,
     setValue: setValueProduct
-  } = useForm({ 
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       nom_pro: '',
@@ -61,12 +61,12 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
   })
 
   // Form config para colores (agregar/editar)
-  const { 
-    register: registerColor, 
+  const {
+    register: registerColor,
     handleSubmit: handleSubmitColor,
     formState: { errors: errorsColor },
-    reset: resetColor, 
-    watch: watchColor 
+    reset: resetColor,
+    watch: watchColor
   } = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -86,7 +86,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
       if (data && data?.[0]) {
         if (!data[0].inv) data[0].inv = []
         if (!data[0]?.colors) data[0].colors = []
-        
+
         // Setear valores en el formulario principal
         resetProduct(data[0])
         setAlmcInv(data[0].inv)
@@ -104,7 +104,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
       if (got) {
         setCategories(got)
       }
-    } catch (err) {      
+    } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')
     }
@@ -114,7 +114,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
     try {
       const got = await GetData(`${URL}/products/colors`)
       if (got) setAllColors(got)
-    } catch (err) {      
+    } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')
     }
@@ -127,17 +127,17 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
 
       const gotBrands = await GetData(`${URL}/products/brands`)
       if (gotBrands) setBrands(gotBrands)
-    } catch (err) {      
+    } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')
     }
   }
 
   const GetBrands = async () => {
-    try {      
+    try {
       const gotBrands = await GetData(`${URL}/products/brands`)
       if (gotBrands) setBrands(gotBrands)
-    } catch (err) {      
+    } catch (err) {
       const message = errorStatusHandler(err)
       showAlert('Error', message, 'error')
     }
@@ -205,8 +205,8 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
       const allData = getValuesProduct()
       showAlertLoading('Cargando...', 'Por favor espera', 'info')
       const mod = await ModifyData(`${URL}/products/modify`, allData)
-      if (mod.success){
-        showAlert('Producto Modificado','El producto ha sido modificado satisfactoriamente','success')
+      if (mod.success) {
+        showAlert('Producto Modificado', 'El producto ha sido modificado satisfactoriamente', 'success')
         fetchProduct()
       } else showAlert('Error', 'No se ha recibido respuesta del servidor', 'error')
     } catch (err) {
@@ -219,7 +219,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
     <main className={styles.formContainer}>
       <header className={styles.formHeader}>
         <h2>{watchProduct('nom_pro') || 'Producto'}</h2>
-        <span style={{ display:'flex', gap: '0.5rem' }}>
+        <span style={{ display: 'flex', gap: '0.5rem' }}>
           <span>
             <button
               type='button'
@@ -320,7 +320,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                 className={styles.input}
                 min="0"
                 step="0.01"
-                {...registerProduct('pre_ori_pro', { 
+                {...registerProduct('pre_ori_pro', {
                   required: 'El precio original es requerido',
                   min: { value: 0, message: 'El precio debe ser mayor a 0' }
                 })}
@@ -340,7 +340,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                 className={styles.input}
                 min="0"
                 max="100"
-                {...registerProduct('des_pre_pro', { 
+                {...registerProduct('des_pre_pro', {
                   min: { value: 0, message: 'El descuento debe ser mayor o igual a 0' },
                   max: { value: 100, message: 'El descuento no puede ser mayor a 100' }
                 })}
@@ -412,7 +412,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
           <header className={styles.headerAside}>
             <label className={styles.label}><h1>Colores</h1></label>
             <span
-              style={{ display: 'flex',alignItems: 'center', gap: '1rem'}}
+              style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
             >
               <button
                 type='button'
@@ -430,7 +430,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
           </header>
           <section className={styles.formGrid}>
             {watchProduct('colors')?.map((col, idx) => (
-              <div 
+              <div
                 key={idx + 99}
                 className={styles.formGroup}
               >
@@ -445,11 +445,11 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                       disabled
                     />
                   </span>
-                  <picture 
+                  <picture
                     style={{ cursor: 'zoom-in' }}
                     onClick={() => setImgExpand(col.url_img)}
                   >
-                    <CheckImage 
+                    <CheckImage
                       className={styles.imgColor}
                       src={col.url_img}
                       imgDefault={imgDefault}
@@ -500,7 +500,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                   Cancelar
                 </button>
               </header>
-              <form onSubmit={handleSubmitColor((data) => {onSubmitColor(data)})}>
+              <form onSubmit={handleSubmitColor((data) => { onSubmitColor(data) })}>
                 <section className={styles.formGridTwo}>
                   <span className={styles.formGridTwoSpan}>
                     <div className={styles.formGroup}>
@@ -519,25 +519,25 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                       )}
                       {showDropDown && (
                         <div className="dropdown">
-                            {allColors?.map((col, index) => (
-                                <div
-                                    key={index + 9082}
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                      resetColor({
-                                        nom_col: col.nom_col,
-                                        hex_col: col.hex_col,
-                                        url_img: watchColor('url_img'),
-                                        nom_img: watchColor('nom_img')
-                                      })
-                                      setShowDropDown(false)
-                                    }}
-                                >
-                                    <div className="dropdown-contenido">
-                                        <div className="dropdown-nombre">{col.nom_col}</div>
-                                    </div>
-                                </div>
-                            ))}
+                          {allColors?.map((col, index) => (
+                            <div
+                              key={index + 9082}
+                              className="dropdown-item"
+                              onClick={() => {
+                                resetColor({
+                                  nom_col: col.nom_col,
+                                  hex_col: col.hex_col,
+                                  url_img: watchColor('url_img'),
+                                  nom_img: watchColor('nom_img')
+                                })
+                                setShowDropDown(false)
+                              }}
+                            >
+                              <div className="dropdown-contenido">
+                                <div className="dropdown-nombre">{col.nom_col}</div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -603,9 +603,9 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
           <header className={styles.headerAside}>
             <label className={styles.label}><h1>Inventario</h1></label>
             <span
-              style={{ display: 'flex',alignItems: 'center', gap: '1rem'}}
+              style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
             >
-              <select 
+              <select
                 name="filter"
                 id="filter"
                 className={styles.select}
@@ -625,7 +625,7 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                 placeholder='Filtrar por color,talla o marca'
                 onChange={(e) => {
                   const term = e.target.value
-                  const filterData = searchFilter(term, almcInv, ['nom_col','size','hex_col','mar_pro'])
+                  const filterData = searchFilter(term, almcInv, ['nom_col', 'size', 'hex_col', 'mar_pro'])
                   if (filterData) setInv(filterData)
                 }}
               />
@@ -635,17 +635,16 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                 onClick={() => {
                   setNameAdd('Inventario')
                   setEditingInvIdx(null)
-                  resetInv()
                 }}
               >
                 <Plus />
-                Añadir
+                Registrar Inventario
               </button>
             </span>
           </header>
           <section className={styles.formGrid}>
             {inv?.map((col, idx) => (
-              <div 
+              <div
                 key={idx + 89}
                 className={styles.formGroup}
               >
@@ -664,11 +663,11 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                       disabled
                     />
                   </span>
-                  <picture 
+                  <picture
                     style={{ cursor: 'zoom-in' }}
                     onClick={() => setImgExpand(col.url_img)}
                   >
-                    <CheckImage 
+                    <CheckImage
                       className={styles.imgColor}
                       src={col.url_img}
                       imgDefault={imgDefault}
@@ -688,116 +687,63 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
               </div>
             ))}
           </section>
-          
+
           <hr className='separator' />
 
           {nameAdd === 'Inventario' && (
             <aside className={styles.formAside}>
-                <header className={styles.headerAside}>
-                  <label className={styles.label}>
-                    <h3>{editingInvIdx !== null ? 'Editar' : 'Añadir'} {nameAdd}</h3>
-                  </label>
-                  <button
-                    type='button'
-                    className={'deleteButton'}
-                    onClick={() => {
-                      setNameAdd(null)
-                      setEditingInvIdx(null)
-                      resetInv()
-                    }}
-                  >
-                    <X />
-                    Cancelar
-                  </button>
-                </header>
-                <form onSubmit={handleSubmitInv(onSubmitInv)}>
-                  <section className={styles.formGridTwo}>
-                    <span className={styles.formGridTwoSpan}>
-                      <div className={styles.formGroup}>
-                        <label className={styles.label}>Color*</label>
-                        <input
-                          type="text"
-                          placeholder="Ingrese un color"
-                          className={styles.input}
-                          {...registerInv('nom_col', { required: 'El color es requerido' })}
-                          onClick={() => setShowDropDown(!showDropDown)}
-                        />
-                        {errorsInv.nom_col && (
-                          <span style={{ color: 'red', fontSize: '0.875rem' }}>
-                            {errorsInv.nom_col.message}
-                          </span>
-                        )}
-                        {showDropDown && (
-                          <div className="dropdown">
-                              {allColors?.map((col, index) => (
-                                  <div
-                                      key={index + 9082}
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        resetInv({
-                                          nom_col: col.nom_col,
-                                          hex_col: col.hex_col,
-                                          size: watchInv('size'),
-                                          stock: watchInv('stock')
-                                        })
-                                        setShowDropDown(false)
-                                      }}
-                                  >
-                                      <div className="dropdown-contenido">
-                                          <div className="dropdown-nombre">{col.nom_col}</div>
-                                      </div>
-                                  </div>
-                              ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={styles.formGroup}>
-                        <label className={styles.label}>Hex color*</label>
-                        <input
-                          type='color'
-                          {...registerInv('hex_col', { required: 'El color hex es requerido' })}
-                        />
-                        {errorsInv.hex_col && (
-                          <span style={{ color: 'red', fontSize: '0.875rem' }}>
-                            {errorsInv.hex_col.message}
-                          </span>
-                        )}
-                      </div>
-                    </span>
-
+              <header className={styles.headerAside}>
+                <label className={styles.label}>
+                  <h3>{editingInvIdx !== null ? 'Editar' : 'Añadir'} {nameAdd}</h3>
+                </label>
+                <button
+                  type='button'
+                  className={'deleteButton'}
+                  onClick={() => {
+                    setNameAdd(null)
+                    setEditingInvIdx(null)
+                    resetInv()
+                  }}
+                >
+                  <X />
+                  Cancelar
+                </button>
+              </header>
+              <form onSubmit={handleSubmitInv(onSubmitInv)}>
+                <section className={styles.formGridTwo}>
+                  <span className={styles.formGridTwoSpan}>
                     <div className={styles.formGroup}>
-                      <label className={styles.label}>Talla*</label>
+                      <label className={styles.label}>Color*</label>
                       <input
                         type="text"
-                        placeholder="Ingrese una talla"
+                        placeholder="Ingrese un color"
                         className={styles.input}
-                        {...registerInv('size', { required: 'La talla es requerida' })}
-                        onClick={() => setShowDropDownTwo(!showDropDownTwo)}
+                        {...registerInv('nom_col', { required: 'El color es requerido' })}
+                        onClick={() => setShowDropDown(!showDropDown)}
                       />
-                      {errorsInv.size && (
+                      {errorsInv.nom_col && (
                         <span style={{ color: 'red', fontSize: '0.875rem' }}>
-                          {errorsInv.size.message}
+                          {errorsInv.nom_col.message}
                         </span>
                       )}
-                      {showDropDownTwo && (
+                      {showDropDown && (
                         <div className="dropdown">
-                          {allSizes?.map((tal, index) => (
+                          {allColors?.map((col, index) => (
                             <div
                               key={index + 9082}
                               className="dropdown-item"
                               onClick={() => {
                                 resetInv({
-                                  nom_col: watchInv('nom_col'),
-                                  hex_col: watchInv('hex_col'),
-                                  size: tal.nom_tal_pro,
+                                  nom_col: col.nom_col,
+                                  hex_col: col.hex_col,
+                                  size: watchInv('size'),
                                   stock: watchInv('stock')
                                 })
-                                setShowDropDownTwo(false)
+                                setShowDropDown(false)
                               }}
-                          >
+                            >
                               <div className="dropdown-contenido">
-                                <div className="dropdown-nombre">{tal.nom_tal_pro}</div>
+                                <div className="dropdown-nombre">{col.nom_col}</div>
                               </div>
                             </div>
                           ))}
@@ -806,41 +752,94 @@ export const ProductEdit = ({ URL = '', imgDefault = '' }) => {
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label className={styles.label}>Cantidad*</label>
+                      <label className={styles.label}>Hex color*</label>
                       <input
-                        type='number'
-                        placeholder='Cantidad de stock'
-                        className={styles.input}
-                        min="0"
-                        {...registerInv('stock', { 
-                          required: 'La cantidad es requerida',
-                          min: { value: 0, message: 'La cantidad debe ser mayor o igual a 0' }
-                        })}
+                        type='color'
+                        {...registerInv('hex_col', { required: 'El color hex es requerido' })}
                       />
-                      {errorsInv.stock && (
+                      {errorsInv.hex_col && (
                         <span style={{ color: 'red', fontSize: '0.875rem' }}>
-                          {errorsInv.stock.message}
+                          {errorsInv.hex_col.message}
                         </span>
                       )}
                     </div>
-                  </section>
+                  </span>
 
-                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                    <button
-                      type='submit'
-                      className='backButton'
-                    >
-                      <Check />
-                      Guardar
-                    </button>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Talla*</label>
+                    <input
+                      type="text"
+                      placeholder="Ingrese una talla"
+                      className={styles.input}
+                      {...registerInv('size', { required: 'La talla es requerida' })}
+                      onClick={() => setShowDropDownTwo(!showDropDownTwo)}
+                    />
+                    {errorsInv.size && (
+                      <span style={{ color: 'red', fontSize: '0.875rem' }}>
+                        {errorsInv.size.message}
+                      </span>
+                    )}
+                    {showDropDownTwo && (
+                      <div className="dropdown">
+                        {allSizes?.map((tal, index) => (
+                          <div
+                            key={index + 9082}
+                            className="dropdown-item"
+                            onClick={() => {
+                              resetInv({
+                                nom_col: watchInv('nom_col'),
+                                hex_col: watchInv('hex_col'),
+                                size: tal.nom_tal_pro,
+                                stock: watchInv('stock')
+                              })
+                              setShowDropDownTwo(false)
+                            }}
+                          >
+                            <div className="dropdown-contenido">
+                              <div className="dropdown-nombre">{tal.nom_tal_pro}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </form>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Cantidad*</label>
+                    <input
+                      type='number'
+                      placeholder='Cantidad de stock'
+                      className={styles.input}
+                      min="0"
+                      {...registerInv('stock', {
+                        required: 'La cantidad es requerida',
+                        min: { value: 0, message: 'La cantidad debe ser mayor o igual a 0' }
+                      })}
+                    />
+                    {errorsInv.stock && (
+                      <span style={{ color: 'red', fontSize: '0.875rem' }}>
+                        {errorsInv.stock.message}
+                      </span>
+                    )}
+                  </div>
+                </section>
+
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                  <button
+                    type='submit'
+                    className='backButton'
+                  >
+                    <Check />
+                    Guardar
+                  </button>
+                </div>
+              </form>
             </aside>
           )}
         </aside>
       </main>
       {imgExpand && (
-        <picture 
+        <picture
           onClick={() => setImgExpand(null)}
           className='activeImg'
         >

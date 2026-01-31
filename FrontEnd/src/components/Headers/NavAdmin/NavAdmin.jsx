@@ -57,6 +57,11 @@ export const NavAdmin = () => {
             label: "Ofertas",
         },
         {
+            path: "/admin/inventory",
+            icon: <Box size={20} />,
+            label: "Inventario"
+        },
+        {
             path: "/admin/products",
             icon: <Box size={20} />,
             label: "Productos"

@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1768620430430@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.Login(
     IN p_firstData VARCHAR(100)
 )
@@ -205,11 +205,11 @@ BEGIN
     SET autocommit = 1;
 END //
 
--- DROP PROCEDURE e_commerce.`Login`;
--- DROP PROCEDURE e_commerce.`ChangePassword`;
--- DROP PROCEDURE e_commerce.`GoogleLogin`;
--- DROP PROCEDURE e_commerce.ChangeTheme;
+/* DROP PROCEDURE e_commerce.`Login`; */
+/* DROP PROCEDURE e_commerce.`ChangePassword`; */
+/* DROP PROCEDURE e_commerce.`GoogleLogin`; */
+/* DROP PROCEDURE e_commerce.ChangeTheme; */
 
--- CALL e_commerce.Login('admin@gmail.com');
--- CALL e_commerce.GoogleLogin('test@gmail.com','testName','testLastName','31312312','test123','test.jpg');
--- CALL e_commerce.ChangePassword('admin@gmail.com', 'Perra123');
+/* CALL e_commerce.Login('admin@gmail.com'); */
+/* CALL e_commerce.GoogleLogin('test@gmail.com','testName','testLastName','31312312','test123','test.jpg'); */
+/* CALL e_commerce.ChangePassword('admin@gmail.com', 'Perra123'); */

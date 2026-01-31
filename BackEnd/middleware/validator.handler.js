@@ -49,7 +49,7 @@ function ValidatorRol(requireRol = '') {
         if (!rolesHeader || typeof rolesHeader !== 'string') {
             return res.status(403).json({ message: 'Roles perdidos o invalidos' })
         }
-      
+        
         const roles = rolesHeader.split(',').map(role => role.trim())
         
         // Comparación case-insensitive

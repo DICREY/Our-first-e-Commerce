@@ -29,6 +29,7 @@ import ProductCatalog from "./components/Products/ProductCatalog"
 import ProductDetailPage from "./Pages/ProductDetail/ProductDetailPage"
 import { EmailChange } from "./Pages/MainForms/GmailReset/EmailChange"
 import { ValidateData } from "./Pages/MainForms/ValidateUserData/ValidateUserData"
+import InventoryPage from "./Pages/Dashboard/InventoryPage/InventoryPage"
 
 // Main Module 
 const App = () => {
@@ -188,6 +189,10 @@ const App = () => {
               <Route 
                 path="/admin/offers"
                 element={<OfferManager URL={URL} imgDefault={imgUser} />} 
+              />
+              <Route 
+                path="/admin/inventory" 
+                element={<InventoryPage URL={URL} imgDefault={imgProduct} />}
               />
               <Route 
                 path="/admin/products" 

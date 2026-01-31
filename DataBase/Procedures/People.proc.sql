@@ -1,4 +1,4 @@
--- Active: 1747352860830@@127.0.0.1@3306@e_commerce
+-- Active: 1768620430430@@127.0.0.1@3306@e_commerce
 CREATE PROCEDURE e_commerce.RegistPeoples(
     IN p_nom_per VARCHAR(100),
     IN p_nom2_per VARCHAR(100),
