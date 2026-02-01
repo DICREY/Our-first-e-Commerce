@@ -1,6 +1,7 @@
 // Libraries 
 import React, { useEffect, useState } from 'react'
 import { Eye, AlertCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 // Imports 
 import { errorStatusHandler, formatDate, formatNumber, showAlert } from '../../../Utils/utils'
@@ -18,6 +19,7 @@ const InventoryView = ({ URL }) => {
 
     // Vars 
     const inventoryURL = `${URL}/inventory`
+    const navigate = useNavigate()
 
     // Functions 
     // Filter inventory
@@ -148,7 +150,11 @@ const InventoryView = ({ URL }) => {
                                     const valorTotal = (item.cantidad || 0) * (item.pre_pro || 0)
 
                                     return (
-                                        <tr key={item.id_inv}>
+                                        <tr 
+                                            key={item.id_inv}
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => navigate(`/product/${item.id_pro}`)}
+                                        >
                                             <td className={styles.productName}>{item.nom_pro}</td>
                                             <td>
                                                 <span

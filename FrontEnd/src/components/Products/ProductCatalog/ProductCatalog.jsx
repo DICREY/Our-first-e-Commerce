@@ -3,12 +3,12 @@ import { useState, useMemo, useEffect } from "react"
 import { useParams, useLocation } from "react-router-dom"
 
 // Imports 
-import { errorStatusHandler, showAlert } from "../../Utils/utils"
-import { GetData } from "../../Utils/Requests"
-import ProductCard from "./ProductCard/ProductCard"
+import { errorStatusHandler, showAlert } from "../../../Utils/utils"
+import { GetData } from "../../../Utils/Requests"
+import ProductCard from "../ProductCard/ProductCard"
 
 // Import styles 
-import styles from "../../styles/Products/ProductCatalog.module.css"
+import styles from "./ProductCatalog.module.css"
 
 // Mapeo de slugs a nombres de categorías
 const SLUG_TO_CATEGORY = {

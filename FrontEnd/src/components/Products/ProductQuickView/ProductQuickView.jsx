@@ -7,7 +7,7 @@ import { PostData } from "../../Utils/Requests";
 import { AuthContext } from "../../Contexts/Contexts";
 
 // Import styles 
-import styles from "../../styles/Products/ProductQuickView.module.css";
+import styles from "./ProductQuickView.module.css";
 
 // Component 
 const ProductQuickView = ({ data, isOpen, onClose, img = '', URL = '' }) => {

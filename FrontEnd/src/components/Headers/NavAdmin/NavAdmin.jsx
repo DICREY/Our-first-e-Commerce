@@ -4,7 +4,6 @@ import { NavLink } from 'react-router-dom'
 import { 
   Box, 
   ChartNoAxesCombined, 
-  Package, 
   Users, 
   Settings,
   Home,
@@ -12,7 +11,9 @@ import {
   ChevronLeft,
   Sun,
   Moon,
-  ClockPlus
+  ClockPlus,
+  FolderSearch2,
+  BaggageClaim
 } from 'lucide-react'
 
 // Imports 
@@ -58,7 +59,7 @@ export const NavAdmin = () => {
         },
         {
             path: "/admin/inventory",
-            icon: <Box size={20} />,
+            icon: <FolderSearch2 size={20} />,
             label: "Inventario"
         },
         {
@@ -68,7 +69,7 @@ export const NavAdmin = () => {
         },
         {
             path: "/admin/orders",
-            icon: <Package size={20} />,
+            icon: <BaggageClaim size={20} />,
             label: "Pedidos"
         },
         {

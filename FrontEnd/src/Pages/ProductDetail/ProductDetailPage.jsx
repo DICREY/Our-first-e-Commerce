@@ -6,11 +6,12 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useCart } from "../../Contexts/CartContext"
 import { CheckImage, formatNumber, errorStatusHandler, showAlert, Discount } from "../../Utils/utils"
 import { PostData } from "../../Utils/Requests"
-import RelatedProductsCarousel from "../../components/Products/RelatedProductsCarousel"
+import RelatedProductsCarousel from "../../components/Products/RelatedProductsCarousel/RelatedProductsCarousel"
 
 //Styles
 import styles from "./ProductDetailPage.module.css"
 
+// Component 
 const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
   // Dynamic vars 
   const [selectedImage, setSelectedImage] = useState(null)
@@ -33,9 +34,7 @@ const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
     const fetchProductData = async () => {
       try {
         setLoading(true);
-
         const productData = await PostData(`${URL}/products/by`, { by: productId });
-
         const prod = productData?.[0] || productData?.result?.[0] || productData?.product || productData;
 
         if (prod?.nom_pro) {
@@ -266,13 +265,15 @@ const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
                   +
                 </button>
               </div>
-              <button
-                className={styles.primaryButton}
-                onClick={handleQuickAdd}
-              >
-                Añadir al carrito
-              </button>
-              <button className={styles.secondaryButton}>Comprar ahora</button>
+              <div>
+                <button
+                  className={styles.primaryButton}
+                  onClick={handleQuickAdd}
+                >
+                  Añadir al carrito
+                </button>
+                <button className={styles.secondaryButton}>Comprar ahora</button>
+              </div>
             </div>
 
             <div className={styles.productMeta}>

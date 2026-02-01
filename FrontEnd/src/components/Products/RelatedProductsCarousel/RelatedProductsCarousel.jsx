@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 
 // Imports 
-import { PostData } from "../../Utils/Requests";
-import { showAlert, errorStatusHandler } from "../../Utils/utils";
-import ProductCard from "./ProductCard/ProductCard";
+import { PostData } from "../../../Utils/Requests";
+import { showAlert, errorStatusHandler } from "../../../Utils/utils";
+import ProductCard from "../ProductCard/ProductCard";
 
 // Import styles 
-import styles from "../../styles/Products/RelatedProductsCarousel.module.css";
+import styles from "./RelatedProductsCarousel.module.css";
 
 // Component 
 const RelatedProductsCarousel = ({ URL = '', img = '', categoryId = '', setProduct }) => {

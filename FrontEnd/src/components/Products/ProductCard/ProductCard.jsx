@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 
 // Imports
 import { useCart } from "../../../Contexts/CartContext"
-import { CheckImage, formatNumber, showAlert, Discount, errorStatusHandler } from "../../../Utils/utils"
+import { CheckImage, formatNumber, Discount } from "../../../Utils/utils"
 import { AuthContext } from "../../../Contexts/Contexts"
 import Button from "../../Button/Button"
 import Badge from "../../Badge/Badge"
