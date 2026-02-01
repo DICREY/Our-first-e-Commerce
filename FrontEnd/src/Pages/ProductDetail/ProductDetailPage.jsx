@@ -14,20 +14,21 @@ import styles from "./ProductDetailPage.module.css"
 // Component 
 const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
   // Dynamic vars 
-  const [selectedImage, setSelectedImage] = useState(null)
-  const [selectedColor, setSelectedColor] = useState("")
-  const [selectedSize, setSelectedSize] = useState(null)
-  const [quantity, setQuantity] = useState(1)
-  const [product, setProduct] = useState({})
-  const [relatedProducts, setRelatedProducts] = useState([])
-  const [reviews, setReviews] = useState([])
-  const [loading, setLoading] = useState(true)
-  const { productId } = useParams();
-  const [activeTab, setActiveTab] = useState('description')
-
+  const [ selectedImage, setSelectedImage ] = useState(null)
+  const [ selectedColor, setSelectedColor ] = useState("")
+  const [ selectedSize, setSelectedSize ] = useState(null)
+  const [ quantity, setQuantity ] = useState(1)
+  const [ product, setProduct ] = useState({})
+  const [ reviews, setReviews ] = useState([])
+  const [ imgExpand, setImgExpand ] = useState(null)
+  const [ loading, setLoading ] = useState(true)
+  const [ activeTab, setActiveTab ] = useState('description')
+  const [ relatedProducts, setRelatedProducts ] = useState([])
+  
   // Get product ID from URL params
   const navigate = useNavigate()
   const { addToCart } = useCart()
+  const { productId } = useParams();
 
   // Fetch product data
   useEffect(() => {
@@ -163,7 +164,11 @@ const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
               ))}
             </div>
 
-            <div className={styles.mainImageContainer}>
+            <div 
+            style={{ cursor: 'zoom-in' }}
+              className={styles.mainImageContainer}
+              onClick={() => setImgExpand(selectedImage)}
+            >
               <CheckImage
                 imgDefault={img}
                 src={selectedImage}
@@ -183,7 +188,7 @@ const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
             </div>
 
             <div className={styles.priceContainer}>
-              {product.offers? (
+              {product.offers ? (
                 <>
                   <p className={styles.price}>
                     ${formatNumber(Discount(product.pre_pro, product.offers?.[0]?.por_des_ofe))}
@@ -195,9 +200,9 @@ const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
                     <span className={styles.discountBadge}>{product.offers?.[0].por_des_ofe}% OFF</span>
                   )}
                 </>
-                ):(
-                  <p className={styles.price}>${formatNumber(product.pre_pro)}</p>
-                )
+              ) : (
+                <p className={styles.price}>${formatNumber(product.pre_pro)}</p>
+              )
               }
             </div>
 
@@ -380,6 +385,17 @@ const ProductDetailPage = ({ URL = '', img = '', setPro }) => {
           categoryId={product.nom_cat_pro}
           setProduct={setPro}
         />
+      )}
+      {imgExpand && (
+        <picture
+          onClick={() => setImgExpand(null)}
+          className='activeImg'
+        >
+          <CheckImage
+            src={imgExpand}
+            imgDefault={img}
+          />
+        </picture>
       )}
     </main>
   )
