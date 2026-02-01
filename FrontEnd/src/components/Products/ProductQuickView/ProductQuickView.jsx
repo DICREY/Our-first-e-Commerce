@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState, useContext } from "react";
-import Modal from "../Modal/Modal";
-import Button from "../Button/Button";
-import { CheckImage, errorStatusHandler, showAlert, showAlertSelect } from "../../Utils/utils";
-import { PostData } from "../../Utils/Requests";
-import { AuthContext } from "../../Contexts/Contexts";
+
+// Imports 
+import Modal from "../../Modal/Modal";
+import Button from "../../Button/Button";
+import { CheckImage, errorStatusHandler, showAlert, showAlertSelect } from "../../../Utils/utils";
+import { PostData } from "../../../Utils/Requests";
+import { AuthContext } from "../../../Contexts/Contexts";
 
 // Import styles 
 import styles from "./ProductQuickView.module.css";

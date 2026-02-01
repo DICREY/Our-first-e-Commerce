@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Check, ChevronLeft, Edit, Plus, Trash2, X } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 
 // Imports 
 import { GetData, ModifyData, PostData } from '../../../Utils/Requests'
@@ -9,8 +10,6 @@ import { CheckImage, errorStatusHandler, searchCustomFilter, searchFilter, showA
 
 // Import styles
 import styles from './ProductEdit.module.css'
-import { get, useForm } from 'react-hook-form'
-import { all } from 'axios'
 
 // Component 
 export const ProductEdit = ({ URL = '', imgDefault = '' }) => {

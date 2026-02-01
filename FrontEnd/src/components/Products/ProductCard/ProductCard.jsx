@@ -9,7 +9,7 @@ import { CheckImage, formatNumber, Discount } from "../../../Utils/utils"
 import { AuthContext } from "../../../Contexts/Contexts"
 import Button from "../../Button/Button"
 import Badge from "../../Badge/Badge"
-import ProductQuickView from "../ProductQuickView"
+import ProductQuickView from "../ProductQuickView/ProductQuickView"
 
 // Import styles 
 import styles from "./ProductCard.module.css"
